@@ -131,14 +131,14 @@ function apiDeleteUUser($db, $user) {
 		$statement = $db -> prepare($query);
 		$statement -> bindParam(':username', $user, PDO::PARAM_STR);
 		$statement -> execute();
-		$result = $statement -> fetch();
+		//$result = $statement -> fetch();
 
 		// Delete user
 		$query = 'DELETE FROM users WHERE username = :username;';
 		$statement = $db -> prepare($query);
 		$statement -> bindParam(':username', $user, PDO::PARAM_STR);
 		$statement -> execute();
-		$result = $statement -> fetch();
+		//$result = $statement -> fetch();
 
 		$output['code'] = 201;
 		$output['status'] = 'success';
@@ -213,7 +213,7 @@ function apiEditUUser($db, $user, $p) {
 			$statement -> bindParam(':expiration', $p['expiration'], PDO::PARAM_STR);
 		}
 		$statement -> execute();
-		$result = $statement -> fetch();
+		//$result = $statement -> fetch();
 	}
 
 	// Update PODs
@@ -233,13 +233,13 @@ function apiEditUUser($db, $user, $p) {
 		$statement -> bindParam(':expiration', $p['pexpiration'], PDO::PARAM_STR);
 		$statement -> bindParam(':username', $user, PDO::PARAM_STR);
 		$statement -> execute();
-		$result = $statement -> fetch();
+		//$result = $statement -> fetch();
 	} else if (isset($p['pod'])) {
 		$query = 'DELETE FROM pods WHERE username = :username;';
 		$statement = $db -> prepare($query);
 		$statement -> bindParam(':username', $user, PDO::PARAM_STR);
 		$statement -> execute();
-		$result = $statement -> fetch();
+		//$result = $statement -> fetch();
 	}
 
 	$output['code'] = 200;
@@ -302,7 +302,7 @@ function apiAddUUser($db, $p) {
 			$statement -> bindParam(':expiration', $p['pexpiration'], PDO::PARAM_STR);
 			$statement -> bindParam(':username', $p['username'], PDO::PARAM_STR);
 			$statement -> execute();
-			$result = $statement -> fetch();
+			//$result = $statement -> fetch();
 		}
 
 		$output['code'] = 201;
