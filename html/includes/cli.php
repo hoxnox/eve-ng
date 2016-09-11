@@ -698,9 +698,14 @@ function prepareNode($n, $id, $t, $nets) {
 			}
 		}
 	}
-
-	// Preparing image
-
+	// Prepare SNAT for RDP 
+	// iptables -t nat -I INPUT -p tcp --dport 11455  -j SNAT --to 169.254.1.102
+	if ($n -> getConsole() == 'rdp' ) {
+		$cmd = 'iptables -t nat -D INPUT -p tcp --dport '.$n -> getPort().' -j SNAT --to 169.254.1.102' ;
+		exec($cmd, $o, $rc);
+		$cmd = 'iptables -t nat -I INPUT -p tcp --dport '.$n -> getPort().' -j SNAT --to 169.254.1.102' ; 
+		exec($cmd, $o, $rc);
+	}
 	// Dropping privileges
 	posix_setsid();
 	posix_setgid(32768);
@@ -934,10 +939,10 @@ function start($n, $id, $t, $nets, $scripttimeout) {
 			break;
 		case 'qemu':
 			$cmd = '/opt/unetlab/wrappers/qemu_wrapper -T '.$t.' -D '.$id.' -t "'.$n -> getName().'" -F '.$bin.' -d '.$n -> getDelay();
-			if ($n -> getConsole() == 'vnc') {
+			if ($n -> getConsole() == 'vnc'  || $n -> getConsole() == 'rdp' ) {
 				// Disable telnet (wrapper) console
 				$cmd .= ' -x';
-			}
+			} 
 			break;
 	}
 	// Special Case for xrv - csr1000v - vIOS - vIOSL - Docker
@@ -1035,6 +1040,12 @@ function stop($n) {
 		}
 		error_log(date('M d H:i:s ').'INFO: stopping '.$cmd);
 		exec($cmd, $o, $rc);
+	            // DELETE SNAT RULE RDP if needed
+                if ( $n -> getConsole() == 'rdp' ) {
+                        $cmd = 'iptables -t nat -D INPUT -p tcp --dport '.$n -> getPort().' -j SNAT --to 169.254.1.102' ;
+                        exec($cmd, $o, $rc);
+                }
+
 		if ($rc  == 0) {
 			return 0;
 		} else {
