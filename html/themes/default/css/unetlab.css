@@ -6,7 +6,7 @@
 *::-webkit-scrollbar-thumb {
 	border-radius: 10px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	background-color: #3ba9ba;
+	background-color: #317087;
 }
 
 *::-webkit-scrollbar-track {
@@ -48,15 +48,15 @@ body.login .full-height{
 	top: 0px;
 	width: 15%;
 	z-index:4;
-	background:#46a6b6;
+	background:#317087;
 	overflow:hidden;
 	padding:3px;
 	color:#fff;
-	max-height:31px;
+	max-height:31px;			
 	overflow:hidden;
 }
 #alert_container .inner{
-	max-height:0px;
+	max-height:0px;	
 	overflow:hidden;
 }
 #alert_container:hover {
@@ -97,7 +97,7 @@ body.login .full-height{
 	max-width:400px;
 }
 .navbar-item-aqua{
-
+	
 }
 #navbar-top .navbar-right{
 	margin-right:0;
@@ -144,7 +144,7 @@ body.login .full-height{
 	margin-top:23px;
 	min-height:auto;
 	margin-left:0px;
-	background-color: #aaa;
+	background-color: #5190AF;
 }
 
 #navbar-top {
@@ -152,7 +152,7 @@ body.login .full-height{
 }
 
 #navbar-main .item-search input {
-	border: 1px solid #46a6b6;
+	border: 1px solid #317087;
 	border-bottom-left-radius: 5px;
 	border-top-left-radius: 5px;
 	color: #89888c;
@@ -161,8 +161,8 @@ body.login .full-height{
 }
 
 #navbar-main .item-search button {
-	background: #46a6b6;
-	border: 1px solid #46a6b6;
+	background: #317087;
+	border: 1px solid #317087;
 	color: #ffffff;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 }
@@ -171,7 +171,7 @@ body.login .full-height{
 	margin-top: -63px;
 }
 #navbar-main  .item-first a{
-
+	
 }
 #navbar-main .item{
 	margin-right:5px;
@@ -224,7 +224,7 @@ body.login .full-height{
 	font-size:16px;
 	font-weight:bold;
 	color:#FFF;
-	background:#46a6b6 ;
+	background:#317087 ;
 	margin:0 -15px;
 	padding:4px 15px;
 }
@@ -234,7 +234,7 @@ body.login .full-height{
 
 #context-menu code {
 	background-color: transparent;
-	color: #3ba9ba;
+	color: #317087;
 }
 
 #context-menu > ul {
@@ -245,13 +245,13 @@ body.login .full-height{
 }
 
 #context-menu .dropdown-header, .edit-custom-shape-form .edit-custom-shape-label, .edit-custom-text-form .edit-custom-text-label {
-	color: #3ba9ba;
+	color: #317087;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 	font-size: 1em;
 }
 
 #lab-sidebar {
-	background-color: #3ba9ba;
+	background-color: #317087;
 	bottom: 0px;
 	padding-top: 30px;
 	position: absolute;
@@ -279,7 +279,7 @@ body.login .full-height{
 	display:block;
 	padding:4px 0 4px 6px;
 	vertical-align:middle;
-
+	
 }
 #lab-sidebar ul li i{
 	margin-right:7px;
@@ -313,11 +313,11 @@ body.login .full-height{
 	top: 0px;
 	white-space: nowrap;
 	z-index:2;
+	height:100vh;
 }
 
 #lab-viewport .network, #lab-viewport .node {
 	position: absolute;
-	cursor: pointer;
 }
 
 #lab-viewport .network, #lab-viewport .node {
@@ -325,12 +325,11 @@ body.login .full-height{
 	font-size: 0.8em;
 	font-weight: bold;
 	text-align: center;
-
 }
 
 #lab-viewport .node_interface {
 	background-color: #9fd3db;
-	border: 2px solid #46a6b6;
+	border: 2px solid #317087;
 	border-radius: 8px;
     font-family: helvetica;
     font-size: 0.8em;
@@ -339,7 +338,7 @@ body.login .full-height{
 }
 #lab-viewport .node_interface:hover {
     z-index: 9000;
-
+	
 }
 
 [class*="node"], [class*="network"] {
@@ -366,7 +365,7 @@ body.login .full-height{
 }
 
 #list-folders {
-	background-color: #e2edef;
+	background-color: #F3F7F9;
 	margin-left: 0px;
 	margin-right: 0px;
 	overflow: hidden;
@@ -384,7 +383,7 @@ body.login .full-height{
 }
 
 #list-title-labs {
-	background-color: #46a6b6;
+	background-color: #317087;
 	color: #ffffff;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -401,7 +400,7 @@ body.login .full-height{
 }
 
 #list-labs {
-	background-color: #aaa;
+	background-color: #5190AF;
 	margin-left: 15px;
 	margin-right: -15px;
 	overflow: hidden;
@@ -421,7 +420,7 @@ body.login .full-height{
 
 #list-title-info {
 	color: #333;
-
+	
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -467,7 +466,7 @@ body.login .full-height{
 
 #mouse_frame {
 	position: absolute;
-
+	
 }
 
 #main.row {
@@ -487,7 +486,7 @@ body.login .full-height{
 }
 
 #pods thead, #users thead {
-	background: #3ba9ba;
+	background: #317087;
 }
 
 #pods thead tr, #users thead tr {
@@ -524,14 +523,14 @@ body.login .full-height{
 	height:100%;
 }
 #stats-text {
-	background-color: #e2edef;
+	background-color: #F3F7F9;
 	margin-left: 0px;
 	margin-right: 0px;
 	overflow: hidden;
 	padding-bottom: 35px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	color:#46a6b6;
+	color:#317087;
 }
 
 #stats-text ul {
@@ -551,7 +550,7 @@ body.login .full-height{
 
 #stats-text code {
 	background-color: transparent;
-	color: #46a6b6;
+	color: #317087;
 	font-size: 1em;
 	font-weight: bold;
 	margin: 0px;
@@ -620,7 +619,7 @@ body.login .full-height{
 
 .full-height {
 	height: 100%;
-	background-color: #3ba9ba;
+	background-color: #317087;
 }
 
 .menuhide {
@@ -628,7 +627,7 @@ body.login .full-height{
 }
 
 .modal-body h1 {
-	color: #3ba9ba;
+	color: #317087;
 	background-color: transparent;
 	border: 0px;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
@@ -640,10 +639,10 @@ body.login .full-height{
 }
 
 .modal-body h2 {
-	color: #3ba9ba;
+	color: #317087;
 	background-color: transparent;
 	border: 0px;
-	border-bottom: 3px solid #3ba9ba;
+	border-bottom: 3px solid #317087;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 	font-size: 1.5em;
 	font-weight: normal;
@@ -768,8 +767,8 @@ body.login .full-height{
 }
 
 .modal-title {
-	border-bottom: 2px solid #46a6b6;
-	color: #46a6b6;
+	border-bottom: 2px solid #317087;
+	color: #317087;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 	font-size: 2.8vmin;
 	text-transform: uppercase;
@@ -801,7 +800,7 @@ input[name='login[username]'], input[name='login[password]']{
 }
 
 #small {
-	background-color: #46a6b6;
+	background-color: #317087;
 	height: 100%;
 	width: 100%;
 }
@@ -812,7 +811,7 @@ input[name='login[username]'], input[name='login[password]']{
 }
 
 #small h1 {
-	color: #46a6b6;
+	color: #317087;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 	font-size: 8vmin;
 }
@@ -886,17 +885,17 @@ input[name='login[username]'], input[name='login[password]']{
 	-webkit-font-smoothing: antialiased;
 	background-color: hsl(189, 44%, 34%) !important;
 	background-repeat: repeat-x;
-	background-image: -khtml-gradient(linear, left top, left bottom, from(#7abfcb), to(#30717c));
-	background-image: -moz-linear-gradient(top, #7abfcb, #30717c);
-	background-image: -ms-linear-gradient(top, #7abfcb, #30717c);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #7abfcb), color-stop(100%, #30717c));
-	background-image: -webkit-linear-gradient(top, #7abfcb, #30717c);
-	background-image: -o-linear-gradient(top, #7abfcb, #30717c);
-	background-image: linear-gradient(#7abfcb, #30717c);
-	border-color: #30717c #30717c hsl(189, 44%, 26.5%);
+	background-image: -khtml-gradient(linear, left top, left bottom, from(#5190AF), to(#F3F7F9));
+	background-image: -moz-linear-gradient(top, #5190AF, #F3F7F9);
+	background-image: -ms-linear-gradient(top, #5190AF, #F3F7F9);
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #5190AF), color-stop(100%, #F3F7F9));
+	background-image: -webkit-linear-gradient(top, #5190AF, #F3F7F9);
+	background-image: -o-linear-gradient(top, #5190AF, #F3F7F9);
+	background-image: linear-gradient(#5190AF, #5190AF);
+	border-color: #F3F7F9 #F3F7F9 hsl(189, 44%, 26.5%);
 	border-radius: 20px;
 	color: #fff !important;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#7abfcb", endColorstr="#30717c");
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#5190AF", endColorstr="#F3F7F9");
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 	font-size: 2.5vmin;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.49);
@@ -946,7 +945,7 @@ input[name='login[username]'], input[name='login[password]']{
 }
 
 .folder, .folder:visited {
-	border-bottom: 1px dotted #46a6b6;
+	border-bottom: 1px dotted #317087;
 	color: #58585a;
 	float: left;
 	font-family: 'Ubuntu Regular', Helvetica, Arial, sans-serif;
@@ -957,8 +956,8 @@ input[name='login[username]'], input[name='login[password]']{
 }
 
 .folder:active, .folder:hover, .folder.ui-draggable-dragging {
-	border-bottom: 1px solid #46a6b6;
-	color: #46a6b6;
+	border-bottom: 1px solid #317087;
+	color: #317087;
 	font-family: 'Ubuntu Regular', Helvetica, Arial, sans-serif;
 	font-weight: bold;
 	text-decoration: none;
@@ -989,7 +988,7 @@ input[name='login[username]'], input[name='login[password]']{
 	font-weight: bold;
 	text-decoration: none !important;
 	width: 100%;
-
+	
 }
 
 .lab.ui-draggable-dragging {
@@ -999,6 +998,7 @@ input[name='login[username]'], input[name='login[password]']{
 
 .selected, .selected:visited, .selected:active, .selected:hover {
 	background: rgba(60, 153, 171, 0.75);
+	background: #317087;
 	text-decoration: none;
 }
 
@@ -1065,7 +1065,7 @@ map area:visited {
     bottom: 15px;     /*bottom: 0;  - but  */
     width: 100%;
     z-index: 4000;
-    border-top: 3px solid #46a6b6;
+    border-top: 3px solid #317087;
     padding-top: 5px !important;
     background-color: #ffffff;
 }
@@ -1128,7 +1128,7 @@ map area:visited {
 * Loading animation
 * *****************************************************************************/
 .loading-lab {
-    background-color: #3ba9b9;
+    background-color: #317087;
     position: absolute;
     top: 0;
     right: 0;
@@ -1148,7 +1148,7 @@ map area:visited {
 }
 
 .loading-lab h3 {
-    background-color: #3ba9b9;
+    background-color: #317087;
     font-family: 'Ubuntu Light', Helvetica, Arial, sans-serif;;
 }
 
@@ -1278,7 +1278,7 @@ table.configured-nodes tbody td label {
     bottom: 5%;
     left: 45%;
     padding: 35px;
-    background: #3ba9ba;
+    background: #317087;
     color: #fff;
     border-radius: 10px;
     height: 90px;
