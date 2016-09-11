@@ -852,6 +852,43 @@ function getPictures(picture_id) {
     return deferred.promise();
 }
 
+// Get lab pictures
+function getPicturesMapped(picture_id) {
+        var deferred = $.Deferred();
+        var lab_filename = $('#lab-viewport').attr('data-path');
+        if (picture_id != null) {
+                var url = '/api/labs' + lab_filename + '/picturesmapped/' + picture_id;
+        } else {
+                var url = '/api/labs' + lab_filename + '/pictures';
+        }
+        var type = 'GET';
+        $.ajax({
+                timeout: TIMEOUT,
+                type: type,
+                url: encodeURI(url),
+                dataType: 'json',
+                success: function(data) {
+                        if (data['status'] == 'success') {
+                                logger(1, 'DEBUG: got pictures(s) from lab "' + lab_filename + '".');
+                                deferred.resolve(data['data']);
+                        } else {
+                                // Application error
+                                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                                deferred.reject(data['message']);
+                        }
+                },
+                error: function(data) {
+                        // Server error
+                        var message = getJsonMessage(data['responseText']);
+                        logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+                        logger(1, 'DEBUG: ' + message);
+                        deferred.reject(message);
+                }
+        });
+        return deferred.promise();
+}
+
+
 // Get lab topology
 function getTopology() {
     var deferred = $.Deferred();
@@ -2218,7 +2255,7 @@ function printPictureInForm(id) {
     var picture_id = id;
     var picture_url = '/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + picture_id + '/data';
 
-    $.when(getPictures(picture_id)).done(function (picture) {
+    $.when(getPicturesMapped(picture_id)).done(function (picture) {
         var picture_map = picture['map'];
         picture_map = picture_map.replace(/{{IP}}/g, location.hostname);
         picture_map = picture_map.replace(/{{(NODE\$?){1}([0-9]+){1}}}/g, function (matchedString, group1, group2, startingPosition, originString) {
