@@ -17,6 +17,10 @@ a2enmod proxy_html
 a2enmod proxy_http
 a2enmod proxy_wstunnel
 
+# add php mysql module
+
+apt-get install php5-mysql
+
 # add directive to apache for proxy
 
 cp proxy.conf /etc/apache2/mods-enabled/proxy.conf 
@@ -24,3 +28,5 @@ cp proxy.conf /etc/apache2/mods-enabled/proxy.conf
 # Restart apache
 
 /etc/init.d/apache2 restart
+/etc/init.d/tomcat7 restart
+/etc/init.d/guacd restart
