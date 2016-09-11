@@ -21,7 +21,7 @@
  * @param	String		$cookie			Session cookie
  * @return	bool						True if valid
  */
-function apiLogin($db, $p, $cookie) {
+function apiLogin($db, $html5_db, $p, $cookie) {
 	if (!isset($p['username'])) {
 		$output['code'] = 400;
 		$output['status'] = 'fail';
@@ -83,6 +83,44 @@ function apiLogin($db, $p, $cookie) {
 			$output['message'] = $GLOBALS['messages'][$rc];
 			return $output;
 		}
+		if ( $p['html5'] == 1 ) {
+		//enable on databse
+			$query = "update users set html5 = 1 where username = '".$username."' ;";
+			$statement = $db -> prepare($query);
+			$statement -> execute();
+			// Add token guacamole to user
+			// HTML5 mode -> add cokies
+			$query = "delete from guacamole_user where username = '".$username."';";
+			$statement = $html5_db -> prepare($query);
+			$statement -> execute();
+	
+			$query = "select id from pods where username = '".$username."';";
+			$statement = $db -> prepare($query);
+			$statement -> execute();
+			$result = $statement -> fetch();
+			$pod = $result["id"];
+	
+			
+			$query = "replace into guacamole_user(user_id,username, password_hash) values  ( ".($pod+1000)." , '".$username."', UNHEX(SHA2('unl',256) ));";
+	                $statement = $html5_db -> prepare($query);
+			$statement -> execute();
+	
+			$query="replace into guacamole_user_permission ( user_id , affected_user_id , permission ) values ( '".($pod+1000)."' , '".($pod+1000)."' , 'UPDATE' ) ;";
+			$statement = $html5_db -> prepare($query);
+			$statement -> execute();
+	
+			$rc = updateUserToken($db,$username,$pod);
+		} else { 
+			$query = "update users set html5 = 0 where username = '".$username."' ;";
+	                $statement = $db -> prepare($query);
+	                $statement -> execute();
+
+                        $query = "delete from guacamole_user where username = '".$username."';";
+                        $statement = $html5_db -> prepare($query);
+                        $statement -> execute();
+
+
+		};
 
 		$output['code'] = 200;
 		$output['status'] = 'success';
@@ -114,7 +152,7 @@ function apiLogout($db, $cookie) {
 	$statement = $db -> prepare($query);
 	$statement -> bindParam(':cookie', $cookie, PDO::PARAM_STR);
 	$statement -> execute();
-	$result = $statement -> fetch();
+	//$result = $statement -> fetch();
 
 	$output['code'] = 200;
 	$output['status'] = 'success';

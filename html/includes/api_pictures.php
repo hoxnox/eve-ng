@@ -113,6 +113,39 @@ function apiGetLabPicture($lab, $id) {
 }
 
 /**
+ * Function to get a single lab picture.
+ *
+ * @param   Lab     $lab                Lab
+ * @param   int     $id                 Picture ID
+ * @return  Array                       Lab picture (JSend data)
+ */
+function apiGetLabPictureMapped($lab, $id,$html5,$username) {
+        // Getting picture
+        if (isset($lab -> getPictures()[$id])) {
+                $picture = $lab -> getPictureMapped($id,$html5,$username);
+                //$picture = $lab -> getPictures()[$id];
+                // Printing picture
+                $output['code'] = 200;
+                $output['status'] = 'success';
+                $output['message'] = 'Picture loaded';
+                $output['data'] = Array(
+                        'height' => $picture -> getHeight(),
+                        'id' => $id,
+                        'name' => $picture -> getName(),
+                        'type' => $picture -> getNType(),
+                        'width' => $picture -> getWidth(),
+                        'map' => $picture -> getMap()
+                );
+        } else {
+                $output['code'] = 404;
+                $output['status'] = 'fail';
+                $output['message'] = 'Picture "'.$id.'" not found on lab "'.$lab_file.'".';
+        }
+        return $output;
+}
+
+
+/**
  * Function to get all lab pictures.
  *
  * @param   Lab     $lab                Lab

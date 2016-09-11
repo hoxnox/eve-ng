@@ -21,7 +21,8 @@
 function checkDatabase() {
 	// Database connection
 	try {
-		$db = new PDO('sqlite:'.DATABASE);
+		//$db = new PDO('sqlite:'.DATABASE);
+		$db = new PDO('mysql:host=127.0.0.1;dbname=eve_ng_db','eve-ng','eve-ng');
 		$db -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		return $db;
 	} catch (Exception $e) {
@@ -138,7 +139,7 @@ function checkNodeConfig($s) {
  * @return	bool						True if valid
  */
 function checkNodeConsole($s) {
-	if (in_array($s, Array('telnet', 'vnc'))) {
+	if (in_array($s, Array('telnet', 'vnc', 'rdp', 'html5_rdp', 'html5_telnet', 'html5_vnc'))) {
 		return True;
 	} else {
 		return False;
@@ -152,7 +153,7 @@ function checkNodeConsole($s) {
  * @return	bool						True if valid
  */
 function checkNodeIcon($s) {
-	if (preg_match('/^[A-Za-z0-9_+\\s-]*\.png$/', $s) && is_file(BASE_DIR.'/html/images/icons/'.$s)) {
+	if (preg_match('/^[A-Za-z0-9_+\\s-]*\.[png$\|.jpg$*]/', $s) && is_file(BASE_DIR.'/html/images/icons/'.$s)) {
 		return True;
 	} else {
 		return False;
@@ -424,7 +425,7 @@ function deleteSessions($db) {
 		$statement = $db -> prepare($query);
 		$statement -> bindParam(':expiration', $now, PDO::PARAM_INT);
 		$statement -> execute();
-		$result = $statement -> fetch();
+		//$result = $statement -> fetch();
 	} catch (Exception $e) {
 		error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][90021]);
 		error_log(date('M d H:i:s ').(string) $e);
@@ -444,7 +445,7 @@ function deleteSessions($db) {
 function getUserByCookie($db, $cookie) {
 	$now = time();
 	try {
-		$query = 'SELECT users.role AS role, users.email AS email, users.name AS name, pods.id AS pod, users.username AS username, users.folder AS folder, pods.lab_id AS lab FROM users LEFT JOIN pods ON users.username = pods.username WHERE cookie = :cookie AND users.session >= :session AND (users.expiration < 0 OR users.expiration >= :user_expiration) AND (pods.expiration < 0 OR pods.expiration > :pod_expiration);';
+		$query = 'SELECT users.role AS role, users.email AS email, users.name AS name, pods.id AS pod, users.username AS username, users.folder AS folder, users.html5 as html5, pods.lab_id AS lab FROM users LEFT JOIN pods ON users.username = pods.username WHERE cookie = :cookie AND users.session >= :session AND (users.expiration < 0 OR users.expiration >= :user_expiration) AND (pods.expiration < 0 OR pods.expiration > :pod_expiration);';
 		$statement = $db -> prepare($query);
 		$statement -> bindParam(':cookie', $cookie, PDO::PARAM_STR);
 		$statement -> bindParam(':session', $now, PDO::PARAM_INT);
@@ -463,6 +464,7 @@ function getUserByCookie($db, $cookie) {
 				'name' => $result['name'],
 				'role' => $result['role'],
 				'tenant' => $result['pod'],
+				'html5' => $result['html5'],
 				'username' => $result['username']
 			);
 		} else {
@@ -638,8 +640,8 @@ function listNodeConfigTemplates() {
 function listNodeIcons() {
 	$results = Array();
 	foreach (scandir(BASE_DIR.'/html/images/icons') as $filename) {
-		if (is_file(BASE_DIR.'/html/images/icons/'.$filename) && preg_match('/^.+\.png$/', $filename)) {
-			$patterns[0] = '/^(.+)\.png$/';  // remove extension
+		if (is_file(BASE_DIR.'/html/images/icons/'.$filename) && preg_match('/^.+\.[png$\|jpg$]/', $filename)) {
+			$patterns[0] = '/^(.+)\.\(png$\|jpg$\)/';  // remove extension
 			$replacements[0] = '$1';
 			$name = preg_replace($patterns, $replacements, $filename);
 			$results[$filename] = $name;
@@ -792,7 +794,8 @@ function unlockFile($file) {
 function updateDatabase($db) {
 	// Users table
 	try {
-		$query = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users';";
+		//$query = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users';";
+		$query = "select table_name as name  from information_schema.TABLES where TABLE_SCHEMA=\"eve_ng_db\" and table_name = 'users' ;";
 		$statement = $db -> prepare($query);
 		$statement -> execute();
 		$result = $statement -> fetch();
@@ -808,7 +811,7 @@ function updateDatabase($db) {
 			$statement = $db -> prepare($query);
 			$statement -> execute();
 			$db -> commit();
-
+@
 			error_log(date('M d H:i:s ').'INFO: '.$GLOBALS['messages'][90004]);
 		}
 	} catch (Exception $e) {
@@ -848,7 +851,9 @@ function updateDatabase($db) {
 
 	// Pods table
 	try {
-		$query = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'pods';";
+		//$query = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'pods';";
+		$query = "select table_name as name  from information_schema.TABLES where TABLE_SCHEMA=\"eve_ng_db\" and table_name = 'pods' ;";
+		
 		$statement = $db -> prepare($query);
 		$statement -> execute();
 		$result = $statement -> fetch();
@@ -875,7 +880,7 @@ function updateDatabase($db) {
 		error_log(date('M d H:i:s ').(string) $e);
 		return False;
 	}
-	
+	/*
 	// Update old database
 	try {
 		$query = 'PRAGMA user_version;';
@@ -913,7 +918,7 @@ function updateDatabase($db) {
 		error_log(date('M d H:i:s ').(string) $e);
 		return False;
 	}
-
+        */
 	return $db;
 }
 
@@ -988,5 +993,108 @@ function updatePodLab($db, $tenant, $lab_file) {
 		error_log(date('M d H:i:s ').(string) $e);
 		return 90034;
 	}
+}
+
+function html5_checkDatabase() {
+	// Database connection
+	try {
+		//$db = new PDO('sqlite:'.DATABASE);
+		$db = new PDO('mysql:host=127.0.0.1;dbname=guacdb','guacuser','eve-ng');
+		$db -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		return $db;
+	} catch (Exception $e) {
+		error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][90003]);
+		error_log(date('M d H:i:s ').(string) $e);
+		return False;
+	}
+}
+
+
+function html5AddSession($db, $name, $type, $port, $userid) {
+	$query = "replace into guacamole_connection ( connection_id , connection_name , protocol ) values ( ".$port.",'".$name."','".$type."') ;";  
+	$statement = $db -> prepare($query);
+	$statement -> execute();
+
+	$query = "replace into guacamole_connection_parameter ( connection_id , parameter_name , parameter_value ) values ( ".$port.",'disable-auth','true' );";
+	$statement = $db -> prepare($query);
+        $statement -> execute();
+
+	$query = "replace into guacamole_connection_parameter ( connection_id , parameter_name , parameter_value ) values ( ".$port.",'ignore-cert','true' );";
+        $statement = $db -> prepare($query);
+        $statement -> execute();
+
+	//$query = "replace into guacamole_connection_parameter ( connection_id , parameter_name , parameter_value ) values ( ".$port.",'hostname','".$_SERVER['SERVER_NAME']."' );";
+	$query = "replace into guacamole_connection_parameter ( connection_id , parameter_name , parameter_value ) values ( ".$port.",'hostname','127.0.0.1' );";
+        $statement = $db -> prepare($query);
+        $statement -> execute();
+
+	$query = "replace into guacamole_connection_parameter ( connection_id , parameter_name , parameter_value ) values ( ".$port.",'port','".$port."' );";
+        $statement = $db -> prepare($query);
+        $statement -> execute();
+
+        $query = "replace into guacamole_connection_parameter ( connection_id , parameter_name , parameter_value ) values ( ".$port.",'create-drive-path','true' );";
+        $statement = $db -> prepare($query);
+        $statement -> execute();
+
+        $query = "replace into guacamole_connection_parameter ( connection_id , parameter_name , parameter_value ) values ( ".$port.",'enable-drive','true' );";
+        $statement = $db -> prepare($query);
+        $statement -> execute();
+
+        $query = "replace into guacamole_connection_parameter ( connection_id , parameter_name , parameter_value ) values ( ".$port.",'drive-path','/tmp/".$port."' );";
+        $statement = $db -> prepare($query);
+        $statement -> execute();
+
+	$query = "replace into guacamole_connection_permission ( user_id, connection_id, permission ) values ( ".($userid+1000)." , ".$port.", 'UPDATE' );";
+	$statement = $db -> prepare($query);
+	$statement -> execute();
+}
+
+function updateUserToken($db,$username,$pod) {
+	$url = 'http://127.0.0.1/html5/api/tokens';
+	$data = array('username' => $username, 'password' => 'unl');
+
+	$options = array(
+        	'http' => array(
+        	'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+        	'method'  => 'POST',
+        	'content' => http_build_query($data),
+    		)
+	);
+
+	$context  = stream_context_create($options);
+	$result = (array) json_decode(file_get_contents($url, false, $context));
+	$token = $result['authToken'];
+	$query = "delete from html5 where username = '".$username."';";
+	$statement = $db -> prepare($query);
+	$statement -> execute();
+	$query = "delete from html5 where pod = '".$pod."';";
+        $statement = $db -> prepare($query);
+        $statement -> execute();
+	$query = "replace into html5 ( username , pod, token ) values ( '".$username."','".$pod."','".$token."');";
+	$statement = $db -> prepare($query);
+	$statement -> execute();
+}
+
+function getHtml5Token($userid) {
+	$db = checkDatabase() ;
+	$query = "select token from html5 where pod = ".$userid." ;";
+	$statement = $db -> prepare($query);
+	$statement -> execute();
+	$result = $statement -> fetch();
+	return $result['token'];
+}
+
+function addHtml5Perm($port,$tenant) {
+	try {
+		$db = html5_checkDatabase() ;
+		$query = "replace into guacamole_connection_permission ( user_id, connection_id, permission ) values ( ".($tenant+1000)." , ".$port.", 'READ' );";
+		$statement = $db -> prepare($query);
+        	$statement -> execute();
+	} catch (Exception $e) {
+                error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][90003]);
+                error_log(date('M d H:i:s ').(string) $e);
+                return True;
+        }
+
 }
 ?>

@@ -2530,6 +2530,11 @@ function printLabTopology() {
 
         });
         $.each(nodes, function (key, value) {
+            if ( value['url'].indexOf('token') != -1 ) {
+               hrefbuf='<a href="' + value['url'] + '" target="'+ value['name']  +'" >' ;
+            } else {
+               hrefbuf='<a href="' + value['url'] + '" >' ;
+            }
             $labViewport.append(
                 '<div id="node' + value['id'] + '" ' +
                 'class="context-menu node node' + value['id'] + ' node_frame" ' +
@@ -2537,7 +2542,7 @@ function printLabTopology() {
                 'data-path="' + value['id'] + '" ' +
                 'data-status="' + value['status'] + '" ' +
                 'data-name="' + value['name'] + '">' +
-                '<a href="' + value['url'] + '">' +
+                hrefbuf +
                 '</a>' +
                 '<div class="node_name"><i class="node' + value['id'] + '_status"></i> ' + value['name'] + '</div>' +
                 '</div>');

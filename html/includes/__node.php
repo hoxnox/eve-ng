@@ -304,6 +304,7 @@ class Node {
 		if (isset($p['left'])) $this -> left = (int) $p['left'];
 		if (isset($p['name'])) $this -> name = $p['name'];
 		if (isset($p['top'])) $this -> top = (int) $p['top'];
+		if (isset($p['console'])) $this -> console = $p['console'];
 
 		// Building iol node
 		if ($p['type'] == 'iol') {
@@ -329,7 +330,7 @@ class Node {
 
 		// Building qemu node
 		if ($p['type'] == 'qemu') {
-			if (isset($p['console'])) $this -> console = $p['console'];
+			//if (isset($p['console'])) $this -> console = $p['console'];
 			if (isset($p['cpu'])) $this -> cpu = (int) $p['cpu'];
 			if (isset($p['ethernet'])) $this -> ethernet = (int) $p['ethernet'];
 			if (isset($p['uuid'])) $this -> uuid = $p['uuid'];
@@ -463,6 +464,14 @@ class Node {
 			error_log(date('M d H:i:s ').'WARNING: '.$GLOBALS['messages'][40010]);
 		} else if (isset($p['top'])) {
 			$this -> top = $p['top'];
+			$modified = True;
+		}
+
+		if (isset($p['console']) && $p['console'] === '') {
+			unset($this -> console);
+			$modified = True;
+		} else if (isset($p['console'])) {
+			$this -> console = htmlentities($p['console']);
 			$modified = True;
 		}
 
@@ -766,6 +775,14 @@ class Node {
 				error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][80016]);
 				return Array(False, False);
 			}
+			if ($this -> getConsole() == 'rdp' ) {
+
+                                $this -> flags_eth .= ' -device %NICDRIVER%,netdev=net'.$this->ethernet.',mac=50:'.sprintf('%02x', $this -> tenant).':'.sprintf('%02x', $this -> id / 512).':'.sprintf('%02x', $this -> id % 512).':00:'.sprintf('%02x', $this->ethernet);
+                                $this -> flags_eth .= ' -netdev user,id=net1,hostfwd=tcp::'.$this -> port.'-:3389,net=169.254.1.100/30,dhcpstart=169.254.1.100,restrict=on';
+                        }
+			if ($this -> getConsole() != 'vnc' ) {
+				$flags .= ' -nographic ';
+			}
 
 			if (isset($p['qemu_nic']) && preg_match('/^[0-9a-zA-Z-]+$/', $p['qemu_nic'])) {
 				// Setting non default NIC driver
@@ -919,7 +936,8 @@ class Node {
 	 */
 	public function getConsole() {
 		if (in_array($this -> type, Array('iol', 'dynamips'))) {
-			return 'telnet';
+			//return 'telnet';
+			return $this -> console;
 		} else if (isset($this -> console)) {
 			return $this -> console;
 		} else {
@@ -932,13 +950,52 @@ class Node {
 	 * 
 	 * @return	string                      Node console URL
 	 */
-	public function getConsoleUrl() {
+	public function getConsoleUrl($html5,$username) {
+/*
 		if ($this -> type == 'docker') {
 			return 'docker://'.$_SERVER['SERVER_NAME'].':4243/'.$this -> lab_id.'-'.$this -> tenant.'-'.$this -> id.'?'.$this -> name;
 		} else if (isset($this -> console)) {
-			return $this -> console.'://'.$_SERVER['SERVER_NAME'].':'.$this -> port;
+				return $this -> console.'://'.$_SERVER['SERVER_NAME'].':'.$this -> port;
 		} else {
 			return 'telnet://'.$_SERVER['SERVER_NAME'].':'.$this -> port;
+		}
+	}
+*/
+		if ($this -> type == 'docker') {
+                        return 'docker://'.$_SERVER['SERVER_NAME'].':4243/'.$this -> lab_id.'-'.$this -> tenant.'-'.$this -> id.'?'.$this -> name;
+                }
+		$html5_db = html5_checkDatabase();
+		if ( $html5 != 1 ) {
+			switch ( $this -> console ) {
+				default:
+				case 'telnet' :
+					//html5AddSession( $html5_db, $username.'_'.$this -> name , "telnet" , $this -> port, $this -> tenant);
+					return 'telnet://'.$_SERVER['SERVER_NAME'].':'.$this -> port;
+					break;;
+				case 'vnc' :
+					//html5AddSession( $html5_db, $username.'_'.$this -> name , "vnc" , $this -> port, $this -> tenant);
+					return 'vnc://'.$_SERVER['SERVER_NAME'].':'.$this -> port;
+					break;;
+				case 'rdp' :
+					//html5AddSession( $html5_db, $username.'_'.$this -> name , "rdp" , $this -> port, $this -> tenant);
+					//return 'rdp://full%20address=s:'.$_SERVER['SERVER_NAME'].':'.$this -> port;
+					return '/rdp/?target='.$_SERVER['SERVER_NAME'].'&port='.$this -> port;
+					break;;
+			}
+		} else {
+			if ( !isset($this->console) || $this->console == '' ) {
+				$console='telnet' ;
+			} else {
+				$console=$this->console ;
+			}
+			//$html5_db = html5_checkDatabase();
+			html5AddSession( $html5_db, $username.'_'.$this -> name , $console , $this -> port, $this -> tenant);
+			$html5_db = null ;
+			addHtml5Perm($this->port,$this->tenant);
+			$token=getHtml5Token($this->tenant);
+			$b64id=base64_encode( $this->port."\0".'c'."\0".'mysql' );
+			//return 'http://'.$_SERVER['SERVER_NAME'].':8080/guacamole/#/client/'.$b64id ;
+			return '/html5/#/client/'.$b64id.'?token='.$token ;
 		}
 	}
 

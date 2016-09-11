@@ -120,7 +120,7 @@ if (!isset($node_templates)) {
 }
 
 // Define parameters
-define('VERSION', '1.0.0-11-git');
+define('VERSION', '1.0.2-2-git');
 define('BASE_DIR', '/opt/unetlab');
 define('BASE_LAB', BASE_DIR.'/labs');
 define('BASE_TMP', BASE_DIR.'/tmp');

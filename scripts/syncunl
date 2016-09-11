@@ -15,7 +15,7 @@
 # 
 # /usr/src/unetlab/scripts/syncunl
 
-cd /usr/src/unetlab
+cd /usr/src/eve-ng-public
 git pull
 cd scripts
 DEB=$(./build_deb_gitunetlab.sh)

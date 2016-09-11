@@ -184,7 +184,7 @@ function apiEditLabNodeInterfaces($lab, $id, $p) {
  * @param   int     $id                 Node ID
  * @return  Array                       Lab node (JSend data)
  */
-function apiGetLabNode($lab, $id) {
+function apiGetLabNode($lab, $id , $html5, $username ) {
 	// Getting node
 	if (isset($lab -> getNodes()[$id])) {
 		$node = $lab -> getNodes()[$id];
@@ -205,7 +205,7 @@ function apiGetLabNode($lab, $id) {
 			'template' => $node -> getTemplate(),
 			'type' => $node -> getNType(),
 			'top' => $node -> getTop(),
-			'url' => $node -> getConsoleUrl()
+			'url' => $node -> getConsoleUrl($html5, $username)
 		);
 
 		if ($node -> getNType() == 'iol') {
@@ -256,7 +256,7 @@ function apiGetLabNode($lab, $id) {
  * @param   Lab     $lab                Lab
  * @return  Array                       Lab nodes (JSend data)
  */
-function apiGetLabNodes($lab) {
+function apiGetLabNodes($lab,$html5,$username) {
 	// Getting node(s)
 	$nodes = $lab -> getNodes();
 
@@ -280,7 +280,7 @@ function apiGetLabNodes($lab) {
 				'template' => $node -> getTemplate(),
 				'type' => $node -> getNType(),
 				'top' => $node -> getTop(),
-				'url' => $node -> getConsoleUrl()
+				'url' => $node -> getConsoleUrl($html5,$username)
 			);
 
 			if ($node -> getNType() == 'iol') {
@@ -545,9 +545,9 @@ function apiGetLabNodeTemplate($p) {
 			'name' => $GLOBALS['messages'][70015],
 			'type' => 'list',
 			'value' => $p['console'],
-			'list' => Array('telnet' => 'telnet', 'vnc' => 'vnc')
+			'list' => Array('telnet' => 'telnet', 'vnc' => 'vnc' , 'rdp' => 'rdp' )
 		);
-	}
+	} 
 
 	// Dynamips options
 	if ($p['type'] == 'dynamips') {

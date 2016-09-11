@@ -840,6 +840,36 @@ class Lab {
 		}
 	}
 
+        /* Method to get all lab pictures.
+         *
+         * @return  Array                       Lab pictures
+         */
+        public function getPictureMapped($id,$html5,$username) {
+		error_log(date('M d H:i:s ').$id.' - '.$html5.' - '.$username);
+		
+                if (!empty($this -> pictures[$id])) {
+                       $curpic = $this -> pictures[$id];
+			$curmap = $curpic -> getMap();
+			$curname = $curpic -> getName() ;
+			preg_match_all("|(.*href=')(.*NODE)(.*)(}}.*)|U",$curmap,$out,PREG_PATTERN_ORDER);
+			$curmap = "" ;
+			for ( $i = 0 ; $i < count($out[0]) ; $i++ ) {
+				$curnode=$this->getNodes()[$out[3][$i]];
+				if ( $html5 == 1 ) {
+					$curmap=$curmap.$out[1][$i].$curnode->getConsoleUrl($html5,$username).'\' TARGET=\''.$curnode->getName().'\'>' ;
+				} else {
+					$curmap=$curmap.$out[1][$i].$curnode->getConsoleUrl($html5,$username).'\'>' ;
+				}
+			}
+			$curpic->edit( array ( 'name' => $curname , 'map' => $curmap ) ) ;
+			return $curpic ;
+                } else {
+                        // By default return an empty array
+                        return Array();
+                }
+        }
+
+
 	/**
 	 * Method to get lab path.
 	 *
@@ -1027,12 +1057,14 @@ class Lab {
 							$d -> addAttribute('nvram', $node -> getNvram());
 							$d -> addAttribute('ram', $node -> getRam());
 							$d -> addAttribute('serial', $node -> getSerialCount());
+							$d -> addAttribute('console', $node -> getConsole());
 							break;
 						case 'dynamips':
 							// Dynamips specific parameters
 							$d -> addAttribute('idlepc', $node -> getIdlePc());
 							$d -> addAttribute('nvram', $node -> getNvram());
 							$d -> addAttribute('ram', $node -> getRam());
+							$d -> addAttribute('console', $node -> getConsole());
 							foreach ($node -> getSlot() as $slot => $module) {
 								$s = $d -> addChild('slot');
 								$s -> addAttribute('id', $slot);

@@ -62,6 +62,7 @@ $app -> notFound(function() use ($app) {
 class ResourceNotFoundException extends Exception {}
 class AuthenticateFailedException extends Exception {}
 
+
 $db = checkDatabase();
 if ($db === False) {
 	// Database is not available
@@ -74,6 +75,20 @@ if ($db === False) {
 	}) -> via('DELETE', 'GET', 'POST');
 	$app -> run();
 }
+
+$html5_db = html5_checkDatabase();
+if ($html5_db === False) {
+        // Database is not available
+        $app -> map('/api/(:path+)', function() use ($app) {
+                $output['code'] = 500;
+                $output['status'] = 'fail';
+                $output['message'] = $GLOBALS['messages']['90003'];
+                $app -> response -> setStatus($output['code']);
+                $app -> response -> setBody(json_encode($output));
+        }) -> via('DELETE', 'GET', 'POST');
+        $app -> run();
+}
+
 
 if (updateDatabase($db) == False) {
 	// Failed to update database
@@ -98,12 +113,12 @@ $forbidden = Array(
 /***************************************************************************
  * Authentication
  **************************************************************************/
-$app -> post('/api/auth/login', function() use ($app, $db) {
+$app -> post('/api/auth/login', function() use ($app, $db, $html5_db) {
 	// Login
 	$event = json_decode($app -> request() -> getBody());
 	$p = json_decode(json_encode($event), True);	// Reading options from POST/PUT
 	$cookie = genUuid();
-	$output = apiLogin($db, $p, $cookie);
+	$output = apiLogin($db, $html5_db, $p, $cookie);
 	if ($output['code'] == 200) {
 		// User is authenticated, need to set the cookie
 		$app -> setCookie('unetlab_session', $cookie, SESSION, '/api/', $_SERVER['SERVER_NAME'], False, False);
@@ -460,7 +475,7 @@ $app -> get('/api/labs/(:path+)', function($path = array()) use ($app, $db) {
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/links$/', $s)) {
 		$output = apiGetLabLinks($lab);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/nodes$/', $s)) {
-		$output = apiGetLabNodes($lab);
+		$output = apiGetLabNodes($lab,$user['html5'],$user['username']);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/nodes\/start$/', $s)) {
 		if ($tenant < 0) {
 			// User does not have an assigned tenant
@@ -507,7 +522,7 @@ $app -> get('/api/labs/(:path+)', function($path = array()) use ($app, $db) {
 		}
 		$output = apiWipeLabNodes($lab, $tenant);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/nodes\/[0-9]+$/', $s)) {
-		$output = apiGetLabNode($lab, $id);
+		$output = apiGetLabNode($lab, $id, $user['html5'],$user['username'] );
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/nodes\/[0-9]+\/interfaces$/', $s)) {
 		$output = apiGetLabNodeInterfaces($lab, $id);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/nodes\/[0-9]+\/start$/', $s)) {
@@ -571,6 +586,9 @@ $app -> get('/api/labs/(:path+)', function($path = array()) use ($app, $db) {
 		$output = apiGetLabPictures($lab, $id);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/pictures\/[0-9]+$/', $s)) {
 		$output = apiGetLabPicture($lab, $id);
+	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/picturesmapped\/[0-9]+$/', $s)) {
+                $output = apiGetLabPictureMapped($lab, $id,$user['html5'],$user['username']);
+		//$output = apiGetLabPicture($lab, $id);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/pictures\/[0-9]+\/data$/', $s)) {
 		$height = 0;
 		$width = 0;
