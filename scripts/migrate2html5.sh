@@ -1,7 +1,10 @@
 #!/bin/sh
 
+# create unetlab symlink for script compatibility
+ln -s /usr/src/eve-ng-public /usr/src/unetlab
+./syncunl
 # install guacamole
-#./guac_install_v1.5.sh
+./guac_install_v1.5.sh
 # creata unetlab DB
 apt-get install sqlite3
 mysql -u root --password=eve-ng mysql < unetlab.sql
