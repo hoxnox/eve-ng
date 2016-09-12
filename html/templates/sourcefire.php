@@ -1,10 +1,8 @@
 <?php
-# vim: syntax=php tabstop=4 softtabstop=0 noexpandtab laststatus=1 ruler
-
 /**
- * html/templates/hpvsr.php
+ * html/templates/sourcefire.php
  *
- * hpvsr template for UNetLab.
+ * sourcefire template for UNetLab.
  *
  * LICENSE:
  *
@@ -17,11 +15,11 @@
  *
  * UNetLab is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with UNetLab.If not, see <http://www.gnu.org/licenses/>.
+ * along with UNetLab. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrea Dainese <andrea.dainese@gmail.com>
  * @copyright 2014-2016 Andrea Dainese
@@ -31,12 +29,12 @@
  */
 
 $p['type'] = 'qemu';
-$p['name'] = 'VSR1000'; 
-$p['icon'] = 'Router.png';
-$p['cpu'] = 2;
-$p['ram'] = 4096; 
-$p['ethernet'] = 2; 
+$p['name'] = 'Sourcefire';
+$p['icon'] = 'Server.png';
+$p['cpu'] = 4;
+$p['ram'] = 4096;
+$p['ethernet'] = 4;
 $p['console'] = 'vnc';
 $p['qemu_arch'] = 'x86_64';
-$p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -nographic -rtc base=utc';
+$p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -serial none -nographic -nodefconfig -nodefaults -display none -vga std -rtc base=utc';
 ?>
