@@ -3,7 +3,7 @@
 /**
  * html/themes/default/js/messages_en.js
  *
- * English messages for UNetLab.
+ * English messages for EVE-NG.
  *
  * @author Andrea Dainese <andrea.dainese@gmail.com>
  * @copyright 2014-2016 Andrea Dainese
@@ -52,7 +52,7 @@ MESSAGES[35] = 'Delete selected users';
 MESSAGES[36] = 'CPU usage';
 MESSAGES[37] = 'Memory usage';
 MESSAGES[38] = 'Disk usage on /';
-MESSAGES[39] = 'UNetLab version';
+MESSAGES[39] = 'EVE-NG version';
 MESSAGES[40] = 'Refresh';
 MESSAGES[41] = 'running IOL nodes';
 MESSAGES[42] = 'running Dynamips nodes';
@@ -143,7 +143,7 @@ MESSAGES[128] = 'Wipe all nodes';
 MESSAGES[129] = 'Export all CFGs';
 MESSAGES[130] = 'All nodes';
 MESSAGES[131] = 'There are running nodes, you need to power off them before closing the lab.';
-MESSAGES[132] = 'Update UNetLab';
+MESSAGES[132] = 'Update EVE-NG';
 MESSAGES[133] = 'Starting update, please wait';
 MESSAGES[134] = 'No pictures in this lab.';
 MESSAGES[135] = 'Add picture';
