@@ -32,11 +32,11 @@
 
 $p['type'] = 'qemu';
 $p['name'] = 'CSR'; 
-$p['icon'] = 'Router.png';
+$p['icon'] = 'CSRv1000.png';
 $p['cpu'] = 1;
 $p['ram'] = 3072; 
 $p['ethernet'] = 4; 
 $p['console'] = 'telnet'; 
 $p['qemu_arch'] = 'x86_64';
-$p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc -realtime mlock=off  -smp 1,sockets=1,cores=1,threads=1 -rtc base=utc,driftfix=slew -global kvm-pit.lost_tick_policy=discard -no-hpet -no-shutdown -boot strict=on ';
+$p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc';
 ?>

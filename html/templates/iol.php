@@ -36,6 +36,5 @@ $p['icon'] = 'Router.png';
 $p['nvram'] = 1024; 
 $p['ram'] = 1024;
 $p['ethernet'] = 1; 
-$p['console'] = 'telnet';
 $p['serial'] = 0; 
 ?>
