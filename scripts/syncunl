@@ -18,6 +18,6 @@
 cd /usr/src/unetlab
 git pull
 cd scripts
-DEB=$(./build_deb_gitunetlab.sh)
+DEB=$(./build_deb_eve-ng.sh)
 dpkg -i $DEB
 apt-get install -f
