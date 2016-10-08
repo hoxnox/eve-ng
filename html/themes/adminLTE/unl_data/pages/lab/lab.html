@@ -213,7 +213,7 @@ function nodeInit(node){
 		'</div>'+
 		'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute; z-index:2;"></div>'+
 		'<a href="{{node['+id+'].url}}" '+ntarget+' ng-click="openConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer">'+
-		'<img ng-src="/themes/adminLTE/unl_data/img/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
+		'<img ng-src="/images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
 		'<a><figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind="node['+id+'].name"></figcaption></a>'+
 	'</div>';
 	$scope.compileNewElement(elDIV, 'nodeID_'+node.id)
@@ -231,7 +231,7 @@ function networkInit(networkObject){
 	var icon = (networkObject.type == 'bridge') ? 'Switch.png' : 'Cloud.png';
 	var elDIV='<div id="networkID_'+networkObject['id']+'" class="w element-menu network" style="left: '+networkObject.left+'px; top: '+networkObject.top+'px;" context-menu="netContext">'+
 		//'<div class="tag"><i class="fa fa-plug plug-icon ep" aria-hidden="true"></i></div>'+
-		'<a><img src="/themes/adminLTE/unl_data/img/icons/'+icon+'" class="'+icon.replace('.png','')+'_sm'+'"></a>'+
+		'<a><img src="/images/icons/'+icon+'" class="'+icon.replace('.png','')+'_sm'+'"></a>'+
 		'<a class="pointer"><figcaption class="figcaption-text '+icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind="networks['+id+'].name"></figcaption></a>'+
 	'</div>';
 	$scope.compileNewElement(elDIV, 'networkID_'+networkObject['id'])

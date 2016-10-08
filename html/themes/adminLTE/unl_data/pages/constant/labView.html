@@ -22,10 +22,10 @@
 						</div>
 					</div>
 					<div data-ng-repeat="(x,y) in nodelist" class="pv_element" style="top:{{y.top/scale}}px; left:{{y.left/scale}}px; position:absolute;" data-toggle="tooltip" title="{{y.name}}">
-						<img data-ng-src="/themes/adminLTE/unl_data/img/icons/{{y.icon}}" class="{{y.icon.replace('.png','').replace(' ','')+'_s'+scale}}">
+						<img data-ng-src="/images/icons/{{y.icon}}" class="{{y.icon.replace('.png','').replace(' ','')+'_s'+scale}}">
 					</div>
 					<div data-ng-repeat="x in networksList" class="pv_element" style="top:{{networksObject[x].top/scale}}px; left:{{networksObject[x].left/scale}}px; position:absolute;" data-toggle="tooltip" title="{{networksObject[x].name}}">
-						<img data-ng-src="/themes/adminLTE/unl_data/img/icons/{{ (networksObject[x].type == 'bridge') ? 'Switch' : 'Cloud'; }}.png" class="{{ (networksObject[x].type == 'bridge') ? 'Switch_s'+scale : 'Cloud_s'+scale; }}">
+						<img data-ng-src="/images/icons/{{ (networksObject[x].type == 'bridge') ? 'Switch' : 'Cloud'; }}.png" class="{{ (networksObject[x].type == 'bridge') ? 'Switch_s'+scale : 'Cloud_s'+scale; }}">
 					</div>
 					<div data-ng-repeat="x in lineList" class="line" style="position:absolute; transform: {{linkLinesAttr(x.x1,x.y1,x.x2,x.y2,scale)[1]}};width: {{linkLinesAttr(x.x1,x.y1,x.x2,x.y2,scale)[0]}}px; top: {{x.y1}}px; left: {{x.x1}}px;"></div>
 				</div>

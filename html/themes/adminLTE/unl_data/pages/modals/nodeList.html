@@ -98,14 +98,14 @@
 			</ui-select>
 		</td>
 		<td>
-			<img ng-src="/themes/adminLTE/unl_data/img/icons/{{item.icon}}" width="15" height="15" ng-show="!item.editmode"/> <text ng-show="!item.editmode">{{item.icon}}</text>
+			<img ng-src="/images/icons/{{item.icon}}" width="15" height="15" ng-show="!item.editmode"/> <text ng-show="!item.editmode">{{item.icon}}</text>
 			<ui-select ng-init="iconTempObj[id].selected.fullname=item.icon; iconTempObj[id].selected.brname=item.icon.replace('.png','')" ng-model="iconTempObj[id].selected" ng-show="item.editmode">
 				<ui-select-match>
-					<img ng-src="/themes/adminLTE/unl_data/img/icons/{{iconTempObj[id].selected.fullname}}" width="15" height="15"/>
+					<img ng-src="/images/icons/{{iconTempObj[id].selected.fullname}}" width="15" height="15"/>
 					<span ng-bind="iconTempObj[id].selected.brname"></span>
 				</ui-select-match>
 				<ui-select-choices repeat="icon in (templateList[item.template].icon.array | filter: $select.search) track by icon.brname">
-					<img ng-src="/themes/adminLTE/unl_data/img/icons/{{icon.fullname}}" width="15" height="15"/>
+					<img ng-src="/images/icons/{{icon.fullname}}" width="15" height="15"/>
 					<span ng-bind="icon.brname"></span>
 				</ui-select-choices>
 			</ui-select>
