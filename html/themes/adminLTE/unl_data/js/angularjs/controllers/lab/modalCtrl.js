@@ -68,7 +68,8 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 							"type":type,
 						},
 						paintStyle: {strokeStyle: (type != 'serial') ? '#1e8151' : '#ffd11a', lineWidth: 2, outlineColor: "white", outlineWidth: 1},
-						connector : (type != 'serial') ? 'Bezier' : 'Straight',
+						//connector : (type != 'serial') ? 'Bezier' : 'Straight',
+						connector : "Straight",
 						anchor: "Continuous",
 						detachable : false,
 						overlays:[
@@ -94,6 +95,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 						},
 						paintStyle: {strokeStyle: (type != 'serial') ? '#1e8151' : '#ffd11a', lineWidth: 2, outlineColor: "white", outlineWidth: 1},
 						connector : (type != 'serial') ? 'Bezier' : 'Straight',
+						connector : "Straight",
 						anchor: "Continuous",
 						detachable : false,
 						overlays:[
@@ -755,6 +757,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.iconTempObj={};
 	$scope.imageTempObj={};
 	$scope.templateList={};
+	$scope.consoleTempObj={};
 	$scope.refreshNodeList = function(){
 	$http.get('/api/labs'+$scope.path+'/nodes')
 	.then(
@@ -868,6 +871,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 			'name' : $scope.nodeList[id].newname,
 			'icon' : $scope.iconTempObj[id].selected.fullname,
 			'image' : $scope.imageTempObj[id].selected,
+			'console' : $scope.consoleTempObj[id].selected,
 			'postfix' : 0
 		}
 		if ($scope.nodeList[id].cpu !== undefined) putdata.cpu=$scope.nodeList[id].newcpu;
