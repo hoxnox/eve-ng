@@ -13,6 +13,10 @@
         <input type="password" class="form-control" placeholder="Password" ng-model="password" my-enter="tryLogin()">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
+      <div class="form-group has-feedback">
+        <center>Use html5</center>
+        <input type="checkbox" class="form-control" placeholder="html5" ng-model="html5" value=-1 onclick="value=0-value">
+      </div>
       <div class="row">
         <div class="col-xs-4 col-xs-offset-8">
           <button class="btn btn-primary btn-block btn-flat" ng-click="tryLogin()">Sign In</button>

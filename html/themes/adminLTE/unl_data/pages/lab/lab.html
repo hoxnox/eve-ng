@@ -194,6 +194,8 @@ function initFullLab(){
 
 function nodeInit(node){
 	var id = node.id;
+	ntarget = '';
+	if ( node.url.indexOf('token') != -1 ) { ntarget='target="'+node.name+'_'+node.id+'"' }
 	$scope.node[node.id]=node;
 	//console.log(node)
 	$scope.node[node.id].imageclass=node.icon.replace('.png','').replace(' ','')+'_sm';
@@ -210,7 +212,7 @@ function nodeInit(node){
 			'<i class="fa fa-plug plug-icon dropdown-toggle ep" ng-show="node['+id+'].playstopView"></i>'+
 		'</div>'+
 		'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute; z-index:2;"></div>'+
-		'<a href="{{node['+id+'].url}}" ng-click="openConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer">'+
+		'<a href="{{node['+id+'].url}}" '+ntarget+' ng-click="openConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer">'+
 		'<img ng-src="/themes/adminLTE/unl_data/img/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
 		'<a><figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind="node['+id+'].name"></figcaption></a>'+
 	'</div>';

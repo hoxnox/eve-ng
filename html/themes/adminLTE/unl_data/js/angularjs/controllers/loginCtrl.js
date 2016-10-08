@@ -6,7 +6,7 @@ function loginController($scope, $http, $location, $rootScope) {
 			$http({
 			method: 'POST',
 			url: '/api/auth/login',
-			data: {"username":$scope.username,"password":$scope.password}})
+			data: {"username":$scope.username,"password":$scope.password,"html5":$scope.html5}})
 				.then(
 				function successCallback(response) {
 					if (response.status == '200' && response.statusText == 'OK'){

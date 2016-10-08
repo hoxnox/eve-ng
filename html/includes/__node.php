@@ -989,7 +989,7 @@ class Node {
 				$console=$this->console ;
 			}
 			//$html5_db = html5_checkDatabase();
-			html5AddSession( $html5_db, $username.'_'.$this -> name , $console , $this -> port, $this -> tenant);
+			html5AddSession( $html5_db, $username.'_'.$this -> name.'_'.$this -> id , $console , $this -> port, $this -> tenant);
 			$html5_db = null ;
 			addHtml5Perm($this->port,$this->tenant);
 			$token=getHtml5Token($this->tenant);
