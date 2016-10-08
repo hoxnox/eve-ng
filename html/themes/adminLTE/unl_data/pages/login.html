@@ -1,0 +1,32 @@
+<div class="login-box">
+  <div class="login-logo">
+    <a href="/" title="Emulated Virtual Environment"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/Logo_EVE_black.png" style="width:312px;height:120px"></a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="login-box-body">
+    <p class="login-box-msg">Sign in to start your session</p>
+      <div class="form-group has-feedback">
+        <input type="text" class="form-control" placeholder="Username" ng-model="username" my-enter="tryLogin()" autofocus>
+        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+        <input type="password" class="form-control" placeholder="Password" ng-model="password" my-enter="tryLogin()">
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+        <center>Use html5</center>
+        <input type="checkbox" class="form-control" placeholder="html5" ng-model="html5" value=-1 onclick="value=0-value">
+      </div>
+      <div class="row">
+        <div class="col-xs-4 col-xs-offset-8">
+          <button class="btn btn-primary btn-block btn-flat" ng-click="tryLogin()">Sign In</button>
+        </div>
+		</p>
+		<p style="text-align:center; color:red" data-ng-bind="loginMessageInfo">
+		</p>
+        <!-- /.col -->
+      </div>
+  </div>
+  <!-- /.login-box-body -->
+</div>
+<!-- /.login-box -->
