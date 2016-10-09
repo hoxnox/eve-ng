@@ -594,26 +594,26 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 				if ($scope.topologyObject[i].destination.includes("network")){
 					var netNum = $scope.topologyObject[i].destination.replace("network", '')
 					if ($scope.networksList.indexOf(netNum) == -1)  $scope.networksList.push(netNum)
-					$scope.lineList[lineCounter]['x1']=(parseFloat($scope.networksObject[netNum].left)+50)/$scope.scale
-					$scope.lineList[lineCounter]['y1']=(parseFloat($scope.networksObject[netNum].top)+30)/$scope.scale
+					$scope.lineList[lineCounter]['x1']=(parseFloat($scope.networksObject[netNum].left)+50)/$scope.scale*2
+					$scope.lineList[lineCounter]['y1']=(parseFloat($scope.networksObject[netNum].top)+30)/$scope.scale*2
 					
 				}
 				if ($scope.topologyObject[i].destination.includes("node")){
 					var nodeNum = $scope.topologyObject[i].destination.replace("node", '')
 					console.log(nodeNum)
-					$scope.lineList[lineCounter]['x1']=(parseFloat($scope.nodelist[parseInt(nodeNum)].left)+50)/$scope.scale
-					$scope.lineList[lineCounter]['y1']=(parseFloat($scope.nodelist[parseInt(nodeNum)].top)+30)/$scope.scale
+					$scope.lineList[lineCounter]['x1']=(parseFloat($scope.nodelist[parseInt(nodeNum)].left)+50)/$scope.scale*2
+					$scope.lineList[lineCounter]['y1']=(parseFloat($scope.nodelist[parseInt(nodeNum)].top)+30)/$scope.scale*2
 				}
 				if ($scope.topologyObject[i].source.includes("network")){
 					var netNum = $scope.topologyObject[i].source.replace("network", '')
-					$scope.lineList[lineCounter]['x2']=(parseFloat($scope.networksObject[netNum].left)+50)/$scope.scale
-					$scope.lineList[lineCounter]['y2']=(parseFloat($scope.networksObject[netNum].top)+30)/$scope.scale
+					$scope.lineList[lineCounter]['x2']=(parseFloat($scope.networksObject[netNum].left)+50)/$scope.scale*2
+					$scope.lineList[lineCounter]['y2']=(parseFloat($scope.networksObject[netNum].top)+30)/$scope.scale*2
 					
 				}
 				if ($scope.topologyObject[i].source.includes("node")){
 					var nodeNum = $scope.topologyObject[i].source.replace("node", '')
-					$scope.lineList[lineCounter]['y2']=(parseFloat($scope.nodelist[parseInt(nodeNum)].top)+20)/$scope.scale
-					$scope.lineList[lineCounter]['x2']=(parseFloat($scope.nodelist[parseInt(nodeNum)].left)+40)/$scope.scale
+					$scope.lineList[lineCounter]['y2']=(parseFloat($scope.nodelist[parseInt(nodeNum)].top)+20)/$scope.scale*2
+					$scope.lineList[lineCounter]['x2']=(parseFloat($scope.nodelist[parseInt(nodeNum)].left)+40)/$scope.scale*2
 					console.log(nodeNum)
 				}
 				lineCounter++
