@@ -195,33 +195,33 @@ CSS for load img
 /*
 Preview images size //START
 */
-.AristaSW_s2{width:60px;height:27}
+.ASA_s2{width:60px;height:67}
 
 .ASA1_s2{width:60px;height:69}
 
-.ASA_s2{width:60px;height:69}
+.AristaSW_s2{width:60px;height:31}
 
-.CiscoACS_s2{width:60px;height:37}
+.CSRv1000_s2{width:60px;height:58}
+
+.CiscoACS_s2{width:60px;height:42}
 
 .CiscoWAAS_s2{width:60px;height:43}
 
 .Cloud_s2{width:60px;height:36}
 
-.CSRv1000_s2{width:60px;height:58}
-
 .CustomShape_s2{width:60px;height:42}
 
-.Desktop_s2{width:60px;height:52}
+.Desktop_s2{width:60px;height:56}
 
-.Firewall_s2{width:60px;height:82}
+.Firewall_s2{width:60px;height:43}
 
 .FrameRelay_s2{width:60px;height:62}
 
 .HUB_s2{width:60px;height:30}
 
-.IPphone_s2{width:60px;height:42}
+.IPS_s2{width:60px;height:31}
 
-.IPS_s2{width:60px;height:33}
+.IPphone_s2{width:60px;height:33}
 
 .ISE_s2{width:60px;height:42}
 
@@ -229,7 +229,7 @@ Preview images size //START
 
 .JuniperSRX_s2{width:60px;height:58}
 
-.Laptop_s2{width:60px;height:48}
+.Laptop_s2{width:60px;height:38}
 
 .LoadBalancer_s2{width:60px;height:39}
 
@@ -243,27 +243,17 @@ Preview images size //START
 
 .PaloAlto_s2{width:60px;height:67}
 
-.Pix_s2{width:60px;height:34}
+.Router_s2{width:60px;height:40}
 
 .Router_cursor_s2{width:60px;height:34}
 
-.router_icon_s2{width:60px;height:40}
-
-.Router_s2{width:60px;height:33}
-
-.Server2_s2{width:60px;height:86}
-
 .Server_s2{width:60px;height:85}
 
+.SwitchL3_s2{width:60px;height:58}
+
+.Switch_s2{width:60px;height:30}
+
 .Switch_cursor_s2{width:60px;height:26}
-
-.switch_icon_s2{width:60px;height:30}
-
-.SwitchL3_s2{width:60px;height:60}
-
-.Switch_s2{width:60px;height:27}
-
-.vWLC_s2{width:60px;height:34}
 
 .WANOptimizer_s2{width:60px;height:43}
 
@@ -271,33 +261,39 @@ Preview images size //START
 
 .XR_s2{width:60px;height:60}
 
-.AristaSW_s3{width:40px;height:18}
+.router_icon_s2{width:60px;height:40}
+
+.switch_icon_s2{width:60px;height:30}
+
+.vWLC_s2{width:60px;height:34}
+
+.ASA_s3{width:40px;height:45}
 
 .ASA1_s3{width:40px;height:46}
 
-.ASA_s3{width:40px;height:46}
+.AristaSW_s3{width:40px;height:21}
 
-.CiscoACS_s3{width:40px;height:24}
+.CSRv1000_s3{width:40px;height:39}
+
+.CiscoACS_s3{width:40px;height:28}
 
 .CiscoWAAS_s3{width:40px;height:28}
 
 .Cloud_s3{width:40px;height:24}
 
-.CSRv1000_s3{width:40px;height:39}
-
 .CustomShape_s3{width:40px;height:28}
 
-.Desktop_s3{width:40px;height:35}
+.Desktop_s3{width:40px;height:37}
 
-.Firewall_s3{width:40px;height:54}
+.Firewall_s3{width:40px;height:29}
 
 .FrameRelay_s3{width:40px;height:41}
 
 .HUB_s3{width:40px;height:20}
 
-.IPphone_s3{width:40px;height:28}
+.IPS_s3{width:40px;height:21}
 
-.IPS_s3{width:40px;height:22}
+.IPphone_s3{width:40px;height:22}
 
 .ISE_s3{width:40px;height:28}
 
@@ -305,7 +301,7 @@ Preview images size //START
 
 .JuniperSRX_s3{width:40px;height:39}
 
-.Laptop_s3{width:40px;height:32}
+.Laptop_s3{width:40px;height:25}
 
 .LoadBalancer_s3{width:40px;height:26}
 
@@ -319,27 +315,17 @@ Preview images size //START
 
 .PaloAlto_s3{width:40px;height:45}
 
-.Pix_s3{width:40px;height:22}
+.Router_s3{width:40px;height:26}
 
 .Router_cursor_s3{width:40px;height:22}
 
-.router_icon_s3{width:40px;height:26}
-
-.Router_s3{width:40px;height:22}
-
-.Server2_s3{width:40px;height:57}
-
 .Server_s3{width:40px;height:57}
 
+.SwitchL3_s3{width:40px;height:39}
+
+.Switch_s3{width:40px;height:20}
+
 .Switch_cursor_s3{width:40px;height:17}
-
-.switch_icon_s3{width:40px;height:20}
-
-.SwitchL3_s3{width:40px;height:40}
-
-.Switch_s3{width:40px;height:18}
-
-.vWLC_s3{width:40px;height:22}
 
 .WANOptimizer_s3{width:40px;height:28}
 
@@ -347,33 +333,39 @@ Preview images size //START
 
 .XR_s3{width:40px;height:40}
 
-.AristaSW_s4{width:30px;height:13}
+.router_icon_s3{width:40px;height:26}
+
+.switch_icon_s3{width:40px;height:20}
+
+.vWLC_s3{width:40px;height:22}
+
+.ASA_s4{width:30px;height:33}
 
 .ASA1_s4{width:30px;height:34}
 
-.ASA_s4{width:30px;height:34}
+.AristaSW_s4{width:30px;height:15}
 
-.CiscoACS_s4{width:30px;height:18}
+.CSRv1000_s4{width:30px;height:29}
+
+.CiscoACS_s4{width:30px;height:21}
 
 .CiscoWAAS_s4{width:30px;height:21}
 
 .Cloud_s4{width:30px;height:18}
 
-.CSRv1000_s4{width:30px;height:29}
-
 .CustomShape_s4{width:30px;height:21}
 
-.Desktop_s4{width:30px;height:26}
+.Desktop_s4{width:30px;height:28}
 
-.Firewall_s4{width:30px;height:41}
+.Firewall_s4{width:30px;height:21}
 
 .FrameRelay_s4{width:30px;height:31}
 
 .HUB_s4{width:30px;height:15}
 
-.IPphone_s4{width:30px;height:21}
+.IPS_s4{width:30px;height:15}
 
-.IPS_s4{width:30px;height:16}
+.IPphone_s4{width:30px;height:16}
 
 .ISE_s4{width:30px;height:21}
 
@@ -381,7 +373,7 @@ Preview images size //START
 
 .JuniperSRX_s4{width:30px;height:29}
 
-.Laptop_s4{width:30px;height:24}
+.Laptop_s4{width:30px;height:19}
 
 .LoadBalancer_s4{width:30px;height:19}
 
@@ -395,27 +387,17 @@ Preview images size //START
 
 .PaloAlto_s4{width:30px;height:33}
 
-.Pix_s4{width:30px;height:17}
+.Router_s4{width:30px;height:20}
 
 .Router_cursor_s4{width:30px;height:17}
 
-.router_icon_s4{width:30px;height:20}
-
-.Router_s4{width:30px;height:16}
-
-.Server2_s4{width:30px;height:43}
-
 .Server_s4{width:30px;height:42}
 
+.SwitchL3_s4{width:30px;height:29}
+
+.Switch_s4{width:30px;height:15}
+
 .Switch_cursor_s4{width:30px;height:13}
-
-.switch_icon_s4{width:30px;height:15}
-
-.SwitchL3_s4{width:30px;height:30}
-
-.Switch_s4{width:30px;height:13}
-
-.vWLC_s4{width:30px;height:17}
 
 .WANOptimizer_s4{width:30px;height:21}
 
@@ -423,33 +405,39 @@ Preview images size //START
 
 .XR_s4{width:30px;height:30}
 
-.AristaSW_s5{width:20px;height:9}
+.router_icon_s4{width:30px;height:20}
+
+.switch_icon_s4{width:30px;height:15}
+
+.vWLC_s4{width:30px;height:17}
+
+.ASA_s5{width:20px;height:22}
 
 .ASA1_s5{width:20px;height:23}
 
-.ASA_s5{width:20px;height:23}
+.AristaSW_s5{width:20px;height:10}
 
-.CiscoACS_s5{width:20px;height:12}
+.CSRv1000_s5{width:20px;height:19}
+
+.CiscoACS_s5{width:20px;height:14}
 
 .CiscoWAAS_s5{width:20px;height:14}
 
 .Cloud_s5{width:20px;height:12}
 
-.CSRv1000_s5{width:20px;height:19}
-
 .CustomShape_s5{width:20px;height:14}
 
-.Desktop_s5{width:20px;height:17}
+.Desktop_s5{width:20px;height:18}
 
-.Firewall_s5{width:20px;height:27}
+.Firewall_s5{width:20px;height:14}
 
 .FrameRelay_s5{width:20px;height:20}
 
 .HUB_s5{width:20px;height:10}
 
-.IPphone_s5{width:20px;height:14}
+.IPS_s5{width:20px;height:10}
 
-.IPS_s5{width:20px;height:11}
+.IPphone_s5{width:20px;height:11}
 
 .ISE_s5{width:20px;height:14}
 
@@ -457,7 +445,7 @@ Preview images size //START
 
 .JuniperSRX_s5{width:20px;height:19}
 
-.Laptop_s5{width:20px;height:16}
+.Laptop_s5{width:20px;height:12}
 
 .LoadBalancer_s5{width:20px;height:13}
 
@@ -471,33 +459,29 @@ Preview images size //START
 
 .PaloAlto_s5{width:20px;height:22}
 
-.Pix_s5{width:20px;height:11}
+.Router_s5{width:20px;height:13}
 
 .Router_cursor_s5{width:20px;height:11}
 
-.router_icon_s5{width:20px;height:13}
-
-.Router_s5{width:20px;height:11}
-
-.Server2_s5{width:20px;height:28}
-
 .Server_s5{width:20px;height:28}
 
+.SwitchL3_s5{width:20px;height:19}
+
+.Switch_s5{width:20px;height:10}
+
 .Switch_cursor_s5{width:20px;height:8}
-
-.switch_icon_s5{width:20px;height:10}
-
-.SwitchL3_s5{width:20px;height:20}
-
-.Switch_s5{width:20px;height:9}
-
-.vWLC_s5{width:20px;height:11}
 
 .WANOptimizer_s5{width:20px;height:14}
 
 .WSA_s5{width:20px;height:14}
 
 .XR_s5{width:20px;height:20}
+
+.router_icon_s5{width:20px;height:13}
+
+.switch_icon_s5{width:20px;height:10}
+
+.vWLC_s5{width:20px;height:11}
 
 /*
 Preview images size //END
