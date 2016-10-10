@@ -22,6 +22,7 @@
  * @return  Array                       Return code (JSend data)
  */
 function apiAddLabNode($lab, $p, $o) {
+	$id = $lab -> getFreeNodeId();
 	// Adding node_id to node_name if required
 	if ($o == True && isset($p['name'])) $p['name'] = $p['name'].$lab -> getFreeNodeId();
 
@@ -31,6 +32,9 @@ function apiAddLabNode($lab, $p, $o) {
 		$output['code'] = 201;
 		$output['status'] = 'success';
 		$output['message'] = $GLOBALS['messages'][60023];
+                $output['data'] = array(
+                        'id'=>$id
+			);
 	} else {
 		$output['code'] = 400;
 		$output['status'] = 'fail';
