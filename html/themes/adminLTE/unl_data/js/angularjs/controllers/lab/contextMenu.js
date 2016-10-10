@@ -17,7 +17,7 @@
    */
   function clickInsideElement( e, className ) {
     var el = e.srcElement || e.target;
-	if (e.path[0].tagName == 'path' || el.classList.contains('aLabel')) return false;
+	if ( ( e.path && e.path[0].tagName == 'path' ) || el.classList.contains('aLabel')) return false;
     if ( el.classList.contains(className) ) {
       return el;
     } else {
@@ -119,9 +119,9 @@ var contextMenuInit = function() {
       //taskItemInContext = clickInsideElement( e, taskItemClassName );
       if ( clickInsideElement( e, taskItemClassName ) ) {
         e.preventDefault();
-		console.log( 'Context menu on '+e.srcElement.parentElement.parentElement.id )
-		console.log(e.srcElement.parentElement.parentElement.id)
-		$('#tempElID').val(e.srcElement.parentElement.parentElement.id)
+		console.log( 'Context menu on '+e.target.parentElement.parentElement.id )
+		console.log(e.target.parentElement.parentElement.id)
+		$('#tempElID').val(e.target.parentElement.parentElement.id)
         toggleMenuOn(taskItemClassName);
         positionMenu(e);
       } else {
