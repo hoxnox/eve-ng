@@ -13,13 +13,13 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	//console.log()
 	
 	$scope.node={};
+	$scope.text={};
 	$scope.networks={};
 	$scope.interfList={};
 	$scope.interfListCount=false;
 	$scope.ready=false;
 	$scope.tempConn= new Object();
-	$scope.changedCursorNode=false;
-	$scope.changedCursorNet=false;
+	$scope.changedCursor="";
 	$scope.addNewObject={};
 	$scope.fullPathToFile=$rootScope.lab;
 	$scope.mainDivHeight = parseInt($('html').height()) - 15;
@@ -42,7 +42,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		$http.get('/api/labs'+$rootScope.lab+'/nodes')
 		.then(
 			function successCallback(response){
-				console.log(response);
+				console.log("nodeListRefresh:",response);
 				$scope.node=response.data.data
 			}
 		)
@@ -55,17 +55,30 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	
 	$scope.mainFieldClick = function($event,src){
 		$('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
-		//console.log($event)
 		if (src == undefined) {$scope.addNewObject={}; $scope.addNewObject=$event}
 		else {$scope.addNewObject={}; $scope.addNewObject.pageX=$('#'+src).offset().left; $scope.addNewObject.pageY=$('#'+src).offset().top;}
 		
-		if ($scope.changedCursorNode){
-			$scope.changedCursorNode=false
-			$scope.openModal('addNode');
-		}
-		if ($scope.changedCursorNet){
-			$scope.changedCursorNet=false
-			$scope.openModal('addNet');
+		switch ($scope.changedCursor){
+			case 'node':
+				$scope.changedCursor='';
+				$scope.openModal('addNode');
+				break;
+			case 'net':
+				$scope.changedCursor='';
+				$scope.openModal('addNet');
+				break;
+			case 'text':
+				$scope.changedCursor='';
+				$scope.openModal('addText');
+				break;
+			case 'shape':
+				$scope.changedCursor='';
+				$scope.openModal('addShape');
+				break;
+			case 'image':
+				$scope.changedCursor='';
+				$scope.openModal('addImage');
+				break;
 		}
 	}
 	
@@ -93,9 +106,15 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 					}
 		);
 	}
-	$scope.compileNewElement = function(el, id){
+	$scope.compileNewElement = function(el, id, object){
 		$('#canvas').append($compile(el)($scope))
-		jsPlumbNodeInit($('#'+id))
+		if (id.search('text') != -1){
+			jsPlumbObjectInit($('#'+id), object)
+		} else if(id.search('shape') != -1){
+			jsPlumbObjectInit($('#'+id), object)
+		} else {
+			jsPlumbNodeInit($('#'+id))
+		}
 	}
 
 	$scope.startstopNode = function(id){
@@ -159,12 +178,32 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		
 		//console.log($scope.nodeDraggingFlag)
 	}
-	
-	$scope.openConsole = function(node, $event){
+
+	$scope.openNodeConsole = function(node, $event){
 		if (!$scope.node[node].upstatus) {$event.preventDefault(); console.log('Node down console locked')}
 		if ($scope.nodeDraggingFlag) {$event.preventDefault(); console.log('Node draged console locked')}
 		$scope.nodeClickDown=false;
 		$scope.nodeDraggingFlag=false;
+	}
+
+	$scope.textClickDown=false;
+	$scope.textDraggingFlag=false;
+	
+	$scope.textTouching = function(textElement, $event){
+		//$event.preventDefault();
+		$scope.textClickDown=true;
+		//console.log($scope.nodeClickDown)
+	}
+	
+	$scope.textDragging = function(textElement, $event){
+		if ($scope.textClickDown && !$scope.textDraggingFlag) $scope.textDraggingFlag = true;
+	}
+	
+	$scope.openTextConsole = function(node, $event){
+		if (!$scope.text[node].upstatus) {$event.preventDefault(); console.log('Text down console locked')}
+		if ($scope.textDraggingFlag) {$event.preventDefault(); console.log('Text draged console locked')}
+		$scope.textClickDown=false;
+		$scope.textDraggingFlag=false;
 	}
 	
 	$scope.openAllObjects = function(){
@@ -195,18 +234,28 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			$scope.ready=false;
 		}
 	}
-	$scope.addNewNodeCursor = function(type){
-		$scope.changedCursorNode=false;
-		$scope.changedCursorNet=false;
+	$scope.addNewCursor = function(type){
+		console.log("type", type)
+		$scope.changedCursor = '';
 		$('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
 		switch (type) {
 			case 'node':
-				$scope.changedCursorNode=true;
+				$scope.changedCursor = 'node';
 				break;
 			case 'network':
-				$scope.changedCursorNet=true;
+				$scope.changedCursor = 'network';
+				break;
+			case 'text':
+				$scope.changedCursor = 'text';
+				break;
+			case 'shape':
+				$scope.changedCursor = 'shape';
+				break;
+			case 'image':
+				$scope.changedCursor = 'image';
 				break;
 			}
+			
 	}
 	
 	$scope.tempElID='';
@@ -390,18 +439,42 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		return deferred.promise;
 	}
 	
-	$scope.setPosition = function(top,left,id,type){
+	$scope.setPosition = function(top,left,id,type,object){
+		var sendingData = {};
+		if(type == 'text'){
+			type = 'textobject';
+			id = id.substr(7); // 7 == "textID_".length
+			if(object.data && typeof(object.data) == "string"){
+				object.data = JSON.parse(new TextDecoderLite('utf-8').decode(toByteArray(object.data)));
+			}
+			object.data.left = left;
+			object.data.top  = top;
+			sendingData = object;
+			sendingData.data = fromByteArray(new TextEncoderLite('utf-8').encode(JSON.stringify(object.data)));
+		} if(type == 'shape'){
+			type = 'textobject';
+			id = id.substr(8); // 8 == "shapeID_".length
+			if(object.data && typeof(object.data) == "string"){
+				object.data = JSON.parse(new TextDecoderLite('utf-8').decode(toByteArray(object.data)));
+			}
+			object.data.left = left;
+			object.data.top  = top;
+			sendingData = object;
+			sendingData.data = fromByteArray(new TextEncoderLite('utf-8').encode(JSON.stringify(object.data)));
+		} else {
+			sendingData = {'left':left, 'top':top }
+		}
 		$http({
 			method: 'PUT',
 			url:'/api/labs'+$rootScope.lab+'/'+type+'s/'+id,
-			data: {'left':left, 'top':top }}).then(
+			data: sendingData}).then(
 			function successCallback(response){
 				//console.log(response)
 				console.log('Position of '+type+' with id '+id+' saved')
 				jsPlumb.repaintEverything();
 				//$scope.interfList = response.data.data;
 			}, function errorCallback(response){
-				console.log('Server Error');
+				console.log('setPosition: [Server Error]');
 				console.log(response);
 			}
 		);
@@ -418,12 +491,9 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 				$scope.addNewObject={};
 				console.log('Esc')
 				$('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
-				if ($scope.changedCursorNode){
-					$scope.changedCursorNode=false;
-				}
-				if ($scope.changedCursorNet){
-					$scope.changedCursorNet=false;
-				}
+				
+				if ($scope.changedCursor) $scope.changedCursor = '';
+				
 				$('#mainDIV').removeClass("router-cursor").removeClass("network-cursor");
 				$('.treeview').addClass("openright");
 				$state.reload;

@@ -8,11 +8,11 @@
             <i class="glyphicon glyphicon-plus"></i> <span class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">Add an object</span> <i class="fa fa-angle-left pull-right"></i>
           </a>
           <ul class="treeview-menu">
-            <li><a class="pointer" ng-click="addNewNodeCursor('node')"><i class="glyphicon glyphicon-hdd"></i> Node</a></li>
-            <li><a class="pointer" ng-click="addNewNodeCursor('network')"><i class="glyphicon glyphicon-transfer"></i> Network</a></li>
-            <li><a class="pointer"><i class="glyphicon glyphicon-picture"></i> Picture</a></li>
-            <li><a class="pointer"><i class="glyphicon glyphicon-unchecked"></i> Custom Shape</a></li>
-            <li><a class="pointer"><i class="glyphicon glyphicon-font"></i> Text</a></li>
+            <li><a class="pointer" ng-click="addNewCursor('node')"><i class="glyphicon glyphicon-hdd"></i> Node</a></li>
+            <li><a class="pointer" ng-click="addNewCursor('network')"><i class="glyphicon glyphicon-transfer"></i> Network</a></li>
+            <li><a class="pointer" ng-click="addNewCursor('image')"><i class="glyphicon glyphicon-picture"></i> Picture</a></li>
+            <li><a class="pointer" ng-click="addNewCursor('shape')"><i class="glyphicon glyphicon-unchecked"></i> Custom Shape</a></li>
+            <li><a class="pointer" ng-click="addNewCursor('text')"><i class="glyphicon glyphicon-font"></i> Text</a></li>
           </ul>
         </li>
         <li>

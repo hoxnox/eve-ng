@@ -42,6 +42,11 @@ td.imageList .ui-select-container .ui-select-choices{
 	cursor : url(/themes/adminLTE/unl_data/img/icons/Router_cursor.png),auto;;
 }
 
+.text-cursor{
+	cursor : url(/themes/adminLTE/unl_data/img/icons/Router_cursor.png),auto;;
+	/*cursor : url(/themes/adminLTE/unl_data/img/icons/Text_cursor.png),auto;;*/
+}
+
 .network-cursor{
 	cursor : url(/themes/adminLTE/unl_data/img/icons/Switch_cursor.png),auto;;
 }

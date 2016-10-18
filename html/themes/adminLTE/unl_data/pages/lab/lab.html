@@ -37,7 +37,8 @@
 		<section class="content">-->
 		
 			<!-- /.content -->
-			<div 	class="grid mainDiv-menu {{ (changedCursorNode) ? ' router-cursor ':'' }} {{ (changedCursorNet) ? ' network-cursor ':'' }}" 	
+			<div 	class="grid mainDiv-menu {{ (changedCursor == 'node') ? ' router-cursor ':'' }} {{ (changedCursor == 'network') ? ' network-cursor ':'' }} 
+			{{(changedCursor == 'text') ? ' router-cursor ' : ''}} {{(changedCursor == 'image') ? ' router-cursor ' : ''}} {{(changedCursor == 'shape') ? ' router-cursor ' : ''}}" 	
 					style="	margin-left:50px; width:calc(100% - 50px); height:100%; position:absolute; overflow-x: scroll; overflow-y: scroll; background-color:#fff;" id="mainDIV" 
 					ng-click="mainFieldClick($event)"
 					ng-mousemove="mouseOverMainDiv($event)">
@@ -155,6 +156,16 @@ function initFullLab(){
 				//if (stopFlag === nodesNumber) {console.log('hereNode'); nodeReady=true;}
 			}
 		}),
+		$.get('/api/labs'+fullPathToFile+'/textobjects', function(data){ ///GET ALL TEXT OBJECTS FROM SERVER///
+			var stopFlag = 0;
+			var textsNumber = ObjectLength(data.data)
+			for (var key in data.data){
+				netArray[stopFlag]=key;
+				stopFlag++;
+				drowObject(data.data[key])
+				//if (stopFlag === networksNumber) {console.log('hereNet'); netReady=true;} 
+			}
+		}),
 		$.get('/api/labs'+fullPathToFile+'/networks', function(data) { ///GET ALL NETWORKS FROM SERVER///
 			//console.log(data.data)
 			var stopFlag=0;
@@ -163,7 +174,7 @@ function initFullLab(){
 			for (var key in data.data){
 				netArray[stopFlag]=key;
 				stopFlag++
-				networkInit(data.data[key])
+				networkInit(data.data[key]);
 				//if (stopFlag === networksNumber) {console.log('hereNet'); netReady=true;} 
 			}
 		})
@@ -191,6 +202,38 @@ function initFullLab(){
 	})
 	$.unblockUI();
 }
+function drowObject(obj){
+	if(obj.type == 'text')	getTextObject(obj.id).then(function(data){textInit(data)});
+	if(obj.type == 'shape') getTextObject(obj.id).then(function(data){shapeInit(data)});
+}
+// Get Text Object By Id
+function getTextObject(id) {
+    var deferred = $.Deferred();
+    $.get('/api/labs'+fullPathToFile+'/textobjects/' + id, function (data) {
+            if (data['status'] == 'success') {
+								// console.log("getTextObject success:", data);
+                try {
+                    data['data'].data = JSON.parse(new TextDecoderLite('utf-8').decode(toByteArray(data['data'].data)));
+                }
+                catch (e) {
+                    console.warn("Compatibility issue", e);
+                }
+                deferred.resolve(data['data']);
+            } else {
+                // Application error
+                deferred.reject(data['message']);
+            }
+        
+					// // Server error
+					// var message = getJsonMessage(data['responseText']);
+					// logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+					// logger(1, 'DEBUG: ' + message);
+					// deferred.reject(message);
+        
+    		// return data || {};
+    });
+    return deferred.promise();
+}
 
 function nodeInit(node){
 	var id = node.id;
@@ -206,21 +249,75 @@ function nodeInit(node){
 	$scope.node[node.id].upstatus=(node.status == 2) ? true : false;
 	var elDIV=
 		'<div id="nodeID_'+node.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+node.left+'px; top: '+node.top+'px;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
-		'<div class="play-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && !node['+id+'].upstatus" title="Start node"><i class="fa fa-play play-icon" aria-hidden="true"></i></div>'+
-		'<div class="stop-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && node['+id+'].upstatus" title="Stop node"><i class="fa fa-stop stop-icon" aria-hidden="true"></i></div>'+
-		'<div class="tag" title="Connect to another node">'+
-			'<i class="fa fa-plug plug-icon dropdown-toggle ep" ng-show="node['+id+'].playstopView"></i>'+
-		'</div>'+
-		'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute; z-index:2;"></div>'+
 		'<a href="{{node['+id+'].url}}" '+ntarget+' ng-click="openConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer">'+
 		'<img ng-src="/images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
 		'<a><figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind="node['+id+'].name"></figcaption></a>'+
 	'</div>';
 	$scope.compileNewElement(elDIV, 'nodeID_'+node.id)
-	//$('#canvas').append(elDIV)
-	//$('#nodeID_'+node.id).ready(function(){ $('.figcaption-text.'+id).css({'width': $('#nodeID_'+node.id+' img').css('width')}); jsPlumb.repaint($('#nodeID_'+node.id))/*console.log('nodeID_'+node.id+' ready');*/ });
-	//jsPlumbNodeInit($('#nodeID_'+node.id))
-	//console.log($scope)
+}
+
+function shapeInit(shapeObj){
+	var id = shapeObj.id;
+	var z_index = 1001;
+	var sideSize = shapeObj.shapeSideSize ? shapeObj.shapeSideSize : 150;
+
+	console.log("shapeElement", shapeObj)
+	var coordinates = 'position:absolute;left:' + shapeObj.data.left + 'px;top:' + shapeObj.data.top + 'px;';
+	var elDIV = "";
+	if(shapeObj.data.shapeType == 'square'){
+		elDIV =
+			'<div id="shapeID_'+shapeObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" ' +
+			'style="left: '+shapeObj.data.left+'px; top: '+shapeObj.data.top+'px; width: " ' + sideSize + 'px; height: " ' + sideSize + 'px; ' +
+			'ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
+				'<svg width="' + sideSize + '" height="' + sideSize + '">' +
+					'<rect width="' + sideSize + '" ' +
+					'height="' + sideSize + '" ' +
+					'fill ="' + shapeObj.data.bgColor + '" ' +
+					'stroke-width ="' + shapeObj.data.borderWidth + '" ' +
+					'stroke ="' + shapeObj.data.borderColor + '" ' + shapeObj.data.borderType +
+					'"/>' +
+				'Sorry, your browser does not support inline SVG.' +
+				'</svg>' +
+			'</div>';
+	} else {
+		var radius = sideSize / 2 - shapeObj.data.borderWidth / 2;
+		elDIV = 
+			'<div id="shapeID_'+shapeObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" ' +
+			'style="left: '+shapeObj.data.left+'px; top: '+shapeObj.data.top+'px; width: " ' + sideSize + 'px; height: " ' + sideSize + 'px; ' +
+			'ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
+				'<svg width="' + sideSize + '" height="' + sideSize + '">' +
+					'<ellipse cx="' + (radius + shapeObj.data.borderWidth / 2 ) + '" ' +
+					'cy="' + (radius + shapeObj.data.borderWidth / 2 ) + '" ' +
+					'rx="' + radius + '" ' +
+					'ry="' + radius + '" ' +
+					'stroke ="' + shapeObj.data.borderColor + '" ' +
+					'stroke-width="' + shapeObj.data.borderWidth / 2 + '" ' + shapeObj.data.borderType +
+					' fill ="' + shapeObj.data.bgColor + '" ' +
+					'/>' +
+				'Sorry, your browser does not support inline SVG.' +
+				'</svg>' +
+			'</div>';
+	}
+	$scope.compileNewElement(elDIV, 'shapeID_'+id, shapeObj.data)
+}
+
+function textInit(textObj){
+	console.log("textObj", textObj)
+	var id = textObj.id;
+	var t_target = '';
+	var fontColor = textObj.data.fontColor || 'black';
+	var bgColor = textObj.data.fontColor || 'white';
+	var fontSize = textObj.data.fontSize || '25';
+	$scope.text[textObj.id]=textObj;
+	console.log("txtobj", textObj)
+	var coordinates = 'position:absolute;left:' + textObj['left'] + 'px;top:' + textObj['top'] + 'px;';
+	var elDIV=
+		'<div id="textID_'+textObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+textObj.data.left+'px; top: '+textObj.data.top+'px;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
+		'<p style="font-size:' + fontSize + 'px; color: ' + fontColor +';" ng-mousedown="textTouching('+id+', $event)" ng-mousemove="textDragging('+id+', $event)" class="pointer">'+
+		textObj.data.text + '</p>'+
+		'</div>';
+	
+	$scope.compileNewElement(elDIV, 'textID_'+textObj.id, textObj)
 }
 
 function networkInit(networkObject){
@@ -230,14 +327,10 @@ function networkInit(networkObject){
 	console.log($scope.networks[id])
 	var icon = (networkObject.type == 'bridge') ? 'Switch.png' : 'Cloud.png';
 	var elDIV='<div id="networkID_'+networkObject['id']+'" class="w element-menu network" style="left: '+networkObject.left+'px; top: '+networkObject.top+'px;" context-menu="netContext">'+
-		//'<div class="tag"><i class="fa fa-plug plug-icon ep" aria-hidden="true"></i></div>'+
 		'<a><img src="/images/icons/'+icon+'" class="'+icon.replace('.png','')+'_sm'+'"></a>'+
 		'<a class="pointer"><figcaption class="figcaption-text '+icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind="networks['+id+'].name"></figcaption></a>'+
 	'</div>';
 	$scope.compileNewElement(elDIV, 'networkID_'+networkObject['id'])
-	//$('#canvas').append(elDIV);
-	//$('#networkID_'+networkObject['id']).ready(function(){ /*console.log('networkID_'+networkObject['id']+' ready');*/ });
-	//jsPlumbNodeInit($('#networkID_'+networkObject['id']))
 }
 
 function topologyInit(topologyObject){
@@ -261,13 +354,35 @@ function topologyInit(topologyObject){
 	jsPlumbMakeConnection(sourceID,destinationID,sourceLabel,destinationLabel,type)
 	///Make connection //END
 }
-
+function jsPlumbObjectInit(el, data){
+	jsPlumb.draggable(el,
+		{	grid:[10,10],
+			stop: function(e){
+				var offset = $(this).offset();
+				if (e.el.offsetLeft < 50 && e.el.offsetTop < 0) $('div#'+e.el.id).offset({ top: 0, left: 50 })
+				if (e.el.offsetLeft < 50){
+					console.log('X < 0')
+					e.el.offsetLeft=50
+					$('div#'+e.el.id).offset({ left: 50 })
+				} else if (e.el.offsetTop < 0){
+					console.log('Y < 0')
+					e.el.offsetTop=0
+					$('div#'+e.el.id).offset({ top: 0 })
+				}
+				var type = 'text';
+				var id = e.el.id.replace('nodeID_','');
+				console.log(id+' '+type)
+				console.log('Element moved. ID: '+e.el.id+' (Name: '+$('div#'+e.el.id+' figcaption').text()+') Coordinates: X'+e.el.offsetLeft+' Y'+e.el.offsetTop)
+				$scope.setPosition(e.el.offsetTop,e.el.offsetLeft,id,type,data)
+			}
+		}
+	);
+}
 function jsPlumbNodeInit(el){
 	// initialise draggable elements.
     jsPlumb.draggable(el,
 		{	grid:[10,10],
 			stop: function(e){
-				//console.log(e)
 				var offset = $(this).offset();
 				if (e.el.offsetLeft < 50 && e.el.offsetTop < 0) $('div#'+e.el.id).offset({ top: 0, left: 50 })
 				if (e.el.offsetLeft < 50){

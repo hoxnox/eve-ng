@@ -3,6 +3,8 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 	$scope.modalActions = {
 		'addConn': {'path':'/themes/adminLTE/unl_data/pages/modals/addConn.html', 'controller':'AddConnModalCtrl'},
 		'addNode': {'path':'/themes/adminLTE/unl_data/pages/modals/addNode.html', 'controller':'AddNodeModalCtrl'},
+		'addText': {'path':'/themes/adminLTE/unl_data/pages/modals/addText.html', 'controller':'AddTextModalCtrl'},
+		'addShape': {'path':'/themes/adminLTE/unl_data/pages/modals/addShape.html', 'controller':'AddShapeModalCtrl'},
 		'editNode': {'path':'/themes/adminLTE/unl_data/pages/modals/editNode.html', 'controller':'editNodeModalCtrl'},
 		'addNet': {'path':'/themes/adminLTE/unl_data/pages/modals/addNet.html', 'controller':'AddNetModalCtrl'},
 		'editNet': {'path':'/themes/adminLTE/unl_data/pages/modals/editNet.html', 'controller':'editNetModalCtrl'},
@@ -30,6 +32,12 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 						return {'path': $rootScope.lab, 'object':$scope.addNewObject};
 						break;
 				case 'addNet':
+						return {'path': $rootScope.lab, 'object':$scope.addNewObject};
+						break;
+				case 'addText':
+						return {'path': $rootScope.lab, 'object':$scope.addNewObject};
+						break;
+				case 'addShape':
 						return {'path': $rootScope.lab, 'object':$scope.addNewObject};
 						break;
 				case 'nodeList':
@@ -154,7 +162,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 	case 'addNode':
 		modalInstance.result.then(function (result) {
 			if (result.result){
-				console.log(result.data)
+                console.log('modalInstance[addNode]',result.data)
 				$http.get('/api/labs'+$rootScope.lab+'/nodes').then(function successCallback(response){
 					console.log(response)
 					$scope.node = response.data.data;
@@ -174,11 +182,113 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 							'<i class="fa fa-plug plug-icon dropdown-toggle ep" ng-show="node['+id+'].playstopView" ng-click="getIntrfInfo('+id+')" data-toggle="dropdown"></i>'+
 						'</div>'+
 						'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute; z-index:2;"></div>'+
-						'<a href="{{node['+id+'].url}}" ng-click="openConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer">'+
+						'<a href="{{node['+id+'].url}}" ng-click="openNodeConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer">'+
 						'<img ng-src="images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
 						'<figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label">'+node.name+'</figcaption>'+
 						'</div>';
-					$scope.compileNewElement(elDIV, id)
+						$scope.compileNewElement(elDIV, 'nodeID_'+id)
+					})
+				} else {
+					
+				}
+			}, function () {
+			//function if user just close modal
+			//$log.info('Modal dismissed at: ' + new Date());
+			});
+			break;
+
+	case 'addText':
+		modalInstance.result.then(function (result) {
+			if (result.result){
+				console.log('modalInstance[addText]',result.data)
+				$http.get('/api/labs'+$rootScope.lab+'/textobjects').then(function successCallback(response){
+					console.log("getText objects:",response)
+					$scope.textElement = response.data.data;
+					var textObj = new TextDecoderLite('utf-8').decode(toByteArray(result.data));
+					try {
+						textObj = JSON.parse(textObj)
+					} catch(ex){
+						console.log("Parsing text object error")
+						textObj = {};
+					}
+					var id = textObj.id;
+					var z_index = 1001;
+					var coordinates = 'position:absolute;left:' + textObj['left'] + 'px;top:' + textObj['top'] + 'px;';
+					var elDIV =
+						'<div id="textID_'+textObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+textObj.left+'px; top: '+textObj.top+'px;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
+						'<p style="font-size:' + textObj.fontSize + 'px; color: ' + textObj.fontColor +';" ng-mousedown="textTouching('+id+', $event)" ng-mousemove="textDragging('+id+', $event)" class="pointer">'+
+						textObj['text'] + '</p>'+
+						'</div>';
+					$scope.compileNewElement(elDIV, 'textID_'+id)
+				})
+			} else {
+				
+			}
+		}, function () {
+		//function if user just close modal
+		//$log.info('Modal dismissed at: ' + new Date());
+		});
+		break;
+	case 'addShape':
+		modalInstance.result.then(function (result) {
+			if (result.result){
+				console.log('modalInstance[addText]',result.data)
+				$http.get('/api/labs'+$rootScope.lab+'/textobjects').then(function successCallback(response){
+					console.log("getShape objects:",response)
+					console.log("getShape 13123:",result.data)
+					$scope.shapeElement = response.data.data;
+					var shapeObj = new TextDecoderLite('utf-8').decode(toByteArray(result.data.data));
+					try {
+						console.log("string shapeObj", shapeObj)
+						shapeObj = JSON.parse(shapeObj)
+					} catch(ex){
+						console.warn("Parsing shape object error:", ex)
+						shapeObj = {};
+					}
+					var id = shapeObj.id;
+					var z_index = 1001;
+					var sideSize = shapeObj.shapeSideSize ? shapeObj.shapeSideSize : 150;
+
+					console.log("shapeElement", shapeObj)
+					var coordinates = 'position:absolute;left:' + shapeObj['left'] + 'px;top:' + shapeObj['top'] + 'px;';
+					var elDIV = "";
+					if(shapeObj.shapeType == 'square'){
+						elDIV =
+							'<div id="shapeID_'+shapeObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" ' +
+							'style="left: '+shapeObj.left+'px; top: '+shapeObj.top+'px; width: " ' + sideSize + 'px; height: " ' + sideSize + 'px; ' +
+							'ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
+								'<svg width="' + sideSize + '" height="' + sideSize + '">' +
+									'<rect width="' + sideSize + '" ' +
+									'height="' + sideSize + '" ' +
+									'fill ="' + shapeObj.bgColor + '" ' +
+									'stroke-width ="' + shapeObj.borderWidth + '" ' +
+									'stroke ="' + shapeObj.borderColor + '" ' + shapeObj.borderType +
+									'"/>' +
+								'Sorry, your browser does not support inline SVG.' +
+								'</svg>' +
+							'</div>';
+					} else {
+						var radius = sideSize / 2 - shapeObj.borderWidth / 2;
+						elDIV = 
+							'<div id="shapeID_'+shapeObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" ' +
+							'style="left: '+shapeObj.left+'px; top: '+shapeObj.top+'px; width: " ' + sideSize + 'px; height: " ' + sideSize + 'px; ' +
+							'ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
+								'<svg width="' + sideSize + '" height="' + sideSize + '">' +
+									'<ellipse cx="' + (radius + shapeObj.borderWidth / 2 ) + '" ' +
+									'cy="' + (radius + shapeObj.borderWidth / 2 ) + '" ' +
+									'rx="' + radius + '" ' +
+									'ry="' + radius + '" ' +
+									'stroke ="' + shapeObj.borderColor + '" ' +
+									'stroke-width="' + shapeObj.borderWidth / 2 + '" ' + shapeObj.borderType +
+									' fill ="' + shapeObj.bgColor + '" ' +
+									'/>' +
+								'Sorry, your browser does not support inline SVG.' +
+								'</svg>' +
+							'</div>';
+					}
+						// '<p style="font-size:' + shapeObj.fontSize + 'px; color: ' + shapeObj.fontColor +';" ng-mousedown="textTouching('+id+', $event)" ng-mousemove="textDragging('+id+', $event)" class="pointer">'+
+						// shapeObj['text'] + '</p>'+
+					$scope.compileNewElement(elDIV, 'shapeID_'+id)
 				})
 			} else {
 				
@@ -587,6 +697,146 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 	};
   
 };
+
+function AddTextModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
+	
+	var result={};
+	$scope.textList={}
+	$scope.textname='Text';
+	$scope.tempObject=data.object;
+	$scope.runningProgress = false;
+	$scope.gotError = false;
+	result.result=false;
+	$scope.textProps = { 
+		'text': '',
+		'bgColor': 'white',
+		'fontColor': 'black',
+		'fontStyle': '',
+		'fontSize': ''
+	}
+	$scope.closeModal = function () {
+		$uibModalInstance.dismiss('cancel');
+	};
+	
+	$scope.addText = function () {
+		$scope.runningProgress = true;
+		var tempData = {};
+		result.data = {
+			'name': $scope.textname,
+			'data':'',
+			'type': 'text',
+			'count': 1,
+			'postfix': 0,
+		}
+		tempData = {
+			'left': $scope.tempObject.pageX,
+			'top': $scope.tempObject.pageY,
+			'text': $scope.textProps.text, 
+			'bgColor': $scope.textProps.bgColor,
+			'fontColor': $scope.textProps.fontColor,
+			'fontStyle': $scope.textProps.fontStyle,
+			'fontSize': $scope.textProps.fontSize
+		}
+		result.data.data = fromByteArray(new TextEncoderLite('utf-8').encode(JSON.stringify(tempData)));
+		// do not remove next string 
+		// if($scope.textProps.text) $scope.result.data.data = btoa($scope.textProps.text);
+
+		
+		console.log("### $scope.result.data",result.data)
+		$http({
+			method: 'POST',
+			url:'/api/labs'+$rootScope.lab+'/textobjects',
+			data: result.data}).then(
+			function successCallback(response){
+				$scope.runningProgress = false;
+				console.log("Response:", response)
+				result.data.id=response.data.result.id;
+				result.result=true;
+				$uibModalInstance.close(result);
+			}, function errorCallback(response){
+				$scope.gotError = true;
+				$scope.errorText = "";
+				// $scope.runningProgress = false;
+				console.log('Server Error: addText method');
+				console.log(response);
+				// $uibModalInstance.close($scope.result);
+			}
+		);
+			
+		console.log("timeout")
+	}
+};
+
+function AddShapeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
+	var result={};
+	$scope.shapeName='Shape';
+	$scope.tempObject=data.object;
+	console.log("sahpe tempobject",$scope.tempObject)
+	// $scope.runningProgress = false;
+	// $scope.gotError = false;
+	result.result=false;
+	$scope.shapeProps = { 
+		'borderType': 'solid',
+		'borderWidth': 1,
+		'borderColor': 'black',
+		'bgColor': 'white',
+		'shapeType': 'circle',
+		'name': '',
+		'isShape': true
+	}
+	$scope.closeModal = function () {
+		$uibModalInstance.dismiss('cancel');
+	};
+	
+	$scope.addShape = function () {
+		// $scope.runningProgress = true;
+		// var tempData = {};
+		result.data = {
+			'name': $scope.shapename,
+			'data':'',
+			'type': 'shape',
+			'count': 1,
+			'postfix': 0,
+		}
+		var tempData = {
+			'left': $scope.tempObject.pageX,
+			'top': $scope.tempObject.pageY,
+			'text': $scope.shapeProps.text, 
+			'bgColor': $scope.shapeProps.bgColor,
+			'shapeType': $scope.shapeProps.shapeType,
+			'borderType': $scope.shapeProps.borderType,
+			'borderWidth': $scope.shapeProps.borderWidth,
+			'borderColor': $scope.shapeProps.borderColor,
+		}
+		result.data.data = fromByteArray(new TextEncoderLite('utf-8').encode(JSON.stringify(tempData)));
+		// do not remove next string 
+		// if($scope.textProps.text) $scope.result.data.data = btoa($scope.textProps.text);
+
+		
+		console.log("### $scope.result.data",result.data)
+		$http({
+			method: 'POST',
+			url:'/api/labs'+$rootScope.lab+'/textobjects',
+			data: result.data}).then(
+			function successCallback(response){
+				$scope.runningProgress = false;
+				console.log("Response:", response)
+				result.data.id=response.data.result.id;
+				result.result=true;
+				$uibModalInstance.close(result);
+			}, function errorCallback(response){
+				$scope.gotError = true;
+				$scope.errorText = "";
+				// $scope.runningProgress = false;
+				console.log('Server Error: addText method');
+				console.log(response);
+				// $uibModalInstance.close($scope.result);
+			}
+		);
+			
+		console.log("timeout")
+	}
+}
 
 function editNodeModalCtrl($scope, $uibModalInstance, $http, data, $state) {
 	
