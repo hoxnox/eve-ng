@@ -173,7 +173,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	}
 	
 	$scope.nodeDragging = function(node, $event){
-		//$event.preventDefault();
+		$event.preventDefault();
 		if ($scope.nodeClickDown && !$scope.nodeDraggingFlag) $scope.nodeDraggingFlag = true;
 		
 		//console.log($scope.nodeDraggingFlag)
@@ -206,6 +206,27 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		$scope.textDraggingFlag=false;
 	}
 	
+	$scope.shapeClickDown=false;
+	$scope.shapeDraggingFlag=false;
+	
+	$scope.shapeTouching = function(textElement, $event){
+		//$event.preventDefault();
+		$scope.shapeClickDown=true;
+		//console.log($scope.nodeClickDown)
+	}
+	
+	$scope.shapeDragging = function(textElement, $event){
+		if ($scope.shapeClickDown && !$scope.shapeDraggingFlag) $scope.shapeDraggingFlag = true;
+	}
+	
+	$scope.openShapeConsole = function(node, $event){
+		if (!$scope.shape[node].upstatus) {$event.preventDefault(); console.log('Shape down console locked')}
+		if ($scope.shapeDraggingFlag) {$event.preventDefault(); console.log('Shape draged console locked')}
+		$scope.shapeClickDown=false;
+		$scope.shapeDraggingFlag=false;
+	}
+	
+
 	$scope.openAllObjects = function(){
 		$http.get('/api/labs'+$rootScope.lab+'/textobjects').then(
 			function successCallback(response){
@@ -261,11 +282,23 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	$scope.tempElID='';
 	$scope.deleteEl = function(){
 		$scope.tempElID=$('#tempElID').val()
-		console.log($('#tempElID').val())
-		var type = ($scope.tempElID.search('node') != -1) ? 'node' : 'network';
-		var id = (type == 'node') ? $scope.tempElID.replace('nodeID_','') : $scope.tempElID.replace('networkID_','');
+        console.log("#tempElID:",$('#tempElID').val())
+		var type = '';
+		var element = '';
+		if($scope.tempElID.search('node') != -1) type = 'node' 
+		if($scope.tempElID.search('net') != -1) type = 'network' 
+		if($scope.tempElID.search('text') != -1) {
+			type = 'textobject';
+			element = 'text';
+		} 
+		if($scope.tempElID.search('shape') != -1) {
+			type = 'textobject';
+			element = 'shape';	
+		} 
+		// if($scope.tempElID.search('image') != -1) type = 'picture' 
+		var id = $scope.tempElID.replace(element ? element + 'ID_' : type + 'ID_','');
 		if (confirm('Are you sure?')){
-				console.log(id+' '+type)
+				console.log("deteling id + type: "+ id+' '+type)
 				$http({
 					method: 'DELETE',
 					url:'/api/labs'+$rootScope.lab+'/'+type+'s/'+id}).then(
@@ -273,8 +306,9 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 						console.log(response)
 						jsPlumb.select({source:type+'ID_'+id}).detach();
 						jsPlumb.select({target:type+'ID_'+id}).detach();
-						console.log($('#'+type+'ID_'+id))
-						$('#'+type+'ID_'+id).remove()
+						var selector = element ? element : type; 
+						console.log($('#'+selector+'ID_'+id))
+						$('#' + selector +'ID_'+id).remove()
 					}, function errorCallback(response){
 						console.log('Server Error');
 						console.log(response);
@@ -493,7 +527,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 				$('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
 				
 				if ($scope.changedCursor) $scope.changedCursor = '';
-				
+
 				$('#mainDIV').removeClass("router-cursor").removeClass("network-cursor");
 				$('.treeview').addClass("openright");
 				$state.reload;

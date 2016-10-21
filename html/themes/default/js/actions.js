@@ -1459,6 +1459,7 @@ $(document).on('click', '.action-nodestop, .action-nodesstop, .action-nodestop-g
             $.when(stop(node_id)).done(function () {
                 // Node stopped -> print a small green message
                 addMessage('success', nodes[node_id]['name'] + ': ' + MESSAGES[77])
+                $('#node' + node_id + ' img').addClass('grayscale')
                 printLabStatus();
             }).fail(function (message) {
                 // Cannot stop

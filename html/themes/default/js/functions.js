@@ -1249,7 +1249,7 @@ function postLogin(param) {
         // Stop updating node_status
         clearInterval(UPDATEID);
     }
-
+    $('body').removeClass('login');
     if (LAB == null && param == null) {
         logger(1, 'DEBUG: loading folder "' + FOLDER + '".');
         printPageLabList(FOLDER);
@@ -1523,6 +1523,7 @@ function start(node_id) {
         success: function (data) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) started.');
+                $('#node' + node_id + ' img').removeClass('grayscale')
                 deferred.resolve(data['data']);
             } else {
                 // Application error
@@ -1561,6 +1562,7 @@ function recursive_start(nodes, i) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) started.');
                 addMessage('success', nodes[Object.keys(nodes)[i]]['name'] + ': ' + MESSAGES[76]);
+                $('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').removeClass('grayscale')
                 
                 //set start status
             } else {
@@ -1606,6 +1608,7 @@ function stop(node_id) {
         success: function (data) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) stopped.');
+                $('#node' + node_id + ' img').addClass('grayscale')
                 deferred.resolve(data['data']);
 
             } else {
@@ -2592,6 +2595,8 @@ function printLabTopology() {
                 img.onabort = resolve;
 
                 img.src = "/images/icons/" + value['icon'];
+
+                if(value['status'] == 0) img.className = 'grayscale';
 
                 $(img).appendTo("#node" + value['id'] + " a");
 

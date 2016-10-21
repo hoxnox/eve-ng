@@ -204,7 +204,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 				$http.get('/api/labs'+$rootScope.lab+'/textobjects').then(function successCallback(response){
 					console.log("getText objects:",response)
 					$scope.textElement = response.data.data;
-					var textObj = new TextDecoderLite('utf-8').decode(toByteArray(result.data));
+					var textObj = new TextDecoderLite('utf-8').decode(toByteArray(result.data.data));
 					try {
 						textObj = JSON.parse(textObj)
 					} catch(ex){
@@ -216,9 +216,10 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 					var coordinates = 'position:absolute;left:' + textObj['left'] + 'px;top:' + textObj['top'] + 'px;';
 					var elDIV =
 						'<div id="textID_'+textObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+textObj.left+'px; top: '+textObj.top+'px;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
-						'<p style="font-size:' + textObj.fontSize + 'px; color: ' + textObj.fontColor +';" ng-mousedown="textTouching('+id+', $event)" ng-mousemove="textDragging('+id+', $event)" class="pointer">'+
+						'<div><p style="font-size:' + textObj.fontSize + 'px; color: ' + textObj.fontColor +';" ng-mousedown="textTouching('+id+', $event)" ng-mousemove="textDragging('+id+', $event)" class="pointer">'+
+						// '<a><figcaption class="figcaption-text _sm_label" ng-bind="
 						textObj['text'] + '</p>'+
-						'</div>';
+						'</div></div>';
 					$scope.compileNewElement(elDIV, 'textID_'+id)
 				})
 			} else {
@@ -741,7 +742,7 @@ function AddTextModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 		// do not remove next string 
 		// if($scope.textProps.text) $scope.result.data.data = btoa($scope.textProps.text);
 
-		
+
 		console.log("### $scope.result.data",result.data)
 		$http({
 			method: 'POST',
@@ -812,7 +813,7 @@ function AddShapeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 		// do not remove next string 
 		// if($scope.textProps.text) $scope.result.data.data = btoa($scope.textProps.text);
 
-		
+
 		console.log("### $scope.result.data",result.data)
 		$http({
 			method: 'POST',
@@ -1218,7 +1219,7 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 	}
 	$scope.editMode=function(id){
 		$scope.cancelChanges()
-		$scope.netList[id].editmode=true;
+		// $scope.netList[id].editmode=true;
 	}
 	$scope.applyChanges=function(id){
 		var putdata = {
@@ -1230,7 +1231,7 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 				console.log(response);
 				$scope.netListRefresh();
 				//$scope.anychanges=true;
-				$scope.netList[id].editmode=false;
+				// $scope.netList[id].editmode=false;
 			},
 			function errorCallback(response){
 				console.log(response);
