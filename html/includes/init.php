@@ -73,6 +73,7 @@ if (!isset($node_templates)) {
 		'acs'			=>	'Cisco ACS',
 		'asa'			=>	'Cisco ASA',
 		'asav'			=>	'Cisco ASAv',
+		'barracuda'		=>	'Barraccuda NGIPS',
 		'cda'			=>	'Cisco Context Directory Agent',
 		'csr1000v'		=>	'Cisco CSR 1000V',
 		'cips'			=>	'Cisco IPS',
@@ -120,7 +121,7 @@ if (!isset($node_templates)) {
 }
 
 // Define parameters
-define('VERSION', '1.0.2-2-git');
+define('VERSION', '1.0.3-1-git');
 define('BASE_DIR', '/opt/unetlab');
 define('BASE_LAB', BASE_DIR.'/labs');
 define('BASE_TMP', BASE_DIR.'/tmp');
