@@ -1,4 +1,4 @@
-function mainController($scope, $http, $location, $uibModal, $log, $rootScope, FileUploader, focus) {
+function mainController($scope, $http, $location, $window, $uibModal, $log, $rootScope, FileUploader, focus) {
 		$rootScope.openLaba=false;
 		$scope.testAUTH("/main"); //TEST AUTH
 		//Default variables ///START
@@ -507,6 +507,12 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 			console.log('Open lab: '+$rootScope.lab)
 		}
 		//Open Lab //END
+		//Open Lagacy LAB//START
+		$scope.legacylabopen = function(labname){
+			$http.get('/api/labs'+labname+'/topology');
+			$window.location.href = "legacy"+labname+"/topology" ;
+		}
+		//Open Lagacy LAB//END
 		///////////////////////////////
 		//More controllers //START
 		ModalCtrl($scope, $uibModal, $log)

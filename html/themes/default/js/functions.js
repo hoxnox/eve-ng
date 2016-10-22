@@ -1251,8 +1251,11 @@ function postLogin(param) {
     }
     $('body').removeClass('login');
     if (LAB == null && param == null) {
-        logger(1, 'DEBUG: loading folder "' + FOLDER + '".');
-        printPageLabList(FOLDER);
+// Code to new UI
+	window.location.href = "/" ; 
+//
+//        logger(1, 'DEBUG: loading folder "' + FOLDER + '".');
+//        printPageLabList(FOLDER);
     } else {
         LAB = LAB || param;
         logger(1, 'DEBUG: loading lab "' + LAB + '".');

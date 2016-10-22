@@ -367,7 +367,8 @@ function AddUserModalCtrl($scope, $uibModalInstance, $http, data) {
 			"password": $scope.passwd,
 			"role": $scope.roleArray[$scope.selectRole],
 			"expiration": $scope.expiration,
-			"pod": $scope.pod,
+			//"pod": $scope.pod,
+			//"pod": -1,
 			"pexpiration": $scope.pexpiration,
 		}
 		$http({

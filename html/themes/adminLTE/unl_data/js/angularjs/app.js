@@ -247,7 +247,7 @@ app_main_unl.config(['$stateProvider', '$urlRouterProvider', function($stateProv
             }
         })
 		//LAB LAYOUT
-		.state('lab', {
+	.state('lab', {
             url: "/lab",
             templateUrl: "/themes/adminLTE/unl_data/pages/lab/lab.html",
             data: {pageTitle: 'Lab'},
