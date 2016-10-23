@@ -155,7 +155,8 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
                                 function successcallback(response) {
                                 //console.log(response)
                                 //$scope.filemngdraw($scope.path);
-				$location.path("/login");
+				$scope.fileMngDraw($scope.path);
+				//$location.path("/login");
                                 },
                                 function errorcallback(response) {
                                 //console.log(response)
