@@ -175,6 +175,7 @@
 						</div>
 						<div class="pull-right">
 						<button type="button" class="btn btn-default btn-flat btn-xs" data-ng-show="visibleArray[x.file] && !fileManagerItem['Fi_'+x.file]['visibleEdit']" data-ng-click="openRename(fileManagerItem['Fi_'+x.file], $event)"><i class="fa fa-edit"></i> Rename</button>
+						<button type="button" class="btn btn-default btn-flat btn-xs" data-ng-show="visibleArray[x.file] && !fileManagerItem['Fi_'+x.file]['visibleEdit']" data-ng-click="cloneElement(fileManagerItem['Fi_'+x.file], $event)"><i class="fa fa-clone"></i> Clone</button>
 						<button type="button" class="btn btn-danger btn-flat btn-xs" data-ng-show="visibleArray[x.file] && !fileManagerItem['Fi_'+x.file]['visibleEdit']" data-ng-click="deleteElement(x.path,'File','true')"><i class="fa fa-trash-o"></i></button>
 						</div>
 					</td>

@@ -139,6 +139,38 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
 			//Create NEW Lab //END
 			////////////////////////
 		}
+                //Clone Lab//START
+
+                $scope.cloneElement = function (elementName,event){
+                console.log('clone requested for '+$scope.path+'/'+elementName.value);
+                form_data = {};
+                form_data['name'] = 'Copy of ' + elementName.value.slice(0,-4);
+                form_data['source'] = $scope.path + '/' + elementName.value;
+                
+                $http({
+                method: 'POST',
+                url: '/api/labs',
+                data: form_data})
+                        .then(
+                                function successcallback(response) {
+                                //console.log(response)
+                                //$scope.filemngdraw($scope.path);
+				$location.path("/login");
+                                },
+                                function errorcallback(response) {
+                                //console.log(response)
+                                console.log("unknown error. why did api doesn't respond?");
+                                $location.path("/login");
+                                }
+                        );
+                
+                
+                event.stopPropagation();
+                }
+
+                //clone lab//end
+
+
 		//Create NEW Element Folder OR Lab //END
 		///////////////////////////////////////
 		//Delete selected elements //START
