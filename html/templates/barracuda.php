@@ -31,7 +31,7 @@
  */ 
 
 $p['type'] = 'qemu'; 
-$p['name'] = 'Baraccuda-NGIPS'; 
+$p['name'] = 'Baraccuda-NGFW'; 
 $p['icon'] = 'Firewall.png'; 
 $p['cpu'] = 2; 
 $p['ram'] = 2048; 
