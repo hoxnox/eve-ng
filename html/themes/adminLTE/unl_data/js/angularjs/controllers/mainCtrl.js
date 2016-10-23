@@ -624,7 +624,20 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
 			function errorCallback(response) {
 				console.log("Unknown Error. Why did API doesn't respond?"); $location.path("/login");}	
 		).finally(function(){
-			if ($scope.topologyObject.length === 0 ) return;
+			if ($scope.topologyObject.length === 0 ) {
+				$http({
+                                method: 'DELETE',
+                                url: '/api/labs/close'})
+                                .then(
+                                        function successCallback(response) {
+                                                console.log(response)
+                                        },
+                                        function errorCallback(response) {
+                                                console.log(response)
+                                        }
+                                );
+				return;
+			}
 			var lineCounter=0;
 			for (i = 0; i < $scope.topologyObject.length; i++) { 
 				$scope.lineList[lineCounter]=[]
