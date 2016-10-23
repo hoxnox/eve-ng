@@ -142,11 +142,11 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
                 //Clone Lab//START
 
                 $scope.cloneElement = function (elementName,event){
-                console.log('clone requested for '+$scope.path+'/'+elementName.value);
+		d = new Date();
+                console.log('clone requested for '+$scope.path+'/'+elementName.value + ' ' + d.getTime());
                 form_data = {};
-                form_data['name'] = 'Copy of ' + elementName.value.slice(0,-4);
+                form_data['name'] = elementName.value.slice(0,-4)+'_'+d.getTime();
                 form_data['source'] = $scope.path + '/' + elementName.value;
-                
                 $http({
                 method: 'POST',
                 url: '/api/labs',
