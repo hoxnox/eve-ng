@@ -692,7 +692,8 @@ $(document).on('click', '.action-labclose', function (e) {
     logger(1, 'DEBUG: action = labclose');
     $.when(closeLab()).done(function () {
         localStorage.setItem('action-nodelink',false);
-        postLogin();
+        //postLogin();
+	newUIreturn();
     }).fail(function (message) {
         addModalError(message);
     });

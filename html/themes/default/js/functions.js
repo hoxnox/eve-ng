@@ -1252,10 +1252,10 @@ function postLogin(param) {
     $('body').removeClass('login');
     if (LAB == null && param == null) {
 // Code to new UI
-	window.location.href = "/" ; 
+//	window.location.href = "/" ; 
 //
-//        logger(1, 'DEBUG: loading folder "' + FOLDER + '".');
-//        printPageLabList(FOLDER);
+        logger(1, 'DEBUG: loading folder "' + FOLDER + '".');
+        printPageLabList(FOLDER);
     } else {
         LAB = LAB || param;
         logger(1, 'DEBUG: loading lab "' + LAB + '".');
@@ -1270,6 +1270,15 @@ function postLogin(param) {
     }
 
 
+}
+// Post login
+function newUIreturn(param) {
+    if (UPDATEID != null) {
+        // Stop updating node_status
+        clearInterval(UPDATEID);
+    }
+    $('body').removeClass('login');
+        window.location.href = "/#/main" ;
 }
 
 //set Network

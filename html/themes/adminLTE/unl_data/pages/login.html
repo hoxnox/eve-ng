@@ -14,8 +14,10 @@
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <center>Use html5</center>
-        <input type="checkbox" class="form-control" placeholder="html5" ng-model="html5" value=-1 onclick="value=0-value">
+	<select name="html5" class="form-control" ng-init="html5='-1'"  placeholder="html5" ng-model="html5" ng-model="data.singleSelect">
+		<option value=-1 selected>Native console</option>
+		<option value=1>Html5 console</option>
+	</select>
       </div>
       <div class="row">
         <div class="col-xs-4 col-xs-offset-8">
