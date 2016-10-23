@@ -32,7 +32,7 @@
 
 $p['type'] = 'qemu'; 
 $p['name'] = 'vQFX-FPE'; 
-$p['icon'] = 'JuniperMX.png'; 
+$p['icon'] = 'JunipervQFXpfe.png'; 
 $p['cpu'] = 1; 
 $p['ram'] = 2048; 
 $p['ethernet'] = 2; 
