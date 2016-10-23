@@ -1,6 +1,6 @@
-<div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/header.html'" data-ng-controller="HeaderController">
+<div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/header.html'" data-ng-controller="HeaderController" style="height: 8vh;">
 </div>
-<div class="wrapper">
+<div class="wrapper" style="height:80%;">
 <!-- AdminLTE App -->
 <script src="/themes/adminLTE/dist/js/app.min.js"></script>
 <link rel="stylesheet" href="/themes/adminLTE/dist/css/skins/skin-blue.css">
@@ -28,7 +28,7 @@
 			<!--<div class="box-header with-border">
               <h3 class="box-title">Current position: {{path}}</h3>
             </div> -->
-            <div class="box-body no-padding" style="display: block;">
+            <div class="box-body no-padding" style="display: block; height:70vh ">
 			<table class="table table-hover table-light" data-ng-show="uploader.queue.length > 0">
 			<thead>
 				<tr class="uppercase">
@@ -113,8 +113,8 @@
 					</div>
 				</div>
 			  </div>
-			  <div class="table-responsive mailbox-messages">
-                <table style="table-layout: fixed; width: 100%" class="table table-hover table-striped tablefont customHover" id="filesTree">
+			  <div class="table-responsive mailbox-messages"  style="height: 65vh ; overflow: auto;">
+                <table style="table-layout: fixed; width: 100%;" class="table table-hover table-striped tablefont customHover" id="filesTree">
                   <tbody>
 				  <!-- make item array - fileManagerItem['Fo_'+x.name] = [ x.name, x.name, visibleEdit, type] -->
                   <tr data-ng-repeat="x in rootDir.folders">
@@ -215,7 +215,7 @@
   
   <input type="file" nv-file-select uploader="uploader" id="oneFileUploadInput" data-ng-model="fileupload" onchange="angular.element(this).scope().fileNameChanged()" style="display:none" multiple />
   <!-- Main Footer -->
-  <div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/footer.html'">
+  <div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/footer.html'" >
 </div>
 <!-- ./wrapper -->
 <script>
