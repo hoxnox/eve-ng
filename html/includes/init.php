@@ -55,7 +55,7 @@ if (!isset($node_config)) {
 		'vsrx'			=>	'config_vsrx.py',
 		'vsrxng'		=>	'config_vsrxng.py',
 		'vmx'			=>	'config_vmx.py',
-		'vqfxre'		=>	'config_vqfx.py',
+		'vqfxre'		=>	'config_vqfxre.py',
 		'xrv'			=>	'config_xrv.py',
 		//'xrv9k'		=>	'config_xrv9k.py',
 		'pfsense'		=>	'config_pfsense.py'
