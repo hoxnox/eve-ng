@@ -182,6 +182,28 @@ def config_put(handler, config):
         print('ERROR: error waiting for ["root#", "root@.*#"] prompt.')
         node_quit(handler)
         return False
+    # clear unwanted config
+    handler.sendline('wildcard range delete interfaces xe-0/0/[0-71]:[0-3]')
+    try:
+        handler.expect(['root#', 'root@.*#'], timeout = longtimeout)
+    except:
+        print('ERROR: error waiting for ["root#", "root@.*#"] prompt.')
+        node_quit(handler)
+        return False
+    handler.sendline('wildcard range delete interfaces xe-0/0/[0-47]')
+    try:
+        handler.expect(['root#', 'root@.*#'], timeout = longtimeout)
+    except:
+        print('ERROR: error waiting for ["root#", "root@.*#"] prompt.')
+        node_quit(handler)
+        return False
+    handler.sendline('wildcard range delete interfaces et-0/0/[0-71]')
+    try:
+        handler.expect(['root#', 'root@.*#'], timeout = longtimeout)
+    except:
+        print('ERROR: error waiting for ["root#", "root@.*#"] prompt.')
+        node_quit(handler)
+        return False
 
     # Start the load mode
     handler.sendline('load set /mnt/juniper.conf')
