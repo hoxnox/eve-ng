@@ -2,7 +2,7 @@
 # vim: syntax=php tabstop=4 softtabstop=0 noexpandtab laststatus=1 ruler 
   
 /** 
- * html/templates/linux.php 
+ * html/templates/vqfxpfe.php 
  * 
  * Linux template for UNetLab. 
  * 
@@ -33,7 +33,7 @@
 $p['type'] = 'qemu'; 
 $p['name'] = 'vQFX-FPE'; 
 $p['icon'] = 'JunipervQFXpfe.png'; 
-$p['cpu'] = 1; 
+$p['cpu'] = 2; 
 $p['ram'] = 2048; 
 $p['ethernet'] = 2; 
 $p['console'] = 'vnc'; 
