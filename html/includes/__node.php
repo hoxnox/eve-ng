@@ -2085,7 +2085,7 @@ class Node {
 								} else if ($i == 1) {
 									$n = 'em1 / Internal use';		// Interface name
 								} else {
-                                                                        $n = 'em'.$i.' / xe-0/0/'.($i - 2);
+                                                                        $n = 'em'.$i.' / ge-0/0/'.($i - 2);
 								}
 								try {
 									$this -> ethernets[$i] = new Interfc(Array('name' => $n, 'type' => 'ethernet'), $i);
