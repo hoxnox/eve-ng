@@ -4,7 +4,7 @@
 /** 
  * html/templates/vqfxpfe.php 
  * 
- * Linux template for UNetLab. 
+ * vqfxpfe template for UNetLab. 
  * 
  * LICENSE: 
  * 
