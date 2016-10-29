@@ -25,14 +25,21 @@
 				<label>Source Name: {{src.name}}</label>
 				<p style="text-muted"><small>type - {{src.type}}</small></p>
 			</div>
+			<div class="form-group">
+
 			<div class="form-group" ng-show="src.type != 'network'">
 			<label for="sourceInterf_addConn">Choose Interface for {{src.name}}</label>
 			<select class="form-control" ng-model="src.selectedIF">
 					<option ng-repeat="(srcethkey, srceth) in src.if.ethernet" value="{{srcethkey}}">{{srceth.name}} {{(srceth.network_id == 0) ? '' : ' connected to '+allNet[srceth.network_id].name}}</option>
 					<option ng-repeat="(srcserkey,srcser) in src.if.serial" value="{{srcserkey}}">{{srcser.name}} {{(srcser.remote_id == 0) ? '' : ' connected to '+nodeList[srcser.remote_id].name+' '+srcser.remote_if_name}}</option>
 			</select>
+			<div style="width:3px;height:30px;"></div>
+			<!--type pus de mine-->
+	            <label>Type</label>
+	            <select class="form-control" ng-init="selectNetType = 'bridge'" data-ng-model="selectNetType" data-ng-options="x for x in netList"></select>
+	        	</div>
 			</div>
-			<div style="width:3px;height:100px;"></div>
+			<div style="width:3px;height:30px;"></div>
 			<div class="form-group" ng-show="dst.type != 'network'">
 			<label for="sourceInterf_addConn">Choose Interface for {{dst.name}}</label>
 			<select class="form-control" ng-model="dst.selectedIF">

@@ -57,11 +57,11 @@
 
 <nav id="context-menu_conn" class="context-menu_conn">
   <ul class="context-menu__items_conn">
-   <!-- <li class="context-menu__item_conn">
-      <a class="context-menu__link_conn pointer">
+   <li class="context-menu__item_conn">
+      <a class="context-menu__link_conn pointer" ng-click="editEl()">
         <i class="fa fa-edit"></i> Edit Connection
       </a>
-    </li> -->
+    </li>
     <li class="context-menu__item_conn">
       <a class="context-menu__link_conn pointer" my-action="delConnection">
         <i class="fa fa-times"></i> Delete Connection
@@ -73,15 +73,34 @@
 <nav id="context-menu_mainDiv" class="context-menu_mainDiv">
   <ul class="context-menu__items_mainDiv">
     <li class="context-menu__item_mainDiv">
-      <a class="context-menu__link_mainDiv pointer" ng-click="changedCursorNode=true; changedCursorNet=false; mainFieldClick($event,'context-menu_mainDiv')">
+      <a class="context-menu__link_mainDiv pointer" ng-click="changedCursor='node'; mainFieldClick($event,'context-menu_mainDiv')">
         <i class="glyphicon glyphicon-hdd"></i> Add new node
       </a>
     </li>
     <li class="context-menu__item_mainDiv">
-      <a class="context-menu__link_mainDiv pointer" ng-click="changedCursorNode=false; changedCursorNet=true; mainFieldClick($event,'context-menu_mainDiv')">
-        <i class="glyphicon glyphicon-transfer"></i> Add new network
+      <a class="context-menu__link_mainDiv pointer" ng-click="changedCursor='network';  mainFieldClick($event,'context-menu_mainDiv')">
+        <i class="glyphicon glyphicon-transfer"></i> Add new networkx
       </a>
     </li>
+
+    <li class="context-menu__item_mainDiv">
+      <a class="context-menu__link_mainDiv pointer" ng-click="changedCursor='image'; mainFieldClick($event,'context-menu_mainDiv')">
+        <i class="glyphicon glyphicon-picture"></i> Add new picture
+      </a>
+    </li>
+
+    <li class="context-menu__item_mainDiv">
+      <a class="context-menu__link_mainDiv pointer" ng-click="changedCursor='shape'; mainFieldClick($event,'context-menu_mainDiv')">
+        <i class="glyphicon glyphicon-unchecked"></i> Add new shape
+      </a>
+    </li>
+
+    <li class="context-menu__item_mainDiv">
+      <a class="context-menu__link_mainDiv pointer" ng-click="changedCursor='text'; mainFieldClick($event,'context-menu_mainDiv')">
+        <i class="glyphicon glyphicon-font"></i> Add new text
+      </a>
+    </li>
+
   </ul>
 </nav>
 

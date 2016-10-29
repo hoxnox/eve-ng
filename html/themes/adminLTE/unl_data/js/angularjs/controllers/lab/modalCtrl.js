@@ -11,9 +11,13 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 		'nodeList': {'path':'/themes/adminLTE/unl_data/pages/modals/nodeList.html', 'controller':'nodeListModalCtrl'},
 		'netList': {'path':'/themes/adminLTE/unl_data/pages/modals/netList.html', 'controller':'netListModalCtrl'},
 		'sysStat': {'path':'/themes/adminLTE/unl_data/pages/modals/sysStat.html', 'controller':'sysStatModalCtrl'},
+		'startUpConfig': {'path':'/themes/adminLTE/unl_data/pages/modals/startUpConfig.html', 'controller':'startUpConfigModalCtrl'},
+		'labDetails': {'path':'/themes/adminLTE/unl_data/pages/modals/labDetails.html', 'controller':'labDetailsModalCtrl'},
+		'configObject': {'path':'/themes/adminLTE/unl_data/pages/modals/configObject.html', 'controller':'configObjectModalCtrl'},
 		'default': {'path':'/themes/adminLTE/unl_data/pages/modals/wtf.html', 'controller':'ModalInstanceCtrl'}
   };
 	
+
 	$scope.openModal = function (action, size) {
 	var pathToModal = (action === undefined) ? 'default' :  action;
     var modalInstance = $uibModal.open({
@@ -24,6 +28,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
       backdrop: (size == 'megalg') ? false : true,
       resolve: {
         data: function () {
+        	console.log("modal js linia 27")
 			switch(action) {
 				case 'addConn':
 						return {'src': $scope.addConnSrc, 'dst': $scope.addConnDst, 'path': $rootScope.lab, 'allNet':$scope.allNetworks};
@@ -52,6 +57,15 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 				case 'netList':
 						return {'path': $rootScope.lab};
 						break;
+				case 'startUpConfig':
+						return {'path': $rootScope.lab}
+						break
+				case 'labDetails':
+						return {'path': $rootScope.lab}
+						break
+				case 'configObject':
+						return {'path': $rootScope.lab}
+						break
 				default:
 						return {'wtf': '123', 'path': '123'};
 			}
@@ -167,26 +181,34 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 					console.log(response)
 					$scope.node = response.data.data;
 					var node=result.data;
-					var id = node.id;
-					$scope.node[node.id].imageclass=node.icon.replace('.png','').replace(' ','')+'_sm';
-					$scope.node[node.id].loadclass=node.icon.replace('.png','').replace(' ','')+'_sm m-progress';
-					$scope.node[node.id].loadclassShow=false;
-					$scope.node[node.id].playstop=false;
-					$scope.node[node.id].playstopView=false;
-					$scope.node[node.id].upstatus=(node.status == 2) ? true : false;
-					var elDIV=
-						'<div id="nodeID_'+id+'" class="w element-menu" style="left: '+node.left+'px; top: '+node.top+'px;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
-						'<div class="play-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && !node['+id+'].upstatus" title="Start node"><i class="fa fa-play play-icon" aria-hidden="true"></i></div>'+
-						'<div class="stop-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && node['+id+'].upstatus" title="Stop node"><i class="fa fa-stop stop-icon" aria-hidden="true"></i></div>'+
-						'<div class="tag" title="Connect to another node">'+
-							'<i class="fa fa-plug plug-icon dropdown-toggle ep" ng-show="node['+id+'].playstopView" ng-click="getIntrfInfo('+id+')" data-toggle="dropdown"></i>'+
-						'</div>'+
-						'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute; z-index:2;"></div>'+
-						'<a href="{{node['+id+'].url}}" ng-click="openNodeConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer">'+
-						'<img ng-src="images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
-						'<figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label">'+node.name+'</figcaption>'+
-						'</div>';
-						$scope.compileNewElement(elDIV, 'nodeID_'+id)
+					for (k in node.id)
+					{
+						if (k > 0)
+						{
+							node.top = node.top + 20;
+							node.left = node.left + 20;
+						}
+						var id = node.id[k];
+						$scope.node[node.id[k]].imageclass=node.icon.replace('.png','').replace(' ','')+'_sm';
+						$scope.node[node.id[k]].loadclass=node.icon.replace('.png','').replace(' ','')+'_sm m-progress';
+						$scope.node[node.id[k]].loadclassShow=false;
+						$scope.node[node.id[k]].playstop=false;
+						$scope.node[node.id[k]].playstopView=false;
+						$scope.node[node.id[k]].upstatus=(node.status == 2) ? true : false;
+						var elDIV=
+							'<div id="nodeID_'+id+'" class="w element-menu" style="left: '+node.left+'px; top: '+node.top+'px;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
+							'<div class="play-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && !node['+id+'].upstatus" title="Start node"><i class="fa fa-play play-icon" aria-hidden="true"></i></div>'+
+							'<div class="stop-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && node['+id+'].upstatus" title="Stop node"><i class="fa fa-stop stop-icon" aria-hidden="true"></i></div>'+
+							'<div class="tag" title="Connect to another node">'+
+								'<i class="fa fa-plug plug-icon dropdown-toggle ep" ng-show="node['+id+'].playstopView" ng-click="getIntrfInfo('+id+')" data-toggle="dropdown"></i>'+
+							'</div>'+
+							'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute; z-index:2;"></div>'+
+							'<a href="{{node['+id+'].url}}" ng-click="openNodeConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer">'+
+							'<img ng-src="images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
+							'<figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label">'+node.name+'</figcaption>'+
+							'</div>';
+							$scope.compileNewElement(elDIV, 'nodeID_'+id)
+						}
 					})
 				} else {
 					
@@ -300,7 +322,11 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 		});
 		break;
 	case 'addNet':
+		console.log("modal js linia 304")
+			
 		modalInstance.result.then(function (result) {
+			console.log("modal js linia 307")
+			
 			if (result.result){
 				console.log(result.data)
 				var icon = (result.data.type == 'bridge') ? 'Switch.png' : 'Cloud.png';
@@ -409,6 +435,16 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 			console.log(response);
 		}
 	)
+	$http.get('/api/list/networks').then(
+		function successCallback(response){
+			//console.log(response)
+			$scope.netList=response.data.data
+		}, function errorCallback(response){
+			console.log('Server Error');
+			console.log(response.data);
+		}
+	);
+
 	
 	if ($scope.src.type == 'node'){
 		$http.get('/api/labs'+$rootScope.lab+'/nodes/'+$scope.src.eveID+'/interfaces').then(
@@ -612,6 +648,13 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 	$scope.viewTemplateSwitch=false;
 	$scope.tempObject=data.object;
 	
+	$scope.select_image = function(x)
+  	{
+  		$scope.selectIcon = x;
+  		$scope.show = false;
+  	}
+  	console.log("aaa")
+
 	$http.get('/api/list/templates/').then(
 		function successCallback(response){
 			console.log(response)
@@ -660,6 +703,7 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 			'top': $scope.tempObject.pageY,
 			'icon': $scope.selectIcon,
 			'template': $scope.selectTemplate
+			
 		}
 		
 		console.log($scope.templateData['type'])
@@ -676,6 +720,7 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 		if ($scope.templateData.options.idlepc != undefined) $scope.result.data.idlepc = $scope.templateData.options.idlepc.value;
 		if ($scope.templateData.options.slot1 != undefined) $scope.result.data.slot1 = $scope.selectSlot1;
 		if ($scope.templateData.options.slot2 != undefined) $scope.result.data.slot2 = $scope.selectSlot2;
+		if ($scope.templateData.options.numberNodes != undefined) $scope.result.data.numberNodes = $scope.templateData.options.numberNodes.value;
 		
 		$http({
 			method: 'POST',
@@ -861,7 +906,11 @@ function editNodeModalCtrl($scope, $uibModalInstance, $http, data, $state) {
 			})
 		}
 	)
-	
+	$scope.select_image = function(x)
+  	{
+  		$scope.selectIcon = x;
+  		$scope.show = false;
+  	}
 	$scope.editNode = function(){
 		var putdata = {
 			'template' : $scope.nodeInfo.template,
@@ -1365,3 +1414,61 @@ function sysStatModalCtrl($scope, $uibModalInstance, $http, $interval, $rootScop
     $uibModalInstance.dismiss('cancel');
   };
 };
+
+
+function startUpConfigModalCtrl($scope, $uibModalInstance, $http, data) {
+	
+	$scope.path=data.path;
+	$http.get('/api/labs'+$scope.path+'/configs')
+	.then(
+		function successCallback(response){
+			console.log(response);
+			$scope.configList=response.data.data
+		},
+		function errorCallback(response){
+			console.log('Server Error');
+			console.log(response);
+		}
+	);
+	$scope.closeModal = function () {
+    $uibModalInstance.dismiss('cancel');
+  };
+}
+
+function labDetailsModalCtrl($scope, $uibModalInstance, $http, data) {
+	console.log("se incarca")
+	$scope.path=data.path;
+	$http.get('/api/labs'+$scope.path)
+	.then(
+		function successCallback(response){
+			console.log(response);
+			$scope.labData=response.data.data
+		},
+		function errorCallback(response){
+			console.log('Server Error');
+			console.log(response);
+		}
+	);
+	$scope.closeModal = function () {
+    $uibModalInstance.dismiss('cancel');
+  };
+}
+
+function configObjectModalCtrl($scope, $uibModalInstance, $http, data) {
+	console.log("se incarca")
+	$scope.path=data.path;
+	$http.get('/api/labs'+$scope.path)
+	.then(
+		function successCallback(response){
+			console.log(response);
+			$scope.labData=response.data.data
+		},
+		function errorCallback(response){
+			console.log('Server Error');
+			console.log(response);
+		}
+	);
+	$scope.closeModal = function () {
+    $uibModalInstance.dismiss('cancel');
+  };
+}

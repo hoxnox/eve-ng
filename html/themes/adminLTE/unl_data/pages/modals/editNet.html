@@ -11,7 +11,7 @@
 		
 		<div class="form-group">
             <label>Type</label>
-            <select class="form-control" data-ng-model="selectNetType" data-ng-options="x for x in netList"></select>
+            <select class="form-control" ng-init="selectNetType = 'bridge'" data-ng-model="selectNetType" data-ng-options="x for x in netList"></select>
         </div>
 		
 		<div class="row">

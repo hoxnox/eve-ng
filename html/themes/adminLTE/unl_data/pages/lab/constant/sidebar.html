@@ -1,5 +1,5 @@
  <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar" style="height: auto;">
+    <section class="sidebar" style="height: auto;" data-ng-controller="HeaderController">
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu">
         <li class="header">MAIN NAVIGATION</li>
@@ -16,7 +16,7 @@
           </ul>
         </li>
         <li>
-          <a class="pointer">
+          <a class="pointer" ng-click="openModal('labDetails', 'megalg')">
             <i class="glyphicon glyphicon-list-alt"></i>
             <span class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">Lab details</span>
           </a>
@@ -34,7 +34,7 @@
           </a>
         </li>
 		 <li>
-          <a class="pointer">
+          <a class="pointer" ng-click="openModal('startUpConfig', 'megalg')">
             <i class="glyphicon glyphicon-align-left"></i>
             <span class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">Startup-configs</span>
           </a>
@@ -46,7 +46,7 @@
           </a>
         </li>
 		 <li>
-          <a class="pointer" ng-click="openAllObjects()">
+          <a class="pointer" ng-click="openModal('configObject', 'megalg')">
             <i class="glyphicon glyphicon-text-background"></i>
             <span class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">Configured objects</span>
           </a>
@@ -69,7 +69,7 @@
           </ul>
         </li>
 		<li>
-          <a class="pointer" data-ng-click="collapseSidebar()">
+          <a class="pointer" data-ng-click="topologyRefresh()">
             <i class="glyphicon glyphicon-refresh"></i>
             <span class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">Refresh topology</span>
           </a>
@@ -90,6 +90,12 @@
           <a class="pointer" data-ng-click="closeLab()">
             <i class="glyphicon glyphicon-off"></i>
             <span class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">Close lab</span>
+          </a>
+        </li>
+    <li>
+          <a class="pointer" ng-click="logout()">
+            <i class="fa fa-sign-out"></i>
+            <span class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">Logout</span>
           </a>
         </li>
       </ul>

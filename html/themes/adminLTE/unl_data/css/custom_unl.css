@@ -502,3 +502,102 @@ Preview images size //START
 /*
 Preview images size //END
 */
+
+/*
+Style for form-group-selection
+*/
+.form-group-selection{
+	cursor: pointer;
+	padding: 5px 0 5px 0;
+}
+.form-group-selection label{
+	line-height: 34px;
+}
+.form-group-selection i{
+	float: right;
+	line-height: 37px;
+}
+.container-img .imageBlock{
+	float: left;
+	width: 136px;
+	height: 80px;
+	background-color: white;
+	text-align: center;
+	cursor: pointer;
+}
+.container-img .imageBlock img{
+	width: 35%;
+	display: block;
+	margin: 0 auto;
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.container-img{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 10;
+	background-color: white;
+	border: 1px solid #d2d6de;
+	padding-top: 10px;
+}
+.parent-form{
+	position: relative;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+.row-icon{
+	padding: 0 10px;
+}
+.container__img {
+	width: 90%;
+	height: 70%;
+	position: relative;
+}
+.container__text {
+	width: 90%;
+	height: 20%;
+}
+/*
+Style for form-group-selection //END
+*/
+
+/*
+Style for startUpConfigModal
+*/
+.modal-body .list_group .list_group_item {
+    position: relative;
+    display: block;
+    padding: 10px 0px;
+    margin-bottom: -1px;
+    background-color: #fff;
+}
+.modal-header .glyphicon{
+  margin: 2px 10px 0 0;
+}
+/*
+Style for startUpConfigModal //END
+*/
+/*
+Style for labDetails
+*/
+.modal-body .lab-details{
+  text-align: center;
+}
+.modal-body .lab-details p{
+  margin-bottom: 10px;
+}
+.modal-body .lab-details code{
+  background-color: transparent;
+  color: #317087;
+  font-size: 1em;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px;
+}

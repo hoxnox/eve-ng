@@ -27,6 +27,18 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		$('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
 	}
 	
+	$scope.topologyRefresh = function(){
+		$scope.networkListRefresh()
+		$scope.nodeListRefresh();
+
+		for (i in $scope.node)
+		{
+			var node = $scope.node[i];
+			if (!$("#nodeID_" + node.id))
+				nodeInit(node)
+		}
+	}
+
 	$scope.networkListRefresh = function(){
 		$http.get('/api/labs'+$rootScope.lab+'/networks')
 		.then(
@@ -63,7 +75,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 				$scope.changedCursor='';
 				$scope.openModal('addNode');
 				break;
-			case 'net':
+			case 'network':
 				$scope.changedCursor='';
 				$scope.openModal('addNet');
 				break;
@@ -259,6 +271,10 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		console.log("type", type)
 		$scope.changedCursor = '';
 		$('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
+		$(".openright").hide();
+		setTimeout(function(){
+			$(".openright").show();
+		}, 100)
 		switch (type) {
 			case 'node':
 				$scope.changedCursor = 'node';
@@ -324,11 +340,11 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			'type': type,
 			'id': id
 		}
-		if (type == 'node'){
+		if (type === 'node'){
 			console.log('Open edit node modal')
 			$scope.openModal('editNode');
 		}
-		if (type == 'network'){
+		if (type === 'network'){
 			console.log('Open edit network modal')
 			$scope.openModal('editNet');
 		}
