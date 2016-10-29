@@ -15,8 +15,8 @@ import getopt, multiprocessing, os, pexpect, re, sys, time
 username = 'root'
 password = 'Juniper'
 conntimeout = 3     # Maximum time for console connection
-expctimeout = 3     # Maximum time for each short expect
-longtimeout = 30    # Maximum time for each long expect
+expctimeout = 30     # Maximum time for each short expect
+longtimeout = 60    # Maximum time for each long expect
 timeout = 120        # Maximum run time (conntimeout is included)
 
 def node_login(handler):
