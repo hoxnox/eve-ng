@@ -17,7 +17,7 @@ password = 'Juniper'
 conntimeout = 3     # Maximum time for console connection
 expctimeout = 3     # Maximum time for each short expect
 longtimeout = 30    # Maximum time for each long expect
-timeout = 60        # Maximum run time (conntimeout is included)
+timeout = 120        # Maximum run time (conntimeout is included)
 
 def node_login(handler):
     # Send an empty line, and wait for the login prompt
