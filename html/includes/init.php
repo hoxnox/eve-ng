@@ -69,7 +69,7 @@ if (!isset($node_templates)) {
 		'timos'			=>	'Alcatel 7750 SR',
 		'veos'			=>	'Arista vEOS',
 		'barracuda'		=>	'Barraccuda NGIPS',
-		'brocadevadx'	=>	'Brocade vADX',
+		'brocadevadx'   =>	'Brocade vADX',
 		'cpsg'			=>	'CheckPoint Security Gateway VE',
 		'docker'		=>	'Docker.io',
 		'acs'			=>	'Cisco ACS',
