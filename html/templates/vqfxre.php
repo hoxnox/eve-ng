@@ -2,9 +2,9 @@
 # vim: syntax=php tabstop=4 softtabstop=0 noexpandtab laststatus=1 ruler
 
 /**
- * html/templates/vmx.php
+ * html/templates/vqfxre.php
  *
- * vmx template for UNetLab.
+ * vqfxre template for UNetLab.
  *
  * LICENSE:
  *
@@ -35,9 +35,9 @@ $p['name'] = 'vQFX-RE';
 $p['icon'] = 'JunipervQFXre.png';
 $p['cpu'] = 1;
 $p['ram'] = 2048;
-$p['ethernet'] = 6;
+$p['ethernet'] = 15;
 $p['console'] = 'telnet';
 $p['qemu_arch'] = 'x86_64';
-$p['qemu_nic'] = 'e1000';
+$p['qemu_nic'] = 'virtio-net-pci';
 $p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -serial mon:stdio -nographic';
 ?>
