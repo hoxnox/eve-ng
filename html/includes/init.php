@@ -38,7 +38,7 @@ if (!defined('TIMEOUT')) define('TIMEOUT', 25);
 if (!defined('TIMEZONE')) define('TIMEZONE', 'Europe/Rome');
 
 if (!isset($node_config)) {
-	$node_config = Array(
+	$node_config =>	Array(
 		'iol'			=>	'embedded',
 		'c1710'			=>	'embedded',
 		'c3725'			=>	'embedded',
@@ -63,12 +63,12 @@ if (!isset($node_config)) {
 }
 
 if (!isset($node_templates)) {
-	$node_templates = Array(
+	$node_templates =>	Array(
 		'a10'			=>	'A10 vThunder',
 		'clearpass'		=>	'Aruba ClearPass',
 		'timos'			=>	'Alcatel 7750 SR',
 		'veos'			=>	'Arista vEOS',
-		'barracuda'	 	=>	'Barraccuda NGIPS',
+		'barracuda'		=>	'Barraccuda NGIPS',
 		'brocadevadx'		=>	'Brocade vADX',
 		'cpsg'			=>	'CheckPoint Security Gateway VE',
 		'docker'		=>	'Docker.io',
@@ -94,9 +94,9 @@ if (!isset($node_templates)) {
 		'phoebe'		=>	'Cisco Email Security Appliance (ESA)',
 		'coeus'			=>	'Cisco Web Security Appliance (WSA)',
 		'xrv'			=>	'Cisco XRv',
-		'xrv9k'			=>  'Cisco XRv 9000',
+		'xrv9k'			=>	'Cisco XRv 9000',
 		'nsvpx'			=>	'Citrix Netscaler',
-		'sonicwall'		=>  'Dell SonicWall',
+		'sonicwall'		=>	'Dell SonicWall',
 		'cumulus'		=>	'Cumulus VX',
 		'extremexos'		=>	'ExtremeXOS',
 		'bigip'			=>	'F5 BIG-IP LTM VE',
@@ -149,7 +149,7 @@ if (defined('LOCALE') && is_file(BASE_DIR.'/html/includes/messages_'.LOCALE.'.ph
 }
 
 // Include CLI specific functions
-if (php_sapi_name() === 'cli') {
+if (php_sapi_name() ===>	'cli') {
 	// CLI User
 	require_once(BASE_DIR.'/html/includes/cli.php');
 } else {
