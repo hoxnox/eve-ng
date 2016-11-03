@@ -15,9 +15,9 @@ import getopt, multiprocessing, os, pexpect, re, sys, time
 username = 'root'
 password = 'Juniper'
 conntimeout = 3     # Maximum time for console connection
-expctimeout = 3     # Maximum time for each short expect
-longtimeout = 30    # Maximum time for each long expect
-timeout = 60        # Maximum run time (conntimeout is included)
+expctimeout = 30     # Maximum time for each short expect
+longtimeout = 60    # Maximum time for each long expect
+timeout = 120        # Maximum run time (conntimeout is included)
 
 def node_login(handler):
     # Send an empty line, and wait for the login prompt
@@ -176,6 +176,28 @@ def config_put(handler, config):
 
     # Got to configure mode
     handler.sendline('configure')
+    try:
+        handler.expect(['root#', 'root@.*#'], timeout = longtimeout)
+    except:
+        print('ERROR: error waiting for ["root#", "root@.*#"] prompt.')
+        node_quit(handler)
+        return False
+    # clear unwanted config
+    handler.sendline('wildcard range delete interfaces xe-0/0/[0-71]:[0-3]')
+    try:
+        handler.expect(['root#', 'root@.*#'], timeout = longtimeout)
+    except:
+        print('ERROR: error waiting for ["root#", "root@.*#"] prompt.')
+        node_quit(handler)
+        return False
+    handler.sendline('wildcard range delete interfaces xe-0/0/[0-47]')
+    try:
+        handler.expect(['root#', 'root@.*#'], timeout = longtimeout)
+    except:
+        print('ERROR: error waiting for ["root#", "root@.*#"] prompt.')
+        node_quit(handler)
+        return False
+    handler.sendline('wildcard range delete interfaces et-0/0/[0-71]')
     try:
         handler.expect(['root#', 'root@.*#'], timeout = longtimeout)
     except:
