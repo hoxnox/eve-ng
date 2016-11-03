@@ -51,6 +51,54 @@ td.imageList .ui-select-container .ui-select-choices{
 	cursor : url(/themes/adminLTE/unl_data/img/icons/Switch_cursor.png),auto;;
 }
 
+/* Context-menu_leftClick */
+
+.context-menu_leftClick{
+  display: none;
+  position: absolute;
+  z-index: 3333;
+  padding: 12px 0;
+  width: 170px;
+  background-color: #fff;
+  border: solid 1px #dfdfdf;
+  box-shadow: 1px 1px 2px #cfcfcf;
+}
+
+.context-menu_leftClick--active {
+  display: block;
+}
+
+.context-menu__items_leftClick {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.context-menu__item_leftClick {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.context-menu__item_leftClick:last-child {
+  margin-bottom: 0;
+}
+
+.context-menu__link_leftClick {
+  display: block;
+  padding: 4px 12px;
+  color: #0066aa;
+  text-decoration: none;
+}
+
+.context-menu__link_leftClick:hover {
+  color: #fff;
+  background-color: #0066aa;
+}
+.context-menu_leftClick a {
+    color: #0066aa;
+    text-decoration: none;
+}
+
 /* context menu */
 
 .context-menu_mainDiv {

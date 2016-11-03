@@ -10,15 +10,42 @@
 				<button type="button" class="btn btn-default btn-flat btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 				More columns <span class="caret"></span>
 				</button>
-				<ul class="dropdown-menu pull-right">
-				<li class="{{(hideCPU) ? 'active' : ''}}"><a data-ng-click="hideCPU = !hideCPU" class="pointer">CPU</a></li>
+
+				<!-- New dropdown -->
+				<ul class="dropdown-menu pull-right dropdown-menu__column">
+				<li class="{{(hideCPU) ? 'active' : ''}}"><input type="checkbox" data-ng-click="hideCPU = !hideCPU" id="check-CPU_id">
+					<label class="pointer" for="check-CPU_id">CPU</label>
+					</li>
+				<li class="{{(hideIdlepc) ? 'active' : ''}}"><input type="checkbox"  data-ng-click="hideIdlepc = !hideIdlepc" id="check-IdlePC_id">
+					<label class="pointer" for="check-IdlePC_id">IdlePC</label>
+					</li>
+				<li class="{{(hideNVRAM) ? 'active' : ''}}"><input type="checkbox" data-ng-click="hideNVRAM = !hideNVRAM" id="check-NVRAM_id">
+					<label class="pointer" for="check-NVRAM_id">NVRAM</label>
+					</li>
+				<li class="{{(hideRAM) ? 'active' : ''}}"><input type="checkbox" data-ng-click="hideRAM = !hideRAM" id="check-RAM_id">
+					<label class="pointer" for="check-RAM_id">RAM</label>
+					</li>
+				<li class="{{(hideSer) ? 'active' : ''}}"><input type="checkbox" data-ng-click="hideSer = !hideSer" id="check-serial_id">
+					<label class="pointer" for="check-serial_id">Serial ports</label>
+					</li>
+				<li class="{{(hideConsole) ? 'active' : ''}}"><input type="checkbox" data-ng-click="hideConsole = !hideConsole" id="check-console_id">
+					<label class="pointer" for="check-console_id">Console</label>
+					</li>
+				<li class="{{(hideStartup) ? 'active' : ''}}"><input type="checkbox" data-ng-click="hideStartup = !hideStartup" id="check-start_id">
+					<label class="pointer" for="check-start_id">Startup-config</label>
+					</li>
+				</ul>
+
+				<!-- Old dropdown
+				<ul class="dropdown-menu pull-right dropdown-menu__column">
+				<li class="{{(hideCPU) ? 'active' : ''}}"><input type="checkbox" data-ng-click="hideCPU = !hideCPU">CPU</li>
 				<li class="{{(hideIdlepc) ? 'active' : ''}}"><a data-ng-click="hideIdlepc = !hideIdlepc" class="pointer">IdlePC</a></li>
 				<li class="{{(hideNVRAM) ? 'active' : ''}}"><a data-ng-click="hideNVRAM = !hideNVRAM" class="pointer">NVRAM</a></li>
 				<li class="{{(hideRAM) ? 'active' : ''}}"><a data-ng-click="hideRAM = !hideRAM" class="pointer">RAM</a></li>
 				<li class="{{(hideSer) ? 'active' : ''}}"><a data-ng-click="hideSer = !hideSer" class="pointer">Serial ports</a></li>
 				<li class="{{(hideConsole) ? 'active' : ''}}"><a data-ng-click="hideConsole = !hideConsole" class="pointer">Console</a></li>
 				<li class="{{(hideStartup) ? 'active' : ''}}"><a data-ng-click="hideStartup = !hideStartup" class="pointer">Startup-config</a></li>
-				</ul>
+				</ul>-->
 			</div>
 		</div>
 	</div>
@@ -29,6 +56,7 @@
 		<tr>
 		<th>ID</th>
 		<th>Name</th>
+		<th>Icon</th>
 		<th>Template</th>
 		<th>Boot image</th>
 		<th ng-show="hideCPU">CPU</th>
@@ -38,19 +66,57 @@
 		<th>Eth</th>
 		<th ng-show="hideSer">Ser</th>
 		<th ng-show="hideConsole">Console</th>
-		<th>Icon</th>
 		<th ng-show="hideStartup">Startup-config</th>
 		<th>Actions</th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody class="tbodyNodeList">
 		<tr ng-repeat="(id,item) in nodeList" class="{{(item.status == 2) ? 'bg-info' : ''}} {{(item.editmode) ? 'bg-warning' : ''}}">
 		<td>{{id}}</td>
 		<td>
 			<!--<text ng-show="!item.editmode">{{item.name}}</text>-->
 			<input ng-init="item.newname = item.name" ng-model="item.newname" ng-blur="applyChanges(id)" style="width:80px; padding-left:2px;"/>
 		</td>
+		<td class="td">
+			<label>Select icon to change it by click on </label>
+			<div class="row form-group-selection" ng-click="show = !show">
+				<div class="col-md-4">
+					<img ng-src="/images/icons/{{item.icon}}" ng-class="item.icon.replace('.png','').replace(' ','')+'_sm img-responsive'" style="margin: left;"/>
+				</div>
+				<div class="col-md-8">
+					<label>{{selectIcon}}</label>
+					<i class="fa fa-caret-down"></i>
+					<input type="hidden" data-ng-model="item.icon" value="{{item.icon}}" />
+				</div>
+			</div>
+			<div class="row row-icon">
+		    	<div class="col-md-12">
+					<div class="container-img" ng-show="show">
+						<div ng-repeat="(x,y) in nodeTemplate.options.icon.list" ng-click="select_image(x)" class="imageBlock">
+							<div class="container__img">
+								<img ng-src="/images/icons/{{x}}" />
+							</div>
+							<div class="container__text">{{y}}</div>
+						</div>
+					
+					</div>
+				</div>
+		    </div>
+			<!--<img ng-src="/images/icons/{{item.icon}}" width="15" height="15" ng-show="!item.editmode"/>
+			<ui-select ng-init="iconTempObj[id].selected.fullname=item.icon; iconTempObj[id].selected.brname=item.icon.replace('.png','')" ng-model="iconTempObj[id].selected"  ng-change="applyChanges(id)" >
+				<ui-select-match>
+					<img ng-src="/images/icons/{{iconTempObj[id].selected.fullname}}" width="15" height="15"/>
+					<span ng-bind="iconTempObj[id].selected.brname"></span>
+				</ui-select-match>
+				<ui-select-choices repeat="icon in (templateList[item.template].icon.array | filter: $select.search) track by icon.brname">
+					<img ng-src="/images/icons/{{icon.fullname}}" width="15" height="15"/>
+					<span ng-bind="icon.brname"></span>
+				</ui-select-choices>
+			</ui-select>
+			-->
+		</td>
 		<td>{{item.template}}</td>
+
 		<td class="imageList">
 			<text ng-show="!item.editmode">{{item.image}}</text>
 			<ui-select ng-init="imageTempObj[id].selected=item.image;" ng-model="imageTempObj[id].selected" ng-show="item.editmode">
@@ -86,6 +152,7 @@
 			<!--<text ng-show="!item.editmode">{{item.serial}}</text>-->
 			<input ng-init="item.newserial = item.serial" ng-model="item.newserial" ng-blur="applyChanges(id)" ng-show="item.serial != undefined" style="width:40px; padding-left:2px;"/>
 		</td>
+		
 		<td class="consoleList" ng-show="hideConsole">
 			<!--<text ng-show="!item.editmode">{{item.console}}</text>-->
 			<ui-select ng-init="consoleTempObj[id].selected=item.console; consoleTab = ['rdp','vnc','telnet'] ;"  ng-change="applyChanges(id)" ng-model="consoleTempObj[id].selected">
@@ -97,19 +164,8 @@
 				</ui-select-choices>
 			</ui-select>
 		</td>
-		<td>
-			<!--<img ng-src="/images/icons/{{item.icon}}" width="15" height="15" ng-show="!item.editmode"/>-->
-			<ui-select ng-init="iconTempObj[id].selected.fullname=item.icon; iconTempObj[id].selected.brname=item.icon.replace('.png','')" ng-model="iconTempObj[id].selected"  ng-change="applyChanges(id)" >
-				<ui-select-match>
-					<img ng-src="/images/icons/{{iconTempObj[id].selected.fullname}}" width="15" height="15"/>
-					<span ng-bind="iconTempObj[id].selected.brname"></span>
-				</ui-select-match>
-				<ui-select-choices repeat="icon in (templateList[item.template].icon.array | filter: $select.search) track by icon.brname">
-					<img ng-src="/images/icons/{{icon.fullname}}" width="15" height="15"/>
-					<span ng-bind="icon.brname"></span>
-				</ui-select-choices>
-			</ui-select>
-		</td>
+
+		
 		<td ng-show="hideStartup">{{item.config}}</td>
 		<td>
 			<div>

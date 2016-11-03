@@ -14,14 +14,17 @@
 		<th>Action</th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody >
 		<tr ng-repeat="(id,item) in netList" class="{{(item.editmode) ? 'bg-warning' : ''}}">
 		<td>{{id}}</td>
 		<td>
 			<text ng-show="!item.editmode" ng-click="editMode(id)">{{item.name}}</text>
-			<input ng-init="item.newname = item.name" ng-model="item.newname" ng-show="item.editmode" style="padding-left:2px;"/>
+			<input ng-init="item.newname = item.name" ng-model="item.newname" ng-show="item.editmode" ng-change="$parent.anychanges = true" style="padding-left:2px;"/>
 		</td>
-		<td>{{item.type}}</td>
+		<td>
+			<text ng-show="!item.editmode" ng-click="editMode(id)">{{item.type}}</text>
+			<select class="form-control-networks" ng-init="item.newtype = item.type" ng-model="item.newtype" ng-change="$parent.anychanges = true" ng-show="item.editmode" data-ng-options="x for x in netListType"></select>
+		</td>
 		<td>{{item.count}}</td>
 		<td>
 			<div class="pull-left"><button type="button" class="btn btn-flat btn-xs" tooltip-placement="top" uib-tooltip="Edit network" ng-click="editMode(id)" ng-show="!item.editmode"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>

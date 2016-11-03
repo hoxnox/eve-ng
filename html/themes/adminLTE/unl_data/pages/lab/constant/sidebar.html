@@ -15,12 +15,7 @@
             <li><a class="pointer" ng-click="addNewCursor('text')"><i class="glyphicon glyphicon-font"></i> Text</a></li>
           </ul>
         </li>
-        <li>
-          <a class="pointer" ng-click="openModal('labDetails', 'megalg')">
-            <i class="glyphicon glyphicon-list-alt"></i>
-            <span class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">Lab details</span>
-          </a>
-        </li>
+        
 		 <li>
           <a class="pointer" ng-click="openModal('nodeList', 'megalg')">
             <i class="glyphicon glyphicon-hdd"></i>
@@ -58,11 +53,11 @@
             <i class="fa fa-angle-left pull-right"></i>
           </a>
           <ul class="treeview-menu {{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}" style="width:228px">
-            <li><a class="pointer"><i class="glyphicon glyphicon-play"></i> Start all nodes</a></li>
-            <li><a class="pointer"><i class="glyphicon glyphicon-stop"></i> Stop all nodes</a></li>
-            <li><a class="pointer"><i class="glyphicon glyphicon-erase"></i> Wipe all nodes</a></li>
+            <li><a class="pointer" ng-click="startAllNode()"><i class="glyphicon glyphicon-play"></i> Start all nodes</a></li>
+            <li><a class="pointer" ng-click="stopAllNode()"><i class="glyphicon glyphicon-stop"></i> Stop all nodes</a></li>
+            <li><a class="pointer" ng-click="wipeAllNode()"><i class="glyphicon glyphicon-erase"></i> Wipe all nodes</a></li>
             <li><a class="pointer"><i class="glyphicon glyphicon-save"></i> Export all CFGs</a></li>
-            <li><a class="pointer"><i class="glyphicon glyphicon-pencil"></i> Edit lab</a></li>
+            <li><a class="pointer" ng-click="openModal('editLab', 'megalg')"><i class="glyphicon glyphicon-pencil"></i> Edit lab</a></li>
             <li><a class="pointer"><i class="glyphicon glyphicon-floppy-saved"></i> Set all startup-cfg to exported</a></li>
             <li><a class="pointer"><i class="glyphicon glyphicon-floppy-save"></i> Set all startup-cfg to none</a></li>
             <li><a class="pointer"><i class="glyphicon glyphicon-floppy-remove"></i> Delete all startup-cfg</a></li>
@@ -84,6 +79,12 @@
           <a class="pointer" ng-click="openModal('sysStat', 'megalg')">
             <i class="glyphicon glyphicon-info-sign"></i>
             <span class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">Status</span>
+          </a>
+        </li>
+    <li>
+          <a class="pointer" ng-click="openModal('labDetails', 'megalg')">
+            <i class="glyphicon glyphicon-list-alt"></i>
+            <span class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">Lab details</span>
           </a>
         </li>
 		<li>

@@ -601,3 +601,75 @@ Style for labDetails
   margin: 0px;
   padding: 0px;
 }
+/*
+Style for labDetails //END
+*/
+
+/*
+Style for networks from sidebar
+*/
+.form-control-networks{
+  width: 160px;
+  height: 24px;
+}
+/*
+Style for networks from sidebar //END
+*/
+
+/*
+Style for icon cange //Start
+*/
+.tbodyNodeList .col-md-4{
+  padding: 0px;
+}
+.tbodyNodeList .row{
+  padding: 0px;
+  margin: 0px;
+}
+.td{
+  padding-top: 0px;
+}
+.tbodyNodeList .form-group-selection{
+    cursor: pointer;
+    padding: 5px 0 0px 0;
+}
+.tbodyNodeList label{
+  line-height: 0px;
+  margin-bottom: 6px;
+  font-weight: normal;
+  margin-top: 3px;
+  display: block;
+}
+.tbodyNodeList .form-group-selection i{
+  line-height: 8px;
+  margin-right: 15px;
+}
+.tbodyNodeList .form-group-selection img{
+  width: 35%;
+  height: 35%;
+}
+/*
+Style for icon cange //END
+*/
+
+/*
+Style for dropdown //START
+*/
+.context-menu__item .list-group-dropdown{
+  display: none;
+}
+.context-menu__item:hover .list-group-dropdown{
+  display: block;
+}
+
+/*
+Style for dropdown "More columns" //START
+*/
+.dropdown-menu__column li{
+  padding: 3px 0 3px 10px;
+  color: gray;
+}
+.dropdown-menu__column li input{
+  margin-right: 10px;
+  
+}

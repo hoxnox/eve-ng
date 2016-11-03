@@ -77,8 +77,16 @@ var contextMenuInit = function() {
   var contextMenuLinkClassName_mainDiv = "context-menu__link_mainDiv";
   var contextMenuActive_mainDiv = "context-menu_mainDiv--active";
 
+  //leftClick 
+  var contextMenuClassName_leftClick = "context-menu_leftClick";
+  var contextMenuItemClassName_leftClick = "context-menu__item_leftClick";
+  var contextMenuLinkClassName_leftClick = "context-menu__link_leftClick";
+  var contextMenuActive_leftClick = "context-menu_leftClick--active";
+
+
   var taskItemClassName = "element-menu";
   var taskItemClassName_mainDiv = "mainDiv-menu";
+  var taskItemClassName_leftClick = "leftClick-menu"; //leftClick 
   var taskItemInContext;
 
   var clickCoords;
@@ -86,12 +94,15 @@ var contextMenuInit = function() {
   var clickCoordsY;
   
   var menuConn = document.querySelector("#context-menu_conn");
+  var menuLeftClick = document.querySelector("#context-menu_leftClick"); //leftClick
 
   var menu = document.querySelector("#context-menu");
   var menu_mainDiv = document.querySelector("#context-menu_mainDiv");
+  var menu_leftClick = document.querySelector("#context-menu_leftClick");
   var menuItems = menu.querySelectorAll(".context-menu__item");
   var menuState = 0;
   var menuState_mainDiv = 0;
+  var menuState_leftClick = 0;
   var menuWidth;
   var menuHeight;
   var menuPosition;
@@ -109,6 +120,22 @@ var contextMenuInit = function() {
     clickListener();
     keyupListener();
     resizeListener();
+    nodeClick();
+  }
+  /*Open context menu //context-meniu_leftClick */
+  function nodeClick(){
+    $(document).on("dblclick", ".element-menu", function(e){
+      //console.log("click la inceput")
+      var pos = getPosition(e);
+      $("#context-menu_leftClick").addClass("context-menu_leftClick--active").css("left", pos.x).css("top", pos.y);
+      console.log("open context-meniu_leftClick")
+
+      $('#tempElID').val(e.target.parentElement.parentElement.id);
+      setTimeout(function(){
+        menuState_leftClick = 1;
+      }, 100)
+      console.log($scope.iconTempObj)
+    })
   }
 
   /**
@@ -211,6 +238,10 @@ var contextMenuInit = function() {
 	if ( menuState_mainDiv !== 0 && target=="mainDiv-menu" || target=="closeAll") {
       menuState_mainDiv = 0;
       $(menu_mainDiv).removeClass( contextMenuActive_mainDiv );
+    }
+  if ( menuState_leftClick !== 0 && (target=="element-menu" || target=="closeAll")) {
+      menuState_leftClick = 0;
+      $(menu_leftClick).removeClass( contextMenuActive_leftClick );
     }
   }
 

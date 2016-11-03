@@ -95,9 +95,17 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	}
 	
 	$scope.closeLab = function(){
-		jsPlumb.detachEveryConnection();
-		//jsPlumb.reset();
-		$http({
+		var fl = true;
+		for (i in $scope.node)
+		{
+			if ($scope.node[i].status == 2)
+				fl = false;
+		}
+		if (!fl){
+			alert('There are running nodes, you need to power off them before closing the lab.')
+		}
+		else {
+			$http({
 				method: 'DELETE',
 				url: '/api/labs/close'})
 				.then(
@@ -116,7 +124,12 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 						$window.location.reload();
 						//$location.path('/main')
 					}
-		);
+			);
+			jsPlumb.detachEveryConnection();
+		}
+		//jsPlumb.reset();
+		
+
 	}
 	$scope.compileNewElement = function(el, id, object){
 		$('#canvas').append($compile(el)($scope))
@@ -129,7 +142,52 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		}
 	}
 
+	$scope.wipeAllNode = function(){
+		for(i in $scope.node)
+		{
+			var node = $scope.node[i];
+			$scope.wipeNode(node.id);
+		}
+	}
+
+	$scope.wipeNode = function(id){
+		if (!id)
+		{
+			id = $("#tempElID").val();
+			id = id.replace("nodeID_", "");
+		}
+		$http.get('/api/labs'+$rootScope.lab+'/nodes/'+id+'/wipe')
+		console.log("s-a transmis wipe")
+	}
+
+	$scope.startAllNode = function(){
+		for(i in $scope.node)
+		{
+			var node = $scope.node[i];
+			if (node.status == 0){
+				$scope.startstopNode(node.id);
+			}
+			
+		}
+	}
+
+	$scope.stopAllNode = function(){
+		for(i in $scope.node)
+		{
+			var node = $scope.node[i];
+			if (node.status == 2){
+				$scope.startstopNode(node.id);
+			}
+			
+		}
+	}
+
 	$scope.startstopNode = function(id){
+		if (!id)
+		{
+			id = $("#tempElID").val();
+			id = id.replace("nodeID_", "");
+		}
 		if(!$scope.node[id].upstatus){
 			//START NODE //START
 			$scope.node[id].loadclassShow=true;
@@ -303,6 +361,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		var element = '';
 		if($scope.tempElID.search('node') != -1) type = 'node' 
 		if($scope.tempElID.search('net') != -1) type = 'network' 
+		if($scope.tempElID.search('conn') != -1) type = 'conn' 
 		if($scope.tempElID.search('text') != -1) {
 			type = 'textobject';
 			element = 'text';

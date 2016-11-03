@@ -104,8 +104,58 @@
   </ul>
 </nav>
 
-<nav id="context-menu" class="context-menu">
+<!-- ContextMenu will be opened after clicking the left mouse button //Start -->
+<nav id="context-menu_leftClick" class="context-menu_leftClick">
+  <ul class="context-menu__items_leftClick">
+    <li class="context-menu__item_leftClick">
+      <a class="context-menu__link_leftClick pointer" ng-click="startstopNode()">
+        <i class="glyphicon glyphicon-play"></i> Start
+      </a>
+    </li>
+    <li class="context-menu__item_leftClick">
+      <a class="context-menu__link_leftClick pointer" ng-click="wipeNode()">
+        <i class="glyphicon glyphicon-erase"></i> Wipe
+      </a>
+    </li>
+    <li class="context-menu__item_leftClick">
+      <a class="context-menu__link_leftClick pointer" ng-click="editEl()">
+        <i class="fa fa-edit"></i> Edit Element
+      </a>
+    </li>
+    <li class="context-menu__item_leftClick">
+      <a class="context-menu__link_leftClick pointer" ng-click="deleteEl()">
+        <i class="fa fa-trash-o"></i> Delete Element
+      </a>
+    </li>
+  </ul>
+</nav>
+<!-- ContextMenu will be opened after clicking the left mouse button //END -->
+
+<nav id="context-menu" class="context-menu" >
   <ul class="context-menu__items">
+  	<li class="context-menu__item">
+    
+    </li>
+  	<li class="context-menu__item">
+      <a class="context-menu__link pointer" ng-click="startstopNode()">
+        <i class="glyphicon glyphicon-play"></i> Start
+      </a>
+    </li>
+    <li class="context-menu__item">
+      <a class="context-menu__link pointer" ng-click="startstopNode()">
+        <i class="glyphicon glyphicon-stop"></i> Stop
+      </a>
+    </li>
+    <li class="context-menu__item">
+      <a class="context-menu__link pointer" ng-click="wipeNode()">
+        <i class="glyphicon glyphicon-erase"></i> Wipe
+      </a>
+    </li>
+    <li class="context-menu__item">
+      <a class="context-menu__link pointer" ng-click="">
+        <i class="glyphicon glyphicon-save"></i> Export CFG
+      </a>
+    </li>
     <li class="context-menu__item">
       <a class="context-menu__link pointer" ng-click="editEl()">
         <i class="fa fa-edit"></i> Edit Element
@@ -113,10 +163,23 @@
     </li>
     <li class="context-menu__item">
       <a class="context-menu__link pointer" ng-click="deleteEl()">
-        <i class="fa fa-times"></i> Delete Element
+        <i class="fa fa-trash-o"></i> Delete Element
       </a>
     </li>
-  </ul>
+	
+	<li class="context-menu__item">
+		<a class="context-menu__link pointer menu-collapse" data-path="myDropDown" href="#" onclick="return false"><i class="glyphicon glyphicon-chevron-down"></i>Capture</a>
+	</li>
+	<li class="context-menu__item">
+		<a class="context-menu__link pointer context-collapsible myDropDown hidden" href="javascript:void(0)"><i class="fa fa-search"></i> hello</a>
+	</li>
+	<li class="context-menu__item">
+		<a class="context-menu__link pointer context-collapsible myDropDown hidden" href="javascript:void(0)"><i class="fa fa-search"></i> hello</a>
+	</li>
+	<li class="context-menu__item">
+		<a class="context-menu__link pointer context-collapsible myDropDown hidden" href="javascript:void(0)"><i class="fa fa-search"></i> hello</a>
+	</li>
+  </ul>  
 </nav>	
 
 <input type="hidden" value="" id="tempElID">
@@ -486,7 +549,14 @@ function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 		label:SLb, 
 		id:SID+'_'+SLb,
 		cssClass: (SLb != '') ? "aLabel" : '',
-		location:0.08}]
+		location:0.08,
+		events:{
+			contextmenu :function(){
+				$("#tempElID").val(DID)
+			}
+		}
+		
+		}]
 	]
 	});
 	
@@ -496,5 +566,7 @@ function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 	cssClass: (Dlb != '') ? "aLabel" : '',
 	location:0.92
 	}]);
+
 }
+
 </script>

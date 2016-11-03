@@ -14,6 +14,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 		'startUpConfig': {'path':'/themes/adminLTE/unl_data/pages/modals/startUpConfig.html', 'controller':'startUpConfigModalCtrl'},
 		'labDetails': {'path':'/themes/adminLTE/unl_data/pages/modals/labDetails.html', 'controller':'labDetailsModalCtrl'},
 		'configObject': {'path':'/themes/adminLTE/unl_data/pages/modals/configObject.html', 'controller':'configObjectModalCtrl'},
+		'editLab': {'path':'/themes/adminLTE/unl_data/pages/modals/editLab.html', 'controller':'editLabModalCtrl'},
 		'default': {'path':'/themes/adminLTE/unl_data/pages/modals/wtf.html', 'controller':'ModalInstanceCtrl'}
   };
 	
@@ -64,6 +65,9 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 						return {'path': $rootScope.lab}
 						break
 				case 'configObject':
+						return {'path': $rootScope.lab}
+						break
+				case 'editLab':
 						return {'path': $rootScope.lab}
 						break
 				default:
@@ -647,9 +651,9 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 	$scope.selectIcon='';
 	$scope.viewTemplateSwitch=false;
 	$scope.tempObject=data.object;
-	
-	$scope.select_image = function(x)
-  	{
+	$scope.numberNodes = 1;
+	 
+	$scope.select_image = function(x){
   		$scope.selectIcon = x;
   		$scope.show = false;
   	}
@@ -720,7 +724,7 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 		if ($scope.templateData.options.idlepc != undefined) $scope.result.data.idlepc = $scope.templateData.options.idlepc.value;
 		if ($scope.templateData.options.slot1 != undefined) $scope.result.data.slot1 = $scope.selectSlot1;
 		if ($scope.templateData.options.slot2 != undefined) $scope.result.data.slot2 = $scope.selectSlot2;
-		if ($scope.templateData.options.numberNodes != undefined) $scope.result.data.numberNodes = $scope.templateData.options.numberNodes.value;
+		if ($scope.numberNodes != undefined) $scope.result.data.numberNodes = $scope.numberNodes;
 		
 		$http({
 			method: 'POST',
@@ -1080,7 +1084,14 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 		}
 	)
 	}
+
+	$scope.select_image = function(x)
+  	{
+  		$scope.selectIcon = x;
+  		$scope.show = false;
+  	}
 	$scope.refreshNodeList();
+
 	
 	$scope.beforeEdit = function(id, template){
 		$scope.escEditMode(id);
@@ -1111,6 +1122,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 				}
 			)
 		}
+		console.log("done")
 	}
 	
 	$scope.startstopNode = function(id){
@@ -1148,7 +1160,6 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 	
 	$scope.cancelChanges = function(id){
 		//console.log($scope.nodeList[id])
-		console.log($scope.imageTempObj)
 		$scope.nodeList[id].newname=$scope.nodeList[id].name
 		$scope.imageTempObj[id].selected=$scope.nodeList[id].image
 		if ($scope.nodeList[id].cpu !== undefined) $scope.nodeList[id].newcpu=$scope.nodeList[id].cpu;
@@ -1157,8 +1168,8 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 		if ($scope.nodeList[id].ram !== undefined) $scope.nodeList[id].newram=$scope.nodeList[id].ram;
 		if ($scope.nodeList[id].ethernet !== undefined) $scope.nodeList[id].newethernet=$scope.nodeList[id].ethernet;
 		if ($scope.nodeList[id].serial !== undefined) $scope.nodeList[id].newserial=$scope.nodeList[id].serial;
-		$scope.iconTempObj[id].selected.fullname=$scope.nodeList[id].icon;
-		$scope.iconTempObj[id].selected.brname=$scope.nodeList[id].icon.replace('.png','');
+		$scope.iconTempObj[id].selected.fullname=$scope.nodeList[id].icon.replace('.png','');
+		$scope.imageTempObj[id].selected.brname=$scope.nodeList[id].icon.replace('.png','');
 		$scope.nodeList[id].editmode=false;
 	}
 	
@@ -1230,6 +1241,17 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.path=data.path;
 	$scope.anychanges=false;
 	$scope.netList={};
+
+	$http.get('/api/list/networks').then(
+		function successCallback(response){
+			//console.log(response)
+			$scope.netListType=response.data.data
+		}, function errorCallback(response){
+			console.log('Server Error');
+			console.log(response.data);
+		}
+	);
+
 	$scope.netListRefresh = function(){
 	$http.get('/api/labs'+$scope.path+'/networks')
 	.then(
@@ -1238,6 +1260,14 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 			$scope.netList=response.data.data
 			for (var key in $scope.netList){
 				$scope.netList[key].newname=$scope.netList[key].name;
+				var img = "";
+				if ($scope.netList[key].type == "bridge")
+					img = "Switch";
+				if ($scope.netList[key].type == "ovs")
+					img = "Cloud";
+				if ($scope.netList[key].type.indexOf("pnet") != -1)
+					img = "Cloud";
+				$("#networkID_" + $scope.netList[key].id).find("a img").attr("src", "/images/icons/" + img + ".png");
 			}
 		},
 		function errorCallback(response){
@@ -1268,26 +1298,27 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 	}
 	$scope.editMode=function(id){
 		$scope.cancelChanges()
-		// $scope.netList[id].editmode=true;
+		$scope.netList[id].editmode=true;
+		
 	}
 	$scope.applyChanges=function(id){
 		var putdata = {
 			'name' : $scope.netList[id].newname,
+			'type' : $scope.netList[id].newtype,
 		}
 		$http.put('/api/labs/'+$scope.path+'/networks/'+id, putdata)
 		.then(
 			function successCallback(response){
 				console.log(response);
 				$scope.netListRefresh();
-				//$scope.anychanges=true;
-				// $scope.netList[id].editmode=false;
+				$scope.anychanges=false;
 			},
 			function errorCallback(response){
 				console.log(response);
 				$scope.netListRefresh();
+				$scope.anychanges=false;
 			}
 		)
-		
 	}
 	
 	$scope.deleteNet = function(id,name){
@@ -1308,8 +1339,12 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 		);
 	}
 
-  $scope.closeModal = function () {
-    $uibModalInstance.dismiss($scope.anychanges);
+  	$scope.closeModal = function () {
+  		console.log($scope.anychanges);
+  		if ($scope.anychanges==true)
+  			alert('You have not saved your changes, click the save button for the changes to take effect.')
+    	else
+    		$uibModalInstance.dismiss();
   };
 };
 
@@ -1455,6 +1490,24 @@ function labDetailsModalCtrl($scope, $uibModalInstance, $http, data) {
 }
 
 function configObjectModalCtrl($scope, $uibModalInstance, $http, data) {
+	console.log("se incarca")
+	$scope.path=data.path;
+	$http.get('/api/labs'+$scope.path)
+	.then(
+		function successCallback(response){
+			console.log(response);
+			$scope.labData=response.data.data
+		},
+		function errorCallback(response){
+			console.log('Server Error');
+			console.log(response);
+		}
+	);
+	$scope.closeModal = function () {
+    $uibModalInstance.dismiss('cancel');
+  };
+}
+function editLabModalCtrl($scope, $uibModalInstance, $http, data) {
 	console.log("se incarca")
 	$scope.path=data.path;
 	$http.get('/api/labs'+$scope.path)
