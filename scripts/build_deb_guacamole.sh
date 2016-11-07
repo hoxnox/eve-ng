@@ -120,23 +120,23 @@ cat > ${CONTROL_DIR_14}/preinst << EOF
 #!/bin/bash
 
 dpkg -l mysql-server &> /dev/null
-if [ $? -ne 0 ]; then
+if [ \$? -ne 0 ]; then
 	echo -ne "Installing MySQL... "
 
 	echo mysql-server mysql-server/root_password password "${MYSQL_ROOT_PASSWD}" 2> /dev/null | debconf-set-selections &> /dev/null
-	if [ $? -ne 0 ]; then
+	if [ \$? -ne 0 ]; then
 		echo -e "${FAILED}"
 		exit 1
 	fi
 
 	echo mysql-server mysql-server/root_password_again password "${MYSQL_ROOT_PASSWD}" 2> /dev/null | debconf-set-selections &> /dev/null
-	if [ $? -ne 0 ]; then
+	if [ \$? -ne 0 ]; then
 		echo -e "${FAILED}"
 		exit 1
 	fi
 
 	apt-get -qqy install mysql-server &> /dev/null
-	if [ $? -ne 0 ]; then
+	if [ \$? -ne 0 ]; then
 		echo -e "${FAILED}"
 		exit 1
 	fi
@@ -146,7 +146,7 @@ fi
 
 echo -ne "Checking MySQL... "
 echo "\q" | mysql -u root --password=eve-ng &> /dev/null
-if [ $? -ne 0 ]; then
+if [ \$? -ne 0 ]; then
 	echo -e "${FAILED}"
 	exit 1
 fi
@@ -155,17 +155,17 @@ echo -e "${DONE}"
 
 echo -ne "Creating database and users... "
 echo "CREATE DATABASE IF NOT EXISTS guacdb;" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} &> /dev/null
-if [ $? -ne 0 ]; then
+if [ \$? -ne 0 ]; then
 	echo -e "${FAILED}"
 	exit 1
 fi
 echo "GRANT ALL ON guacdb.* TO 'guacuser'@'localhost' IDENTIFIED BY '${GUAC_DB_PASSWD}';" | mysql --host=localhost --user=root --password=eve-ng &> /dev/null
-if [ $? -ne 0 ]; then
+if [ \$? -ne 0 ]; then
 	echo -e "${FAILED}"
 	exit 1
 fi
-echo "SET @salt = UNHEX(SHA2(UUID(), 256)); UPDATE guacamole_user SET password_salt = @salt, password_hash = UNHEX(SHA2(CONCAT('${GUAC_ADMIN_PASSWORD}', HEX(@salt)), 256)) WHERE username = 'guacadmin';" mysql --user=root --password=eve-ng guacdb &> /dev/null
-if [ $? -ne 0 ]; then
+echo "SET @salt = UNHEX(SHA2(UUID(), 256)); UPDATE guacamole_user SET password_salt = @salt, password_hash = UNHEX(SHA2(CONCAT('${GUAC_ADMIN_PASSWORD}', HEX(@salt)), 256)) WHERE username = 'guacadmin';" | mysql --user=root --password=eve-ng guacdb &> /dev/null
+if [ \$? -ne 0 ]; then
 	echo -e "${FAILED}"
 	exit 1
 fi

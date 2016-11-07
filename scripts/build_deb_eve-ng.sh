@@ -15,6 +15,8 @@ WARNING="\033[1;33mwarning\033[0m"
 INFO="\033[0;34mblue\033[0m"
 DONE="\033[0;32mdone\033[0m"
 
+MYSQL_ROOT_PASSWD="eve-ng"
+
 # Installing dependencies
 echo -ne "Installing dependencies... "
 
@@ -298,7 +300,7 @@ cat > ${CONTROL_DIR_14}/preinst << EOF
 
 echo -ne "Checking MySQL... "
 echo "\q" | mysql -u root --password=eve-ng &> /dev/null
-if [ $? -ne 0 ]; then
+if [ \$? -ne 0 ]; then
         echo -e "${FAILED}"
         exit 1
 fi
@@ -306,13 +308,13 @@ fi
 echo -e "${DONE}"
 
 echo -ne "Creating database and users... "
-echo "CREATE DATABASE IF NOT EXISTS eve_ngdb;" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} &> /dev/null
-if [ $? -ne 0 ]; then
+echo "CREATE DATABASE IF NOT EXISTS eve_ng_db;" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} &> /dev/null
+if [ \$? -ne 0 ]; then
         echo -e "${FAILED}"
         exit 1
 fi
-echo "GRANT ALL ON eve_ngdb.* TO 'eve-ng'@'localhost' IDENTIFIED BY 'eve-ng';" | mysql --host=localhost --user=root --password=eve-ng &> /dev/null
-if [ $? -ne 0 ]; then
+echo "GRANT ALL ON eve_ng_db.* TO 'eve-ng'@'localhost' IDENTIFIED BY 'eve-ng';" | mysql --host=localhost --user=root --password=eve-ng &> /dev/null
+if [ \$? -ne 0 ]; then
         echo -e "${FAILED}"
         exit 1
 fi
@@ -320,18 +322,39 @@ fi
 echo -e "${DONE}"
 
 echo -ne "Creating tables... "
-echo "CREATE TABLE IF NOT EXISTS html5 (username TEXT, pod INT DEFAULT NULL, token TEXT);" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ngdb &> /dev/null
-if [ $? -ne 0 ]; then
+echo "CREATE TABLE IF NOT EXISTS html5 (username TEXT, pod INT DEFAULT NULL, token TEXT);" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ng_db &> /dev/null
+if [ \$? -ne 0 ]; then
         echo -e "${FAILED}"
         exit 1
 fi
-echo "CREATE TABLE IF NOT EXISTS pods (id INT NOT NULL, expiration INT DEFAULT '-1', username TEXT, lab_id TEXT, PRIMARY KEY (id), KEY username_pods (username (32)));" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ngdb &> /dev/null
-if [ $? -ne 0 ]; then
+echo "CREATE TABLE IF NOT EXISTS pods (id INT NOT NULL, expiration INT DEFAULT '-1', username TEXT, lab_id TEXT, PRIMARY KEY (id), KEY username_pods (username (32)));" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ng_db &> /dev/null
+if [ \$? -ne 0 ]; then
+        echo -e "${FAILED}"
+        exit 1
+fi
+echo "CREATE TABLE users (username TEXT NOT NULL, cookie TEXT, email TEXT, expiration INT DEFAULT '-1', name TEXT, password TEXT, session INT DEFAULT NULL, ip TEXT, role TEXT, folder TEXT, html5 tinyint DEFAULT NULL, PRIMARY KEY (username (32)));" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ng_db &> /dev/null
+if [ \$? -ne 0 ]; then
         echo -e "${FAILED}"
         exit 1
 fi
 
 echo -e "${DONE}"
+
+if [ -f /opt/unetlab/data/database.sdb ]; then
+	echo -ne "Migrating users... "
+	echo ".dump users " 2> /dev/null | sqlite3 /opt/unetlab/data/database.sdb 2> /dev/null | grep -i insert 2> /dev/null | sed -e 's/);/,1);/' -e 's/"/\`/g' 2> /dev/null | mysql -u eve-ng --password=eve-ng eve_ng_db &> /dev/null
+	if [ $? -ne 0 ]; then
+			echo -e "${FAILED}"
+			exit 1
+	fi
+	mv /opt/unetlab/data/database.sdb /opt/unetlab/data/database.sdb.old &> /dev/null
+	if [ $? -ne 0 ]; then
+			echo -e "${FAILED}"
+			exit 1
+	fi
+
+	echo -e "${DONE}"
+fi
 EOF
 
 cp -a ${CONTROL_DIR_14}/preinst ${CONTROL_DIR_16} &>> ${LOG}
@@ -347,6 +370,7 @@ a2enmod rewrite &> /dev/null
 a2enmod proxy_html &> /dev/null
 a2enmod proxy_http &> /dev/null
 a2enmod proxy_wstunnel &> /dev/null
+a2enmod mod_xml2enc &> /dev/null
 a2dissite 000-default &> /dev/null
 a2ensite unetlab &> /dev/null
 service apache2 restart &> /dev/null
