@@ -1,147 +1,452 @@
 #!/bin/bash
-CONTROL="/usr/src/unetlab/debian/eve-ng_control.template"
-SRC_DIR="/usr/src/unetlab"
-ARCH=$(cat ${CONTROL} | grep Architecture | cut -d: -f2 | sed 's/ //')
 BUILD_DIR="/build"
-CONTROL_DIR="$(mktemp -dt)"
-DATA_DIR="$(mktemp -dt)"
-VERSION="$(cat ${SRC_DIR}/VERSION | cut -d- -f1)"
-RELEASE="$(cat ${SRC_DIR}/VERSION | cut -d- -f2)-git"
+LOG="/tmp/eve_build.log"
+SRC_DIR="/usr/src/eve-ng-public-dev"
+CONTROL="${SRC_DIR}/debian/eve-ng_control.template"
+CONTROL_DIR_14="$(mktemp -dt eve_control_14.XXXXXXXXXX)"
+DATA_DIR_14="$(mktemp -dt eve_data_14.XXXXXXXXXX)"
+CONTROL_DIR_16="$(mktemp -dt eve_control_16.XXXXXXXXXX)"
+DATA_DIR_16="$(mktemp -dt eve_data_16.XXXXXXXXXX)"
+TMP="$(mktemp -dt eve_tmp.XXXXXXXXXX)"
+DEBIAN_FRONTEND="noninteractive"
 
-cat ${CONTROL} | sed "s/%VERSION%/${VERSION}/" | sed "s/%RELEASE%/${RELEASE}/" > ${CONTROL_DIR}/control
+FAILED="\033[0;31mfailed\033[0m"
+WARNING="\033[1;33mwarning\033[0m"
+INFO="\033[0;34mblue\033[0m"
+DONE="\033[0;32mdone\033[0m"
 
-# UNetLab
+# Installing dependencies
+echo -ne "Installing dependencies... "
+
+PACKAGES="$(cat ${CONTROL} 2>> ${LOG} | grep "Depends" 2>> ${LOG} | sed 's/Depends: //' 2>> ${LOG} | sed 's/,//g' 2>> ${LOG} | sed 's/ (.*)//g' 2>> ${LOG})"
+apt-get -qqy install ${PACKAGES} &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+echo -e ${DONE}
+
+# Environment for both Ubuntu 14.04 and 16.04
+echo -ne "Building environment... "
+
+VERSION="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f1 2>> ${LOG})"
+RELEASE="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f2 2>> ${LOG})"
+
+mkdir -p ${BUILD_DIR} {${CONTROL_DIR_14},${CONTROL_DIR_16}} {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/addons {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/data/Logs {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/labs {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/tmp {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/scripts {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/data/Exports &>> ${LOG} {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/wrappers {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/addons/iol/lib {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/addons/iol/bin {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/addons/dynamips {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/addons/qemu {${DATA_DIR_14},${DATA_DIR_16}}/etc/sudoers.d {${DATA_DIR_14},${DATA_DIR_16}}/etc/apache2/sites-available {${DATA_DIR_14},${DATA_DIR_16}}/etc/logrotate.d {${DATA_DIR_14},${DATA_DIR_16}}/lib/plymouth/themes/unetlab {${DATA_DIR_14},${DATA_DIR_16}}/etc/initramfs-tools/conf.d {${DATA_DIR_14},${DATA_DIR_16}}/etc/apt/sources.list.d {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/html/files {${DATA_DIR_14},${DATA_DIR_16}}/etc/profile.d {${DATA_DIR_14},${DATA_DIR_16}}/etc/init /build/apt/pool/{trusty,xenial}/e/eve-ng
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+# Environment for Ubuntu 14.04
+cat ${CONTROL} 2>> ${LOG} | sed "s/%VERSION%/${VERSION}/" 2>> ${LOG} | sed "s/%RELEASE%/${RELEASE}/" 2>> ${LOG} > ${CONTROL_DIR_14}/control
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+# Environment for Ubuntu 16.04
+cat ${CONTROL} 2>> ${LOG} | sed "s/%VERSION%/${VERSION}/" 2>> ${LOG} | sed "s/%RELEASE%/${RELEASE}/" 2>> ${LOG} | sed "s/tomcat7/tomcat8/g" 2>> ${LOG} > ${CONTROL_DIR_16}/control
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+# Copying html
 cd ${SRC_DIR}
-rm -f html/includes/config.php
-rm -rf html/files
-mkdir -p ${DATA_DIR}/opt/unetlab ${DATA_DIR}/opt/unetlab/addons ${DATA_DIR}/opt/unetlab/data/Logs ${DATA_DIR}/opt/unetlab/labs ${DATA_DIR}/opt/unetlab/tmp/ ${DATA_DIR}/opt/unetlab/scripts ${DATA_DIR}/opt/unetlab/data/Exports
-rsync -a --delete html ${DATA_DIR}/opt/unetlab/
-cat html/includes/init.php | sed "s/define('VERSION', .*/define('VERSION', '${VERSION}-${RELEASE}');/g" > ${DATA_DIR}/opt/unetlab/html/includes/init.php
-cp -a scripts/remove_uuid.sh ${DATA_DIR}/opt/unetlab/scripts/
-cp -a scripts/fix_iol_nvram.sh ${DATA_DIR}/opt/unetlab/scripts/
-cp -a scripts/config_* ${DATA_DIR}/opt/unetlab/scripts/
-cp -a scripts/wrconf_iol.py ${DATA_DIR}/opt/unetlab/scripts/
-cp -a scripts/wrconf_dyn.py ${DATA_DIR}/opt/unetlab/scripts/
-cp -a scripts/veos_diskmod.sh ${DATA_DIR}/opt/unetlab/scripts/
-cp -a scripts/minidisk.bz2 ${DATA_DIR}/opt/unetlab/scripts/
-cp -a scripts/createdosdisk.sh ${DATA_DIR}/opt/unetlab/scripts/
-cp -a scripts/createjundisk.sh ${DATA_DIR}/opt/unetlab/scripts/
-cp -a IOUtools/iou_export ${DATA_DIR}/opt/unetlab/scripts/
-chown -R root:root ${DATA_DIR}/opt/unetlab
-chown -R www-data:www-data ${DATA_DIR}/opt/unetlab/data ${DATA_DIR}/opt/unetlab/labs
-chown -R root:unl ${DATA_DIR}/opt/unetlab/tmp
-chmod 2775 -R ${DATA_DIR}/opt/unetlab/data ${DATA_DIR}/opt/unetlab/labs ${DATA_DIR}/opt/unetlab/tmp
-chmod 755 ${DATA_DIR}/opt/unetlab/scripts/*
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
 
-# UNetLab Wrappers and addons
-cd wrappers
+rm -f html/includes/config.php &>> ${LOG}
+rm -rf html/files &>> ${LOG}
+
+cp -a html ${DATA_DIR_14}/opt/unetlab/ &>> ${LOG} && cp -a html ${DATA_DIR_16}/opt/unetlab/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+# Setting version
+cd ${SRC_DIR}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cat html/includes/init.php 2>> ${LOG} | sed "s/define('VERSION', .*/define('VERSION', '${VERSION}-${RELEASE}');/g" 2>> ${LOG} > ${DATA_DIR_14}/opt/unetlab/html/includes/init.php && cat html/includes/init.php 2>> ${LOG} | sed "s/define('VERSION', .*/define('VERSION', '${VERSION}-${RELEASE}');/g" 2>> ${LOG} > ${DATA_DIR_16}/opt/unetlab/html/includes/init.php
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+# Copying scripts
+cd ${SRC_DIR}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cp -a scripts ${DATA_DIR_14}/opt/unetlab/ &>> ${LOG} && cp -a scripts ${DATA_DIR_16}/opt/unetlab/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cp -a IOUtools/iou_export ${DATA_DIR_14}/opt/unetlab/scripts/ &>> ${LOG} && cp -a IOUtools/iou_export ${DATA_DIR_16}/opt/unetlab/scripts/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+echo -e ${DONE}
+
+# Compiling wrappers
+echo -ne "Compiling wrappers... "
+
 export CC="gcc"
 export CFLAGS="-Wall -O2"
 export INC="include/ts.c include/serial2udp.c include/afsocket.c include/tap.c include/cmd.c include/functions.c include/log.c"
-export DST="${DATA_DIR}/opt/unetlab/wrappers"
-mkdir -p ${DATA_DIR}/opt/unetlab/wrappers ${DATA_DIR}/opt/unetlab/addons/iol/lib ${DATA_DIR}/opt/unetlab/addons/iol/bin ${DATA_DIR}/opt/unetlab/addons/dynamips ${DATA_DIR}/opt/unetlab/addons/qemu
-${CC} ${CFLAGS} -o ${DST}/iol_wrapper ${INC} iol_wrapper.c iol_functions.c
-${CC} ${CFLAGS} -o ${DST}/qemu_wrapper ${INC} qemu_wrapper.c qemu_functions.c
-${CC} ${CFLAGS} -o ${DST}/dynamips_wrapper ${INC} dynamips_wrapper.c dynamips_functions.c
-cp -a unl_profile ${DST}/unl_profile
-cp -a unl_wrapper.php ${DST}/unl_wrapper
-cp -a nsenter ${DST}/nsenter
-cd ..
-cp -a /opt/unetlab/addons/iol/lib/libcrypto.so.4 ${DATA_DIR}/opt/unetlab/addons/iol/lib
 
-# Additional files
-mkdir -p ${DATA_DIR}/opt/unetlab/html/files
-cp -a /usr/src/unetlab/windows ${DATA_DIR}/opt/unetlab/html/files/UNetLab
-cd ${DATA_DIR}/opt/unetlab/html/files
-zip -r windows.zip UNetLab > /dev/null
+cd ${SRC_DIR}/wrappers
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+${CC} ${CFLAGS} -o ${DATA_DIR_14}/opt/unetlab/wrappers/iol_wrapper ${INC} iol_wrapper.c iol_functions.c &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cp -a ${DATA_DIR_14}/opt/unetlab/wrappers/iol_wrapper ${DATA_DIR_16}/opt/unetlab/wrappers/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+${CC} ${CFLAGS} -o ${DATA_DIR_14}/opt/unetlab/wrappers/qemu_wrapper ${INC} qemu_wrapper.c qemu_functions.c &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cp -a ${DATA_DIR_14}/opt/unetlab/wrappers/qemu_wrapper ${DATA_DIR_16}/opt/unetlab/wrappers/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+${CC} ${CFLAGS} -o ${DATA_DIR_14}/opt/unetlab/wrappers/dynamips_wrapper ${INC} dynamips_wrapper.c dynamips_functions.c &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cp -a ${DATA_DIR_14}/opt/unetlab/wrappers/dynamips_wrapper ${DATA_DIR_16}/opt/unetlab/wrappers/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cp -a unl_profile ${DATA_DIR_14}/opt/unetlab/wrappers/ &>> ${LOG} && cp -a unl_profile ${DATA_DIR_16}/opt/unetlab/wrappers/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cp -a unl_wrapper.php ${DATA_DIR_14}/opt/unetlab/wrappers/ &>> ${LOG} && cp -a unl_wrapper.php ${DATA_DIR_16}/opt/unetlab/wrappers/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cp -a nsenter ${DATA_DIR_14}/opt/unetlab/wrappers/ &>> ${LOG} && cp -a nsenter ${DATA_DIR_16}/opt/unetlab/wrappers/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cp -a libcrypto.so.4 ${DATA_DIR_14}/opt/unetlab/addons/iol/lib/ &>> ${LOG} && cp -a libcrypto.so.4 ${DATA_DIR_16}/opt/unetlab/addons/iol/lib/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+echo -e ${DONE}
+
+# Copying OS files
+echo -ne "Copying OS files... "
+
 cd ${SRC_DIR}
-rm -rf ${DATA_DIR}/opt/unetlab/html/files/UNetLab
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
 
-# SUDO
-mkdir -p ${DATA_DIR}/etc/sudoers.d
-cp -a etc/sudo.conf ${DATA_DIR}/etc/sudoers.d/unetlab
+cp -a etc/sudo.conf ${DATA_DIR_14}/etc/sudoers.d/unetlab &>> ${LOG} && cp -a etc/sudo.conf ${DATA_DIR_16}/etc/sudoers.d/unetlab &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
 
-# Apache
-mkdir -p ${DATA_DIR}/etc/apache2/sites-available ${DATA_DIR}/etc/logrotate.d
-cp -a etc/apache.conf ${DATA_DIR}/etc/apache2/sites-available/unetlab.conf
-cp -a etc/logrotate.conf ${DATA_DIR}/etc/logrotate.d/unetlab
+cp -a etc/apache.conf ${DATA_DIR_14}/etc/apache2/sites-available/unetlab.conf &>> ${LOG} && cp -a etc/apache.conf ${DATA_DIR_16}/etc/apache2/sites-available/unetlab.conf
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
 
-# PlyMouth
-mkdir -p ${DATA_DIR}/lib/plymouth/themes/unetlab ${DATA_DIR}/etc/initramfs-tools/conf.d
-rsync -a --delete plymouth/ ${DATA_DIR}/lib/plymouth/themes/unetlab/
-cp -a etc/initramfs.conf ${DATA_DIR}/etc/initramfs-tools/conf.d/plymouth
+cp -a etc/logrotate.conf ${DATA_DIR_14}/etc/logrotate.d/unetlab &>> ${LOG} && cp -a etc/logrotate.conf ${DATA_DIR_16}/etc/logrotate.d/unetlab
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
 
-# APT
-mkdir -p ${DATA_DIR}/etc/apt/sources.list.d
-cp -a etc/sources.list ${DATA_DIR}/etc/apt/sources.list.d/unetlab.list
+cp -a etc/initramfs.conf ${DATA_DIR_14}/etc/initramfs-tools/conf.d/ &>> ${LOG} && cp -a etc/initramfs.conf ${DATA_DIR_16}/etc/initramfs-tools/conf.d/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
 
-# OVF Config
-mkdir -p ${DATA_DIR}/etc/init ${DATA_DIR}/etc/profile.d ${DATA_DIR}/etc/init
-rsync -a --delete ovf ${DATA_DIR}/opt
-cp -a etc/profile.sh ${DATA_DIR}/etc/profile.d/ovf.sh
-mv -f ${DATA_DIR}/opt/ovf/ovfconfig.conf ${DATA_DIR}/etc/init/ovfconfig.conf
+cp -a etc/sources.list ${DATA_DIR_14}/etc/apt/sources.list.d/unetlab.list &>> ${LOG} && cp -a etc/sources.list ${DATA_DIR_16}/etc/apt/sources.list.d/unetlab.list &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
 
-# Post Install
-cat > ${CONTROL_DIR}/postinst << EOF
-#!/bin/sh
-groupadd -g 32768 -f unl > /dev/null 2>&1
-a2enmod rewrite > /dev/null 2>&1
-a2dissite 000-default > /dev/null 2>&1
-a2ensite unetlab > /dev/null 2>&1
-service apache2 restart > /dev/null 2>&1
-sed -i 's/.*GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash vga=788"/g' /etc/default/grub
-sed -i 's/.*GRUB_GFXMODE=.*/GRUB_GFXMODE="800x600"/g' /etc/default/grub
-sed -i 's/.*GRUB_HIDDEN_TIMEOUT=.*/GRUB_HIDDEN_TIMEOUT=2/g' /etc/default/grub
-sed -i 's/.*GRUB_HIDDEN_TIMEOUT_QUIET=.*/GRUB_HIDDEN_TIMEOUT_QUIET=true/g' /etc/default/grub
-sed -i 's/.*GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/g' /etc/default/grub
-sed -i "s/^ServerName.*$/ServerName \$(hostname -f)/g" /etc/apache2/sites-available/unetlab.conf
-update-alternatives --install /lib/plymouth/themes/default.plymouth default.plymouth /lib/plymouth/themes/unetlab/unetlab.plymouth 100 > /dev/null 2>&1
-update-initramfs -u > /dev/null 2>&1
-update-grub2 > /dev/null 2>&1
-fgrep "xml.cisco.com" /etc/hosts > /dev/null || echo 127.0.0.127 xml.cisco.com >> /etc/hosts
+cp -a plymouth ${DATA_DIR_14}/lib/plymouth/themes/unetlab &>> ${LOG} && cp -a plymouth ${DATA_DIR_16}/lib/plymouth/themes/unetlab &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cp -a ${SRC_DIR}/windows ${TMP}/UNetLab &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+cd ${TMP} &>> ${LOG} && zip -r windows.zip UNetLab &>> ${LOG} && cd ${SRC_DIR} &>> ${LOG}
+cp -a ${TMP}/windows.zip ${DATA_DIR_14}/opt/unetlab/html/files/ &>> ${LOG} && cp -a ${TMP}/windows.zip ${DATA_DIR_16}/opt/unetlab/html/files/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cp -a ovf ${DATA_DIR_14}/opt/ &>> ${LOG} && cp -a ovf ${DATA_DIR_16}/opt/ &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+cp -a etc/profile.sh ${DATA_DIR_14}/etc/profile.d/ovf.sh &>> ${LOG} && cp -a etc/profile.sh ${DATA_DIR_16}/etc/profile.d/ovf.sh &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+cp -a etc/init.conf ${DATA_DIR_14}/etc/init/ovfconfig.conf &>> ${LOG} && cp -a etc/init.conf ${DATA_DIR_16}/etc/init/ovfconfig.conf &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+echo -e ${DONE}
+
+# Permissions
+echo -ne "Setting permissions... "
+
+chown -R root:root {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+chown -R www-data:www-data {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/data {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/labs &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+chown -R root:unl {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/tmp &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+chmod 2775 -R {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/data {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/labs {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/tmp &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+chmod 0755 {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/scripts/* {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/wrappers/*_wrapper {${DATA_DIR_14},${DATA_DIR_16}}/opt/unetlab/wrappers/nsenter &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+chmod 644 {${DATA_DIR_14},${DATA_DIR_16}}/etc/sudoers.d/unetlab {${DATA_DIR_14},${DATA_DIR_16}}/etc/apache2/sites-available/unetlab.conf {${DATA_DIR_14},${DATA_DIR_16}}/etc/logrotate.d/unetlab {${DATA_DIR_14},${DATA_DIR_16}}/etc/initramfs-tools/conf.d/initramfs.conf {${DATA_DIR_14},${DATA_DIR_16}}/etc/apt/sources.list.d/unetlab.list {${DATA_DIR_14},${DATA_DIR_16}}/lib/plymouth/themes/unetlab/* {${DATA_DIR_14},${DATA_DIR_16}}/etc/profile.d/ovf.sh {${DATA_DIR_14},${DATA_DIR_16}}/etc/init/ovfconfig.conf &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+echo -e ${DONE}
+
+# Building deb packages
+echo -ne "Building deb packages... "
+
+cat > ${CONTROL_DIR_14}/preinst << EOF
+#!/bin/bash
+
+echo -ne "Checking MySQL... "
+echo "\q" | mysql -u root --password=eve-ng &> /dev/null
+if [ $? -ne 0 ]; then
+        echo -e "${FAILED}"
+        exit 1
+fi
+
+echo -e "${DONE}"
+
+echo -ne "Creating database and users... "
+echo "CREATE DATABASE IF NOT EXISTS eve_ngdb;" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} &> /dev/null
+if [ $? -ne 0 ]; then
+        echo -e "${FAILED}"
+        exit 1
+fi
+echo "GRANT ALL ON eve_ngdb.* TO 'eve-ng'@'localhost' IDENTIFIED BY 'eve-ng';" | mysql --host=localhost --user=root --password=eve-ng &> /dev/null
+if [ $? -ne 0 ]; then
+        echo -e "${FAILED}"
+        exit 1
+fi
+
+echo -e "${DONE}"
+
+echo -ne "Creating tables... "
+echo "CREATE TABLE IF NOT EXISTS html5 ('username' TEXT, 'pod' INT DEFAULT NOT NULL, 'token' TEXT);" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ngdb &> /dev/null
+if [ $? -ne 0 ]; then
+        echo -e "${FAILED}"
+        exit 1
+fi
+echo "CREATE TABLE IF NOT EXISTS pods ('id' INT DEFAULT NOT NULL, 'expiration' INT DEFAULT '-1', 'username' TEXT, 'lab_id' TEXT, PRIMARY KEY ('id'), KEY 'username_pods' ('username'));" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ngdb &> /dev/null
+if [ $? -ne 0 ]; then
+        echo -e "${FAILED}"
+        exit 1
+fi
+
+
+EOF
+
+cat > ${CONTROL_DIR_14}/postinst << EOF
+#!/bin/bash
+groupadd -g 32768 -f unl &> /dev/null
+a2enmod rewrite &> /dev/null
+a2enmod proxy_html &> /dev/null
+a2enmod proxy_http &> /dev/null
+a2enmod proxy_wstunnel &> /dev/null
+a2dissite 000-default &> /dev/null
+a2ensite unetlab &> /dev/null
+service apache2 restart &> /dev/null
+sed -i 's/.*GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash vga=788"/g' /etc/default/grub &> /dev/null
+sed -i 's/.*GRUB_GFXMODE=.*/GRUB_GFXMODE="800x600"/g' /etc/default/grub &> /dev/null
+sed -i 's/.*GRUB_HIDDEN_TIMEOUT=.*/GRUB_HIDDEN_TIMEOUT=2/g' /etc/default/grub &> /dev/null
+sed -i 's/.*GRUB_HIDDEN_TIMEOUT_QUIET=.*/GRUB_HIDDEN_TIMEOUT_QUIET=true/g' /etc/default/grub &> /dev/null
+sed -i 's/.*GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/g' /etc/default/grub &> /dev/null
+sed -i "s/^ServerName.*$/ServerName \$(hostname -f)/g" /etc/apache2/sites-available/unetlab.conf &> /dev/null
+update-alternatives --install /lib/plymouth/themes/default.plymouth default.plymouth /lib/plymouth/themes/unetlab/unetlab.plymouth 100 &> /dev/null
+update-initramfs -u &> /dev/null
+update-grub2 &> /dev/null
+fgrep "xml.cisco.com" /etc/hosts &> /dev/null || echo 127.0.0.127 xml.cisco.com >> /etc/hosts 2> /dev/null
 # Fix tunctl
-setcap cap_net_admin+ep /usr/sbin/tunctl > /dev/null 2>&1
-setcap cap_net_admin+ep /bin/ip > /dev/null 2>&1
-setcap cap_net_admin+ep /sbin/brctl > /dev/null 2>&1
-setcap cap_net_admin+ep /usr/bin/ovs-vsctl > /dev/null 2>&1
+setcap cap_net_admin+ep /usr/sbin/tunctl &> /dev/null
+setcap cap_net_admin+ep /bin/ip &> /dev/null
+setcap cap_net_admin+ep /sbin/brctl &> /dev/null
+setcap cap_net_admin+ep /usr/bin/ovs-vsctl &> /dev/null
 # Check for Intel VT-x/AMD-V
-fgrep -e vmx -e svm /proc/cpuinfo > /dev/null || echo "*** WARNING: neither Intel VT-x or AMD-V found"
+fgrep -e vmx -e svm /proc/cpuinfo &> /dev/null || echo -e "\033[1;33mWARNING: neither Intel VT-x or AMD-V found\033[0m"
 # Cleaning logs
-rm -f /opt/unetlab/data/Logs/*
-/usr/sbin/apache2ctl graceful > /dev/null 2>&1
+rm -f /opt/unetlab/data/Logs/* &> /dev/null
+/usr/sbin/apache2ctl graceful &> /dev/null
 # Cleaning exports
-rm -f /opt/unetlab/data/Exports/*
+rm -f /opt/unetlab/data/Exports/* &> /dev/null
 # Cleaning swp files
-find /opt/unetlab/labs/ -name "*.swp" -exec rm -f {} \;
+find /opt/unetlab/labs/ -name "*.swp" -exec rm -f {} \; &> /dev/null
 # Fixing permissions
-/opt/unetlab/wrappers/unl_wrapper -a fixpermissions > /dev/null 2>&1
+/opt/unetlab/wrappers/unl_wrapper -a fixpermissions &> /dev/null
 # Mark official kernels as hold
-apt-mark hold  \$(dpkg -l | grep -e linux-image -e linux-headers -e linux-generic | grep -v unetlab | awk '{print \$2}') > /dev/null 2>&1
+apt-mark hold  \$(dpkg -l | grep -e linux-image -e linux-headers -e linux-generic | grep -v unetlab | awk '{print \$2}') &> /dev/null
 # Additional fixes
-find /opt/unetlab/tmp/ -name "nvram_*" -exec /opt/unetlab/scripts/fix_iol_nvram.sh "{}" \; > /dev/null 2>&1
+find /opt/unetlab/tmp/ -name "nvram_*" -exec /opt/unetlab/scripts/fix_iol_nvram.sh "{}" \; &> /dev/null
 EOF
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
 
-# Configuring APT
-cat > /etc/apt/apt.conf.d/FTPArchive.conf << EOF
-APT::FTPArchive::Release::Origin "RR Labs";
-APT::FTPArchive::Release::Label "RR Labs archive";
-APT::FTPArchive::Release::Suite "trusty";
-APT::FTPArchive::Release::Version "14.04";
-APT::FTPArchive::Release::Codename "trusty";
-APT::FTPArchive::Release::Architectures "amd64 i386 noarch";
-APT::FTPArchive::Release::Components "rrlabs";
-APT::FTPArchive::Release::Description "Route Reflector Labs";
-EOF
+cp -a ${CONTROL_DIR_14}/postinst ${CONTROL_DIR_16} &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
 
-# Building the package
-cd ${DATA_DIR}
-tar czf data.tar.gz *
-find -type f -exec md5sum {} \; >> ${CONTROL_DIR}/md5sums
-echo 2.0 > ${CONTROL_DIR}/debian-binary
-cd ${CONTROL_DIR}
-tar czf control.tar.gz md5sums control postinst
-cd ${SRC_DIR}
-#mkdir -p ${BUILD_DIR}/apt/pool/trusty/u/unetlab
-ar -cr /usr/src/eve-ng_${VERSION}-${RELEASE}_${ARCH}.deb ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz ${DATA_DIR}/data.tar.gz
-rm -rf ${CONTROL_DIR} ${DATA_DIR}
-echo /usr/src/eve-ng_${VERSION}-${RELEASE}_${ARCH}.deb
+for i in 14 16; do
+	if [ ${i} -eq 14 ]; then
+		DEBFILE="/build/apt/pool/trusty/e/eve-ng/eve-ng_${VERSION}-${RELEASE}_amd64.deb"
+	else
+		DEBFILE="/build/apt/pool/xenial/e/eve-ng/eve-ng_${VERSION}-${RELEASE}_amd64.deb"
+	fi
+
+	cd $(eval 'echo ${'"DATA_DIR_$i"'}') &>> ${LOG}
+	if [ $? -ne 0 ]; then
+		echo -e ${FAILED}
+		exit 1
+	fi
+
+	tar czf data.tar.gz * &>> ${LOG}
+	if [ $? -ne 0 ]; then
+		echo -e ${FAILED}
+		exit 1
+	fi
+
+	find -type f -exec md5sum {} \; >> $(eval 'echo ${'"CONTROL_DIR_$i"'}')/md5sums 2>> ${LOG}
+	if [ $? -ne 0 ]; then
+		echo -e ${FAILED}
+		exit 1
+	fi
+
+	echo 2.0 > $(eval 'echo ${'"CONTROL_DIR_$i"'}')/debian-binary 2>> ${LOG}
+	if [ $? -ne 0 ]; then
+		echo -e ${FAILED}
+		exit 1
+	fi
+
+	cd $(eval 'echo ${'"CONTROL_DIR_$i"'}') &>> ${LOG}
+	if [ $? -ne 0 ]; then
+		echo -e ${FAILED}
+		exit 1
+	fi
+
+	tar czf control.tar.gz md5sums control postinst preinst &>> ${LOG}
+	if [ $? -ne 0 ]; then
+		echo -e ${FAILED}
+		exit 1
+	fi
+
+	cd ${SRC_DIR}
+	if [ $? -ne 0 ]; then
+		echo -e ${FAILED}
+		exit 1
+	fi
+
+	ar -cr ${DEBFILE} $(eval 'echo ${'"CONTROL_DIR_$i"'}')/debian-binary $(eval 'echo ${'"CONTROL_DIR_$i"'}')/control.tar.gz $(eval 'echo ${'"DATA_DIR_$i"'}')/data.tar.gz &>> ${LOG}
+	if [ $? -ne 0 ]; then
+		echo -e ${FAILED}
+		exit 1
+	fi
+done
+
+echo -e ${DONE}
+
+rm -rf ${CONTROL_DIR_14} ${DATA_DIR_14} ${CONTROL_DIR_16} ${DATA_DIR_16} ${LOG}
+
+# Build completed
+echo -e "Build completed:"
+ls -l /build/apt/pool/*/e/eve-ng/eve-ng_*.deb
+
