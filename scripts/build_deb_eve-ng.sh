@@ -320,19 +320,25 @@ fi
 echo -e "${DONE}"
 
 echo -ne "Creating tables... "
-echo "CREATE TABLE IF NOT EXISTS html5 ('username' TEXT, 'pod' INT DEFAULT NOT NULL, 'token' TEXT);" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ngdb &> /dev/null
+echo "CREATE TABLE IF NOT EXISTS html5 (username TEXT, pod INT DEFAULT NULL, token TEXT);" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ngdb &> /dev/null
 if [ $? -ne 0 ]; then
         echo -e "${FAILED}"
         exit 1
 fi
-echo "CREATE TABLE IF NOT EXISTS pods ('id' INT DEFAULT NOT NULL, 'expiration' INT DEFAULT '-1', 'username' TEXT, 'lab_id' TEXT, PRIMARY KEY ('id'), KEY 'username_pods' ('username'));" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ngdb &> /dev/null
+echo "CREATE TABLE IF NOT EXISTS pods (id INT NOT NULL, expiration INT DEFAULT '-1', username TEXT, lab_id TEXT, PRIMARY KEY (id), KEY username_pods (username (32)));" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ngdb &> /dev/null
 if [ $? -ne 0 ]; then
         echo -e "${FAILED}"
         exit 1
 fi
 
-
+echo -e "${DONE}"
 EOF
+
+cp -a ${CONTROL_DIR_14}/preinst ${CONTROL_DIR_16} &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
 
 cat > ${CONTROL_DIR_14}/postinst << EOF
 #!/bin/bash
@@ -375,10 +381,6 @@ apt-mark hold  \$(dpkg -l | grep -e linux-image -e linux-headers -e linux-generi
 # Additional fixes
 find /opt/unetlab/tmp/ -name "nvram_*" -exec /opt/unetlab/scripts/fix_iol_nvram.sh "{}" \; &> /dev/null
 EOF
-if [ $? -ne 0 ]; then
-	echo -e ${FAILED}
-	exit 1
-fi
 
 cp -a ${CONTROL_DIR_14}/postinst ${CONTROL_DIR_16} &>> ${LOG}
 if [ $? -ne 0 ]; then

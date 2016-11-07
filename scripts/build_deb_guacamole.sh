@@ -186,6 +186,7 @@ update-rc.d tomcat7 enable &> /dev/null
 update-rc.d mysql enable &> /dev/null
 echo -e "${DONE}"
 echo -ne "Starting Tomcat... "
+cp -a /etc/tomcat7/server-guacamole.xml /etc/tomcat7/server.xml &> /dev/null
 service tomcat7 restart &> /dev/null
 pgrep -u tomcat7 java &> /dev/null && echo -e "${DONE}" || echo -e "${FAILED}"
 EOF
@@ -201,6 +202,7 @@ systemctl enable tomcat8 &> /dev/null
 systemctl enable mysql &> /dev/null
 echo -e "${DONE}"
 echo -ne "Starting Tomcat... "
+cp -a /etc/tomcat8/server-guacamole.xml /etc/tomcat8/server.xml &> /dev/null
 systemctl restart tomcat7 &> /dev/null
 pgrep -u tomcat7 java &> /dev/null && echo -e "${DONE}" || echo -e "${FAILED}"
 EOF
@@ -240,7 +242,7 @@ for i in 14 16; do
 		exit 1
 	fi
 
-	mkdir -p $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/extensions $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/lib $(eval 'echo ${'"DATA_DIR_$i"'}')/var/lib/tomcat${TOMCAT_VER}/webapps $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/{extensions,lib} &>> ${LOG}
+	mkdir -p $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/extensions $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/lib $(eval 'echo ${'"DATA_DIR_$i"'}')/var/lib/tomcat${TOMCAT_VER}/webapps $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/{extensions,lib} $(eval 'echo ${'"DATA_DIR_$i"'}')/etc/tomcat${TOMCAT_VER} &>> ${LOG}
 	if [ $? -ne 0 ]; then
 		echo -e ${FAILED}
 		exit 1
@@ -266,6 +268,11 @@ for i in 14 16; do
 		exit 1
 	fi
 	cp -a ${SRC_DIR}/etc/guacamole.properties $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/ &>> ${LOG}
+	if [ $? -ne 0 ]; then
+		echo -e ${FAILED}
+		exit 1
+	fi
+	cp -a -a ${SRC_DIR}/etc/server.xml $(eval 'echo ${'"DATA_DIR_$i"'}')/etc/tomcat${TOMCAT_VER}/server-guacamole.xml &>> ${LOG}
 	if [ $? -ne 0 ]; then
 		echo -e ${FAILED}
 		exit 1
