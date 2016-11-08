@@ -265,7 +265,7 @@ for i in 14 16; do
 		echo -e ${FAILED}
 		exit 1
 	fi
-	cp -a /usr/src/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}-bin.jar $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/extensions/ &>> ${LOG}
+	cp -a /usr/src/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}-bin.jar $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/lib/ &>> ${LOG}
 	if [ $? -ne 0 ]; then
 		echo -e ${FAILED}
 		exit 1
