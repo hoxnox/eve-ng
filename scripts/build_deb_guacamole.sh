@@ -192,11 +192,14 @@ cat > ${CONTROL_DIR_14}/postinst << EOF
 echo -ne "Enable services at boot... "
 update-rc.d tomcat7 enable &> /dev/null
 update-rc.d mysql enable &> /dev/null
+update-rc.d guacd enable &> /dev/null
 echo -e "${DONE}"
 echo -ne "Starting Tomcat... "
-cp -a /etc/tomcat7/server-guacamole.xml /etc/tomcat7/server.xml &> /dev/null
+cp -a /etc/tomcat7/server-guacamole.xml /etc/tomcat7/server.xml &> /dev/null 
 service tomcat7 restart &> /dev/null
 pgrep -u tomcat7 java &> /dev/null && echo -e "${DONE}" || echo -e "${FAILED}"
+service guacd restart &> /dev/null
+pgrep guacd &> /dev/null && echo -e "${DONE}" || echo -e "${FAILED}"
 EOF
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
@@ -208,11 +211,14 @@ cat > ${CONTROL_DIR_16}/postinst << EOF
 echo -ne "Enable services at boot... "
 systemctl enable tomcat8 &> /dev/null
 systemctl enable mysql &> /dev/null
+systemctl enable guacd &> /dev/null
 echo -e "${DONE}"
 echo -ne "Starting Tomcat... "
 cp -a /etc/tomcat8/server-guacamole.xml /etc/tomcat8/server.xml &> /dev/null
 systemctl restart tomcat7 &> /dev/null
-pgrep -u tomcat7 java &> /dev/null && echo -e "${DONE}" || echo -e "${FAILED}"
+pgrep -u tomcat8 java &> /dev/null && echo -e "${DONE}" || echo -e "${FAILED}"
+systemctl restart guacd &> /dev/null
+pgrep guacd &> /dev/null && echo -e "${DONE}" || echo -e "${FAILED}"
 EOF
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
@@ -250,7 +256,7 @@ for i in 14 16; do
 		exit 1
 	fi
 
-	mkdir -p $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/extensions $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/lib $(eval 'echo ${'"DATA_DIR_$i"'}')/var/lib/tomcat${TOMCAT_VER}/webapps $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/{extensions,lib} $(eval 'echo ${'"DATA_DIR_$i"'}')/etc/tomcat${TOMCAT_VER} &>> ${LOG}
+	mkdir -p $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/extensions $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/lib $(eval 'echo ${'"DATA_DIR_$i"'}')/var/lib/tomcat${TOMCAT_VER}/webapps $(eval 'echo ${'"DATA_DIR_$i"'}')/usr/share/tomcat${TOMCAT_VER}/.guacamole/{extensions,lib} $(eval 'echo ${'"DATA_DIR_$i"'}')/etc/tomcat${TOMCAT_VER}  $(eval 'echo ${'"DATA_DIR_$i"'}')/etc/init.d &>> ${LOG}
 	if [ $? -ne 0 ]; then
 		echo -e ${FAILED}
 		exit 1
@@ -280,7 +286,12 @@ for i in 14 16; do
 		echo -e ${FAILED}
 		exit 1
 	fi
-	cp -a -a ${SRC_DIR}/etc/server.xml $(eval 'echo ${'"DATA_DIR_$i"'}')/etc/tomcat${TOMCAT_VER}/server-guacamole.xml &>> ${LOG}
+	cp -a ${SRC_DIR}/etc/server.xml $(eval 'echo ${'"DATA_DIR_$i"'}')/etc/tomcat${TOMCAT_VER}/server-guacamole.xml &>> ${LOG}
+	if [ $? -ne 0 ]; then
+		echo -e ${FAILED}
+		exit 1
+	fi
+	cp -a ${SRC_DIR}/etc/guacd $(eval 'echo ${'"DATA_DIR_$i"'}')/etc/init.d/ &>> ${LOG}
 	if [ $? -ne 0 ]; then
 		echo -e ${FAILED}
 		exit 1
