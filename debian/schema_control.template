@@ -1,0 +1,11 @@
+Package: eve-ng-schema
+Version: %VERSION%-%RELEASE%
+Name: Emulated Virtual Environment - schema
+Architecture: amd64
+Maintainer: Andrea Dainese (andrea.dainese@gmail.com)
+Homepage: http://www.unetlab.com/
+Installed-Size: 9912
+Section: devel
+Priority: optional
+Provides: eve-ng-schema
+Description: Daabase schema for UNetLab/EVE-NG
