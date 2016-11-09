@@ -83,10 +83,15 @@ var contextMenuInit = function() {
   var contextMenuLinkClassName_leftClick = "context-menu__link_leftClick";
   var contextMenuActive_leftClick = "context-menu_leftClick--active";
 
+  var contextMenuClassName_freeSelect = "context-menu_freeSelect";
+  var contextMenuItemClassName_freeSelect = "context-menu__item_freeSelect";
+  var contextMenuLinkClassName_freeSelect = "context-menu__link_freeSelect";
+  var contextMenuActive_freeSelect = "context-menu_freeSelect--active";
 
   var taskItemClassName = "element-menu";
   var taskItemClassName_mainDiv = "mainDiv-menu";
   var taskItemClassName_leftClick = "leftClick-menu"; //leftClick 
+  var taskItemClassName_freeSelect = "freeSelect-menu"; //leftClick 
   var taskItemInContext;
 
   var clickCoords;
@@ -94,15 +99,19 @@ var contextMenuInit = function() {
   var clickCoordsY;
   
   var menuConn = document.querySelector("#context-menu_conn");
+  var menuNet = document.querySelector("#context-menu_net");
   var menuLeftClick = document.querySelector("#context-menu_leftClick"); //leftClick
+  var menuFreeSelect = document.querySelector("#context-menu_freeSelect"); //leftClick
 
   var menu = document.querySelector("#context-menu");
   var menu_mainDiv = document.querySelector("#context-menu_mainDiv");
   var menu_leftClick = document.querySelector("#context-menu_leftClick");
+  var menu_freeSelect = document.querySelector("#context-menu_freeSelect");
   var menuItems = menu.querySelectorAll(".context-menu__item");
   var menuState = 0;
   var menuState_mainDiv = 0;
   var menuState_leftClick = 0;
+  var menuState_freeSelect = 0;
   var menuWidth;
   var menuHeight;
   var menuPosition;
@@ -116,11 +125,14 @@ var contextMenuInit = function() {
    * Initialise our application's code.
    */
   function init() {
+    freeSelectNode()
+    nodeClick();
     contextListener();
     clickListener();
     keyupListener();
     resizeListener();
-    nodeClick();
+    freeSelectPopUp();
+    
   }
   /*Open context menu //context-meniu_leftClick */
   function nodeClick(){
@@ -128,16 +140,32 @@ var contextMenuInit = function() {
       //console.log("click la inceput")
       var pos = getPosition(e);
       $("#context-menu_leftClick").addClass("context-menu_leftClick--active").css("left", pos.x).css("top", pos.y);
-      console.log("open context-meniu_leftClick")
+      console.log("open context-meniu_leftClick");
 
-      $('#tempElID').val(e.target.parentElement.parentElement.id);
-      setTimeout(function(){
-        menuState_leftClick = 1;
-      }, 100)
+      setTimeout(function() {
+        menuState_leftClick = 1
+      }, 100);
       console.log($scope.iconTempObj)
     })
   }
 
+  function freeSelectPopUp(){
+    $(document).on("contextmenu", ".free-selected", function(e){
+      console.log("click la inceput");
+      e.preventDefault();
+      e.stopPropagation();
+      var pos = getPosition(e);
+      $("#context-menu_freeSelect").addClass("context-menu_freeSelect--active").css("left", pos.x).css("top", pos.y);
+      $("#context-menu").removeClass("context-menu--active");
+      console.log("open context-meniu_freeSelect");
+
+      setTimeout(function() {
+        menuState_freeSelect = 1
+      }, 100);
+      
+      console.log($scope.iconTempObj)
+    })
+  }
   /**
    * Listens for contextmenu events.
    */
@@ -146,27 +174,41 @@ var contextMenuInit = function() {
       //taskItemInContext = clickInsideElement( e, taskItemClassName );
       if ( clickInsideElement( e, taskItemClassName ) ) {
         e.preventDefault();
-		console.log( 'Context menu on '+e.target.parentElement.parentElement.id )
-		console.log(e.target.parentElement.parentElement.id)
-		$('#tempElID').val(e.target.parentElement.parentElement.id)
+		    console.log( 'Context menu on '+e.target.parentElement.parentElement.id)
+		    console.log(e.target.parentElement.parentElement.id)
+		    $('#tempElID').val(e.target.parentElement.parentElement.id)
         toggleMenuOn(taskItemClassName);
         positionMenu(e);
       } else {
         taskItemInContext = null;
         toggleMenuOff(taskItemClassName);
-		if ( clickInsideElement( e, taskItemClassName_mainDiv ) ){
-			e.preventDefault();
+		    if ( clickInsideElement( e, taskItemClassName_mainDiv ) ){
+			   e.preventDefault();
 			//console.log(clickInsideElement( e, taskItemClassName ))
-			toggleMenuOn(taskItemClassName_mainDiv);
-			positionMenu(e);
-		} else {
-			 taskItemInContext = null;
-			toggleMenuOff(taskItemClassName_mainDiv);
-		}
+			   toggleMenuOn(taskItemClassName_mainDiv);
+			   positionMenu(e);
+		      } else {
+			     taskItemInContext = null;
+			     toggleMenuOff(taskItemClassName_mainDiv);
+		      }
       }
     });
   }
-
+  //////////////////////////////////////
+  ////
+  function freeSelectNode(){
+        $(document).on('click', ".element-menu", function(e) {
+          if($("#freeSelect").hasClass("activeFreeSelect") )
+          {
+            $(this).toggleClass('free-selected')       
+          }
+          else
+          {
+            console.log('')
+          }
+      })
+  }
+  
   /**
    * Listens for click events.
    */
@@ -214,10 +256,29 @@ var contextMenuInit = function() {
 	if ( menuState !== 1 && target=="element-menu") {
       menuState = 1;
       menu.classList.add( contextMenuActive );
+      if ($(".free-selected").length)
+      {
+        $("#nodesGroup-content").show();
+        $("#network_content").hide();
+        $("#node_content").hide();
+      }
+      else
+      {
+        $("#nodesGroup-content").hide();
+        if($("#tempElID").val().indexOf("networkID_") != -1)
+        {
+          $("#network_content").show();
+          $("#node_content").hide();
+        }
+        else
+        {
+          $("#network_content").hide();
+          $("#node_content").show();
+        }
+      }
 	  $("#context-menu_conn").removeClass('context-menu_conn--active')
 	  return;
     }
-	
     if ( menuState_mainDiv !== 1 && target=="mainDiv-menu") {
       menuState_mainDiv = 1;
       $(menu_mainDiv).addClass( contextMenuActive_mainDiv );
@@ -242,6 +303,10 @@ var contextMenuInit = function() {
   if ( menuState_leftClick !== 0 && (target=="element-menu" || target=="closeAll")) {
       menuState_leftClick = 0;
       $(menu_leftClick).removeClass( contextMenuActive_leftClick );
+    }
+  if ( menuState_freeSelect !== 0 && (target=="element-menu" || target=="closeAll")) {
+      menuState_freeSelect = 0;
+      $(menu_freeSelect).removeClass( contextMenuActive_freeSelect );
     }
   }
 
@@ -288,7 +353,7 @@ var contextMenuInit = function() {
 }
 
 var contextMenuInitConn = function() {
-	console.log('here123')
+	console.log('init the contextMenuInitConn')
 //////////////////////////////
 jsPlumb.bind("contextmenu", function (c,e) {
 	//e.preventDefault();
@@ -465,3 +530,12 @@ jsPlumb.bind("contextmenu", function (c,e) {
 })
 //////////////////////////////
 }
+
+/*
+$(".higlited").each(function(){
+  //start node
+  var id = $(this).attr("id");
+  id = id.replace("nodeID_", "");
+})
+        */
+

@@ -5,16 +5,16 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 		'addNode': {'path':'/themes/adminLTE/unl_data/pages/modals/addNode.html', 'controller':'AddNodeModalCtrl'},
 		'addText': {'path':'/themes/adminLTE/unl_data/pages/modals/addText.html', 'controller':'AddTextModalCtrl'},
 		'addShape': {'path':'/themes/adminLTE/unl_data/pages/modals/addShape.html', 'controller':'AddShapeModalCtrl'},
-		'editNode': {'path':'/themes/adminLTE/unl_data/pages/modals/editNode.html', 'controller':'editNodeModalCtrl'},
 		'addNet': {'path':'/themes/adminLTE/unl_data/pages/modals/addNet.html', 'controller':'AddNetModalCtrl'},
+		'editNode': {'path':'/themes/adminLTE/unl_data/pages/modals/editNode.html', 'controller':'editNodeModalCtrl'},
 		'editNet': {'path':'/themes/adminLTE/unl_data/pages/modals/editNet.html', 'controller':'editNetModalCtrl'},
+		'editLab': {'path':'/themes/adminLTE/unl_data/pages/modals/editLab.html', 'controller':'editLabModalCtrl'},
 		'nodeList': {'path':'/themes/adminLTE/unl_data/pages/modals/nodeList.html', 'controller':'nodeListModalCtrl'},
 		'netList': {'path':'/themes/adminLTE/unl_data/pages/modals/netList.html', 'controller':'netListModalCtrl'},
 		'sysStat': {'path':'/themes/adminLTE/unl_data/pages/modals/sysStat.html', 'controller':'sysStatModalCtrl'},
 		'startUpConfig': {'path':'/themes/adminLTE/unl_data/pages/modals/startUpConfig.html', 'controller':'startUpConfigModalCtrl'},
 		'labDetails': {'path':'/themes/adminLTE/unl_data/pages/modals/labDetails.html', 'controller':'labDetailsModalCtrl'},
 		'configObject': {'path':'/themes/adminLTE/unl_data/pages/modals/configObject.html', 'controller':'configObjectModalCtrl'},
-		'editLab': {'path':'/themes/adminLTE/unl_data/pages/modals/editLab.html', 'controller':'editLabModalCtrl'},
 		'default': {'path':'/themes/adminLTE/unl_data/pages/modals/wtf.html', 'controller':'ModalInstanceCtrl'}
   };
 	
@@ -23,7 +23,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 	var pathToModal = (action === undefined) ? 'default' :  action;
     var modalInstance = $uibModal.open({
       animation: $scope.animationsEnabled,
-      templateUrl: $scope.modalActions[pathToModal]['path'],
+      templateUrl: $scope.modalActions[pathToModal]['path'],   
       controller: $scope.modalActions[pathToModal]['controller'],
       size: size,
       backdrop: (size == 'megalg') ? false : true,
@@ -657,7 +657,7 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
   		$scope.selectIcon = x;
   		$scope.show = false;
   	}
-  	console.log("aaa")
+  	//console.log("aaa")
 
 	$http.get('/api/list/templates/').then(
 		function successCallback(response){
@@ -1084,6 +1084,18 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 		}
 	)
 	}
+	$http.get('/api/icons')
+	.then(
+		function successCallback(response){
+			console.log(response);
+			$scope.icon_list=response.data;
+		},
+		function errorCallback(response){
+			console.log('Server Error');
+			console.log(response);
+		}
+	)
+	
 
 	$scope.select_image = function(x)
   	{
@@ -1168,12 +1180,13 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 		if ($scope.nodeList[id].ram !== undefined) $scope.nodeList[id].newram=$scope.nodeList[id].ram;
 		if ($scope.nodeList[id].ethernet !== undefined) $scope.nodeList[id].newethernet=$scope.nodeList[id].ethernet;
 		if ($scope.nodeList[id].serial !== undefined) $scope.nodeList[id].newserial=$scope.nodeList[id].serial;
-		$scope.iconTempObj[id].selected.fullname=$scope.nodeList[id].icon.replace('.png','');
-		$scope.imageTempObj[id].selected.brname=$scope.nodeList[id].icon.replace('.png','');
+		$scope.iconTempObj[id].selected.fullname=$scope.nodeList[id];
+		$scope.imageTempObj[id].selected.brname=$scope.nodeList[id].icon//.replace('.png','');
 		$scope.nodeList[id].editmode=false;
 	}
 	
 	$scope.applyChanges = function(id){
+		console.log('applyChanges')
 		$scope.anychanges=true;
 		var putdata = {
 			'template' : $scope.nodeList[id].template,
@@ -1192,7 +1205,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 		if ($scope.nodeList[id].ethernet !== undefined) putdata.ethernet=$scope.nodeList[id].newethernet;
 		if ($scope.nodeList[id].serial !== undefined) putdata.serial=$scope.nodeList[id].newserial;
 		console.log(putdata);
-		$http.put('/api/labs/'+$scope.path+'/nodes/'+id, putdata)
+		$http.put('/api/labs'+$scope.path+'/nodes/'+id, putdata)
 		.then(
 			function successCallback(response){
 				console.log(response);
@@ -1452,7 +1465,6 @@ function sysStatModalCtrl($scope, $uibModalInstance, $http, $interval, $rootScop
 
 
 function startUpConfigModalCtrl($scope, $uibModalInstance, $http, data) {
-	
 	$scope.path=data.path;
 	$http.get('/api/labs'+$scope.path+'/configs')
 	.then(
@@ -1468,10 +1480,42 @@ function startUpConfigModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.closeModal = function () {
     $uibModalInstance.dismiss('cancel');
   };
+ 	 $scope.openConfigForm = function (id){
+		$("#stockdata").val(id);
+		$http.get('/api/labs'+$scope.path+'/configs/' + id)
+		.then(
+			function successCallback(response){
+				$("#nodeconfig").val(response.data.data.data)
+			},
+			function errorCallback(response){
+				console.log('Server Error');
+				console.log(response);
+			}
+		)	
+		$('#form-node-config').removeClass('form-horizontal--hidden').addClass('form-horizontal--active')
+	}
+	$scope.saveChanged = function(){
+		var id = $("#stockdata").val();
+		var putdata = {
+			'data' : $("#nodeconfig").val(),
+			'id' : id,
+		}
+		
+		$http.put('/api/labs'+$scope.path+'/configs/' + id, putdata)
+		.then(
+			function successCallback(response){
+				console.log(response);
+			},
+			function errorCallback(response){
+				console.log(response);
+			}
+		)
+		console.log("s-a transmis")
+	}
+	
 }
 
 function labDetailsModalCtrl($scope, $uibModalInstance, $http, data) {
-	console.log("se incarca")
 	$scope.path=data.path;
 	$http.get('/api/labs'+$scope.path)
 	.then(
@@ -1525,3 +1569,4 @@ function editLabModalCtrl($scope, $uibModalInstance, $http, data) {
     $uibModalInstance.dismiss('cancel');
   };
 }
+

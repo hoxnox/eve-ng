@@ -568,6 +568,38 @@ Style for form-group-selection
 Style for form-group-selection //END
 */
 
+
+.container-img-nodeList .imageBlock{
+  float: left;
+  width: 100px;
+  height: 80px;
+  background-color: white;
+  text-align: center;
+  cursor: pointer;
+}
+.container-img-nodeList .imageBlock img{
+  width: 35%;
+  display: block;
+  margin: 0 auto;
+  position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.container-img-nodeList{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: white;
+  border: 1px solid #d2d6de;
+  padding-top: 10px;
+  overflow: auto;
+}
 /*
 Style for startUpConfigModal
 */
@@ -642,7 +674,6 @@ Style for icon cange //Start
 }
 .tbodyNodeList .form-group-selection i{
   line-height: 8px;
-  margin-right: 15px;
 }
 .tbodyNodeList .form-group-selection img{
   width: 35%;
@@ -671,5 +702,29 @@ Style for dropdown "More columns" //START
 }
 .dropdown-menu__column li input{
   margin-right: 10px;
-  
+}
+
+/*
+Sturtup-congig 
+*/
+.form-horizontal--active{
+  display: block;
+}
+.form-horizontal--hidden{
+  display: none;
+}
+.list-group .glyphicon-floppy-saved{
+  margin-left: 10px;
+}
+/*
+Free select
+*/
+.activeFreeSelect i{
+  color: red;
+}
+.free-selected{
+  -webkit-box-shadow: 0 0 10px 10px rgba(70, 166, 182, 0.5);
+     -moz-box-shadow: 0 0 10px 10px rgba(70, 166, 182, 0.5);
+       -o-box-shadow: 0 0 10px 10px rgba(70, 166, 182, 0.5);
+          box-shadow: 0 0 10px 10px rgba(70, 166, 182, 0.5);
 }

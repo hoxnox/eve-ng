@@ -19,6 +19,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	$scope.interfListCount=false;
 	$scope.ready=false;
 	$scope.tempConn= new Object();
+	$scope.tempNet= new Object();
 	$scope.changedCursor="";
 	$scope.addNewObject={};
 	$scope.fullPathToFile=$rootScope.lab;
@@ -142,15 +143,30 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		}
 	}
 
+	///////////////////////////////////////////////
+	//// Wipe all nodes //START
 	$scope.wipeAllNode = function(){
-		for(i in $scope.node)
+		openrightHide();
+		var h_flague = false;
+		$(".free-selected").each(function(){
+		  var id = $(this).attr("id");
+		  id = id.replace("nodeID_", "");
+		  var node = $scope.node[id];
+		  $scope.wipeNode(node.id);
+			h_flague = true;
+		})
+		if (!h_flague)
 		{
-			var node = $scope.node[i];
-			$scope.wipeNode(node.id);
+			for(i in $scope.node)
+			{
+				var node = $scope.node[i];
+				$scope.wipeNode(node.id);
+			}
 		}
 	}
 
 	$scope.wipeNode = function(id){
+		openrightHide();
 		if (!id)
 		{
 			id = $("#tempElID").val();
@@ -159,26 +175,56 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		$http.get('/api/labs'+$rootScope.lab+'/nodes/'+id+'/wipe')
 		console.log("s-a transmis wipe")
 	}
+	///////////////////////////////////////////////
+	//// Wipe all nodes /END
 
+	///////////////////////////////////////////////
+	//// Start/Stop Node //START
 	$scope.startAllNode = function(){
-		for(i in $scope.node)
-		{
-			var node = $scope.node[i];
+		openrightHide();
+		var h_flague = false;
+		$(".free-selected").each(function(){
+		  var id = $(this).attr("id");
+		  id = id.replace("nodeID_", "");
+		  var node = $scope.node[id];
 			if (node.status == 0){
 				$scope.startstopNode(node.id);
 			}
-			
+			h_flague = true;
+		})
+		if (!h_flague)
+		{
+			for(i in $scope.node)
+			{
+				var node = $scope.node[i];
+				if (node.status == 0){
+					$scope.startstopNode(node.id);
+				}
+			}
 		}
 	}
 
 	$scope.stopAllNode = function(){
-		for(i in $scope.node)
-		{
-			var node = $scope.node[i];
+		openrightHide();
+		var h_flague = false;
+		$(".free-selected").each(function(){
+		  var id = $(this).attr("id");
+		  id = id.replace("nodeID_", "");
+		  var node = $scope.node[id];
 			if (node.status == 2){
 				$scope.startstopNode(node.id);
 			}
-			
+			h_flague = true;
+		})
+		if (!h_flague)
+		{
+			for(i in $scope.node)
+			{
+				var node = $scope.node[i];
+				if (node.status == 2){
+					$scope.startstopNode(node.id);
+				}
+			}
 		}
 	}
 
@@ -233,7 +279,210 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			//STOP NODE //END
 		}
 	}
+	///////////////////////////////////////////////
+	//// Start/Stop Node //END
+
+	///////////////////////////////////////////////
+	//// Export CFG //START
+	$scope.exportCFG = function(id){
+		openrightHide();
+		if (!id)
+		{
+			id = $("#tempElID").val();
+			id = id.replace("nodeID_", "");
+		}
+		$http.put('/api/labs'+$rootScope.lab+'/nodes/'+id+'/export')
+		.then(
+				function successCallback(response){
+					console.log(response);
+				},
+				function errorCallback(response){
+					console.log('Server Error');
+					console.log(response);
+				}
+			);
+		console.log("s-a transmis export")
+	}
+
+	$scope.exportAllCFG = function(id){
+		openrightHide();
+		var h_flague = false;
+		$(".free-selected").each(function(){
+		  var id = $(this).attr("id");
+		  id = id.replace("nodeID_", "");
+		  var node = $scope.node[id];
+			$http.put('/api/labs'+$rootScope.lab+'/nodes/' + id + '/export')
+				.then(
+						function successCallback(response){
+							console.log(response);
+						},
+						function errorCallback(response){
+							console.log('Server Error');
+							console.log(response);
+						}
+					);
+				console.log("s-a transmis export")
+			h_flague = true;
+		})
+		if (!h_flague)
+		{
+		for(i in $scope.node)
+			{
+				$http.put('/api/labs'+$rootScope.lab+'/nodes/' + i, '/export')
+				.then(
+						function successCallback(response){
+							console.log(response);
+						},
+						function errorCallback(response){
+							console.log('Server Error');
+							console.log(response);
+						}
+					);
+				console.log("s-a transmis export")
+			}
+		}
+	}
+	///////////////////////////////////////////////
+	//// Export CFG //END
+
+	///////////////////////////////////////////////
+	//// Set all startup-cfg for export //START
+	$scope.setAllStartupExport = function(){
+		openrightHide();
+		console.log("click")
+		var h_flague = false;
+		$(".free-selected").each(function(){
+		  var id = $(this).attr("id");
+		  id = id.replace("nodeID_", "");
+		  var node = $scope.node[id];
+			$http.put('/api/labs'+$rootScope.lab+'/nodes/' + id, {'config' : 1})
+				.then(
+					function successCallback(response){
+						console.log(response);
+					},
+					function errorCallback(response){
+						console.log('Server Error');
+						console.log(response);
+					}
+				);
+			h_flague = true;
+		})
+		if (!h_flague)
+		{
+			for (i in $scope.node)
+			{
+				$http.put('/api/labs'+$rootScope.lab+'/nodes/' + i, {'config' : 1})
+				.then(
+					function successCallback(response){
+						console.log(response);
+					},
+					function errorCallback(response){
+						console.log('Server Error');
+						console.log(response);
+					}
+				);
+			}
+		}
+	}
 	
+	$scope.setAllStartupNone = function(){
+		openrightHide();
+		//console.log("click")
+		var h_flague = false;
+		$(".free-selected").each(function(){
+		  var id = $(this).attr("id");
+		  id = id.replace("nodeID_", "");
+		  var node = $scope.node[id];
+			$http.put('/api/labs'+$rootScope.lab+'/nodes/' + id, {'config' : 0})
+				.then(
+					function successCallback(response){
+						console.log(response);
+					},
+					function errorCallback(response){
+						console.log('Server Error');
+						console.log(response);
+					}
+				);
+			h_flague = true;
+		})
+		if (!h_flague)
+		{
+			for (i in $scope.node)
+			{
+				$http.put('/api/labs'+$rootScope.lab+'/nodes/' + i, {'config' : 0})
+				.then(
+					function successCallback(response){
+						console.log(response);
+					},
+					function errorCallback(response){
+						console.log('Server Error');
+						console.log(response);
+					}
+				);
+			}
+		}
+	}
+
+	$scope.deleteAllStartupConfig = function(){
+		openrightHide();
+		//console.log("click")
+		var h_flague = false;
+		$(".free-selected").each(function(){
+		  var id = $(this).attr("id");
+		  id = id.replace("nodeID_", "");
+		  var node = $scope.node[id];
+			$http.put('/api/labs'+$rootScope.lab+'/configs/' + id, {'data' : ""})
+				.then(
+					function successCallback(response){
+						console.log(response);
+					},
+					function errorCallback(response){
+						console.log('Server Error');
+						console.log(response);
+					}
+				);
+			h_flague = true;
+		})
+		if (!h_flague)
+		{
+			for (i in $scope.node)
+			{
+				$http.put('/api/labs'+$rootScope.lab+'/configs/' + i, {'data' : ""})
+				.then(
+					function successCallback(response){
+						console.log(response);
+					},
+					function errorCallback(response){
+						console.log('Server Error');
+						console.log(response);
+					}
+				);
+			}
+		}
+	}
+	///////////////////////////////////////////////
+	//// Set all startup-cfg for export //END
+
+	///////////////////////////////////////////////
+	//// Free select //START
+	$scope.freeSelect = function(){
+		openrightHide();
+		//$("#freeSelect").toggleClass("activeFreeSelect")
+		if($("#freeSelect").hasClass('noneActive'))
+		{
+			$("#freeSelect").removeClass("noneActive").addClass("activeFreeSelect");
+			console.log('clasa active s-a adaugat');
+		}else if ($("#freeSelect").hasClass('activeFreeSelect'))
+		{
+			$("#freeSelect").removeClass("activeFreeSelect").addClass("noneActive");
+			$(".element-menu").removeClass("free-selected");
+			console.log('clasa active s-a sters');
+		}
+		
+	}
+	///////////////////////////////////////////////
+	//// Free select //END
+
 	$scope.nodeClickDown=false;
 	$scope.nodeDraggingFlag=false;
 	$scope.nodeTouching = function(node, $event){
@@ -621,4 +870,10 @@ function ObjectLength( object ) {
         }
     }
 	return length;
+}
+function openrightHide() {
+	$(".openright").hide();
+	setTimeout(function(){
+		$(".openright").show();
+	}, 100)
 }

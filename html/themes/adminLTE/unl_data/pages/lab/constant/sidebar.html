@@ -56,11 +56,11 @@
             <li><a class="pointer" ng-click="startAllNode()"><i class="glyphicon glyphicon-play"></i> Start all nodes</a></li>
             <li><a class="pointer" ng-click="stopAllNode()"><i class="glyphicon glyphicon-stop"></i> Stop all nodes</a></li>
             <li><a class="pointer" ng-click="wipeAllNode()"><i class="glyphicon glyphicon-erase"></i> Wipe all nodes</a></li>
-            <li><a class="pointer"><i class="glyphicon glyphicon-save"></i> Export all CFGs</a></li>
+            <li><a class="pointer" ng-click="exportAllCFG()"><i class="glyphicon glyphicon-save"></i> Export all CFGs</a></li>
             <li><a class="pointer" ng-click="openModal('editLab', 'megalg')"><i class="glyphicon glyphicon-pencil"></i> Edit lab</a></li>
-            <li><a class="pointer"><i class="glyphicon glyphicon-floppy-saved"></i> Set all startup-cfg to exported</a></li>
-            <li><a class="pointer"><i class="glyphicon glyphicon-floppy-save"></i> Set all startup-cfg to none</a></li>
-            <li><a class="pointer"><i class="glyphicon glyphicon-floppy-remove"></i> Delete all startup-cfg</a></li>
+            <li><a class="pointer" ng-click="setAllStartupExport()"><i class="glyphicon glyphicon-floppy-saved" ></i> Set all startup-cfg to exported</a></li>
+            <li><a class="pointer" ng-click="setAllStartupNone()"><i class="glyphicon glyphicon-floppy-save"></i> Set all startup-cfg to none</a></li>
+            <li><a class="pointer" ng-click="deleteAllStartupConfig()"><i class="glyphicon glyphicon-floppy-remove"></i> Delete all startup-cfg</a></li>
           </ul>
         </li>
 		<li>
@@ -70,7 +70,7 @@
           </a>
         </li>
 		<li>
-          <a class="pointer">
+          <a id="freeSelect" class="pointer noneActive" data-ng-click="freeSelect()">
             <i class="glyphicon glyphicon-check"></i>
             <span class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">Free Select</span>
           </a>

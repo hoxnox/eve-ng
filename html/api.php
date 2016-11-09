@@ -1209,6 +1209,15 @@ $app -> get('/api/logs/(:file)/(:lines)/(:search)', function($file = False, $lin
 	$app -> response -> setStatus(200);
 	$app -> response -> setBody(json_encode($arr));
 });
+
+/***************************************************************************
+ * ICONS
+ **************************************************************************/
+$app -> get('/api/icons', function() use ($app, $db) {
+	$arr = listNodeIcons();
+	$app -> response -> setStatus(200);
+	$app -> response -> setBody(json_encode($arr));
+});
 /***************************************************************************
  * Run
  **************************************************************************/
