@@ -18,16 +18,16 @@ DONE="\033[0;32mdone\033[0m"
 MYSQL_ROOT_PASSWD="eve-ng"
 
 # Installing dependencies
-echo -ne "Installing dependencies... "
+#echo -ne "Installing dependencies... "
 
-PACKAGES="$(cat ${CONTROL} 2>> ${LOG} | grep "Depends" 2>> ${LOG} | sed 's/Depends: //' 2>> ${LOG} | sed 's/,//g' 2>> ${LOG} | sed 's/ (.*)//g' 2>> ${LOG})"
-apt-get -qqy install ${PACKAGES} &>> ${LOG}
-if [ $? -ne 0 ]; then
-	echo -e ${FAILED}
-	exit 1
-fi
+#PACKAGES="$(cat ${CONTROL} 2>> ${LOG} | grep "Depends" 2>> ${LOG} | sed 's/Depends: //' 2>> ${LOG} | sed 's/,//g' 2>> ${LOG} | sed 's/ (.*)//g' 2>> ${LOG})"
+#apt-get -qqy install ${PACKAGES} &>> ${LOG}
+#if [ $? -ne 0 ]; then
+#	echo -e ${FAILED}
+#	exit 1
+#fi
 
-echo -e ${DONE}
+#echo -e ${DONE}
 
 # Environment for both Ubuntu 14.04 and 16.04
 echo -ne "Building environment... "
