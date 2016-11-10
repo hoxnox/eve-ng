@@ -130,56 +130,165 @@
   </ul>
 </nav>
 <!-- ContextMenu will be opened after clicking the left mouse button //END -->
+<nav id="context-menu_freeSelect" class="context-menu_freeSelect">
+  <ul class="context-menu__items_freeSelect">
+  	<li class="context-menu__item_freeSelect">
+      <a class="context-menu__link pointer" ng-click="startAllNode()">
+        <i class="glyphicon glyphicon-play"></i>  Start all
+      </a>
+    </li>
+    <li class="context-menu__item_freeSelect">
+      <a class="context-menu__link_freeSelect pointer" ng-click="stopAllNode()">
+        <i class="glyphicon glyphicon-stop"></i> Stop all
+      </a>
+    </li>
+    <li class="context-menu__item_freeSelect">
+      <a class="context-menu__link_freeSelect pointer" ng-click="wipeAllNode()">
+        <i class="glyphicon glyphicon-erase"></i> Wipe all
+      </a>
+    </li>
+    <hr>
+    <li class="context-menu__item_freeSelect">
+      <a class="context-menu__link_freeSelect pointer" ng-click="exportAllCFG()">
+        <i class="glyphicon glyphicon-save"></i> Export all CFGs
+      </a>
+    </li>
+    <li class="context-menu__item_freeSelect">
+      <a class="context-menu__link_freeSelect pointer" ng-click="setAllStartupExport()">
+        <i class="glyphicon glyphicon-floppy-saved"></i> Set all startup-cfg to exported
+      </a>
+    </li>
+    <li class="context-menu__item_freeSelect">
+      <a class="context-menu__link_freeSelect pointer" ng-click="setAllStartupNone()">
+        <i class="glyphicon glyphicon-floppy-save"></i> Set all startup-cfg to none
+      </a>
+    </li>
+    <hr>
+    <li class="context-menu__item_freeSelect">
+      <a class="context-menu__link_freeSelect pointer" ng-click="deleteAllStartupConfig()">
+        <i class="glyphicon glyphicon-trash"></i> Delete nodes startup-cfg
+      </a>
+    </li>
+    <li class="context-menu__item_freeSelect">
+      <a class="context-menu__link_freeSelect pointer" ng-click="">
+        <i class="glyphicon glyphicon-trash"></i> Delete all
+      </a>
+    </li>
+  </ul>  
+</nav>
+
 
 <nav id="context-menu" class="context-menu" >
-  <ul class="context-menu__items">
-  	<li class="context-menu__item">
-    
-    </li>
-  	<li class="context-menu__item">
-      <a class="context-menu__link pointer" ng-click="startstopNode()">
-        <i class="glyphicon glyphicon-play"></i> Start
-      </a>
-    </li>
-    <li class="context-menu__item">
-      <a class="context-menu__link pointer" ng-click="startstopNode()">
-        <i class="glyphicon glyphicon-stop"></i> Stop
-      </a>
-    </li>
-    <li class="context-menu__item">
-      <a class="context-menu__link pointer" ng-click="wipeNode()">
-        <i class="glyphicon glyphicon-erase"></i> Wipe
-      </a>
-    </li>
-    <li class="context-menu__item">
-      <a class="context-menu__link pointer" ng-click="">
-        <i class="glyphicon glyphicon-save"></i> Export CFG
-      </a>
-    </li>
-    <li class="context-menu__item">
-      <a class="context-menu__link pointer" ng-click="editEl()">
-        <i class="fa fa-edit"></i> Edit Element
-      </a>
-    </li>
-    <li class="context-menu__item">
-      <a class="context-menu__link pointer" ng-click="deleteEl()">
-        <i class="fa fa-trash-o"></i> Delete Element
-      </a>
-    </li>
-	
-	<li class="context-menu__item">
-		<a class="context-menu__link pointer menu-collapse" data-path="myDropDown" href="#" onclick="return false"><i class="glyphicon glyphicon-chevron-down"></i>Capture</a>
-	</li>
-	<li class="context-menu__item">
-		<a class="context-menu__link pointer context-collapsible myDropDown hidden" href="javascript:void(0)"><i class="fa fa-search"></i> hello</a>
-	</li>
-	<li class="context-menu__item">
-		<a class="context-menu__link pointer context-collapsible myDropDown hidden" href="javascript:void(0)"><i class="fa fa-search"></i> hello</a>
-	</li>
-	<li class="context-menu__item">
-		<a class="context-menu__link pointer context-collapsible myDropDown hidden" href="javascript:void(0)"><i class="fa fa-search"></i> hello</a>
-	</li>
-  </ul>  
+	<!--<div id="nodesGroup-content">
+	  <ul class="context-menu__items_freeSelect">
+	  	<li class="context-menu__item_freeSelect">
+	      <a class="context-menu__link pointer" ng-click="startAllNode()">
+	        <i class="glyphicon glyphicon-play"></i>  Start all
+	      </a>
+	    </li>
+	    <li class="context-menu__item_freeSelect">
+	      <a class="context-menu__link_freeSelect pointer" ng-click="">
+	        <i class="glyphicon glyphicon-stop"></i> Stop all
+	      </a>
+	    </li>
+	    <li class="context-menu__item_freeSelect">
+	      <a class="context-menu__link_freeSelect pointer" ng-click="">
+	        <i class="glyphicon glyphicon-erase"></i> Wipe all
+	      </a>
+	    </li>
+	    <hr>
+	    <li class="context-menu__item_freeSelect">
+	      <a class="context-menu__link_freeSelect pointer" ng-click="">
+	        <i class="glyphicon glyphicon-save"></i> Export all CFGs
+	      </a>
+	    </li>
+	    <li class="context-menu__item_freeSelect">
+	      <a class="context-menu__link_freeSelect pointer" ng-click="">
+	        <i class="glyphicon glyphicon-floppy-saved"></i> Set all startup-cfg to exported
+	      </a>
+	    </li>
+	    <li class="context-menu__item_freeSelect">
+	      <a class="context-menu__link_freeSelect pointer" ng-click="">
+	        <i class="glyphicon glyphicon-floppy-save"></i> Set all startup-cfg to none
+	      </a>
+	    </li>
+	    <hr>
+	    <li class="context-menu__item_freeSelect">
+	      <a class="context-menu__link_freeSelect pointer" ng-click="">
+	        <i class="glyphicon glyphicon-trash"></i> Delete nodes startup-cfg
+	      </a>
+	    </li>
+	    <li class="context-menu__item_freeSelect">
+	      <a class="context-menu__link_freeSelect pointer" ng-click="">
+	        <i class="glyphicon glyphicon-trash"></i> Delete all
+	      </a>
+	    </li>
+	  </ul>  
+	</div>-->
+	<div id="network_content">
+		<ul class="context-menu__items">
+		   	<li class="context-menu__item">
+		      <a class="context-menu__link pointer" ng-click="editEl()">
+		        <i class="fa fa-edit"></i> Edit Connection
+		      </a>
+		    </li>
+		    <li class="context-menu__item">
+		      <a class="context-menu__link pointer" my-action="delConnection">
+		        <i class="fa fa-times"></i> Delete Connection
+		      </a>
+		    </li>
+	  	</ul>
+	</div>
+	<div id="node_content">
+	  <ul class="context-menu__items">
+	  	<li class="context-menu__item">
+	    
+	    </li>
+	  	<li class="context-menu__item">
+	      <a class="context-menu__link pointer" ng-click="startstopNode()">
+	        <i class="glyphicon glyphicon-play"></i> Start
+	      </a>
+	    </li>
+	    <li class="context-menu__item">
+	      <a class="context-menu__link pointer" ng-click="startstopNode()">
+	        <i class="glyphicon glyphicon-stop"></i> Stop
+	      </a>
+	    </li>
+	    <li class="context-menu__item">
+	      <a class="context-menu__link pointer" ng-click="editEl()">
+	        <i class="fa fa-edit"></i> Edit
+	      </a>
+	    </li>
+	    <li class="context-menu__item">
+	      <a class="context-menu__link pointer" ng-click="wipeNode()">
+	        <i class="glyphicon glyphicon-erase"></i> Wipe
+	      </a>
+	    </li>
+	    <li class="context-menu__item">
+	      <a class="context-menu__link pointer" ng-click="exportCFG()">
+	        <i class="glyphicon glyphicon-save"></i> Export CFG
+	      </a>
+	    </li>
+	    <li class="context-menu__item">
+	      <a class="context-menu__link pointer" ng-click="deleteEl()">
+	        <i class="fa fa-trash-o"></i> Delete
+	      </a>
+	    </li>
+		
+		<li class="context-menu__item">
+			<a class="context-menu__link pointer menu-collapse" data-path="myDropDown" href="#" onclick="return false"><i class="glyphicon glyphicon-chevron-down"></i>Capture</a>
+		</li>
+		<li class="context-menu__item">
+			<a class="context-menu__link pointer context-collapsible myDropDown hidden" href="javascript:void(0)"><i class="fa fa-search"></i> hello</a>
+		</li>
+		<li class="context-menu__item">
+			<a class="context-menu__link pointer context-collapsible myDropDown hidden" href="javascript:void(0)"><i class="fa fa-search"></i> hello</a>
+		</li>
+		<li class="context-menu__item">
+			<a class="context-menu__link pointer context-collapsible myDropDown hidden" href="javascript:void(0)"><i class="fa fa-search"></i> hello</a>
+		</li>
+	  </ul>  
+  </div>
 </nav>	
 
 <input type="hidden" value="" id="tempElID">
@@ -548,8 +657,8 @@ function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 	[ "Label", {
 		label:SLb, 
 		id:SID+'_'+SLb,
-		cssClass: (SLb != '') ? "aLabel" : '',
-		location:0.08,
+		cssClass:  (SLb != '') ? "aLabel" : '',
+		location:0.2,
 		events:{
 			contextmenu :function(){
 				$("#tempElID").val(DID)
@@ -562,9 +671,10 @@ function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 	
 	conn_temp.addOverlay(["Label", {
 	label:Dlb, 
-	id:DID+'_'+Dlb,
+	id:SID+'_'+Dlb,
 	cssClass: (Dlb != '') ? "aLabel" : '',
-	location:0.92
+	location:0.5,
+	
 	}]);
 
 }

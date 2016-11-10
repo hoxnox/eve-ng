@@ -51,6 +51,7 @@ td.imageList .ui-select-container .ui-select-choices{
 	cursor : url(/themes/adminLTE/unl_data/img/icons/Switch_cursor.png),auto;;
 }
 
+
 /* Context-menu_leftClick */
 
 .context-menu_leftClick{
@@ -98,6 +99,59 @@ td.imageList .ui-select-container .ui-select-choices{
     color: #0066aa;
     text-decoration: none;
 }
+
+/* Context-menu_freeSelect */
+
+.context-menu_freeSelect{
+  display: none;
+  position: absolute;
+  z-index: 3333;
+  padding: 12px 0;
+  min-width: 170px;
+  background-color: #fff;
+  border: solid 1px #dfdfdf;
+  box-shadow: 1px 1px 2px #cfcfcf;
+}
+.context-menu__items_freeSelect hr{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.context-menu_freeSelect--active {
+  display: block;
+}
+
+.context-menu__items_freeSelect {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.context-menu__item_freeSelect {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.context-menu__item_freeSelect:last-child {
+  margin-bottom: 0;
+}
+
+.context-menu__link_freeSelect{
+  display: block;
+  padding: 4px 12px;
+  color: #0066aa;
+  text-decoration: none;
+}
+
+.context-menu__link_freeSelect:hover {
+  color: #fff;
+  background-color: #0066aa;
+}
+.context-menu_freeSelect a {
+    color: #0066aa;
+    text-decoration: none;
+}
+
 
 /* context menu */
 
@@ -202,7 +256,7 @@ td.imageList .ui-select-container .ui-select-choices{
   position: absolute;
   z-index: 3333;
   padding: 12px 0;
-  width: 150px;
+  min-width: 150px;
   background-color: #fff;
   border: solid 1px #dfdfdf;
   box-shadow: 1px 1px 2px #cfcfcf;
@@ -336,12 +390,12 @@ td.imageList .ui-select-container .ui-select-choices{
 
 .aLabel {
     background-color: #e6f5ff;
-    padding: 0.3em;
-    border-radius: 0.9em;
+    padding: 0.08em;
+    border-radius: 0.8em;
     border: 2px solid #346789;
     cursor: pointer;
-	font-size: 11px;
-	font-weight: bold;
+    font-size: 11px;
+    font-weight: bold;
 }
 
 .icon-opacity{

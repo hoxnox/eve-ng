@@ -44,3 +44,7 @@ document.addEventListener( "Wich", function(e) {
     	return false;
 	}
 }, true);
+
+/*
+Open form startup-config
+*/
