@@ -12,6 +12,8 @@ WARNING="\033[1;33mwarning\033[0m"
 INFO="\033[0;34mblue\033[0m"
 DONE="\033[0;32mdone\033[0m"
 
+MYSQL_ROOT_PASSWD="eve-ng"
+
 # Environment for both Ubuntu 14.04 and 16.04
 echo -ne "Building environment... "
 
@@ -49,6 +51,26 @@ echo -e ${DONE}
 # Building deb packages
 echo -ne "Building deb packages... "
 
+cat > ${CONTROL_DIR}/postinst << EOF
+#!/bin/bash
+
+echo -ne "Setting MySQL root password... "
+
+echo mysql-server mysql-server/root_password password "${MYSQL_ROOT_PASSWD}" 2> /dev/null | debconf-set-selections &> /dev/null
+if [ \$? -ne 0 ]; then
+	echo -e "${FAILED}"
+	exit 1
+fi
+
+echo mysql-server mysql-server/root_password_again password "${MYSQL_ROOT_PASSWD}" 2> /dev/null | debconf-set-selections &> /dev/null
+if [ \$? -ne 0 ]; then
+	echo -e "${FAILED}"
+	exit 1
+fi
+
+echo -e "${DONE}"
+EOF
+
 cd ${DATA_DIR} &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
@@ -79,7 +101,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-tar czf control.tar.gz md5sums control &>> ${LOG}
+tar czf control.tar.gz md5sums control postinst &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1

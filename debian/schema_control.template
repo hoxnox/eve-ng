@@ -8,4 +8,4 @@ Installed-Size: 9912
 Section: devel
 Priority: optional
 Provides: eve-ng-schema
-Description: Daabase schema for UNetLab/EVE-NG
+Description: Database schema for UNetLab/EVE-NG
