@@ -64,7 +64,6 @@ cat > ${CONTROL_DIR}/preinst << EOF
 #!/bin/bash
 
 echo -ne "Setting MySQL root password... "
-<<<<<<< HEAD
 echo "mysql-server-5.5 mysql-server/root_password password '${MYSQL_ROOT_PASSWD}'" | debconf-set-selections
 if [ \$? -ne 0 ]; then
 	echo -e "${FAILED}"
@@ -75,17 +74,6 @@ if [ \$? -ne 0 ]; then
 	echo -e "${FAILED}"
 	exit 1
 fi
-=======
-echo mysql-server mysql-server/root_password password "${MYSQL_ROOT_PASSWD}" | debconf-set-selections
-echo mysql-server mysql-server/root_password_again password "${MYSQL_ROOT_PASSWD}" | debconf-set-selections
-echo -e "${DONE}"
-
-#. /usr/share/debconf/confmodule
-#db_set mysql-server/root_password "${MYSQL_ROOT_PASSWD}"
-#db_fset mysql-server/root_password seen true
-#db_set  mysql-server/root_password_again "${MYSQL_ROOT_PASSWD}"
-#db_fset mysql-server/root_password_again seen true
->>>>>>> 22ed665bb353d8310a6fae734bd0c042bc3ecd8a
 EOF
 
 cd ${DATA_DIR} &>> ${LOG}
