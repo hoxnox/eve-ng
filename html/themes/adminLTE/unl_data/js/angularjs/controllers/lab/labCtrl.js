@@ -28,15 +28,10 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		$('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
 	}
 	
-<<<<<<< HEAD
 	// $scope.refreshPage = function(){
 	// 	location.reload();
 	// }
-=======
-	$scope.refreshPage = function(){
-		location.reload();
-	}
->>>>>>> 6504f6fc34a235f6481b82a37a0b185d55eacca6
+
 	$scope.topologyRefresh = function(){
 		jsPlumb.detachEveryConnection();
 		jsPlumb.reset();

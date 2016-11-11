@@ -1188,10 +1188,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 	
 	$scope.applyChanges = function(id){
 		console.log('applyChanges')
-<<<<<<< HEAD
-=======
-		$scope.anychanges=false;
->>>>>>> 6504f6fc34a235f6481b82a37a0b185d55eacca6
+
 		var putdata = {
 			'template' : $scope.nodeList[id].template,
 			'type' : $scope.nodeList[id].template,
