@@ -107,6 +107,15 @@ fi
 
 echo -e ${DONE}
 
+echo -ne "Calculating installed size... "
+SIZE=$(du -sk ${DATA_DIR} | awk '{print $1}')
+sed -i "s/^Installed-Size.*/Installed-Size: ${SIZE}/g" ${CONTROL}
+if [ $? -ne 0 ]; then
+    echo -e ${FAILED}
+    exit 1
+fi
+echo -e ${DONE}
+
 # Building deb packages
 echo -ne "Building deb packages... "
 
@@ -118,31 +127,6 @@ fi
 
 cat > ${CONTROL_DIR_14}/preinst << EOF
 #!/bin/bash
-
-dpkg -l mysql-server &> /dev/null
-if [ \$? -ne 0 ]; then
-	echo -ne "Installing MySQL... "
-
-	echo mysql-server mysql-server/root_password password "${MYSQL_ROOT_PASSWD}" 2> /dev/null | debconf-set-selections &> /dev/null
-	if [ \$? -ne 0 ]; then
-		echo -e "${FAILED}"
-		exit 1
-	fi
-
-	echo mysql-server mysql-server/root_password_again password "${MYSQL_ROOT_PASSWD}" 2> /dev/null | debconf-set-selections &> /dev/null
-	if [ \$? -ne 0 ]; then
-		echo -e "${FAILED}"
-		exit 1
-	fi
-
-	apt-get -qqy install mysql-server &> /dev/null
-	if [ \$? -ne 0 ]; then
-		echo -e "${FAILED}"
-		exit 1
-	fi
-
-	echo -e "${DONE}"
-fi
 
 echo -ne "Checking MySQL... "
 echo "\q" | mysql -u root --password=${MYSQL_ROOT_PASSWD} &> /dev/null
@@ -189,6 +173,7 @@ fi
 
 cat > ${CONTROL_DIR_14}/postinst << EOF
 #!/bin/bash
+ldconfig &> /dev/null
 echo -ne "Enable services at boot... "
 update-rc.d tomcat7 enable &> /dev/null
 update-rc.d mysql enable &> /dev/null
@@ -198,6 +183,7 @@ echo -ne "Starting Tomcat... "
 cp -a /etc/tomcat7/server-guacamole.xml /etc/tomcat7/server.xml &> /dev/null 
 service tomcat7 restart &> /dev/null
 pgrep -u tomcat7 java &> /dev/null && echo -e "${DONE}" || echo -e "${FAILED}"
+echo -ne "Starting Guacamole daemon... "
 service guacd restart &> /dev/null
 pgrep guacd &> /dev/null && echo -e "${DONE}" || echo -e "${FAILED}"
 EOF

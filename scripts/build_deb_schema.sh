@@ -48,6 +48,15 @@ fi
 
 echo -e ${DONE}
 
+echo -ne "Calculating installed size... "
+SIZE=$(du -sk ${DATA_DIR} | awk '{print $1}')
+sed -i "s/^Installed-Size.*/Installed-Size: ${SIZE}/g" ${CONTROL}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+echo -e ${DONE}
+
 # Building deb packages
 echo -ne "Building deb packages... "
 
@@ -55,20 +64,15 @@ cat > ${CONTROL_DIR}/postinst << EOF
 #!/bin/bash
 
 echo -ne "Setting MySQL root password... "
-
-echo mysql-server mysql-server/root_password password "${MYSQL_ROOT_PASSWD}" 2> /dev/null | debconf-set-selections &> /dev/null
-if [ \$? -ne 0 ]; then
-	echo -e "${FAILED}"
-	exit 1
-fi
-
-echo mysql-server mysql-server/root_password_again password "${MYSQL_ROOT_PASSWD}" 2> /dev/null | debconf-set-selections &> /dev/null
-if [ \$? -ne 0 ]; then
-	echo -e "${FAILED}"
-	exit 1
-fi
-
+echo mysql-server mysql-server/root_password password "${MYSQL_ROOT_PASSWD}" | debconf-set-selections
+echo mysql-server mysql-server/root_password_again password "${MYSQL_ROOT_PASSWD}" | debconf-set-selections
 echo -e "${DONE}"
+
+#. /usr/share/debconf/confmodule
+#db_set mysql-server/root_password "${MYSQL_ROOT_PASSWD}"
+#db_fset mysql-server/root_password seen true
+#db_set  mysql-server/root_password_again "${MYSQL_ROOT_PASSWD}"
+#db_fset mysql-server/root_password_again seen true
 EOF
 
 cd ${DATA_DIR} &>> ${LOG}
