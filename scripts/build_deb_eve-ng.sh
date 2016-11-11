@@ -292,6 +292,15 @@ fi
 
 echo -e ${DONE}
 
+echo -ne "Calculating installed size... "
+SIZE=$(du -sk ${DATA_DIR} | awk '{print $1}')
+sed -i "s/^Installed-Size.*/Installed-Size: ${SIZE}/g" ${CONTROL}
+if [ $? -ne 0 ]; then
+    echo -e ${FAILED}
+    exit 1
+fi
+echo -e ${DONE}
+
 # Building deb packages
 echo -ne "Building deb packages... "
 

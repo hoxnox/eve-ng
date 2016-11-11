@@ -4,8 +4,9 @@ Name: Emulated Virtual Environment - schema
 Architecture: amd64
 Maintainer: Andrea Dainese (andrea.dainese@gmail.com)
 Homepage: http://www.unetlab.com/
-Installed-Size: 9912
+Installed-Size: 36
 Section: devel
 Priority: optional
 Provides: eve-ng-schema
+Pre-Depends: debconf
 Description: Database schema for UNetLab/EVE-NG

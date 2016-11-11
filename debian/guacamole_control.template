@@ -4,10 +4,10 @@ Name: Emulated Virtual Environment - Guacamole
 Architecture: amd64
 Maintainer: Andrea Dainese (andrea.dainese@gmail.com)
 Homepage: http://www.unetlab.com/
-Installed-Size: 9912
+Installed-Size: 2340228
 Section: devel
 Priority: optional
 Provides: eve-ng-guacamole
-Pre-Depends: eve-ng-schema (>= 2.0.1-23)
-Depends: default-jdk, libcairo2-dev, libelf1, libfreerdp-dev, libjpeg-turbo8-dev, libossp-uuid-dev, libpango1.0-dev, libpcap0.8, libpng12-dev, libpulse-dev, libssh2-1-dev, libssl-dev, libtelnet-dev, libvncserver-dev, libvorbis-dev, lsb-release, mysql-server, telnet, tomcat7, tomcat7-admin, tomcat7-docs
+Pre-Depends: eve-ng-schema (>= 2.0.1-36), mysql-server
+Depends: default-jdk, libcairo2-dev, libelf1, libfreerdp-dev, libjpeg-turbo8-dev, libossp-uuid-dev, libpango1.0-dev, libpcap0.8, libpng12-dev, libpulse-dev, libssh2-1-dev, libssl-dev, libtelnet-dev, libvncserver-dev, libvorbis-dev, lsb-release, telnet, tomcat7, tomcat7-admin, tomcat7-docs
 Description: Guacamole for UNetLab/EVE-NG
