@@ -1,5 +1,5 @@
 .customHover tr:hover td {
-	background-color: #ddd;
+  background-color: #ddd;
 }
 
 .tooltip-inner {
@@ -8,41 +8,41 @@
 }
 
 .scale-menu-inside{
-	margin:5px;
+  margin:5px;
 }
 .scale-menu-helper{
-	position: absolute; 
-	width:100%;
+  position: absolute; 
+  width:100%;
 }
 .scale-menu-collapsed{
-	right:0;
-	height: 45px; 
-	width:52px; 
-	background-color:#fff; 
-	position:absolute; 
-	z-index:14;
-	-webkit-box-shadow: 0px 5px 74px 0px rgba(0,0,0,0.75);
-	-moz-box-shadow: 0px 5px 74px 0px rgba(0,0,0,0.75);
-	box-shadow: 0px 5px 74px 0px rgba(0,0,0,0.75);
-	background-color: #ddd;
+  right:0;
+  height: 45px; 
+  width:52px; 
+  background-color:#fff; 
+  position:absolute; 
+  z-index:14;
+  -webkit-box-shadow: 0px 5px 74px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 5px 74px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 5px 74px 0px rgba(0,0,0,0.75);
+  background-color: #ddd;
 }
 
 .scale-menu{
-	right:0;
-	height: 150px; 
-	width:52px; 
-	background-color:#fff; 
-	position:absolute; 
-	z-index:14;
-	-webkit-box-shadow: 0px 5px 74px 0px rgba(0,0,0,0.75);
-	-moz-box-shadow: 0px 5px 74px 0px rgba(0,0,0,0.75);
-	box-shadow: 0px 5px 74px 0px rgba(0,0,0,0.75);
-	background-color: #ddd;
+  right:0;
+  height: 150px; 
+  width:52px; 
+  background-color:#fff; 
+  position:absolute; 
+  z-index:14;
+  -webkit-box-shadow: 0px 5px 74px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 5px 74px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 5px 74px 0px rgba(0,0,0,0.75);
+  background-color: #ddd;
 }
 
 div.pv_element{
-	position:absolute;
-	z-index:10;
+  position:absolute;
+  z-index:10;
 }
 
 div.line{
@@ -53,15 +53,15 @@ div.line{
 }
 
 .tablefont tbody td {
-	font-size: 18px;
+  font-size: 18px;
 }
 
 .pointer {
-	cursor:pointer;
+  cursor:pointer;
 }
 
 .zero-border{
-	border-radius: 0px 0 0 0px;
+  border-radius: 0px 0 0 0px;
 }
 
 @-webkit-keyframes ld {
@@ -131,7 +131,7 @@ div.line{
 
 /*
 CSS for load img
-	START
+  START
 */
 
 .spinner {
@@ -189,7 +189,7 @@ CSS for load img
 
 /*
 CSS for load img
-	END
+  END
 */
 
 /*
@@ -507,29 +507,29 @@ Preview images size //END
 Style for form-group-selection
 */
 .form-group-selection{
-	cursor: pointer;
-	padding: 5px 0 5px 0;
+  cursor: pointer;
+  padding: 5px 0 5px 0;
 }
 .form-group-selection label{
-	line-height: 34px;
+  line-height: 34px;
 }
 .form-group-selection i{
-	float: right;
-	line-height: 37px;
+  float: right;
+  line-height: 37px;
 }
 .container-img .imageBlock{
-	float: left;
-	width: 136px;
-	height: 80px;
-	background-color: white;
-	text-align: center;
-	cursor: pointer;
+  float: left;
+  width: 136px;
+  height: 80px;
+  background-color: white;
+  text-align: center;
+  cursor: pointer;
 }
 .container-img .imageBlock img{
-	width: 35%;
-	display: block;
-	margin: 0 auto;
-	position: absolute;
+  width: 35%;
+  display: block;
+  margin: 0 auto;
+  position: absolute;
     top: 50%;
     left: 50%;
     -webkit-transform: translate(-50%, -50%);
@@ -538,31 +538,31 @@ Style for form-group-selection
     transform: translate(-50%, -50%);
 }
 .container-img{
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 10;
-	background-color: white;
-	border: 1px solid #d2d6de;
-	padding-top: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: white;
+  border: 1px solid #d2d6de;
+  padding-top: 10px;
 }
 .parent-form{
-	position: relative;
-	padding-left: 15px;
-	padding-right: 15px;
+  position: relative;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 .row-icon{
-	padding: 0 10px;
+  padding: 0 10px;
 }
 .container__img {
-	width: 90%;
-	height: 70%;
-	position: relative;
+  width: 90%;
+  height: 70%;
+  position: relative;
 }
 .container__text {
-	width: 90%;
-	height: 20%;
+  width: 90%;
+  height: 20%;
 }
 /*
 Style for form-group-selection //END
@@ -727,4 +727,9 @@ Free select
      -moz-box-shadow: 0 0 10px 10px rgba(70, 166, 182, 0.5);
        -o-box-shadow: 0 0 10px 10px rgba(70, 166, 182, 0.5);
           box-shadow: 0 0 10px 10px rgba(70, 166, 182, 0.5);
+}
+
+
+.modal-content_opacity{
+  opacity: 0.3;
 }

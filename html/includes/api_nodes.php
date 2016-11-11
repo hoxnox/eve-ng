@@ -25,7 +25,17 @@ function apiAddLabNode($lab, $p, $o) {
 	$numberNodes = $p['numberNodes'];
 	unset($p['numberNodes']);
 	
+	$default_name = $p['name'];
+	if ($default_name == "R")
+		$o = True;
+	
 	$ids = array();
+	$no_array = false;
+	if (!$numberNodes)
+	{
+		$numberNodes = 1;
+		$no_array = true;
+	}
 	for($i = 1 ; $i<= $numberNodes; $i++)
 	{
 		if ($i > 1)
@@ -35,7 +45,7 @@ function apiAddLabNode($lab, $p, $o) {
 		}
 		$id = $lab -> getFreeNodeId();
 		// Adding node_id to node_name if required
-		if ($o == True && isset($p['name'])) $p['name'] = $p['name'].$lab -> getFreeNodeId();
+		if ($o == True && $default_name) $p['name'] = $default_name.$lab -> getFreeNodeId();
 		
 		// Adding the node
 		$rc = $lab -> addNode($p);
@@ -46,7 +56,7 @@ function apiAddLabNode($lab, $p, $o) {
 		$output['status'] = 'success';
 		$output['message'] = $GLOBALS['messages'][60023];
                 $output['data'] = array(
-                        'id'=>$ids
+                        'id'=> ($no_array ? $id : $ids)
 			);
 	} else {
 		$output['code'] = 400;
