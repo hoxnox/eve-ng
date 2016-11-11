@@ -173,7 +173,7 @@ fi
 
 cat > ${CONTROL_DIR_14}/postinst << EOF
 #!/bin/bash
-ldconfig &> /dev/null
+ldconfig -v &> /dev/null
 echo -ne "Enable services at boot... "
 update-rc.d tomcat7 enable &> /dev/null
 update-rc.d mysql enable &> /dev/null
