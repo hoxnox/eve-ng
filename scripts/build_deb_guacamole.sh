@@ -2,7 +2,8 @@
 BUILD_DIR="/build"
 LOG="/tmp/eve_build.log"
 SRC_DIR="/usr/src/eve-ng-public-dev"
-CONTROL="${SRC_DIR}/debian/guacamole_control.template"
+CONTROL_14="${SRC_DIR}/debian/guacamole_control.template"
+CONTROL_16="${SRC_DIR}/debian/guacamole_xenial_control.template"
 CONTROL_DIR_14="$(mktemp -dt eve_control_14.XXXXXXXXXX)"
 DATA_DIR_14="$(mktemp -dt eve_data_14.XXXXXXXXXX)"
 CONTROL_DIR_16="$(mktemp -dt eve_control_16.XXXXXXXXXX)"
@@ -92,14 +93,14 @@ if [ $? -ne 0 ]; then
 fi
 
 # Environment for Ubuntu 14.04
-cat ${CONTROL} 2>> ${LOG} | sed "s/%VERSION%/${VERSION}/" 2>> ${LOG} | sed "s/%RELEASE%/${RELEASE}/" 2>> ${LOG} > ${CONTROL_DIR_14}/control
+cat ${CONTROL_14} 2>> ${LOG} | sed "s/%VERSION%/${VERSION}/" 2>> ${LOG} | sed "s/%RELEASE%/${RELEASE}/" 2>> ${LOG} > ${CONTROL_DIR_14}/control
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
 
 # Environment for Ubuntu 16.04
-cat ${CONTROL} 2>> ${LOG} | sed "s/%VERSION%/${VERSION}/" 2>> ${LOG} | sed "s/%RELEASE%/${RELEASE}/" 2>> ${LOG} | sed "s/tomcat7/tomcat8/g" 2>> ${LOG} > ${CONTROL_DIR_16}/control
+cat ${CONTROL_16} 2>> ${LOG} | sed "s/%VERSION%/${VERSION}/" 2>> ${LOG} | sed "s/%RELEASE%/${RELEASE}/" 2>> ${LOG} | sed "s/tomcat7/tomcat8/g" 2>> ${LOG} > ${CONTROL_DIR_16}/control
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -200,7 +201,7 @@ systemctl enable mysql &> /dev/null
 systemctl enable guacd &> /dev/null
 echo -e "${DONE}"
 echo -ne "Starting Tomcat... "
-cp -a /etc/tomcat8/server-guacamole.xml /etc/tomcat8/server.xml &> /dev/null
+cat /etc/tomcat8/server-guacamole.xml | grep -v JasperListener >  /etc/tomcat8/server.xml  &> /dev/null
 systemctl restart tomcat7 &> /dev/null
 pgrep -u tomcat8 java &> /dev/null && echo -e "${DONE}" || echo -e "${FAILED}"
 systemctl restart guacd &> /dev/null
