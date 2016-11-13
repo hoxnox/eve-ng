@@ -2258,23 +2258,23 @@ class Node {
 							$this -> flags_eth .= ' -netdev tap,id=net'.$i.',ifname=vunl'.$this -> tenant.'_'.$this -> id.'_'.$i.',script=no';
 						}
 						break;
-                    case 'xrv9k':
+					case 'xrv9k':
 						for ($i = 0; $i < $this -> ethernet; $i++) {
 							if (isset($old_ethernets[$i])) {
 								// Previous interface found, copy from old one
 								$this -> ethernets[$i] = $old_ethernets[$i];
 							} else {
-									if ($i == 0) {
-											$n = 'Mgmt0/0/CPU0/0';      // Interface name
-									} else if ($i == 1) {
-											$n = 'Internal use';              // Interface name
-									} else if ($i == 2) {
-											$n = 'Internal use';              // Interface name		
-									} else {
-											$n = 'Gi0/0/0/'.($i - 3);   // Interface name
-									}
-									try {
-											$this -> ethernets[$i] = new Interfc(Array('name' => $n, 'type' => 'ethernet'), $i);
+								if ($i == 0) {
+									$n = 'Mgmt0/0/CPU0/0';      // Interface name
+								} else if ($i == 1) {
+									$n = 'Internal use';        // Interface name
+								} else if ($i == 2) {
+								    $n = 'Internal use';        // Interface name
+								} else {
+								    $n = 'Gi0/0/0/'.($i - 3);   // Interface name
+								}
+								try {
+									$this -> ethernets[$i] = new Interfc(Array('name' => $n, 'type' => 'ethernet'), $i);
 								} catch (Exception $e) {
 									error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][40020]);
 									error_log(date('M d H:i:s ').(string) $e);
