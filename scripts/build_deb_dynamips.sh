@@ -14,9 +14,9 @@ cat ${CONTROL} | sed "s/%VERSION%/${VERSION}/" | sed "s/%RELEASE%/${RELEASE}/" >
 mkdir -p ${DATA_DIR}/usr/bin ${DATA_DIR}/usr/share/man/man1 ${DATA_DIR}/usr/share/man/man7
 cp -a /usr/bin/dynamips ${DATA_DIR}/usr/bin
 cp -a /usr/bin/nvram_export ${DATA_DIR}/usr/bin
-cp -a /usr/share/man/man1/dynamips.1 ${DATA_DIR}/usr/share/man/man1
-cp -a /usr/share/man/man1/nvram_export.1 ${DATA_DIR}/usr/share/man/man1
-cp -a /usr/share/man/man7/hypervisor_mode.7 ${DATA_DIR}/usr/share/man/man7
+cp -a /usr/share/man/man1/dynamips.* ${DATA_DIR}/usr/share/man/man1
+cp -a /usr/share/man/man1/nvram_export.* ${DATA_DIR}/usr/share/man/man1
+cp -a /usr/share/man/man7/hypervisor_mode.* ${DATA_DIR}/usr/share/man/man7
 
 # Building the package
 cd ${DATA_DIR}
