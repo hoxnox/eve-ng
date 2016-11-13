@@ -4,7 +4,7 @@ Name: Emulated Virtual Environment - Guacamole
 Architecture: amd64
 Maintainer: Andrea Dainese (andrea.dainese@gmail.com)
 Homepage: http://www.unetlab.com/
-Installed-Size: 2403940
+Installed-Size: 2762268
 Section: devel
 Priority: optional
 Provides: eve-ng-guacamole

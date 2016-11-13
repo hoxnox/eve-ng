@@ -110,7 +110,12 @@ echo -e ${DONE}
 
 echo -ne "Calculating installed size... "
 SIZE=$(du -sk ${DATA_DIR} | awk '{print $1}')
-sed -i "s/^Installed-Size.*/Installed-Size: ${SIZE}/g" ${CONTROL}
+sed -i "s/^Installed-Size.*/Installed-Size: ${SIZE}/g" ${CONTROL_14}
+if [ $? -ne 0 ]; then
+    echo -e ${FAILED}
+    exit 1
+fi
+sed -i "s/^Installed-Size.*/Installed-Size: ${SIZE}/g" ${CONTROL_16}
 if [ $? -ne 0 ]; then
     echo -e ${FAILED}
     exit 1
@@ -193,6 +198,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+set -xv 
 cat > ${CONTROL_DIR_16}/postinst << EOF
 #!/bin/bash
 echo -ne "Enable services at boot... "
@@ -201,9 +207,11 @@ systemctl enable mysql &> /dev/null
 systemctl enable guacd &> /dev/null
 echo -e "${DONE}"
 echo -ne "Starting Tomcat... "
-cat /etc/tomcat8/server-guacamole.xml | grep -v JasperListener >  /etc/tomcat8/server.xml  &> /dev/null
-systemctl restart tomcat7 &> /dev/null
+cp -a /etc/tomcat8/server-guacamole.xml /etc/tomcat8/server.xml &> /dev/null
+sed -i -e'/.*Jasper.*/d' /etc/tomcat8/server.xml &> /dev/null
+systemctl restart tomcat8 &> /dev/null
 pgrep -u tomcat8 java &> /dev/null && echo -e "${DONE}" || echo -e "${FAILED}"
+ldconfig -vv &> /dev/null
 systemctl restart guacd &> /dev/null
 pgrep guacd &> /dev/null && echo -e "${DONE}" || echo -e "${FAILED}"
 EOF

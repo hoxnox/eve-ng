@@ -1,7 +1,7 @@
 #!/bin/bash
 BUILD_DIR="/build"
 LOG="/tmp/eve_build.log"
-SRC_DIR="/usr/src/eve-ng-public"
+SRC_DIR="/usr/src/eve-ng-public-dev"
 CONTROL="${SRC_DIR}/debian/eve-ng_xenial_control.template"
 CONTROL_DIR_14="$(mktemp -dt eve_control_14.XXXXXXXXXX)"
 DATA_DIR_14="$(mktemp -dt eve_data_14.XXXXXXXXXX)"
@@ -160,7 +160,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-cp -a unl_wrapper.php ${DATA_DIR_14}/opt/unetlab/wrappers/ &>> ${LOG} && cp -a unl_wrapper.php ${DATA_DIR_16}/opt/unetlab/wrappers/ &>> ${LOG}
+cp -a unl_wrapper.php ${DATA_DIR_14}/opt/unetlab/wrappers/unl_wrapper &>> ${LOG} && cp -a unl_wrapper.php ${DATA_DIR_16}/opt/unetlab/wrappers/unl_wrapper &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -351,6 +351,8 @@ if [ \$? -ne 0 ]; then
 		fi
 
 		echo -e "${DONE}"
+	else
+		echo "INSERT INTO users VALUES ('admin',NULL,'root@localhost',-1,'UNetLab Administrator','dddc487d503fdb607bc113821a7416cfd67a3abf77f4ec87ee5797449bdca796',NULL,'','admin','',1);" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ng_db &> /dev/null
 	fi
 fi
 EOF
