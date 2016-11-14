@@ -17,19 +17,7 @@ DONE="\033[0;32mdone\033[0m"
 
 MYSQL_ROOT_PASSWD="eve-ng"
 
-# Installing dependencies
-#echo -ne "Installing dependencies... "
-
-#PACKAGES="$(cat ${CONTROL} 2>> ${LOG} | grep "Depends" 2>> ${LOG} | sed 's/Depends: //' 2>> ${LOG} | sed 's/,//g' 2>> ${LOG} | sed 's/ (.*)//g' 2>> ${LOG})"
-#apt-get -qqy install ${PACKAGES} &>> ${LOG}
-#if [ $? -ne 0 ]; then
-#	echo -e ${FAILED}
-#	exit 1
-#fi
-
-#echo -e ${DONE}
-
-# Environment 
+# Environment
 echo -ne "Building environment... "
 
 VERSION="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f1 2>> ${LOG})"
@@ -57,7 +45,7 @@ fi
 rm -f html/includes/config.php &>> ${LOG}
 rm -rf html/files &>> ${LOG}
 
-cp -a html ${DATA_DIR}/opt/unetlab/ &>> ${LOG} 
+cp -a html ${DATA_DIR}/opt/unetlab/ &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -70,7 +58,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-cat html/includes/init.php 2>> ${LOG} | sed "s/define('VERSION', .*/define('VERSION', '${VERSION}-${RELEASE}');/g" 2>> ${LOG} > ${DATA_DIR}/opt/unetlab/html/includes/init.php 
+cat html/includes/init.php 2>> ${LOG} | sed "s/define('VERSION', .*/define('VERSION', '${VERSION}-${RELEASE}');/g" 2>> ${LOG} > ${DATA_DIR}/opt/unetlab/html/includes/init.php
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -83,13 +71,13 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-cp -a scripts ${DATA_DIR}/opt/unetlab/ &>> ${LOG} 
+cp -a scripts ${DATA_DIR}/opt/unetlab/ &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
 
-cp -a IOUtools/iou_export ${DATA_DIR}/opt/unetlab/scripts/ &>> ${LOG} 
+cp -a IOUtools/iou_export ${DATA_DIR}/opt/unetlab/scripts/ &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -128,25 +116,25 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-cp -a unl_profile ${DATA_DIR}/opt/unetlab/wrappers/ &>> ${LOG} 
+cp -a unl_profile ${DATA_DIR}/opt/unetlab/wrappers/ &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
 
-cp -a unl_wrapper.php ${DATA_DIR}/opt/unetlab/wrappers/unl_wrapper &>> ${LOG} 
+cp -a unl_wrapper.php ${DATA_DIR}/opt/unetlab/wrappers/unl_wrapper &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
 
-cp -a nsenter ${DATA_DIR}/opt/unetlab/wrappers/ &>> ${LOG} 
+cp -a nsenter ${DATA_DIR}/opt/unetlab/wrappers/ &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
 
-cp -a libcrypto.so.4 ${DATA_DIR}/opt/unetlab/addons/iol/lib/ &>> ${LOG} 
+cp -a libcrypto.so.4 ${DATA_DIR}/opt/unetlab/addons/iol/lib/ &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -163,7 +151,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-cp -a etc/sudo.conf ${DATA_DIR}/etc/sudoers.d/unetlab &>> ${LOG} 
+cp -a etc/sudo.conf ${DATA_DIR}/etc/sudoers.d/unetlab &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -188,6 +176,11 @@ if [ $? -ne 0 ]; then
 fi
 
 cp -a etc/sources.list ${DATA_DIR}/etc/apt/sources.list.d/unetlab.list &>> ${LOG}
+if [ $? -ne 0 ]; then
+        echo -e ${FAILED}
+        exit 1
+fi
+sed -i -e 's/trusty/'${DISTNAME}'/' ${DATA_DIR}/etc/apt/sources.list.d/unetlab.list &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -429,5 +422,5 @@ rm -rf ${CONTROL_DIR} ${DATA_DIR} ${LOG}
 
 # Build completed
 echo -e "Build completed:"
-ls -l /build/apt/pool/*/e/eve-ng/eve-ng_*.deb
+ls -l /build/apt/pool/${DISTNAME}/e/eve-ng/eve-ng_*.deb
 
