@@ -1,6 +1,6 @@
-Package: unetlab-qemu
+Package: eve-ng-qemu
 Version: %VERSION%-%RELEASE%
-Name: Unified Networking Lab - QEMU
+Name: EVE-NG - QEMU
 Architecture: amd64
 Maintainer: Andrea Dainese <andrea.dainese@gmail.com>
 Homepage: http://www.unetlab.com/
@@ -8,4 +8,6 @@ Installed-Size: 80420
 Section: devel
 Priority: optional
 Depends: libaio1
-Description: QEMU files for UNetLab.
+Conflicts: unetlab-qemu
+Replaces: unetlab-qemu
+Description: QEMU files for Eve-NG.

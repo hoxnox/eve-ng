@@ -1,6 +1,7 @@
 #!/bin/bash
-CONTROL="/usr/src/unetlab/debian/qemu_control.template"
-SRC_DIR="/usr/src/unetlab"
+CONTROL="/usr/src/eve-ng-public-dev/debian/qemu_control.template"
+SRC_DIR="/usr/src/eve-ng-public-dev"
+DISTNAME=$(lsb_release -c -s)
 ARCH=$(cat ${CONTROL} | grep Architecture | cut -d: -f2 | sed 's/ //')
 BUILD_DIR="/build"
 CONTROL_DIR="$(mktemp -dt)"
@@ -24,7 +25,7 @@ echo 2.0 > ${CONTROL_DIR}/debian-binary
 cd ${CONTROL_DIR}
 tar czf control.tar.gz md5sums control
 cd ${SRC_DIR}
-DISTNAME=$(lsb_release -c -s)
-mkdir -p ${BUILD_DIR}/apt/pool/${DISTNAME}/u/unetlab-qemu
-ar -cr ${BUILD_DIR}/apt/pool/${DISTNAME}/u/unetlab-qemu/unetlab-qemu_${VERSION}-${RELEASE}_${ARCH}.deb ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz ${DATA_DIR}/data.tar.gz
+mkdir -p ${BUILD_DIR}/apt/pool/${DISTNAME}/e/eve-ng-qemu
+ar -cr ${BUILD_DIR}/apt/pool/${DISTNAME}/e/eve-ng-qemu/eve-ng-qemu_${VERSION}-${RELEASE}_${ARCH}.deb ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz ${DATA_DIR}/data.tar.gz
 rm -rf ${CONTROL_DIR} ${DATA_DIR}
+ls -l /build/apt/pool/*/e/eve-ng-qemu/eve-ng-qemu_*.deb

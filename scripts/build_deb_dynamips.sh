@@ -1,6 +1,6 @@
 #!/bin/bash
-CONTROL="/usr/src/unetlab/debian/dynamips_control.template"
-SRC_DIR="/usr/src/unetlab"
+CONTROL="/usr/src/eve-ng-public-dev/debian/dynamips_control.template"
+SRC_DIR="/usr/src/eve-ng-public-dev"
 ARCH=$(cat ${CONTROL} | grep Architecture | cut -d: -f2 | sed 's/ //')
 BUILD_DIR="/build"
 CONTROL_DIR="$(mktemp -dt)"
@@ -27,6 +27,6 @@ cd ${CONTROL_DIR}
 tar czf control.tar.gz md5sums control
 cd ${SRC_DIR}
 DISTNAME=$(lsb_release -c -s)
-mkdir -p ${BUILD_DIR}/apt/pool/${DISTNAME}/u/unetlab-dynamips
-ar -cr ${BUILD_DIR}/apt/pool/${DISTNAME}/u/unetlab-dynamips/unetlab-dynamips_${VERSION}-${RELEASE}_${ARCH}.deb ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz ${DATA_DIR}/data.tar.gz
+mkdir -p ${BUILD_DIR}/apt/pool/${DISTNAME}/e/eve-ng-dynamips
+ar -cr ${BUILD_DIR}/apt/pool/${DISTNAME}/e/eve-ng-dynamips/eve-ng-dynamips_${VERSION}-${RELEASE}_${ARCH}.deb ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz ${DATA_DIR}/data.tar.gz
 rm -rf ${CONTROL_DIR} ${DATA_DIR}
