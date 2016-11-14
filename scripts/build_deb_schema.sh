@@ -2,6 +2,7 @@
 BUILD_DIR="/build"
 LOG="/tmp/eve_build.log"
 SRC_DIR="/usr/src/eve-ng-public-dev"
+DISTNAME=$(lsb_release -c -s)
 CONTROL="${SRC_DIR}/debian/schema_control.template"
 CONTROL_DIR="$(mktemp -dt eve_control.XXXXXXXXXX)"
 DATA_DIR="$(mktemp -dt eve_data.XXXXXXXXXX)"
@@ -118,14 +119,12 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-for i in trusty xenial; do
-	DEBFILE="/build/apt/pool/${i}/e/eve-ng-schema/eve-ng-schema_${VERSION}-${RELEASE}_amd64.deb"
-	ar -cr ${DEBFILE} ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz $DATA_DIR/data.tar.gz &>> ${LOG}
-	if [ $? -ne 0 ]; then
-		echo -e ${FAILED}
-		exit 1
-	fi
-done
+DEBFILE="/build/apt/pool/${DISTNAME}/e/eve-ng-schema/eve-ng-schema_${VERSION}-${RELEASE}_amd64.deb"
+ar -cr ${DEBFILE} ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz $DATA_DIR/data.tar.gz &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
 
 echo -e ${DONE}
 
