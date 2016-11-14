@@ -36,6 +36,7 @@ echo 2.0 > ${CONTROL_DIR}/debian-binary
 cd ${CONTROL_DIR}
 tar czf control.tar.gz md5sums control 
 #cd ${SRC_DIR}
-mkdir -p ${BUILD_DIR}/apt/pool/trusty/u/unetlab-vpcs
-ar -cr ${BUILD_DIR}/apt/pool/trusty/u/unetlab-vpcs/unetlab-vpcs_${VERSION}-${RELEASE}_${ARCH}.deb ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz ${DATA_DIR}/data.tar.gz
+DISTNAME=$(lsb_release -c -s)
+mkdir -p ${BUILD_DIR}/apt/pool/${DISTNAME}/u/unetlab-vpcs
+ar -cr ${BUILD_DIR}/apt/pool/${DISTNAME}/u/unetlab-vpcs/unetlab-vpcs_${VERSION}-${RELEASE}_${ARCH}.deb ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz ${DATA_DIR}/data.tar.gz
 rm -rf ${CONTROL_DIR} ${DATA_DIR}

@@ -1,6 +1,7 @@
 <div class="modal-content">
     <div class="modal-header">
         <button type="button" class="close" ng-click="closeModal()" >&times;</button>
+        <i class="glyphicon glyphicon-certificate pull-right pointer action-changeopacity" ng-click="opacity()"></i>
         <h4 class="modal-title">Edit lab</h4>
     </div>
     <div class="modal-body">
@@ -14,7 +15,7 @@
             <div class="form-group">
                 <label class="col-md-3 control-label">Name</label>
                 <div class="col-md-5">
-                    <input class="form-control autofocus" name="lab[name]" value="{{ labData.name }}" type="text">
+                    <input class="form-control autofocus" name="lab[name]" value="{{ labData.name }}" type="text" autofocus="autofocus">
                 </div>
             </div>
             <div class="form-group">
@@ -48,9 +49,11 @@
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-md-5 col-md-offset-3">
-                    <button type="submit" class="btn btn-aqua">Save</button>
-                    <button type="button" class="btn btn-grey" ng-click="closeModal()">Cancel</button>
+                <div class="col-md-2 col-md-offset-10">
+                    <div class="pull-right">
+                        <button type="submit" class="btn btn-success btn-flat">Save</button>
+                        <button type="button" class="btn btn-grey btn-flat" ng-click="closeModal()">Cancel</button>
+                    </div>
                 </div>
             </div>
         </form>

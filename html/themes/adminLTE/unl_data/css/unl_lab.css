@@ -1,17 +1,17 @@
 .modal-megalg{
-	width:93%;
+  width:93%;
 }
 
 td.imageList .ui-select-container {
-	width:90%;
+  width:90%;
 }
 
 td.imageList .ui-select-container .ui-select-choices{
-	width:initial;
+  width:initial;
 }
 
 .ui-select-choices-row-inner{
-	padding: 3px 10px !important;
+  padding: 3px 10px !important;
 }
 
 .ui-select-match-text{
@@ -27,28 +27,28 @@ td.imageList .ui-select-container .ui-select-choices{
 }
 
 .newNodeSelect .ui-select-choices {
-	max-height:600px !important;
+  max-height:600px !important;
 }
 
 .hideMe {
-	display: none;
+  display: none;
 }
 
 .showMe {
-	display: inherit !important;
+  display: inherit !important;
 }
 
 .router-cursor{
-	cursor : url(/themes/adminLTE/unl_data/img/icons/Router_cursor.png),auto;;
+  cursor : url(/themes/adminLTE/unl_data/img/icons/Router_cursor.png),auto;;
 }
 
 .text-cursor{
-	cursor : url(/themes/adminLTE/unl_data/img/icons/Router_cursor.png),auto;;
-	/*cursor : url(/themes/adminLTE/unl_data/img/icons/Text_cursor.png),auto;;*/
+  cursor : url(/themes/adminLTE/unl_data/img/icons/Router_cursor.png),auto;;
+  /*cursor : url(/themes/adminLTE/unl_data/img/icons/Text_cursor.png),auto;;*/
 }
 
 .network-cursor{
-	cursor : url(/themes/adminLTE/unl_data/img/icons/Switch_cursor.png),auto;;
+  cursor : url(/themes/adminLTE/unl_data/img/icons/Switch_cursor.png),auto;;
 }
 
 
@@ -299,7 +299,7 @@ td.imageList .ui-select-container .ui-select-choices{
 
 
 .grid{
-	height:80px;width:200px;
+  height:80px;width:200px;
     background-image: url(/themes/adminLTE/unl_data/img/grid.png);
     background-repeat:repeat;
 }
@@ -307,19 +307,19 @@ td.imageList .ui-select-container .ui-select-choices{
 .dropdown-menu.noborderRadius li a {overflow: hidden; display: inline-block; text-overflow: ellipsis; white-space: nowrap; padding:0px;}
 
 .dropdown-menu.noborderRadius{
-	border-radius: 0px ;
-	border: 1px solid #ccc;
-	padding-left:10px;
-	padding-right:10px;
+  border-radius: 0px ;
+  border: 1px solid #ccc;
+  padding-left:10px;
+  padding-right:10px;
 }
 
 .figcaption-text{
-	background-color:#fff;
-	margin:0;
-	font-size: 11px;
-	font-weight: bold;
-	text-align: center;
-	word-wrap: break-word;
+  background-color:#fff;
+  margin:0;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+  word-wrap: break-word;
 }
 
 .tag {float: left;  position: absolute; left: 80%; top: 20%; cursor: pointer; z-index:1;}
@@ -327,20 +327,20 @@ td.imageList .ui-select-container .ui-select-choices{
 .stop-tag {float: left; position: absolute; left: 0%; top: 5%; cursor: pointer; z-index:1;}
 
 .plug-icon{
-	color: #ff6600;
-	font-size: 14px;
-	text-shadow: 0 0 2px black;
+  color: #ff6600;
+  font-size: 14px;
+  text-shadow: 0 0 2px black;
     -webkit-transition: -webkit-box-shadow 0.25s ease-in;
     -moz-transition: -moz-box-shadow 0.25s ease-in;
-    transition: box-shadow 0.25s ease-in;	
-	z-index:5;
+    transition: box-shadow 0.25s ease-in; 
+  z-index:5;
 }
 .plug-icon:hover{color: #ff944d; transition: font-size 0.35s ease-in; transition: color 0.25s ease-in; font-size: 22px;}
 
 .play-icon{
-	color: #80ff00;
-	font-size: 14px;
-	text-shadow: 0 0 2px black;
+  color: #80ff00;
+  font-size: 14px;
+  text-shadow: 0 0 2px black;
     -webkit-transition: -webkit-box-shadow 0.25s ease-in;
     -moz-transition: -moz-box-shadow 0.25s ease-in;
     transition: box-shadow 0.25s ease-in;
@@ -348,9 +348,9 @@ td.imageList .ui-select-container .ui-select-choices{
 .play-icon:hover{color: #bfff00; transition: font-size 0.35s ease-in; transition: color 0.25s ease-in; font-size: 22px;}
 
 .stop-icon{
-	color: #ff4d4d;
-	font-size: 13px;
-	text-shadow: 0 0 2px black;
+  color: #ff4d4d;
+  font-size: 13px;
+  text-shadow: 0 0 2px black;
     -webkit-transition: -webkit-box-shadow 0.25s ease-in;
     -moz-transition: -moz-box-shadow 0.25s ease-in;
     transition: box-shadow 0.25s ease-in;
@@ -363,7 +363,7 @@ td.imageList .ui-select-container .ui-select-choices{
 }
 
 .mover{
-	cursor:move;
+  cursor:move;
 }
 
 .aLabel {
@@ -375,17 +375,17 @@ td.imageList .ui-select-container .ui-select-choices{
 .aLabel.jsplumb-hover {
     background-color: #aaa;
     color: white;
-	z-index: 5;
+  z-index: 5;
 }
 .jsplumb-source-hover:not(.noborderRadius), .jsplumb-target-hover:not(.noborderRadius) {
-	 -webkit-filter: invert(100%);
-	  -webkit-transition: 0.25s ease-in-out;
-	 filter: invert(100%);
+   -webkit-filter: invert(100%);
+    -webkit-transition: 0.25s ease-in-out;
+   filter: invert(100%);
 }
 .jsplumb-drag-hover {
-	 -webkit-filter: invert(100%);
-	  -webkit-transition: 0.25s ease-in-out;
-	 filter: invert(100%);
+   -webkit-filter: invert(100%);
+    -webkit-transition: 0.25s ease-in-out;
+   filter: invert(100%);
 }
 
 .aLabel {
@@ -399,7 +399,7 @@ td.imageList .ui-select-container .ui-select-choices{
 }
 
 .icon-opacity{
-	opacity: 0.7;
+  opacity: 0.7;
 }
 
 .grayscale {-webkit-filter: grayscale(100%); filter: grayscale(100%);}
@@ -501,6 +501,6 @@ td.imageList .ui-select-container .ui-select-choices{
 .m-progress.min:before {
     width:16px;
     height:16px;
-	margin-top: -8px;
+  margin-top: -8px;
     margin-left: -8px;
 }

@@ -28,16 +28,26 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		$('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
 	}
 	
-	$scope.topologyRefresh = function(){
-		$scope.networkListRefresh()
-		$scope.nodeListRefresh();
+	// $scope.refreshPage = function(){
+	// 	location.reload();
+	// }
 
-		for (i in $scope.node)
-		{
-			var node = $scope.node[i];
-			if (!$("#nodeID_" + node.id))
-				nodeInit(node)
-		}
+	$scope.topologyRefresh = function(){
+		jsPlumb.detachEveryConnection();
+		jsPlumb.reset();
+		initFullLab();
+		// $scope.networkListRefresh();
+		// $scope.nodeListRefresh();
+		// for (i in $scope.node)
+		// {
+		// 	console.log('for scope node');
+		// 	var node = $scope.node[i];
+		// 	if (!$("#nodeID_" + node.id).length)
+		// 	{
+		// 		nodeInit(node);
+		// 		console.log('init node');
+		// 	}
+		// }
 	}
 
 	$scope.networkListRefresh = function(){
@@ -602,6 +612,48 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			
 	}
 	
+	// $scope.tempElID='';
+	// $scope.deleteEl = function(){
+	// 	$scope.tempElID=$('#tempElID').val()
+ //        console.log("#tempElID:",$('#tempElID').val())
+	// 	var type = '';
+	// 	var element = '';
+	// 	if($scope.tempElID.search('node') != -1) type = 'node' 
+	// 	if($scope.tempElID.search('net') != -1) type = 'network' 
+	// 	if($scope.tempElID.search('conn') != -1) type = 'conn' 
+	// 	if($scope.tempElID.search('text') != -1) {
+	// 		type = 'textobject';
+	// 		element = 'text';
+	// 	} 
+	// 	if($scope.tempElID.search('shape') != -1) {
+	// 		type = 'textobject';
+	// 		element = 'shape';	
+	// 	} 
+	// 	// if($scope.tempElID.search('image') != -1) type = 'picture' 
+	// 	var id = $scope.tempElID.replace(element ? element + 'ID_' : type + 'ID_','');
+	// 	if (confirm('Are you sure?')){
+	// 			console.log("deteling id + type: "+ id+' '+type)
+	// 			$http({
+	// 				method: 'DELETE',
+	// 				url:'/api/labs'+$rootScope.lab+'/'+type+'s/'+id}).then(
+	// 				function successCallback(response){
+	// 					console.log(response)
+	// 					jsPlumb.select({source:type+'ID_'+id}).detach();
+	// 					jsPlumb.select({target:type+'ID_'+id}).detach();
+	// 					var selector = element ? element : type; 
+	// 					console.log($('#'+selector+'ID_'+id))
+	// 					$('#' + selector +'ID_'+id).remove()
+	// 				}, function errorCallback(response){
+	// 					console.log('Server Error');
+	// 					console.log(response);
+	// 				}
+	// 			);
+	// 	}
+	// }
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	/////////////    DELETE node, network,
+	//////////////////////////////////////////////////////////////////////////////////////
 	$scope.tempElID='';
 	$scope.deleteEl = function(){
 		$scope.tempElID=$('#tempElID').val()
@@ -622,7 +674,54 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		// if($scope.tempElID.search('image') != -1) type = 'picture' 
 		var id = $scope.tempElID.replace(element ? element + 'ID_' : type + 'ID_','');
 		if (confirm('Are you sure?')){
-				console.log("deteling id + type: "+ id+' '+type)
+			console.log("deteling id + type: "+ id+' '+type)
+			var h_flague = false;
+			$(".free-selected").each(function(){
+		  		var id = $(this).attr("id");
+		  		if (id.indexOf("nodeID_") != -1) 
+		  		{
+		  			id = id.replace("nodeID_", "");
+			  		var node = $scope.node[id];
+					$http({
+						method: 'DELETE',
+						url:'/api/labs'+$rootScope.lab+'/'+type+'s/'+id}).then(
+						function successCallback(response){
+							console.log(response)
+							jsPlumb.select({source:type+'ID_'+id}).detach();
+							jsPlumb.select({target:type+'ID_'+id}).detach();
+							var selector = element ? element : type; 
+							console.log($('#'+selector+'ID_'+id))
+							$('#' + selector +'ID_'+id).remove()
+						}, function errorCallback(response){
+							console.log('Server Error');
+							console.log(response);
+						}
+					);
+		  		}
+		  		if (id.indexOf("networkID_") !=1) 
+		  		{
+		  			id = id.replace("networkID_", "");
+			  		var node = $scope.node[id];
+					$http({
+						method: 'DELETE',
+						url:'/api/labs'+$rootScope.lab+'/'+type+'s/'+id}).then(
+						function successCallback(response){
+							console.log(response)
+							jsPlumb.select({source:type+'ID_'+id}).detach();
+							jsPlumb.select({target:type+'ID_'+id}).detach();
+							var selector = element ? element : type; 
+							console.log($('#'+selector+'ID_'+id))
+							$('#' + selector +'ID_'+id).remove()
+						}, function errorCallback(response){
+							console.log('Server Error');
+							console.log(response);
+						}
+					);
+		  		}
+				h_flague = true;
+			})
+			if (!h_flague)
+			{
 				$http({
 					method: 'DELETE',
 					url:'/api/labs'+$rootScope.lab+'/'+type+'s/'+id}).then(
@@ -638,8 +737,15 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 						console.log(response);
 					}
 				);
+			}
 		}
 	}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 	$scope.editEl = function(){
 		$scope.tempElID=$('#tempElID').val()
 		var type = ($scope.tempElID.search('node') != -1) ? 'node' : 'network';
