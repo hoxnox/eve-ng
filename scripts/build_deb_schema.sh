@@ -21,7 +21,7 @@ echo -ne "Building environment... "
 VERSION="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f1 2>> ${LOG})"
 RELEASE="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f2 2>> ${LOG})"
 
-mkdir -p ${BUILD_DIR} ${CONTROL_DIR} ${DATA_DIR}/opt/unetlab /build/apt/pool/{trusty,xenial}/e/eve-ng-schema
+mkdir -p ${BUILD_DIR} ${CONTROL_DIR} ${DATA_DIR}/opt/unetlab /build/apt/pool/${DISTNAME}/e/eve-ng-schema
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -132,5 +132,5 @@ rm -rf ${CONTROL_DIR} ${DATA_DIR} ${LOG}
 
 # Build completed
 echo -e "Build completed:"
-ls -l /build/apt/pool/*/e/eve-ng-schema/*.deb
+ls -l /build/apt/pool/${DISTNAME}/e/eve-ng-schema/*.deb
 

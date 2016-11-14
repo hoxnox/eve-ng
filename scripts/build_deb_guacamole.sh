@@ -20,8 +20,15 @@ MYSQL_ROOT_PASSWD="eve-ng"
 GUAC_DB_PASSWD="eve-ng"
 GUAC_ADMIN_PASSWORD="eve-ng"
 
-#Get dev package
-apt-get install libcairo2-dev libfreerdp-dev libjpeg-turbo8-dev libossp-uuid-dev libpango1.0-dev libpng12-dev libpulse-dev libssh2-1-dev libssl-dev libtelnet-dev libvncserver-dev libvorbis-dev
+# Installing dependencies
+echo -ne "Installing dependencies... "
+apt-get -qqy install libcairo2-dev libfreerdp-dev libjpeg-turbo8-dev libossp-uuid-dev libpango1.0-dev libpng12-dev libpulse-dev libssh2-1-dev libssl-dev libtelnet-dev libvncserver-dev libvorbis-dev &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+echo -e ${DONE}
+
 # Downloading Guacamole
 echo -ne "Downloading Guacamole ${GUAC_VER}... "
 
@@ -327,5 +334,5 @@ rm -rf ${CONTROL_DIR} ${DATA_DIR} ${LOG}
 
 # Build completed
 echo -e "Build completed:"
-ls -l /build/apt/pool/*/e/eve-ng-guacamole/eve-ng-guacamole_*.deb
+ls -l /build/apt/pool/${DISTNAME}/e/eve-ng-guacamole/eve-ng-guacamole_*.deb
 
