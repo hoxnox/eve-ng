@@ -1,0 +1,14 @@
+#get Info at http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.4.14-xenial/
+
+git clone -t v4.4.14 git://git.launchpad.net/~ubuntu-kernel-test/ubuntu/+source/linux/+git/mainline-crack v4.4.14
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.4.14-xenial/0001-base-packaging.patch
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.4.14-xenial/0002-debian-changelog.patch
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.4.14-xenial/0003-configs-based-on-Ubuntu-4.4.0-28.47.patch
+
+cd v4.4.14 
+patch -p1 < ../0001-base-packaging.patch
+patch -p1 < ../0002-debian-changelog.patch
+patch -p1 < ../0003-configs-based-on-Ubuntu-4.4.0-28.47.patch
+
+
+#patch brctl
