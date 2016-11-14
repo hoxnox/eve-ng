@@ -12,3 +12,16 @@ patch -p1 < ../0003-configs-based-on-Ubuntu-4.4.0-28.47.patch
 
 
 #patch brctl
+TBD
+
+
+apt-get build-dep linux-image
+cp -a /usr/share/kernel-package/examples/etc/kernel/postinst.d/force-build-link /etc/kernel/postinst.d/
+cp -a /usr/share/kernel-package/examples/etc/kernel/postrm.d/force-build-link /etc/kernel/postrm.d/
+
+# EDIT /etc/kernel-pkg.conf 
+
+make-kpkg clean
+fakeroot make-kpkg -j4 --initrd --append-to-version=-eve-ng kernel-image kernel-headers 
+
+
