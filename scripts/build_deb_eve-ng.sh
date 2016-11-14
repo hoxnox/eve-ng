@@ -160,7 +160,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-cp -a unl_wrapper.php ${DATA_DIR_14}/opt/unetlab/wrappers/ &>> ${LOG} && cp -a unl_wrapper.php ${DATA_DIR_16}/opt/unetlab/wrappers/ &>> ${LOG}
+cp -a unl_wrapper.php ${DATA_DIR_14}/opt/unetlab/wrappers/unl_wrapper &>> ${LOG} && cp -a unl_wrapper.php ${DATA_DIR_16}/opt/unetlab/wrappers/unl_wrapper &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
