@@ -1,5 +1,4 @@
 GRANT USAGE ON *.* TO 'eve-ng'@'%';
-CREATE USER 'eve-ng'@'%'  IDENTIFIED BY 'eve-ng';
 GRANT SELECT,INSERT,UPDATE,DELETE ON eve_ng_db.* TO 'eve-ng'@'%';
 -- FLUSH PRIVILEGES;
 

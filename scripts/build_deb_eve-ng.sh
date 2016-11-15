@@ -28,7 +28,6 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-# Environment
 cat ${CONTROL} 2>> ${LOG} | sed "s/%VERSION%/${VERSION}/" 2>> ${LOG} | sed "s/%RELEASE%/${RELEASE}/" 2>> ${LOG} > ${CONTROL_DIR}/control
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
@@ -175,7 +174,12 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-cat etc/sources.list | sed "s/trusty/${DISTNAME}/" > ${DATA_DIR}/etc/apt/sources.list.d/unetlab.list 2>> ${LOG}
+cp -a etc/sources.list ${DATA_DIR}/etc/apt/sources.list.d/unetlab.list &>> ${LOG}
+if [ $? -ne 0 ]; then
+        echo -e ${FAILED}
+        exit 1
+fi
+sed -i -e 's/trusty/'${DISTNAME}'/' ${DATA_DIR}/etc/apt/sources.list.d/unetlab.list &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -313,6 +317,15 @@ if [ \$? -ne 0 ]; then
 		fi
 
 		echo -e "${DONE}"
+	else
+		echo -ne "Adding admin user... "
+		echo "INSERT INTO users VALUES ('admin',NULL,'root@localhost',-1,'UNetLab Administrator','dddc487d503fdb607bc113821a7416cfd67a3abf77f4ec87ee5797449bdca796',NULL,'','admin','',1);" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ng_db &> /dev/null
+		if [ $? -ne 0 ]; then
+				echo -e "${FAILED}"
+				exit 1
+		fi
+
+		echo -e "${DONE}"
 	fi
 fi
 EOF
@@ -360,8 +373,7 @@ apt-mark hold  \$(dpkg -l | grep -e linux-image -e linux-headers -e linux-generi
 find /opt/unetlab/tmp/ -name "nvram_*" -exec /opt/unetlab/scripts/fix_iol_nvram.sh "{}" \; &> /dev/null
 EOF
 
-DEBFILE="/build/apt/pool/trusty/e/eve-ng/eve-ng_${VERSION}-${RELEASE}_amd64.deb"
-
+DEBFILE="/build/apt/pool/${DISTNAME}/e/eve-ng/eve-ng_${VERSION}-${RELEASE}_amd64.deb"
 cd ${DATA_DIR} &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
@@ -412,7 +424,7 @@ fi
 
 echo -e ${DONE}
 
-rm -rf ${CONTROL_DIR} ${DATA_DIR}
+rm -rf ${CONTROL_DIR} ${DATA_DIR} ${LOG}
 
 # Build completed
 echo -e "Build completed:"
