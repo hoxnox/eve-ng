@@ -1,7 +1,5 @@
-GRANT USAGE ON *.* TO 'eve-ng'@'%';
-DROP USER  'eve-ng';
-CREATE USER 'eve-ng'@'%'  IDENTIFIED BY 'eve-ng';
-GRANT SELECT,INSERT,UPDATE,DELETE ON eve_ng_db.* TO 'eve-ng'@'%';
+GRANT USAGE ON *.* TO 'eve-ng'@'localhost';
+GRANT SELECT,INSERT,UPDATE,DELETE ON eve_ng_db.* TO 'eve-ng'@'localhost';
 -- FLUSH PRIVILEGES;
 
 -- MySQL dump 10.13  Distrib 5.5.49, for debian-linux-gnu (x86_64)

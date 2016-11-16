@@ -1,0 +1,51 @@
+diff -Nru v4.4.14-untouched/net/bridge/br_input.c v4.4.14/net/bridge/br_input.c
+--- v4.4.14-untouched/net/bridge/br_input.c	2016-11-14 16:03:13.220209948 -0500
++++ v4.4.14/net/bridge/br_input.c	2016-11-14 16:12:43.131211966 -0500
+@@ -273,9 +273,6 @@
+ 				goto forward;
+ 			break;
+ 
+-		case 0x01:	/* IEEE MAC (Pause) */
+-			goto drop;
+-
+ 		default:
+ 			/* Allow selective forwarding for most other protocols */
+ 			fwd_mask |= p->br->group_fwd_mask;
+diff -Nru v4.4.14-untouched/net/bridge/br_netlink.c v4.4.14/net/bridge/br_netlink.c
+--- v4.4.14-untouched/net/bridge/br_netlink.c	2016-11-14 16:03:13.244210411 -0500
++++ v4.4.14/net/bridge/br_netlink.c	2016-11-14 16:15:28.858410067 -0500
+@@ -923,9 +923,6 @@
+ 
+ 	if (data[IFLA_BR_GROUP_FWD_MASK]) {
+ 		u16 fwd_mask = nla_get_u16(data[IFLA_BR_GROUP_FWD_MASK]);
+-
+-		if (fwd_mask & BR_GROUPFWD_RESTRICTED)
+-			return -EINVAL;
+ 		br->group_fwd_mask = fwd_mask;
+ 	}
+ 
+diff -Nru v4.4.14-untouched/net/bridge/br_private.h v4.4.14/net/bridge/br_private.h
+--- v4.4.14-untouched/net/bridge/br_private.h	2016-11-14 16:03:13.244210411 -0500
++++ v4.4.14/net/bridge/br_private.h	2016-11-14 16:13:46.324431489 -0500
+@@ -34,8 +34,6 @@
+ 
+ /* Control of forwarding link local multicast */
+ #define BR_GROUPFWD_DEFAULT	0
+-/* Don't allow forwarding of control protocols like STP, MAC PAUSE and LACP */
+-#define BR_GROUPFWD_RESTRICTED	0x0007u
+ /* The Nearest Customer Bridge Group Address, 01-80-C2-00-00-[00,0B,0C,0D,0F] */
+ #define BR_GROUPFWD_8021AD	0xB801u
+ 
+diff -Nru v4.4.14-untouched/net/bridge/br_sysfs_br.c v4.4.14/net/bridge/br_sysfs_br.c
+--- v4.4.14-untouched/net/bridge/br_sysfs_br.c	2016-11-14 16:03:13.244210411 -0500
++++ v4.4.14/net/bridge/br_sysfs_br.c	2016-11-14 16:14:23.077140723 -0500
+@@ -178,9 +178,6 @@
+ 	if (endp == buf)
+ 		return -EINVAL;
+ 
+-	if (val & BR_GROUPFWD_RESTRICTED)
+-		return -EINVAL;
+-
+ 	br->group_fwd_mask = val;
+ 
+ 	return len;

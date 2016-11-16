@@ -1,15 +1,15 @@
 #!/bin/bash
-set -xv
-CONTROL="/usr/src/unetlab/debian/vpcs_control.template"
-SRC_DIR="/usr/src/unetlab"
-PATCH_DIR="/usr/src/unetlab/patch"
+CONTROL="/usr/src/eve-ng-public-dev/debian/vpcs_control.template"
+SRC_DIR="/usr/src/eve-ng-public-dev"
+PATCH_DIR="/usr/src/eve-ng-public-dev/patch"
+DISTNAME=$(lsb_release -c -s)
 ARCH=$(cat ${CONTROL} | grep Architecture | cut -d: -f2 | sed 's/ //')
 BUILD_DIR="/build"
 CONTROL_DIR="$(mktemp -dt)"
 COMP_DIR="$(mktemp -dt)"
 DATA_DIR="$(mktemp -dt)"
 VERSION="0.8c"
-RELEASE="unetlab"
+RELEASE="eve-ng"
 
 cat ${CONTROL} | sed "s/%VERSION%/${VERSION}/" | sed "s/%RELEASE%/${RELEASE}/" > ${CONTROL_DIR}/control
 
@@ -36,6 +36,7 @@ echo 2.0 > ${CONTROL_DIR}/debian-binary
 cd ${CONTROL_DIR}
 tar czf control.tar.gz md5sums control 
 #cd ${SRC_DIR}
-mkdir -p ${BUILD_DIR}/apt/pool/trusty/u/unetlab-vpcs
-ar -cr ${BUILD_DIR}/apt/pool/trusty/u/unetlab-vpcs/unetlab-vpcs_${VERSION}-${RELEASE}_${ARCH}.deb ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz ${DATA_DIR}/data.tar.gz
+mkdir -p ${BUILD_DIR}/apt/pool/${DISTNAME}/e/eve-ng-vpcs
+ar -cr ${BUILD_DIR}/apt/pool/${DISTNAME}/e/eve-ng-vpcs/eve-ng-vpcs_${VERSION}-${RELEASE}_${ARCH}.deb ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz ${DATA_DIR}/data.tar.gz
 rm -rf ${CONTROL_DIR} ${DATA_DIR}
+ls -l /build/apt/pool/*/e/eve-ng-vpcs/eve-ng-vpcs_*.deb

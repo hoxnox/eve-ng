@@ -22,8 +22,8 @@
  * @return  Array                       Return code (JSend data)
  */
 function apiAddLabNode($lab, $p, $o) {
-	$numberNodes = $p['numberNodes'];
-	unset($p['numberNodes']);
+	if (isset($p['numberNodes'])) 
+		$numberNodes = $p['numberNodes'];
 	
 	$default_name = $p['name'];
 	if ($default_name == "R")
@@ -31,7 +31,7 @@ function apiAddLabNode($lab, $p, $o) {
 	
 	$ids = array();
 	$no_array = false;
-	if (!$numberNodes)
+	if (!isset($numberNodes))
 	{
 		$numberNodes = 1;
 		$no_array = true;

@@ -121,7 +121,8 @@ class Lab {
 			}
 
 			// Lab description
-			$result = (string) array_pop($xml -> xpath('//lab/description'));
+			$result = $xml -> xpath('//lab/description');
+			$result = (string) array_pop($result);
 			if (strlen($result) !== 0) {
 				$this -> description = htmlspecialchars($result, ENT_DISALLOWED, 'UTF-8', TRUE);
 			} else if (strlen($result) !== 0) {
@@ -129,7 +130,8 @@ class Lab {
 			}
 
 			// Lab body
-			$result = (string) array_pop($xml -> xpath('//lab/body'));
+			$result = $xml -> xpath('//lab/body');
+			$result = (string) array_pop($result);
 			if (strlen($result) !== 0) {
 				$this -> body = htmlspecialchars($result, ENT_DISALLOWED, 'UTF-8', TRUE);
 			} else if (strlen($result) !== 0) {
@@ -137,7 +139,8 @@ class Lab {
 			}
 
 			// Lab author
-			$result = (string) array_pop($xml -> xpath('//lab/@author'));
+			$result = $xml -> xpath('//lab/@author');
+			$result = (string) array_pop($result);
 			if (strlen($result) !== 0) {
 				$this -> author = htmlspecialchars($result, ENT_DISALLOWED, 'UTF-8', TRUE);
 			} else if (strlen($result) !== 0) {
@@ -145,7 +148,8 @@ class Lab {
 			}
 
 			// Lab version
-			$result = (string) array_pop($xml -> xpath('//lab/@version'));
+			$result = $xml -> xpath('//lab/@version');
+			$result = (string) array_pop($result);
 			if (strlen($result) !== 0 && (int) $result >= 0) {
 				$this -> version = $result;
 			} else if (strlen($result) !== 0) {
@@ -197,7 +201,8 @@ class Lab {
 				$n['config'] == 'None' ? $n['config'] = '0' : $n['config'];	// Fix startup-config
 
 				// If config is empty, force "None"
-				$result = (string) array_pop($xml -> xpath('//lab/objects/configs/config[@id="'.$n['id'].'"]'));
+				$result = $xml -> xpath('//lab/objects/configs/config[@id="'.$n['id'].'"]');
+				$result = (string) array_pop($result);
 				if (strlen($result) == 0) {
 					$n['config'] = 0;
 					$config_data = False;
@@ -271,7 +276,8 @@ class Lab {
 			}
 
 			// lab script timeout
-			$result = (string) array_pop($xml -> xpath('//lab/@scripttimeout'));
+			$result = $xml -> xpath('//lab/@scripttimeout');
+			$result = (string) array_pop($result);
                         if (strlen($result) !== 0 && (int) $result >= 300) {
                                 $this -> scripttimeout = $result;
                         } else if (strlen($result) !== 0) {
