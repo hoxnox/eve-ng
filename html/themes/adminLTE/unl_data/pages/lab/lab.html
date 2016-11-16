@@ -79,7 +79,7 @@
     </li>
     <li class="context-menu__item_mainDiv">
       <a class="context-menu__link_mainDiv pointer" ng-click="changedCursor='network';  mainFieldClick($event,'context-menu_mainDiv')">
-        <i class="glyphicon glyphicon-transfer"></i> Add new networkx
+        <i class="glyphicon glyphicon-transfer"></i> Add new network
       </a>
     </li>
 
@@ -119,12 +119,12 @@
     </li>
     <li class="context-menu__item_leftClick">
       <a class="context-menu__link_leftClick pointer" ng-click="editEl()">
-        <i class="fa fa-edit"></i> Edit Element
+        <i class="fa fa-edit"></i> Edit
       </a>
     </li>
     <li class="context-menu__item_leftClick">
       <a class="context-menu__link_leftClick pointer" ng-click="deleteEl()">
-        <i class="fa fa-trash-o"></i> Delete Element
+        <i class="fa fa-trash-o"></i> Delete
       </a>
     </li>
   </ul>
@@ -245,12 +245,12 @@
 	    
 	    </li>
 	  	<li class="context-menu__item">
-	      <a class="context-menu__link pointer" ng-click="startstopNode()">
+	      <a class="context-menu__link pointer" ng-click="startThisNode()">
 	        <i class="glyphicon glyphicon-play"></i> Start
 	      </a>
 	    </li>
 	    <li class="context-menu__item">
-	      <a class="context-menu__link pointer" ng-click="startstopNode()">
+	      <a class="context-menu__link pointer" ng-click="stopThisNode()">
 	        <i class="glyphicon glyphicon-stop"></i> Stop
 	      </a>
 	    </li>
@@ -310,15 +310,17 @@ jsPlumb.importDefaults({
 	HoverPaintStyle:{ outlineWidth: 2, outlineColor: "white" },	
 });
 
-jsPlumb.bind("connection", function (info) {
-		$scope.newConnModal(info)
-})
 
-var readyState=false;
-var fullPathToFile='';
-var getScopeInterval=setInterval(function(){ 
-	if (test()) {clearInterval(getScopeInterval); readyState=true; console.log(fullPathToFile); initFullLab()}
-	}, 1000);
+var readyState = false;
+var fullPathToFile = '';
+var getScopeInterval = setInterval(function(){ 
+	if (test()) {
+		clearInterval(getScopeInterval); 
+		readyState=true; 
+		console.log(fullPathToFile); 
+		initFullLab()
+	}
+}, 1000);
  
 function getScope(ctrlID) {
     return angular.element("#"+ctrlID).scope();
@@ -326,7 +328,7 @@ function getScope(ctrlID) {
 
 function test() {
     $scope = getScope('labCtrl');
-	fullPathToFile=$scope.fullPathToFile;
+	fullPathToFile = $scope.fullPathToFile;
 	return ($scope.fullPathToFile === undefined) ? false : true
 }
 
@@ -351,7 +353,7 @@ function initFullLab(){
 			var stopFlag = 0;
 			var textsNumber = ObjectLength(data.data)
 			for (var key in data.data){
-				netArray[stopFlag]=key;
+				netArray[stopFlag] = key;
 				stopFlag++;
 				drowObject(data.data[key])
 				//if (stopFlag === networksNumber) {console.log('hereNet'); netReady=true;}
@@ -359,11 +361,11 @@ function initFullLab(){
 		}),
 		$.get('/api/labs'+fullPathToFile+'/networks', function(data) { ///GET ALL NETWORKS FROM SERVER///
 			//console.log(data.data)
-			var stopFlag=0;
-			$scope.networks=data.data;
+			var stopFlag = 0;
+			$scope.networks = data.data;
 			var networksNumber = ObjectLength(data.data)
 			for (var key in data.data){
-				netArray[stopFlag]=key;
+				netArray[stopFlag] = key;
 				stopFlag++
 				networkInit(data.data[key]);
 				//if (stopFlag === networksNumber) {console.log('hereNet'); netReady=true;}
@@ -389,6 +391,12 @@ function initFullLab(){
 				$('#networkID_'+netArray[z]).hide()		///HIDE ALL UNUSED NETWORKS///
 			}
 			$scope.ready=true;
+			jsPlumb.repaintEverything();
+			jsPlumb.repaintEverything();
+
+			jsPlumb.bind("connection", function (info) {
+				$scope.newConnModal(info);
+			})
 		})
 	})
 	$.unblockUI();
@@ -658,7 +666,7 @@ function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 		label:SLb, 
 		id:SID+'_'+SLb,
 		cssClass:  (SLb != '') ? "aLabel" : '',
-		location:0.2,
+		location:0.3,
 		events:{
 			contextmenu :function(){
 				$("#tempElID").val(DID)
@@ -671,12 +679,28 @@ function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 	
 	conn_temp.addOverlay(["Label", {
 	label:Dlb, 
-	id:SID+'_'+Dlb,
+	id:DID+'_'+Dlb,
 	cssClass: (Dlb != '') ? "aLabel" : '',
-	location:0.5,
+	location:0.7,
 	
 	}]);
 
+}
+
+
+// Basename: given /a/b/c return c
+function basename(path) {
+    return path.replace(/\\/g, '/').replace(/.*\//, '');
+}
+
+// Dirname: given /a/b/c return /a/b
+function dirname(path) {
+    var dir = path.replace(/\\/g, '/').replace(/\/[^\/]*$/, '');
+    if (dir == '') {
+        return '/';
+    } else {
+        return dir;
+    }
 }
 
 </script>

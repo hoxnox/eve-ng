@@ -103,7 +103,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 							label:result.node.ifname, 
 							id:'nodeID_'+result.node.id+'_'+result.node.ifname,
 							cssClass: "aLabel",
-							location:0.08}]
+							location:0.3}]
 						]
 					});
 				} 
@@ -129,14 +129,14 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 							label:result.nodesData.src.ifname, 
 							id:'nodeID_'+result.nodesData.src.id+'_'+result.nodesData.src.ifname,
 							cssClass: "aLabel",
-							location:0.08}]
+							location:0.3}]
 						]
 					});
 					newConn.addOverlay(["Label", {
 					label:result.nodesData.dst.ifname, 
 					id:result.nodesData.dst.id+'_'+result.nodesData.dst.ifname,
 					cssClass: "aLabel",
-					location:0.92
+					location:0.7
 					}]); 
 				} else if (result.nodesData.type == 'serial'){
 					var type = 'serial';
@@ -158,24 +158,28 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 							label:result.nodesData.src.ifname, 
 							id:'nodeID_'+result.nodesData.src.id+'_'+result.nodesData.src.ifname,
 							cssClass: "aLabel",
-							location:0.08}]
+							location:0.3}]
 						]
 					});
 					newConn.addOverlay(["Label", {
 					label:result.nodesData.dst.ifname, 
 					id:result.nodesData.dst.id+'_'+result.nodesData.dst.ifname,
 					cssClass: "aLabel",
-					location:0.92
+					location:0.7
 					}]); 
 				}
 				}
 			$scope.ready=true;
-		} else console.log('Error apeared. Sorry((')}
+		} else console.log('Error apeared. Sorry((')
+		jsPlumb.repaintEverything();
+	}
 		, function () {
 			$scope.ready=true;
 		//function if user just close modal
 		//$log.info('Modal dismissed at: ' + new Date());
+
 		});
+
 		break;
 	case 'addNode':
 		modalInstance.result.then(function (result) {
@@ -505,11 +509,11 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 		);
 	}
 
-  $scope.closeModal = function () {
-    $uibModalInstance.dismiss('cancel');
-  };
+ 	$scope.closeModal = function () {
+    	$uibModalInstance.dismiss('cancel');
+  	};
   
-  $scope.addConn = function () {
+  	$scope.addConn = function () {
 		//console.log($scope.dst.type+' '+$scope.dst.eveID+' '+$scope.dst.selectedIF)
 		//console.log($scope.src.type+' '+$scope.src.eveID+' '+$scope.src.selectedIF)
 		//if ( ($scope.dst.type == 'node' && $scope.src.type == 'network') || ($scope.dst.type == 'network' && $scope.src.type == 'node')){
@@ -543,6 +547,7 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 				}
 			);
 		}
+
 		if ( ($scope.dst.type == 'node' && $scope.src.type == 'node')){
 			console.log($scope.srcfullIfList)
 			console.log($scope.src.selectedIF)
@@ -637,7 +642,9 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 			)
 		}
 		}
-  };
+
+  	};
+  	jsPlumb.repaintEverything();
 };
 
 function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
@@ -1055,7 +1062,7 @@ function editNetModalCtrl($scope, $uibModalInstance, $http, data) {
 
 function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.path=data.path;
-	$scope.anychanges=true;
+	$scope.anychanges=false;
 	$scope.nodeList={};
 	$scope.iconTempObj={};
 	$scope.imageTempObj={};
@@ -1106,7 +1113,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 
 	
 	$scope.beforeEdit = function(id, template){
-		// $scope.escEditMode(id);
+		$scope.escEditMode(id);
 		if($scope.nodeList[id].status != 0){
 			if(confirm('Befor edit you should shutdown node. Do that now?')){
 				$scope.startstopNode(id)
@@ -1212,13 +1219,13 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 			function successCallback(response){
 				console.log(response + 'datele salvate');
 				$scope.refreshNodeList();
-				$scope.nodeList[id].editmode=false;
-				$scope.anychanges=false;
+				$scope.nodeList[id].editmode = false;
+				$scope.anychanges = false;
 			},
 			function errorCallback(response){
 				console.log(response);
 				$scope.refreshNodeList();
-				$scope.anychanges=false;
+				$scope.anychanges = false;
 			}
 		)
 	}
@@ -1227,6 +1234,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 		if(!confirm('Do you realy want to delete '+name+'?'))return;
 		console.log('Delete node with id '+id)
 		$scope.anychanges=true;
+		if ($scope.nodeList[id].count > 0) {$scope.anychanges=true;}
 		$http({
 			method: 'DELETE',
 			url:'/api/labs'+$scope.path+'/nodes/'+id}).then(
@@ -1251,7 +1259,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.closeModal = function () {
   		console.log($scope.anychanges);
   		if ($scope.anychanges==true)
-  			alert('You have not saved your changes, click the save button for the changes to take effect.')
+  			alert('So you need to edit some node, save and then close')
     	else
     		$uibModalInstance.dismiss();
   	};
@@ -1302,7 +1310,7 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 		}
 	)
 	}
-	$scope.netListRefresh()
+	$scope.netListRefresh();
 	
 	$scope.cancelChanges = function(id){
 		
@@ -1323,7 +1331,7 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 		}
 	}
 	$scope.editMode=function(id){
-		$scope.cancelChanges()
+		$scope.cancelChanges();
 		$scope.netList[id].editmode=true;
 		
 	}
@@ -1350,7 +1358,13 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.deleteNet = function(id,name){
 		if(!confirm('Do you realy want to delete '+name+'?'))return;
 		console.log('Delete node with id '+id)
-		if ($scope.netList[id].count > 0) {$scope.anychanges=true;} else {$('#networkID_'+id).remove();}
+		if ($scope.netList[id].count > 0) 
+			{
+				$scope.anychanges=true;
+			} else 
+			{
+				$('#networkID_'+id).remove();
+			}
 		$http({
 			method: 'DELETE',
 			url:'/api/labs'+$scope.path+'/networks/'+id}).then(
@@ -1358,9 +1372,11 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 				console.log(response)
 				console.log('Delete network done')
 				$scope.netListRefresh();
+				$scope.anychanges=false;
 			}, function errorCallback(response){
 				console.log('Server Error');
 				console.log(response);
+				$scope.anychanges=false;
 			}
 		);
 	}
@@ -1368,7 +1384,7 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
   	$scope.closeModal = function () {
   		console.log($scope.anychanges);
   		if ($scope.anychanges==true)
-  			alert('You have not saved your changes, click the save button for the changes to take effect.')
+  			alert('So you need to edit some network, save and then close')
     	else
     		$uibModalInstance.dismiss();
   	};
@@ -1587,14 +1603,20 @@ function configObjectModalCtrl($scope, $uibModalInstance, $http, data) {
 		$(".modal-content").toggleClass("modal-content_opacity");
 	}
 }
-function editLabModalCtrl($scope, $uibModalInstance, $http, data) {
+function editLabModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 	console.log("se incarca")
-	$scope.path=data.path;
+	$scope.path = data.path;
+	$scope.anychanges = false;
+	$scope.editLab = {};
+	$scope.digits = {};
+	$scope.restrictTest = '\\d+';
+	$scope.restrictNumber = '^[a-zA-Z0-9-_]+$';
+
 	$http.get('/api/labs'+$scope.path)
 	.then(
 		function successCallback(response){
 			console.log(response);
-			$scope.labData=response.data.data
+			$scope.labData=response.data.data;
 		},
 		function errorCallback(response){
 			console.log('Server Error');
@@ -1602,12 +1624,88 @@ function editLabModalCtrl($scope, $uibModalInstance, $http, data) {
 		}
 	);
 
+	$scope.saveChanged = function(){
+		var putdata = {
+			"name" : $scope.labData.name,
+			"version" : $scope.labData.version,
+			"author" : $scope.labData.author,
+			"scripttimeout" : $scope.labData.scripttimeout,
+			"description" : $scope.labData.description,
+			"body" : $scope.labData.body
+		}
+
+		$http.put('/api/labs'+$scope.path, putdata)
+		.then(
+			function successCallback(response){
+				console.log('S-a salvat')
+				//console.log("basename" , basename($scope.path));
+				//console.log("dirname" , dirname($scope.path));
+				console.log($scope.path)
+				if (basename($scope.path) != $scope.labData.name + '.unl')
+				{
+					$rootScope.lab = dirname($scope.path) + $scope.labData.name + '.unl'
+					$scope.path = dirname($scope.path) + $scope.labData.name + '.unl'
+				}
+				console.log($scope.path)
+				$scope.labData=response.data.data;
+				$scope.refreshEditLab();
+			},
+			function errorCallback(response){
+				console.log('Server Error');
+				console.log(response);
+			}
+		);
+	}
+
 	$scope.closeModal = function () {
     	$uibModalInstance.dismiss('cancel');
   	};
 
   	$scope.opacity = function(){
 		$(".modal-content").toggleClass("modal-content_opacity");
+	};
+
+	$scope.refreshEditLab = function(){
+		$http.get('/api/labs'+$scope.path)
+		.then(
+			function successCallback(response){
+				console.log(response);
+				$scope.labData=response.data.data
+			
+			},
+			function errorCallback(response){
+				console.log('Server Error');
+				console.log(response);
+			}
+		)
 	}
+
+	// $scope.patern = function(){
+	// 	var valid = formLabEdit.version.$valid;
+	// 	if(valid == false)
+	// 	{
+	// 		$(".chars").css("color", "blue")
+	// 	}
+
+	// }
+
+
+
+
+
+// 	$('input').keyup(function() {
+//     var $th = $(this);
+//     $th.val( $th.val().replace(/[^a-zA-Z0-9]/g, function(str) { alert('You typed " ' + str + ' ".\n\nPlease use only letters and numbers.'); return ''; } ) );
+// });
+
+// 	$('input').on('keypress', function(event){
+//         var char = String.fromCharCode(event.which);
+//         var txt = $(this).val();
+//         if (!txt.match(/^[0-9]*$/)){
+//             var changeTo = txt.replace(char, '')
+//             $(this).val(changeTo).change();
+//         }
+// });
+	
 }
 

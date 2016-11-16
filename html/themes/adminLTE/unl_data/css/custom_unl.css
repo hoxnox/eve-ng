@@ -728,8 +728,66 @@ Free select
        -o-box-shadow: 0 0 10px 10px rgba(70, 166, 182, 0.5);
           box-shadow: 0 0 10px 10px rgba(70, 166, 182, 0.5);
 }
-
-
+/*
+*Opacity for modals
+*/
 .modal-content_opacity{
   opacity: 0.3;
 }
+/*
+*Style for form group from EDIT LAB //START
+*/
+.control-label_custom{
+  text-align: left !important;
+}
+.control-label_custom_pos{
+   position: relative;
+}
+.sup-star{
+  color:  #a6a6a6;
+  font-size: 17px;
+  position: absolute;
+  right: 1px;
+  top: 15px;
+}
+.parent-required{
+  position: relative;
+  color:  #a6a6a6;
+}
+.p-required{
+  padding-left: 17px;
+  font-size: 14px;
+  padding-top: 10px;
+}
+.sup-required{
+  color: #a6a6a6;
+  font-size: 19px;
+  left: 21px;
+  position: absolute;
+  top: 21px;
+}
+.chars,.chars-full{
+  color: #a6a6a6;
+  font-size: 12px;
+}
+.chars--active{
+  font-size: 12px;
+  color: rgb(250,0,0);
+  font-weight: bold;
+}
+.input--error{
+  -webkit-box-shadow: 0 0 5px 0 rgba(250,0,0,0.5);
+  -moz-box-shadow: 0 0 5px 0 rgba(250,0,0,0.5);
+  -o-box-shadow: 0 0 5px 0 rgba(250,0,0,0.5);
+  box-shadow: 0 0 5px 0 rgba(250,0,0,0.5);
+}
+.input--error:focus{
+  -webkit-box-shadow: 0 0 5px 0 rgba(250,0,0,0.5);
+  -moz-box-shadow: 0 0 5px 0 rgba(250,0,0,0.5);
+  -o-box-shadow: 0 0 5px 0 rgba(250,0,0,0.5);
+  box-shadow: 0 0 5px 0 rgba(250,0,0,0.5);
+  border-color: rgb(250,0,0);
+}
+/*
+*Style for form group from EDIT LAB //END
+*/

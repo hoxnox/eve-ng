@@ -125,7 +125,7 @@ var contextMenuInit = function() {
    * Initialise our application's code.
    */
   function init() {
-    freeSelectNode()
+    freeSelectNode();
     nodeClick();
     contextListener();
     clickListener();
@@ -136,9 +136,12 @@ var contextMenuInit = function() {
   }
   /*Open context menu //context-meniu_leftClick */
   function nodeClick(){
-    $(document).on("dblclick", ".element-menu", function(e){
-      //console.log("click la inceput")
+    $(document).on("dbclick", ".element-menu", function(e){
+      console.log("click la inceput")
+      e.preventDefault();
+      e.stopPropagation();
       var pos = getPosition(e);
+      $('#tempElID').val(e.target.parentElement.parentElement.id);
       $("#context-menu_leftClick").addClass("context-menu_leftClick--active").css("left", pos.x).css("top", pos.y);
       console.log("open context-meniu_leftClick");
 

@@ -36,6 +36,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		jsPlumb.detachEveryConnection();
 		jsPlumb.reset();
 		initFullLab();
+		openrightHide();
 		// $scope.networkListRefresh();
 		// $scope.nodeListRefresh();
 		// for (i in $scope.node)
@@ -70,7 +71,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			}
 		)
 	}
-	$scope.nodeListRefresh()
+	$scope.nodeListRefresh();
 	
 	$scope.mouseOverMainDiv = function($event){
 		
@@ -176,13 +177,13 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	}
 
 	$scope.wipeNode = function(id){
-		openrightHide();
 		if (!id)
 		{
 			id = $("#tempElID").val();
 			id = id.replace("nodeID_", "");
 		}
-		$http.get('/api/labs'+$rootScope.lab+'/nodes/'+id+'/wipe')
+		$http.get('/api/labs'+$rootScope.lab+'/nodes/'+id+'/wipe');
+		$scope.stopThisNode();
 		console.log("s-a transmis wipe")
 	}
 	///////////////////////////////////////////////
@@ -190,6 +191,24 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 
 	///////////////////////////////////////////////
 	//// Start/Stop Node //START
+	$scope.startThisNode = function(id){
+		var id = $("#tempElID").val();
+		id = id.replace("nodeID_", "");
+		var node = $scope.node[id];
+		if(node.status == 0){
+			$scope.startstopNode(node.id);
+		}
+	}
+
+	$scope.stopThisNode = function(){
+		var id = $("#tempElID").val();
+		id = id.replace("nodeID_", "");
+		var node = $scope.node[id];
+		if(node.status == 2){
+			$scope.startstopNode(node.id);
+		}
+	}
+
 	$scope.startAllNode = function(){
 		openrightHide();
 		var h_flague = false;
@@ -237,6 +256,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			}
 		}
 	}
+
 
 	$scope.startstopNode = function(id){
 		if (!id)
@@ -477,6 +497,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	//// Free select //START
 	$scope.freeSelect = function(){
 		openrightHide();
+		// openrightRemove();
 		//$("#freeSelect").toggleClass("activeFreeSelect")
 		if($("#freeSelect").hasClass('noneActive'))
 		{
@@ -588,10 +609,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		console.log("type", type)
 		$scope.changedCursor = '';
 		$('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
-		$(".openright").hide();
-		setTimeout(function(){
-			$(".openright").show();
-		}, 100)
+		openrightHide();
 		switch (type) {
 			case 'node':
 				$scope.changedCursor = 'node';
@@ -978,8 +996,18 @@ function ObjectLength( object ) {
 	return length;
 }
 function openrightHide() {
-	$(".openright").hide();
+	var objects = $(".openright");
+	objects.removeClass("openright");
 	setTimeout(function(){
-		$(".openright").show();
+		objects.addClass("openright");
 	}, 100)
 }
+
+// function openrightRemove(){
+// 	$(document).on("click", ".openright", function(){
+// 		$(this).hide(".openright", 0);
+// 		setTimeout(function(){
+// 			$(".openright").show();
+// 		},10)
+// 	});
+// }

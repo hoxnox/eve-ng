@@ -27,7 +27,7 @@ td.imageList .ui-select-container .ui-select-choices{
 }
 
 .newNodeSelect .ui-select-choices {
-  max-height:600px !important;
+  min-height:550px !important;
 }
 
 .hideMe {
@@ -375,7 +375,7 @@ td.imageList .ui-select-container .ui-select-choices{
 .aLabel.jsplumb-hover {
     background-color: #aaa;
     color: white;
-  z-index: 5;
+    z-index: 5;
 }
 .jsplumb-source-hover:not(.noborderRadius), .jsplumb-target-hover:not(.noborderRadius) {
    -webkit-filter: invert(100%);
@@ -390,7 +390,8 @@ td.imageList .ui-select-container .ui-select-choices{
 
 .aLabel {
     background-color: #e6f5ff;
-    padding: 0.08em;
+    padding-left: 3px;
+    padding-right: 3px;
     border-radius: 0.8em;
     border: 2px solid #346789;
     cursor: pointer;
