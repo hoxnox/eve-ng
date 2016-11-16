@@ -8,170 +8,124 @@ CONTROL_DIR="$(mktemp -dt eve_control.XXXXXXXXXX)"
 DATA_DIR="$(mktemp -dt eve_data.XXXXXXXXXX)"
 TMP="$(mktemp -dt eve_tmp.XXXXXXXXXX)"
 DEBIAN_FRONTEND="noninteractive"
+
 FAILED="\033[0;31mfailed\033[0m"
 WARNING="\033[1;33mwarning\033[0m"
 INFO="\033[0;34mblue\033[0m"
 DONE="\033[0;32mdone\033[0m"
-MYSQL_ROOT_PASSWD="eve-ng"
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
+MYSQL_ROOT_PASSWD="eve-ng"
+
 # Environment
 echo -ne "Building environment... "
+
 VERSION="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f1 2>> ${LOG})"
 RELEASE="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f2 2>> ${LOG})"
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 mkdir -p ${BUILD_DIR} ${CONTROL_DIR} ${DATA_DIR}/opt/unetlab/addons ${DATA_DIR}/opt/unetlab/data/Logs ${DATA_DIR}/opt/unetlab/labs ${DATA_DIR}/opt/unetlab/tmp ${DATA_DIR}/opt/unetlab/scripts ${DATA_DIR}/opt/unetlab/data/Exports &>> ${LOG} ${DATA_DIR}/opt/unetlab/wrappers ${DATA_DIR}/opt/unetlab/addons/iol/lib ${DATA_DIR}/opt/unetlab/addons/iol/bin ${DATA_DIR}/opt/unetlab/addons/dynamips ${DATA_DIR}/opt/unetlab/addons/qemu ${DATA_DIR}/etc/sudoers.d ${DATA_DIR}/etc/apache2/sites-available ${DATA_DIR}/etc/logrotate.d ${DATA_DIR}/lib/plymouth/themes/unetlab ${DATA_DIR}/etc/initramfs-tools/conf.d ${DATA_DIR}/etc/apt/sources.list.d ${DATA_DIR}/opt/unetlab/html/files ${DATA_DIR}/etc/profile.d ${DATA_DIR}/etc/init /build/apt/pool/${DISTNAME}/e/eve-ng
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cat ${CONTROL} 2>> ${LOG} | sed "s/%VERSION%/${VERSION}/" 2>> ${LOG} | sed "s/%RELEASE%/${RELEASE}/" 2>> ${LOG} > ${CONTROL_DIR}/control
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 # Copying html
 cd ${SRC_DIR}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
+
 rm -f html/includes/config.php &>> ${LOG}
 rm -rf html/files &>> ${LOG}
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cp -a html ${DATA_DIR}/opt/unetlab/ &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
+
 # Setting version
 cd ${SRC_DIR}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cat html/includes/init.php 2>> ${LOG} | sed "s/define('VERSION', .*/define('VERSION', '${VERSION}-${RELEASE}');/g" 2>> ${LOG} > ${DATA_DIR}/opt/unetlab/html/includes/init.php
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
+
 # Copying scripts
 cd ${SRC_DIR}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cp -a scripts ${DATA_DIR}/opt/unetlab/ &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cp -a IOUtools/iou_export ${DATA_DIR}/opt/unetlab/scripts/ &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
+
 echo -e ${DONE}
+
 # Compiling wrappers
 echo -ne "Compiling wrappers... "
+
 export CC="gcc"
 export CFLAGS="-Wall -O2"
 export INC="include/ts.c include/serial2udp.c include/afsocket.c include/tap.c include/cmd.c include/functions.c include/log.c"
+
 cd ${SRC_DIR}/wrappers
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
+
 ${CC} ${CFLAGS} -o ${DATA_DIR}/opt/unetlab/wrappers/iol_wrapper ${INC} iol_wrapper.c iol_functions.c &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
+
 ${CC} ${CFLAGS} -o ${DATA_DIR}/opt/unetlab/wrappers/qemu_wrapper ${INC} qemu_wrapper.c qemu_functions.c &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-${CC} ${CFLAGS} -o ${DATA_DIR}/opt/unetlab/wrappers/dynamips_wrapper ${INC} dynamips_wrapper.c dynamips_functions.c &>> ${LOG}
-=======
-
-${CC} ${CFLAGS} -o ${DATA_DIR}/opt/unetlab/wrappers/iol_wrapper ${INC} iol_wrapper.c iol_functions.c &>> ${LOG}
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
-if [ $? -ne 0 ]; then
-	echo -e ${FAILED}
-	exit 1
-fi
-<<<<<<< HEAD
-cp -a unl_profile ${DATA_DIR}/opt/unetlab/wrappers/ &>> ${LOG}
-=======
-
-${CC} ${CFLAGS} -o ${DATA_DIR}/opt/unetlab/wrappers/qemu_wrapper ${INC} qemu_wrapper.c qemu_functions.c &>> ${LOG}
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
-if [ $? -ne 0 ]; then
-	echo -e ${FAILED}
-	exit 1
-fi
-<<<<<<< HEAD
-cp -a unl_wrapper.php ${DATA_DIR}/opt/unetlab/wrappers/unl_wrapper &>> ${LOG}
-=======
 
 ${CC} ${CFLAGS} -o ${DATA_DIR}/opt/unetlab/wrappers/dynamips_wrapper ${INC} dynamips_wrapper.c dynamips_functions.c &>> ${LOG}
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-cp -a nsenter ${DATA_DIR}/opt/unetlab/wrappers/ &>> ${LOG}
-=======
 
 cp -a unl_profile ${DATA_DIR}/opt/unetlab/wrappers/ &>> ${LOG}
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-cp -a libcrypto.so.4 ${DATA_DIR}/opt/unetlab/addons/iol/lib/ &>> ${LOG}
-=======
 
 cp -a unl_wrapper.php ${DATA_DIR}/opt/unetlab/wrappers/unl_wrapper &>> ${LOG}
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
 cp -a nsenter ${DATA_DIR}/opt/unetlab/wrappers/ &>> ${LOG}
 if [ $? -ne 0 ]; then
@@ -185,55 +139,41 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 echo -e ${DONE}
+
 # Copying OS files
 echo -ne "Copying OS files... "
+
 cd ${SRC_DIR}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cp -a etc/sudo.conf ${DATA_DIR}/etc/sudoers.d/unetlab &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cp -a etc/apache.conf ${DATA_DIR}/etc/apache2/sites-available/unetlab.conf &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cp -a etc/logrotate.conf ${DATA_DIR}/etc/logrotate.d/unetlab &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cp -a etc/initramfs.conf ${DATA_DIR}/etc/initramfs-tools/conf.d/ &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cp -a etc/sources.list ${DATA_DIR}/etc/apt/sources.list.d/unetlab.list &>> ${LOG}
 if [ $? -ne 0 ]; then
         echo -e ${FAILED}
@@ -244,15 +184,13 @@ if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cp -a plymouth ${DATA_DIR}/lib/plymouth/themes/unetlab &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
+
 cp -a ${SRC_DIR}/windows ${TMP}/UNetLab &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
@@ -264,10 +202,7 @@ if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cp -a ovf ${DATA_DIR}/opt/ &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
@@ -283,13 +218,12 @@ if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
+
 echo -e ${DONE}
+
 # Permissions
 echo -ne "Setting permissions... "
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 chown -R root:root ${DATA_DIR}/opt/unetlab &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
@@ -315,16 +249,15 @@ if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 chmod 644 ${DATA_DIR}/etc/sudoers.d/unetlab ${DATA_DIR}/etc/apache2/sites-available/unetlab.conf ${DATA_DIR}/etc/logrotate.d/unetlab ${DATA_DIR}/etc/initramfs-tools/conf.d/initramfs.conf ${DATA_DIR}/etc/apt/sources.list.d/unetlab.list ${DATA_DIR}/lib/plymouth/themes/unetlab/* ${DATA_DIR}/etc/profile.d/ovf.sh ${DATA_DIR}/etc/init/ovfconfig.conf &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
+
 echo -e ${DONE}
+
 echo -ne "Calculating installed size... "
 SIZE=$(du -sk ${DATA_DIR} | awk '{print $1}')
 sed -i "s/^Installed-Size.*/Installed-Size: ${SIZE}/g" ${CONTROL}
@@ -333,21 +266,22 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 echo -e ${DONE}
+
 # Building deb packages
 echo -ne "Building deb packages... "
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cat > ${CONTROL_DIR}/preinst << EOF
 #!/bin/bash
+
 echo -ne "Checking MySQL... "
 echo "\q" | mysql -u root --password=eve-ng &> /dev/null
 if [ \$? -ne 0 ]; then
         echo -e "${FAILED}"
         exit 1
 fi
+
 echo -e "${DONE}"
+
 echo "\q" | mysql -u root --password=${MYSQL_ROOT_PASSWD} eve_ng_db &> /dev/null
 if [ \$? -ne 0 ]; then
 	echo -ne "Creating database and users... "
@@ -366,7 +300,9 @@ if [ \$? -ne 0 ]; then
         echo -e "${FAILED}"
         exit 1
     fi
+
 	echo -e "${DONE}"
+
 	if [ -f /opt/unetlab/data/database.sdb ]; then
 		echo -ne "Migrating users... "
 		echo ".dump users " 2> /dev/null | sqlite3 /opt/unetlab/data/database.sdb 2> /dev/null | grep -i insert 2> /dev/null | sed -e 's/);/,1);/' -e 's/"/\`/g' 2> /dev/null | mysql -u eve-ng --password=eve-ng eve_ng_db &> /dev/null
@@ -379,14 +315,7 @@ if [ \$? -ne 0 ]; then
 				echo -e "${FAILED}"
 				exit 1
 		fi
-		echo -e "${DONE}"
-	else
-		echo -ne "Adding admin user... "
-		echo "INSERT INTO users VALUES ('admin',NULL,'root@localhost',-1,'UNetLab Administrator','dddc487d503fdb607bc113821a7416cfd67a3abf77f4ec87ee5797449bdca796',NULL,'','admin','',1);" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ng_db &> /dev/null
-		if [ $? -ne 0 ]; then
-				echo -e "${FAILED}"
-				exit 1
-		fi
+
 		echo -e "${DONE}"
 	else
 		echo -ne "Adding admin user... "
@@ -400,10 +329,7 @@ if [ \$? -ne 0 ]; then
 	fi
 fi
 EOF
-<<<<<<< HEAD
-=======
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 cat > ${CONTROL_DIR}/postinst << EOF
 #!/bin/bash
 groupadd -g 32768 -f unl &> /dev/null
@@ -446,60 +372,13 @@ apt-mark hold  \$(dpkg -l | grep -e linux-image -e linux-headers -e linux-generi
 # Additional fixes
 find /opt/unetlab/tmp/ -name "nvram_*" -exec /opt/unetlab/scripts/fix_iol_nvram.sh "{}" \; &> /dev/null
 EOF
-<<<<<<< HEAD
-DEBFILE="/build/apt/pool/${DISTNAME}/e/eve-ng/eve-ng_${VERSION}-${RELEASE}_amd64.deb"
-cd ${DATA_DIR} &>> ${LOG}
-if [ $? -ne 0 ]; then
-	echo -e ${FAILED}
-	exit 1
-fi
-tar czf data.tar.gz * &>> ${LOG}
-if [ $? -ne 0 ]; then
-	echo -e ${FAILED}
-	exit 1
-fi
-find -type f -exec md5sum {} \; >> ${CONTROL_DIR}/md5sums 2>> ${LOG}
-if [ $? -ne 0 ]; then
-	echo -e ${FAILED}
-	exit 1
-fi
-echo 2.0 > ${CONTROL_DIR}/debian-binary 2>> ${LOG}
-if [ $? -ne 0 ]; then
-	echo -e ${FAILED}
-	exit 1
-fi
-cd ${CONTROL_DIR} &>> ${LOG}
-if [ $? -ne 0 ]; then
-	echo -e ${FAILED}
-	exit 1
-fi
-tar czf control.tar.gz md5sums control postinst preinst &>> ${LOG}
-if [ $? -ne 0 ]; then
-	echo -e ${FAILED}
-	exit 1
-fi
-cd ${SRC_DIR}
-if [ $? -ne 0 ]; then
-	echo -e ${FAILED}
-	exit 1
-fi
-ar -cr ${DEBFILE} ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz ${DATA_DIR}/data.tar.gz &>> ${LOG}
-=======
 
 DEBFILE="/build/apt/pool/${DISTNAME}/e/eve-ng/eve-ng_${VERSION}-${RELEASE}_amd64.deb"
 cd ${DATA_DIR} &>> ${LOG}
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
 fi
-<<<<<<< HEAD
-echo -e ${DONE}
-rm -rf ${CONTROL_DIR} ${DATA_DIR} ${LOG}
-# Build completed
-echo -e "Build completed:"
-ls -l /build/apt/pool/${DISTNAME}/e/eve-ng/eve-ng_*.deb
-=======
 
 tar czf data.tar.gz * &>> ${LOG}
 if [ $? -ne 0 ]; then
@@ -551,4 +430,3 @@ rm -rf ${CONTROL_DIR} ${DATA_DIR} ${LOG}
 echo -e "Build completed:"
 ls -l /build/apt/pool/${DISTNAME}/e/eve-ng/eve-ng_*.deb
 
->>>>>>> 770df32c2ee43a7009bbfb64ee2ef4fd0fec1e85
