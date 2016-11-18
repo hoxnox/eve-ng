@@ -124,7 +124,7 @@ if (!isset($node_templates)) {
 }
 
 // Define parameters
-define('VERSION', '2.0.1-45');
+define('VERSION', '2.0.1-50');
 define('BASE_DIR', '/opt/unetlab');
 define('BASE_LAB', BASE_DIR.'/labs');
 define('BASE_TMP', BASE_DIR.'/tmp');

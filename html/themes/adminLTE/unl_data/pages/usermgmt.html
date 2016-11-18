@@ -32,11 +32,21 @@
                         <button type="button" class="btn btn-default btn-flat btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                           More Info <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu pull-right">
-                          <li class="{{(sessionTime) ? 'active' : ''}}"><a data-ng-click="sessionTime = !sessionTime" class="pointer">Last session time</a></li>
+                        <ul class="dropdown-menu pull-right dropdown-menu__column">
+                          <li class="{{(sessionTime) ? 'active' : ''}}"><input id="check-time_id" type="checkbox" data-ng-click="sessionTime = !sessionTime" /><label class="pointer" for="check-time_id">Last session time</label>
+                         </li>
+                          <li class="{{(sessionIP) ? 'active' : ''}}"><input id="check-ip_id" type="checkbox" data-ng-click="sessionIP = !sessionIP"/><label for="check-ip_id" class="pointer"> Last session ip</label>
+                          </li>
+                          <li class="{{(currentFolder) ? 'active' : ''}}"><input id="check-folder_id" type="checkbox" data-ng-click="currentFolder = !currentFolder"><label for="check-folder_id" class="pointer"> Current folder</label>
+                          </li>
+                          <li class="{{(currentLab) ? 'active' : ''}}"><input id="check-lab_id" type="checkbox" data-ng-click="currentLab = !currentLab"><label for="check-lab_id" class="pointer"> Current lab</label>
+                         </li>
+
+
+                          <!-- <li class="{{(sessionTime) ? 'active' : ''}}"><a data-ng-click="sessionTime = !sessionTime" class="pointer">Last session time</a></li>
                           <li class="{{(sessionIP) ? 'active' : ''}}"><a data-ng-click="sessionIP = !sessionIP" class="pointer">Last session ip</a></li>
                           <li class="{{(currentFolder) ? 'active' : ''}}"><a data-ng-click="currentFolder = !currentFolder" class="pointer">Current folder</a></li>
-                          <li class="{{(currentLab) ? 'active' : ''}}"><a data-ng-click="currentLab = !currentLab" class="pointer">Current lab</a></li>
+                          <li class="{{(currentLab) ? 'active' : ''}}"><a data-ng-click="currentLab = !currentLab" class="pointer">Current lab</a></li> -->
                         </ul>
                       </div>
 				</div>
@@ -85,7 +95,7 @@
   
   
   <!-- Main Footer -->
-  <div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/footer.html'">
+  <!-- <div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/footer.html'"> -->
 </div>
 <!-- ./wrapper -->
 <!-- AdminLTE App -->

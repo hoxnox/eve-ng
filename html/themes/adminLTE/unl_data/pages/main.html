@@ -1,34 +1,43 @@
-<div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/header.html'" data-ng-controller="HeaderController" style="height: 8vh;">
+<div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/header.html'" data-ng-controller="HeaderController" style="height: 50px;">
 </div>
 <div class="wrapper" style="height:80%;">
 <!-- AdminLTE App -->
-<script src="/themes/adminLTE/dist/js/app.min.js"></script>
+<script src="/themes/adminLTE/dist/js/app.js"></script>
+<link rel="stylesheet" href="/themes/adminLTE/unl_data/css/unl_lab.css">
 <link rel="stylesheet" href="/themes/adminLTE/dist/css/skins/skin-blue.css">
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
       <!-- Content Header (Page header) -->
-      <section class="content-header">
+      <!--<section class="content-header" >
         <h1>
           File manager
           <small>here you can manage you labs</small>
         </h1>
-      </section>
+      </section>-->
     <!-- Main content -->
-<section class="content">
-      <div class="class="col-xs-12">
+	<section class="content row" style="padding-top: 0;">
+    <div class="box-header with-border">
+		<h3 class="box-title" style="padding-right:10px;"><b><i class="fa fa-sitemap" aria-hidden="true"></i> File manager</b> 
+		</h3>
+		<ol class="breadcrumb" style="margin-bottom:0px; display: inline-block; padding-left:10px; padding-right:10px;">
+			<li>Current position</li>
+			<li data-ng-repeat="foldername in splitPath track by $index"><a class="pointer" data-ng-click="fileMngDraw(splitPathArray[$index])">{{foldername}}</a></li>
+		</ol>
+    </div>
+      <div class="col-xs-12">
           <div class="box box-default">
-            <div class="box-header with-border">
+            <!-- <div class="box-header with-border">
 				<h3 class="box-title" style="padding-right:10px;"><b><i class="fa fa-sitemap" aria-hidden="true"></i> File manager</b> 
 				</h3>
 				<ol class="breadcrumb" style="margin-bottom:0px; display: inline-block; padding-left:10px; padding-right:10px;">
 					<li>Current position</li>
 					<li data-ng-repeat="foldername in splitPath track by $index"><a class="pointer" data-ng-click="fileMngDraw(splitPathArray[$index])">{{foldername}}</a></li>
 				</ol>
-            </div>
+            </div> -->
 			<!--<div class="box-header with-border">
               <h3 class="box-title">Current position: {{path}}</h3>
             </div> -->
-            <div class="box-body no-padding" style="display: block; height:70vh ">
+            <div class="box-body no-padding" style="display: block; height:auto ">
 			<table class="table table-hover table-light" data-ng-show="uploader.queue.length > 0">
 			<thead>
 				<tr class="uppercase">
@@ -90,7 +99,7 @@
                 </a>
                 <div class="btn-group">
                   <a type="button" class="btn btn-default btn-sm" data-toggle="tooltip" title="Add new folder" data-ng-click="newElementName=''; elementToggleFun('Folder');"><i class="fa fa-folder"></i></a>
-                  <a type="button" class="btn btn-default btn-sm" data-toggle="tooltip" title="Add new lab" data-ng-click="openModal('addfile');"><i class="fa fa-file"></i></a>
+                  <a type="button" class="btn btn-default btn-sm" data-toggle="tooltip" title="Add new lab" data-ng-click="openModal('addfile', null,'megalg');"><i class="fa fa-file"></i></a>
                   <a type="button" class="btn btn-default btn-sm" data-toggle="tooltip" title="Change item's name" data-ng-click="editElementShow();" ><i class="fa fa-pencil"></i></a>
                   <a type="button" class="btn btn-default btn-sm" data-toggle="tooltip" title="Move to ..." data-ng-click="moveto()" ><i class="fa fa-scissors"></i></a>
                   <a type="button" class="btn btn-default btn-sm" data-toggle="tooltip" title="Delete selected items" data-ng-click="deleteALLElement(); hideAllEdit()"><i class="fa fa-trash-o"></i></a>
@@ -113,13 +122,13 @@
 					</div>
 				</div>
 			  </div>
-			  <div class="table-responsive mailbox-messages"  style="height: 65vh ; overflow: auto;">
+			  <div class="table-responsive mailbox-messages"  style="height: 75vh ; overflow: auto;">
                 <table style="table-layout: fixed; width: 100%;" class="table table-hover table-striped tablefont customHover" id="filesTree">
                   <tbody>
 				  <!-- make item array - fileManagerItem['Fo_'+x.name] = [ x.name, x.name, visibleEdit, type] -->
                   <tr data-ng-repeat="x in rootDir.folders">
                     <td width="10%"><input type="checkbox" data-ng-show="x.name != '..'" data-ng-init="checkboxArray['Fo_'+x.name]['name']=x.name; checkboxArray['Fo_'+x.name]['checked']=false; checkboxArray['Fo_'+x.name]['type']='Folder';" data-ng-model="checkboxArray['Fo_'+x.name]['checked']" data-ng-click="falseForSelAll(); hideAllEdit();"/></td>
-                    <td style="word-wrap: break-word" class="mailbox-star" data-ng-click="selectElbyTD(checkboxArray['Fo_'+x.name])" data-ng-mousemove="visibleArray[x.name]=true" data-ng-mouseleave="visibleArray[x.name]=false">
+                    <td style="word-wrap: break-word;" class="mailbox-star" data-ng-click="selectElbyTD(checkboxArray['Fo_'+x.name])" data-ng-mousemove="visibleArray[x.name]=true" data-ng-mouseleave="visibleArray[x.name]=false">
 						<a class="pointer" data-ng-click="fileMngDraw(x.path, x.name); $event.stopPropagation();" data-ng-init="fileManagerItem['Fo_'+x.name]['visibleEdit']=false; fileManagerItem['Fo_'+x.name]['type']='Folder';" data-ng-show="!fileManagerItem['Fo_'+x.name]['visibleEdit']">
 							<i class="fa fa-folder" style="color:#dfba49"></i>
 							{{x.name}} 
@@ -142,7 +151,7 @@
 								</span>
 							</div>
 						</div>
-						<div class="pull-right">
+						<div class="pull-right button-box" style="color: red;">
 						<button type="button" class="btn btn-default btn-flat btn-xs" data-ng-show="visibleArray[x.name] && x.name != '..' && !fileManagerItem['Fo_'+x.name]['visibleEdit']" data-ng-click="openRename(fileManagerItem['Fo_'+x.name], $event)"><i class="fa fa-edit"></i> Rename</button>
 						<button type="button" class="btn btn-danger btn-flat btn-xs" data-ng-show="visibleArray[x.name] && x.name != '..' && !fileManagerItem['Fo_'+x.name]['visibleEdit']" data-ng-click="deleteElement(x.path,'Folder','true')"><i class="fa fa-trash-o"></i></button>
 						</div>
@@ -163,6 +172,7 @@
 							</div>
 							<!-- <img src="/themes/adminLTE/dist/img/waiting.gif" style="width:15px;height:15px;" data-ng-init="fileManagerItem['Fi_'+x.file]['img']=false" data-ng-show="fileManagerItem['Fi_'+x.file]['img']"> -->
 						</a>
+
 						<div class="form-group" data-ng-show="fileManagerItem['Fi_'+x.file]['visibleEdit']">
 							<div class="input-group input-group-sm">
 								<span class="input-group-addon"><i class="fa fa-file"></i></span>
@@ -173,7 +183,8 @@
 								</span>
 							</div>
 						</div>
-						<div class="pull-right">
+
+						<div class="pull-right button-box">
 						<button type="button" class="btn btn-default btn-flat btn-xs" data-ng-show="visibleArray[x.file] && !fileManagerItem['Fi_'+x.file]['visibleEdit']" data-ng-click="openRename(fileManagerItem['Fi_'+x.file], $event)"><i class="fa fa-edit"></i> Rename</button>
 						<button type="button" class="btn btn-default btn-flat btn-xs" data-ng-show="visibleArray[x.file] && !fileManagerItem['Fi_'+x.file]['visibleEdit']" data-ng-click="cloneElement(fileManagerItem['Fi_'+x.file], $event)"><i class="fa fa-clone"></i> Clone</button>
 						<button type="button" class="btn btn-danger btn-flat btn-xs" data-ng-show="visibleArray[x.file] && !fileManagerItem['Fi_'+x.file]['visibleEdit']" data-ng-click="deleteElement(x.path,'File','true')"><i class="fa fa-trash-o"></i></button>
@@ -209,13 +220,13 @@
         <!-- /.col -->
 	
    <!-- /.content -->
-     </section>
+    </section>
   </div>
   <!-- /.content-wrapper -->
   
   <input type="file" nv-file-select uploader="uploader" id="oneFileUploadInput" data-ng-model="fileupload" onchange="angular.element(this).scope().fileNameChanged()" style="display:none" multiple />
   <!-- Main Footer -->
-  <div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/footer.html'" >
+  <!--<div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/footer.html'" >-->
 </div>
 <!-- ./wrapper -->
 <script>

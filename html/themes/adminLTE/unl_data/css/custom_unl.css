@@ -29,7 +29,7 @@
 
 .scale-menu{
   right:0;
-  height: 150px; 
+  height: 185px; 
   width:52px; 
   background-color:#fff; 
   position:absolute; 
@@ -791,3 +791,15 @@ Free select
 /*
 *Style for form group from EDIT LAB //END
 */
+/*
+* Style for menu with folder and lab list from main page //START
+*/
+.mailbox-star{
+  position: relative;
+}
+.button-box{
+  position: absolute;
+  top: 47%;
+  right: 0;
+  transform:translateY(-50%);
+}

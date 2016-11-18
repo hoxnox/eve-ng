@@ -15,11 +15,13 @@ function ModalCtrl($scope, $uibModal, $log) {
   $scope.openModal = function (action , edituser, size) {
 	$scope.edituser = (edituser === undefined) ? '' :  edituser;
 	var pathToModal = (action === undefined) ? 'default' :  action;
+	console.log(size + 'aaaaaaaaaa');
     var modalInstance = $uibModal.open({
       animation: $scope.animationsEnabled,
       templateUrl: $scope.modalActions[pathToModal]['path'],
       controller: $scope.modalActions[pathToModal]['controller'],
       size: size,
+      backdrop: (size == 'megalg') ? false : true,
       resolve: {
         data: function () {
 			switch(action) {
@@ -137,12 +139,14 @@ function AddElModalCtrl($scope, $uibModalInstance, data, $http) {
 	$scope.author='';
 	$scope.description='';
 	$scope.version=1;
-	//$scope.body='';
+	$scope.body='';
 	$scope.scripttimeout=300;
 	$scope.labName=data.name;
 	$scope.labPath=data.path;
 	$scope.errorClass='';
 	$scope.errorMessage='';
+	$scope.restrictTest = '\\d+';
+	$scope.restrictNumber = '^[a-zA-Z0-9-_]+$';
 	
 	$scope.addNewLab = function () {
 		
@@ -157,6 +161,7 @@ function AddElModalCtrl($scope, $uibModalInstance, data, $http) {
 		'scripttimeout': $scope.scripttimeout,
 		'version': $scope.version,
 		'name': $scope.labName,
+		'body': $scope.body,
 		'path': $scope.path}
 		
 		if ($scope.labName == ''){ 
@@ -200,6 +205,10 @@ function AddElModalCtrl($scope, $uibModalInstance, data, $http) {
 			}
 		);
 	}
+
+	$scope.opacity = function(){
+		$(".modal-content").toggleClass("modal-content_opacity");
+	};
 
 	$scope.closeModal = function () {
 		$uibModalInstance.dismiss('cancel');
@@ -715,3 +724,4 @@ function MoveToModalCtrl($scope, $uibModalInstance, data, $http, $location,$inte
 	};
 	
 }
+

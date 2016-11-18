@@ -1055,9 +1055,9 @@ function editNetModalCtrl($scope, $uibModalInstance, $http, data) {
 			}
 		)
 	}
-  $scope.closeModal = function () {
-    $uibModalInstance.dismiss('cancel');
-  };
+	$scope.closeModal = function () {
+	    $uibModalInstance.dismiss('cancel');
+	};
 };
 
 function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
@@ -1113,7 +1113,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 
 	
 	$scope.beforeEdit = function(id, template){
-		$scope.escEditMode(id);
+		//$scope.escEditMode(id);
 		if($scope.nodeList[id].status != 0){
 			if(confirm('Befor edit you should shutdown node. Do that now?')){
 				$scope.startstopNode(id)
@@ -1331,7 +1331,7 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 		}
 	}
 	$scope.editMode=function(id){
-		$scope.cancelChanges();
+		//$scope.cancelChanges();
 		$scope.netList[id].editmode=true;
 		
 	}
@@ -1644,9 +1644,9 @@ function editLabModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 				if (basename($scope.path) != $scope.labData.name + '.unl')
 				{
 					$rootScope.lab = dirname($scope.path) + $scope.labData.name + '.unl'
-					$scope.path = dirname($scope.path) + $scope.labData.name + '.unl'
+					//$scope.path = dirname($scope.path) + $scope.labData.name + '.unl'
 				}
-				console.log($scope.path)
+				// console.log($scope.path)
 				$scope.labData=response.data.data;
 				$scope.refreshEditLab();
 			},
@@ -1680,7 +1680,14 @@ function editLabModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 		)
 	}
 
-	// $scope.patern = function(){
+	
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////Scripturi experimentale.
+
+// $scope.patern = function(){
 	// 	var valid = formLabEdit.version.$valid;
 	// 	if(valid == false)
 	// 	{
@@ -1707,5 +1714,3 @@ function editLabModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 //         }
 // });
 	
-}
-

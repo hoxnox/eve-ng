@@ -57,6 +57,10 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
 				$scope.rootDir = response.data.data;
 				$scope.currentPosition();
 				$.unblockUI();
+				//console.log($scope.rootDir)
+				setTimeout(function(){
+					$scope.getLabInfo($scope.rootDir.labs[0].path, $scope.rootDir.labs[0].file);
+				}, 1000)
 			}, 
 			function errorCallback(response) {
 				$.unblockUI();

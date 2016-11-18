@@ -126,7 +126,7 @@ var contextMenuInit = function() {
    */
   function init() {
     freeSelectNode();
-    nodeClick();
+    // nodeClick();
     contextListener();
     clickListener();
     keyupListener();
@@ -135,22 +135,22 @@ var contextMenuInit = function() {
     
   }
   /*Open context menu //context-meniu_leftClick */
-  function nodeClick(){
-    $(document).on("dbclick", ".element-menu", function(e){
-      console.log("click la inceput")
-      e.preventDefault();
-      e.stopPropagation();
-      var pos = getPosition(e);
-      $('#tempElID').val(e.target.parentElement.parentElement.id);
-      $("#context-menu_leftClick").addClass("context-menu_leftClick--active").css("left", pos.x).css("top", pos.y);
-      console.log("open context-meniu_leftClick");
+  // function nodeClick(){
+  //   $(document).on("click", ".element-menu", function(e){
+  //     console.log("click la inceput")
+  //     e.preventDefault();
+  //     e.stopPropagation();
+  //     var pos = getPosition(e);
+  //     $('#tempElID').val(e.target.parentElement.parentElement.id);
+  //     $("#context-menu_leftClick").addClass("context-menu_leftClick--active").css("left", pos.x).css("top", pos.y);
+  //     console.log("open context-meniu_leftClick");
 
-      setTimeout(function() {
-        menuState_leftClick = 1
-      }, 100);
-      console.log($scope.iconTempObj)
-    })
-  }
+  //     setTimeout(function() {
+  //       menuState_leftClick = 1
+  //     }, 100);
+  //     console.log($scope.iconTempObj)
+  //   })
+  // }
 
   function freeSelectPopUp(){
     $(document).on("contextmenu", ".free-selected", function(e){

@@ -458,7 +458,7 @@ function nodeInit(node){
 		'<img ng-src="/images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
 		'<a><figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind="node['+id+'].name"></figcaption></a>'+
 	'</div>';
-	$scope.compileNewElement(elDIV, 'nodeID_'+node.id)
+	$scope.compileNewElement(elDIV, 'nodeID_'+node.id);
 	//$('#canvas').append(elDIV)
 	//$('#nodeID_'+node.id).ready(function(){ $('.figcaption-text.'+id).css({'width': $('#nodeID_'+node.id+' img').css('width')}); jsPlumb.repaint($('#nodeID_'+node.id))/*console.log('nodeID_'+node.id+' ready');*/ });
 	//jsPlumbNodeInit($('#nodeID_'+node.id))
