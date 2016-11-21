@@ -11,7 +11,7 @@ rm -f /opt/unetlab/data/Logs/* /opt/unetlab/data/Exports/*
 /usr/sbin/apache2ctl graceful
 
 # Setting /etc/issue
-echo "Unified Networking Lab (default root password is 'unl')" > /etc/issue
+echo "Unified Networking Lab (default root password is 'eve')" > /etc/issue
 if [[ -e "/sys/class/net/pnet0" ]]; then
     INTERFACE="pnet0"
     IP="$(ifconfig ${INTERFACE} 2> /dev/null | grep 'inet addr' | cut -d: -f2 | cut -d' ' -f1 | grep -E "^[0-9]+.[0-9]+.[0-9]+.[0-9]+$")"
