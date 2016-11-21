@@ -478,6 +478,7 @@ function EditUserModalCtrl($scope, $uibModalInstance, data, $http) {
 		if ($scope.passwdConfirm!=$scope.passwd) {$scope.errorClass='has-error passwdConfirm'; $scope.errorMessage="Password doesn't match";}
 		if ($scope.passwdConfirm=='') {$scope.errorClass='has-error passwdConfirm'; $scope.errorMessage="Password can't be empty!";}
 		if ($scope.passwd=='') {$scope.errorClass='has-error passwd'; $scope.errorMessage="Password can't be empty!";}
+		if ($scope.passwd=='whereismypassword?') { $scope.passwd='' ;}
 		if ($scope.errorClass!=''){return;}
 		
 		$http.get('/api/users/').then(function(response){
@@ -486,7 +487,7 @@ function EditUserModalCtrl($scope, $uibModalInstance, data, $http) {
 			//Compare unique POD //START
 			for (var key in response.data.data){
 				console.log(parseInt(response.data.data[key].pod))
-				if (parseInt(response.data.data[key].pod) == parseInt($scope.pod)) {
+				if (parseInt(response.data.data[key].pod) == parseInt($scope.pod) && response.data.data[key].username != $scope.username) {
 					$scope.podError=true; break;
 				}
 			}
