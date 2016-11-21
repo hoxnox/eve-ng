@@ -22,7 +22,7 @@ echo -ne "Building environment... "
 VERSION="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f1 2>> ${LOG})"
 RELEASE="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f2 2>> ${LOG})"
 
-mkdir -p ${BUILD_DIR} ${CONTROL_DIR} ${DATA_DIR}/opt/unetlab/addons ${DATA_DIR}/opt/unetlab/data/Logs ${DATA_DIR}/opt/unetlab/labs ${DATA_DIR}/opt/unetlab/tmp ${DATA_DIR}/opt/unetlab/scripts ${DATA_DIR}/opt/unetlab/data/Exports &>> ${LOG} ${DATA_DIR}/opt/unetlab/wrappers ${DATA_DIR}/opt/unetlab/addons/iol/lib ${DATA_DIR}/opt/unetlab/addons/iol/bin ${DATA_DIR}/opt/unetlab/addons/dynamips ${DATA_DIR}/opt/unetlab/addons/qemu ${DATA_DIR}/etc/sudoers.d ${DATA_DIR}/etc/apache2/sites-available ${DATA_DIR}/etc/logrotate.d ${DATA_DIR}/lib/plymouth/themes/unetlab ${DATA_DIR}/etc/initramfs-tools/conf.d ${DATA_DIR}/etc/apt/sources.list.d ${DATA_DIR}/opt/unetlab/html/files ${DATA_DIR}/etc/profile.d ${DATA_DIR}/etc/init /build/apt/pool/${DISTNAME}/e/eve-ng
+mkdir -p ${BUILD_DIR} ${CONTROL_DIR} ${DATA_DIR}/opt/unetlab/addons ${DATA_DIR}/opt/unetlab/data/Logs ${DATA_DIR}/opt/unetlab/labs ${DATA_DIR}/opt/unetlab/tmp ${DATA_DIR}/opt/unetlab/scripts ${DATA_DIR}/opt/unetlab/data/Exports &>> ${LOG} ${DATA_DIR}/opt/unetlab/wrappers ${DATA_DIR}/opt/unetlab/addons/iol/lib ${DATA_DIR}/opt/unetlab/addons/iol/bin ${DATA_DIR}/opt/unetlab/addons/dynamips ${DATA_DIR}/opt/unetlab/addons/qemu ${DATA_DIR}/etc/sudoers.d ${DATA_DIR}/etc/apache2/sites-available ${DATA_DIR}/etc/logrotate.d ${DATA_DIR}/lib/plymouth/themes/unetlab ${DATA_DIR}/etc/initramfs-tools/conf.d ${DATA_DIR}/etc/apt/sources.list.d ${DATA_DIR}/opt/unetlab/html/files ${DATA_DIR}/etc/profile.d ${DATA_DIR}/etc/init /build/apt/pool/${DISTNAME}/e/eve-ng ${DATA_DIR}/etc/systemd/system
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -151,6 +151,12 @@ if [ $? -ne 0 ]; then
 fi
 
 cp -a etc/sudo.conf ${DATA_DIR}/etc/sudoers.d/unetlab &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
+cp -a etc/ovfstartup.service ${DATA_DIR}/etc/systemd/system/ovfstartup.service &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -332,6 +338,9 @@ EOF
 
 cat > ${CONTROL_DIR}/postinst << EOF
 #!/bin/bash
+systemctl --system daemon-reload &> /dev/null
+systemctl enable ovfstartup &> /dev/null
+systemctl start ovfstartup &> /dev/null
 groupadd -g 32768 -f unl &> /dev/null
 a2enmod rewrite &> /dev/null
 a2enmod proxy_html &> /dev/null
@@ -368,7 +377,9 @@ find /opt/unetlab/labs/ -name "*.swp" -exec rm -f {} \; &> /dev/null
 # Fixing permissions
 /opt/unetlab/wrappers/unl_wrapper -a fixpermissions &> /dev/null
 # Mark official kernels as hold
-apt-mark hold  \$(dpkg -l | grep -e linux-image -e linux-headers -e linux-generic | grep -v unetlab | awk '{print \$2}') &> /dev/null
+#apt-mark hold  \$(dpkg -l | grep -e linux-image -e linux-headers -e linux-generic | grep -v eve-ng | awk '{print \$2}') &> /dev/null
+# Remove non EVE-NG kernel
+apt-get -y purge \$(dpkg -l | grep -e linux-image -e linux-headers -e linux-generic | grep -v eve-ng | awk '{print \$2}') &> /dev/null
 # Additional fixes
 find /opt/unetlab/tmp/ -name "nvram_*" -exec /opt/unetlab/scripts/fix_iol_nvram.sh "{}" \; &> /dev/null
 EOF
