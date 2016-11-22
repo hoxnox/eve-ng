@@ -22,7 +22,7 @@ echo -ne "Building environment... "
 VERSION="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f1 2>> ${LOG})"
 RELEASE="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f2 2>> ${LOG})"
 
-mkdir -p ${BUILD_DIR} ${CONTROL_DIR} ${DATA_DIR}/opt/unetlab/addons ${DATA_DIR}/opt/unetlab/data/Logs ${DATA_DIR}/opt/unetlab/labs ${DATA_DIR}/opt/unetlab/tmp ${DATA_DIR}/opt/unetlab/scripts ${DATA_DIR}/opt/unetlab/data/Exports &>> ${LOG} ${DATA_DIR}/opt/unetlab/wrappers ${DATA_DIR}/opt/unetlab/addons/iol/lib ${DATA_DIR}/opt/unetlab/addons/iol/bin ${DATA_DIR}/opt/unetlab/addons/dynamips ${DATA_DIR}/opt/unetlab/addons/qemu ${DATA_DIR}/etc/sudoers.d ${DATA_DIR}/etc/apache2/sites-available ${DATA_DIR}/etc/logrotate.d ${DATA_DIR}/lib/plymouth/themes/unetlab ${DATA_DIR}/etc/initramfs-tools/conf.d ${DATA_DIR}/etc/apt/sources.list.d ${DATA_DIR}/opt/unetlab/html/files ${DATA_DIR}/etc/profile.d ${DATA_DIR}/etc/init /build/apt/pool/${DISTNAME}/e/eve-ng ${DATA_DIR}/etc/systemd/system
+mkdir -p ${BUILD_DIR} ${CONTROL_DIR} ${DATA_DIR}/opt/unetlab/addons ${DATA_DIR}/opt/unetlab/data/Logs ${DATA_DIR}/opt/unetlab/labs ${DATA_DIR}/opt/unetlab/tmp ${DATA_DIR}/opt/unetlab/scripts ${DATA_DIR}/opt/unetlab/data/Exports &>> ${LOG} ${DATA_DIR}/opt/unetlab/wrappers ${DATA_DIR}/opt/unetlab/addons/iol/lib ${DATA_DIR}/opt/unetlab/addons/iol/bin ${DATA_DIR}/opt/unetlab/addons/dynamips ${DATA_DIR}/opt/unetlab/addons/qemu ${DATA_DIR}/etc/sudoers.d ${DATA_DIR}/etc/apache2/sites-available ${DATA_DIR}/etc/logrotate.d ${DATA_DIR}/usr/share/plymouth/themes ${DATA_DIR}/etc/initramfs-tools/conf.d ${DATA_DIR}/etc/apt/sources.list.d ${DATA_DIR}/opt/unetlab/html/files ${DATA_DIR}/etc/profile.d ${DATA_DIR}/etc/init /build/apt/pool/${DISTNAME}/e/eve-ng ${DATA_DIR}/etc/systemd/system
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -191,7 +191,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-cp -a plymouth ${DATA_DIR}/lib/plymouth/themes/unetlab &>> ${LOG}
+cp -a plymouth ${DATA_DIR}/usr/share/plymouth/themes/eveng &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -357,7 +357,11 @@ sed -i 's/.*GRUB_HIDDEN_TIMEOUT_QUIET=.*/GRUB_HIDDEN_TIMEOUT_QUIET=true/g' /etc/
 sed -i 's/.*GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/g' /etc/default/grub &> /dev/null
 sed -i "s/^ServerName.*$/ServerName \$(hostname -f)/g" /etc/apache2/sites-available/unetlab.conf &> /dev/null
 update-alternatives --install /lib/plymouth/themes/default.plymouth default.plymouth /lib/plymouth/themes/unetlab/unetlab.plymouth 100 &> /dev/null
+# new for 16.04
+# sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/eveng/eveng.plymouth 100
 update-initramfs -u &> /dev/null
+# better
+# sudo update-initramfs -u -k all
 update-grub2 &> /dev/null
 fgrep "xml.cisco.com" /etc/hosts &> /dev/null || echo 127.0.0.127 xml.cisco.com >> /etc/hosts 2> /dev/null
 # Fix tunctl

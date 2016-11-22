@@ -1,0 +1,116 @@
+# See also:
+# - http://brej.org/blog/?p=158
+# - http://brej.org/blog/?p=174
+# - http://brej.org/blog/?p=197
+
+# Setting the backgrounds
+Window.SetBackgroundTopColor(0.0, 0.0, 0.0);
+Window.SetBackgroundBottomColor(0.0, 0.0, 0.0);
+
+# Load the logo
+logo.image = Image("logo.png");
+
+# Get scale factor
+if (Window.GetWidth() > logo.image.GetWidth() && Window.GetHeight() > logo.image.GetHeight()) {
+    # Screen is larger than logo
+    scale = 1;
+} else {
+    # Screen is smaller than logo
+    scale_x = Window.GetWidth() / logo.image.GetWidth();
+    scale_y = Window.GetHeight() / logo.image.GetHeight();
+    scale = Math.Min(scale_x, scale_y) * 0.95;
+}
+
+# Position the scaled logo in the center of the screen
+logo.width = logo.image.GetWidth() * scale;
+logo.height = logo.image.GetHeight() * scale;
+logo.scaled = logo.image.Scale(logo.width, logo.height);
+logo.x = Window.GetX() + Window.GetWidth() / 2 - logo.width / 2;
+logo.y = Window.GetY() + Window.GetHeight() / 2 - logo.height / 2;
+logo.z = 0;
+
+# Print the logo
+logo.sprite = Sprite();
+logo.sprite.SetImage(logo.scaled);
+logo.sprite.SetX(logo.x);
+logo.sprite.SetY(logo.y);
+logo.sprite.SetZ(logo.z);
+logo.sprite.SetOpacity(1);
+
+fun refresh_callback () {
+    # Currently we do nothing here
+}
+
+Plymouth.SetRefreshFunction (refresh_callback);
+
+#--- Progress -------------------------------------------------------------
+
+checkpoint = 0;
+logo_count = 1;
+increasing = 1;
+
+next_logo.sprite = Sprite();
+fun progress_callback (duration, progress) {
+    # Debug
+    # plymouthd --debug --tty=/dev/tty1 --no-deamon --tty=/dev/tty1; plymouth --show-splash ; for ((I=0;I<10;I++)); do sleep 1 ; plymouth --update=event$I ; done ; plymouth --quit
+
+    if (checkpoint != progress) {
+		if (logo_count == 12 && increasing == 1) {
+			logo_count = 11;
+			increasing =0;
+		} else if (logo_count == 1 && increasing == 0) {
+			logo_count = 2;
+			increasing = 1;
+		} else if (increasing == 1) {
+			logo_count = logo_count + 1;
+		} else if (increasing == 0) {
+			logo_count = logo_count - 1;
+		} else {
+			# should not be here
+		}
+
+		# Load the next logo
+		next_logo.image = Image("logo_" + logo_count + ".png");
+
+		# Position the scaled next_logo in the center of the screen
+		next_logo.width = next_logo.image.GetWidth() * scale;
+		next_logo.height = next_logo.image.GetHeight() * scale;
+		next_logo.scaled = next_logo.image.Scale(next_logo.width, next_logo.height);
+		next_logo.x = Window.GetX() + Window.GetWidth() / 2 - next_logo.width / 2;
+		next_logo.y = Window.GetY() + Window.GetHeight() / 2 - next_logo.height / 2;
+		next_logo.z = 0;
+
+		# Print the next_logo
+		next_logo.sprite = Sprite();
+		next_logo.sprite.SetImage(next_logo.scaled);
+		next_logo.sprite.SetX(next_logo.x);
+		next_logo.sprite.SetY(next_logo.y);
+		next_logo.sprite.SetZ(next_logo.z);
+		next_logo.sprite.SetOpacity(1);
+	}
+}
+
+Plymouth.SetBootProgressFunction(progress_callback);
+
+#--- Quit -----------------------------------------------------------------
+
+fun quit_callback () {
+    Window.SetBackgroundTopColor(0.0, 0.0, 0.0);
+    Window.SetBackgroundBottomColor(0.0, 0.0, 0.0);
+    logo.sprite.SetOpacity(0);
+    next_logo.sprite.SetOpacity(0);
+}
+
+Plymouth.SetQuitFunction(quit_callback);
+
+#--- Message --------------------------------------------------------------
+
+message_sprite = Sprite();
+message_sprite.SetPosition(10, 10, 10000);
+
+fun message_callback (text) {
+    my_image = Image.Text(text, 1, 1, 1);
+    message_sprite.SetImage(my_image);
+}
+
+Plymouth.SetMessageFunction(message_callback);
