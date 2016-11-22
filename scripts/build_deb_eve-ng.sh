@@ -356,8 +356,8 @@ sed -i 's/.*GRUB_HIDDEN_TIMEOUT=.*/GRUB_HIDDEN_TIMEOUT=2/g' /etc/default/grub &>
 sed -i 's/.*GRUB_HIDDEN_TIMEOUT_QUIET=.*/GRUB_HIDDEN_TIMEOUT_QUIET=true/g' /etc/default/grub &> /dev/null
 sed -i 's/.*GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/g' /etc/default/grub &> /dev/null
 sed -i "s/^ServerName.*$/ServerName \$(hostname -f)/g" /etc/apache2/sites-available/unetlab.conf &> /dev/null
-sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/eveng/eveng.plymouth 100 &> /dev/null
-update-initramfs -u -k all
+update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/eveng/eveng.plymouth 100 &> /dev/null
+update-initramfs -u -k all &> /dev/null
 update-grub2 &> /dev/null
 fgrep "xml.cisco.com" /etc/hosts &> /dev/null || echo 127.0.0.127 xml.cisco.com >> /etc/hosts 2> /dev/null
 # Fix tunctl
