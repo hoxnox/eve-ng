@@ -256,7 +256,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-chmod 644 ${DATA_DIR}/etc/sudoers.d/unetlab ${DATA_DIR}/etc/apache2/sites-available/unetlab.conf ${DATA_DIR}/etc/logrotate.d/unetlab ${DATA_DIR}/etc/initramfs-tools/conf.d/initramfs.conf ${DATA_DIR}/etc/apt/sources.list.d/unetlab.list ${DATA_DIR}/lib/plymouth/themes/unetlab/* ${DATA_DIR}/etc/profile.d/ovf.sh ${DATA_DIR}/etc/init/ovfconfig.conf &>> ${LOG}
+chmod 644 ${DATA_DIR}/etc/sudoers.d/unetlab ${DATA_DIR}/etc/apache2/sites-available/unetlab.conf ${DATA_DIR}/etc/logrotate.d/unetlab ${DATA_DIR}/etc/initramfs-tools/conf.d/initramfs.conf ${DATA_DIR}/etc/apt/sources.list.d/unetlab.list ${DATA_DIR}/usr/share/plymouth/themes/eveng/* ${DATA_DIR}/etc/profile.d/ovf.sh ${DATA_DIR}/etc/init/ovfconfig.conf &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
@@ -356,12 +356,8 @@ sed -i 's/.*GRUB_HIDDEN_TIMEOUT=.*/GRUB_HIDDEN_TIMEOUT=2/g' /etc/default/grub &>
 sed -i 's/.*GRUB_HIDDEN_TIMEOUT_QUIET=.*/GRUB_HIDDEN_TIMEOUT_QUIET=true/g' /etc/default/grub &> /dev/null
 sed -i 's/.*GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/g' /etc/default/grub &> /dev/null
 sed -i "s/^ServerName.*$/ServerName \$(hostname -f)/g" /etc/apache2/sites-available/unetlab.conf &> /dev/null
-update-alternatives --install /lib/plymouth/themes/default.plymouth default.plymouth /lib/plymouth/themes/unetlab/unetlab.plymouth 100 &> /dev/null
-# new for 16.04
-# sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/eveng/eveng.plymouth 100
-update-initramfs -u &> /dev/null
-# better
-# sudo update-initramfs -u -k all
+sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/eveng/eveng.plymouth 100 &> /dev/null
+update-initramfs -u -k all
 update-grub2 &> /dev/null
 fgrep "xml.cisco.com" /etc/hosts &> /dev/null || echo 127.0.0.127 xml.cisco.com >> /etc/hosts 2> /dev/null
 # Fix tunctl
