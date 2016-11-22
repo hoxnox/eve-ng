@@ -1,0 +1,61 @@
+### Localization
+# Preseeding only locale sets language, country and locale.
+d-i debian-installer/locale string en_US
+# Keyboard selection.
+# Disable automatic (interactive) keymap detection.
+d-i console-setup/ask_detect boolean false
+d-i keyboard-configuration/xkb-keymap select us
+d-i keyboard-configuration/toggle select No toggling
+# Always install the virtual kernel.
+d-i	base-installer/kernel/override-image	string linux-virtual
+#force old ethernet naming
+d-i debian-installer/add-kernel-opts string net.ifnames=0
+# Don't even install the standard task.
+tasksel	tasksel/skip-tasks	string standard
+d-i netcfg/hostname string eve-ng
+# Only install basic language packs. Let tasksel ask about tasks.
+d-i	pkgsel/language-pack-patterns	string
+d-i	localechooser/supported-locales select en_US
+base-config	base-config/install-language-support boolean false
+# Only ask the UTC question if there are other operating systems installed.
+d-i	clock-setup/utc-auto	boolean true
+# Verbose output and no boot splash screen.
+d-i	debian-installer/quiet	boolean false
+d-i	debian-installer/splash	boolean false
+d-i partman-auto/disk string /dev/sda
+d-i partman-auto/method string lvm
+d-i partman-auto-lvm/guided_size string max
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+d-i partman-lvm/confirm_nooverwrite boolean true
+### Apt setup
+# You can choose to install restricted and universe software, or to install
+# software from the backports repository.
+d-i apt-setup/restricted boolean true
+d-i apt-setup/universe boolean true
+d-i apt-setup/backports boolean false
+# Uncomment this if you don't want to use a network mirror.
+#d-i apt-setup/use_mirror boolean false
+# Select which update services to use; define the mirrors to be used.
+# Values shown below are the normal defaults.
+#d-i apt-setup/services-select multiselect security
+#d-i apt-setup/security_host string security.ubuntu.com
+#d-i apt-setup/security_path string /ubuntu
+# Seul Debian sera géré par GRUB
+d-i grub-installer/only_debian boolean true
+
+# Si on détecte un autre OS, on installera GRUB sur le MBR
+d-i grub-installer/with_other_os boolean true
+
+# On installe GRUB sur /dev/sda
+d-i grub-installer/bootdev  string /dev/sda
+
+d-i	grub-installer/timeout	string 2
+d-i	passwd/root-login boolean true
+d-i	passwd/make-user boolean false
+d-i	passwd/root-password-crypted password $6$8vHIrQpC$CwJL.uj32XYEdtzmaq8oVEPL1xuE.8E.Z1OHx0aAL7Vr7FXXONyy8NyJ4RHx3gFimOmQHAGB/M3X6dSUj4FIc1
+d-i	user-setup/allow-password-weak boolean true
+tasksel	tasksel/first	string	openssh-server
+d-i preseed/late_command string mv /target/etc/rc.local /target/etc/rc.local.ori ; cp /cdrom/install/eve-setup.sh  /target/etc/rc.local

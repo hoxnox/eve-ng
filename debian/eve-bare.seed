@@ -1,0 +1,22 @@
+# Always install the virtual kernel.
+d-i	base-installer/kernel/override-image	string linux-virtual
+#force old ethernet naming
+d-i debian-installer/add-kernel-opts string net.ifnames=0
+# Don't even install the standard task.
+tasksel	tasksel/skip-tasks	string standard
+# Only install basic language packs. Let tasksel ask about tasks.
+d-i	pkgsel/language-pack-patterns	string
+d-i	localechooser/supported-locales select en_US
+base-config	base-config/install-language-support boolean false
+# Only ask the UTC question if there are other operating systems installed.
+d-i	clock-setup/utc-auto	boolean true
+# Verbose output and no boot splash screen.
+d-i	debian-installer/quiet	boolean false
+d-i	debian-installer/splash	boolean false
+# Wait for two seconds in grub
+d-i	grub-installer/timeout	string 2
+d-i	passwd/root-login boolean true
+d-i	passwd/make-user boolean false
+d-i	passwd/root-password-crypted password $6$8vHIrQpC$CwJL.uj32XYEdtzmaq8oVEPL1xuE.8E.Z1OHx0aAL7Vr7FXXONyy8NyJ4RHx3gFimOmQHAGB/M3X6dSUj4FIc1
+d-i	user-setup/allow-password-weak boolean true
+tasksel	tasksel/first	string	openssh-server
