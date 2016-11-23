@@ -41,7 +41,6 @@ make
 make install
 
 cd /usr/src/qemu-2.4.0
-patch < /usr/src/eve-ng-public-dev/patch/qemu-2.1.2.patch
 ./configure --prefix=/opt/qemu --target-list="i386-softmmu x86_64-softmmu" --enable-sdl --enable-vnc --disable-xen --enable-curses --enable-kvm --enable-uuid --audio-drv-list="alsa oss"
 make
 make install
