@@ -291,9 +291,11 @@ class Lab {
 				if (isset($picture -> attributes() -> id)) $p['id'] = (string) $picture -> attributes() -> id;
 				if (isset($picture -> attributes() -> name)) $p['name'] = (string) $picture -> attributes() -> name;
 				if (isset($picture -> attributes() -> type)) $p['type'] = (string) $picture -> attributes() -> type;
-				$result = (string) array_pop($picture -> xpath('./data'));
+				$result = $picture -> xpath('./data') ;
+				$result = (string) array_pop($result);
 				if (strlen($result) > 0) $p['data'] = base64_decode($result);
-				$result = (string) array_pop($picture -> xpath('./map'));
+				$result = $picture -> xpath('./map');
+				$result = (string) array_pop($result);
 				if (strlen($result) > 0) $p['map'] = html_entity_decode($result);
 
 				try {
@@ -312,7 +314,8 @@ class Lab {
 				if (isset($textobject -> attributes() -> id)) $p['id'] = (string) $textobject -> attributes() -> id;
 				if (isset($textobject -> attributes() -> name)) $p['name'] = (string) $textobject -> attributes() -> name;
 				if (isset($textobject -> attributes() -> type)) $p['type'] = (string) $textobject -> attributes() -> type;
-				$result = (string) array_pop($textobject -> xpath('./data'));
+				$result = $textobject -> xpath('./data');
+				$result = (string) array_pop($result);
 				if (strlen($result) > 0) $p['data'] = $result;
 
 				try {
