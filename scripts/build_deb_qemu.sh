@@ -20,6 +20,11 @@ wget -O /usr/src/qemu-2.4.0.tar.bz2 -c "http://wiki.qemu-project.org/download/qe
 # IMPORTANT ADD src in sources.list
 apt-get build-dep qemu-kvm
 apt-get install libtool-bin
+#clean src
+rm -fr /usr/src/qemu-1.3.1
+rm -fr /usr/src/qemu-2.0.2
+rm -fr /usr/src/qemu-2.4.0
+
 # Extract
 
 cd /usr/src/
