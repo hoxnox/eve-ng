@@ -11,6 +11,36 @@ RELEASE="$(cat ${SRC_DIR}/VERSION | cut -d- -f2)"
 
 cat ${CONTROL} | sed "s/%VERSION%/${VERSION}/" | sed "s/%RELEASE%/${RELEASE}/" > ${CONTROL_DIR}/control
 
+# Download src
+wget -O /usr/src/qemu-1.3.1.tar.bz2 -c "http://wiki.qemu-project.org/download/qemu-1.3.1.tar.bz2"
+wget -O /usr/src/qemu-2.0.2.tar.bz2 -c "http://wiki.qemu-project.org/download/qemu-2.0.2.tar.bz2"
+wget -O /usr/src/qemu-2.4.0.tar.bz2 -c "http://wiki.qemu-project.org/download/qemu-2.4.0.tar.bz2"
+
+# get needed dev
+apt-get build-dep qemu
+# Extract
+
+cd /usr/src/
+tar -jxvf qemu-1.3.1.tar.bz2
+tar -jxvf qemu-2.0.2.tar.bz2
+tar -jxvf qemu-2.4.0.tar.bz2
+
+cd /usr/src/qemu-1.3.1
+./configure --prefix=/opt/qemu-1.3.1 --target-list="i386-softmmu x86_64-softmmu" --enable-sdl --enable-vnc --disable-xen --enable-curses --enable-kvm --enable-uuid --audio-drv-list="alsa oss"
+make 
+make install
+
+cd /usr/src/qemu-2.0.2
+./configure --prefix=/opt/qemu-2.0.2 --target-list="i386-softmmu x86_64-softmmu" --enable-sdl --enable-vnc --disable-xen --enable-curses --enable-kvm --enable-uuid --audio-drv-list="alsa oss"
+make
+make install
+
+cd /usr/src/qemu-2.4.0
+./configure --prefix=/opt/qemu --target-list="i386-softmmu x86_64-softmmu" --enable-sdl --enable-vnc --disable-xen --enable-curses --enable-kvm --enable-uuid --audio-drv-list="alsa oss"
+make
+make install
+
+
 # QEMU
 mkdir -p ${DATA_DIR}/opt
 cp -a /opt/qemu ${DATA_DIR}/opt
