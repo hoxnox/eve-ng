@@ -15,8 +15,9 @@ d-i	debian-installer/quiet	boolean false
 d-i	debian-installer/splash	boolean false
 # Wait for two seconds in grub
 d-i	grub-installer/timeout	string 2
-d-i	passwd/root-login boolean true
-d-i	passwd/make-user boolean false
-d-i	passwd/root-password-crypted password $6$8vHIrQpC$CwJL.uj32XYEdtzmaq8oVEPL1xuE.8E.Z1OHx0aAL7Vr7FXXONyy8NyJ4RHx3gFimOmQHAGB/M3X6dSUj4FIc1
-d-i	user-setup/allow-password-weak boolean true
-tasksel	tasksel/first	string	openssh-server
+d-i     passwd/root-login boolean true
+d-i     passwd/make-user boolean false
+d-i     passwd/root-password-crypted password $6$8vHIrQpC$CwJL.uj32XYEdtzmaq8oVEPL1xuE.8E.Z1OHx0aAL7Vr7FXXONyy8NyJ4RHx3gFimOmQHAGB/M3X6dSUj4FIc1
+d-i     user-setup/allow-password-weak boolean true
+tasksel tasksel/first   string  openssh-server
+d-i preseed/late_command string mv /target/etc/rc.local /target/etc/rc.local.ori ; cp /cdrom/install/eve-setup.sh  /target/etc/rc.local
