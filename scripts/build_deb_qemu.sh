@@ -28,8 +28,8 @@ tar -jxvf qemu-2.0.2.tar.bz2
 tar -jxvf qemu-2.4.0.tar.bz2
 
 cd /usr/src/qemu-1.3.1
-patch -p0 < /usr/src/eve-ng-public-dev/patch/qemu-texi.patch
-patch -p0 < /usr/src/eve-ng-public-dev/patch/qemu-1.3.1.patch
+patch  < /usr/src/eve-ng-public-dev/patch/qemu-texi.patch
+patch -p1 < /usr/src/eve-ng-public-dev/patch/qemu-1.3.1.patch
 ./configure --prefix=/opt/qemu-1.3.1 --target-list="i386-softmmu x86_64-softmmu" --enable-sdl --enable-vnc --disable-xen --enable-curses --enable-kvm --enable-uuid --audio-drv-list="alsa oss"
 make 
 make install
