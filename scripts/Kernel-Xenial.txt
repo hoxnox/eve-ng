@@ -21,7 +21,7 @@ cp -a /usr/share/kernel-package/examples/etc/kernel/postinst.d/force-build-link 
 cp -a /usr/share/kernel-package/examples/etc/kernel/postrm.d/force-build-link /etc/kernel/postrm.d/
 
 # EDIT /etc/kernel-pkg.conf 
-
+cp /usr/src/eve-ng-public-dev/debian/kernel-pkg.conf /etc/kernel-pkg.conf
 make-kpkg clean
 TMPVER="config-$(uname -r)"
 mv /boot/${TMPVER} /boot/${TMPVER}.ori
