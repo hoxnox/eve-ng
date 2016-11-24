@@ -50,6 +50,10 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		// 	}
 		// }
 	}
+	
+	$rootScope.topologyRefresh = function(){
+		$scope.topologyRefresh();
+	}
 
 	$scope.networkListRefresh = function(){
 		$http.get('/api/labs'+$rootScope.lab+'/networks')
@@ -74,7 +78,6 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	$scope.nodeListRefresh();
 	
 	$scope.mouseOverMainDiv = function($event){
-		
 	}
 	
 	$scope.mainFieldClick = function($event,src){
@@ -520,20 +523,66 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		//$event.preventDefault();
 		$scope.nodeClickDown=true;
 		//console.log($scope.nodeClickDown)
+		$(".element-menu").addClass("nodeClick");
+		// console.log($scope.nodeClickDown)
+
 	}
-	
-	$scope.nodeDragging = function(node, $event){
-		$event.preventDefault();
-		if ($scope.nodeClickDown && !$scope.nodeDraggingFlag) $scope.nodeDraggingFlag = true;
-		
-		//console.log($scope.nodeDraggingFlag)
+	$scope.nodeStopTouching = function(node, $event){
+		console.log("sto ptouch dragging", $scope.nodeDraggingFlag)
+		if ($scope.nodeDraggingFlag == true)
+		{
+			setTimout(function(){
+				$(".element-menu").removeClass("nodeClick");
+				
+			},200)
+		}
+		else
+			$(".element-menu").removeClass("nodeClick");
+		$scope.nodeDraggingFlag = false;
+		// console.log($scope.nodeClickDown)
 	}
 
-	$scope.openNodeConsole = function(node, $event){
-		if (!$scope.node[node].upstatus) {$event.preventDefault(); console.log('Node down console locked')}
-		if ($scope.nodeDraggingFlag) {$event.preventDefault(); console.log('Node draged console locked')}
+	$scope.nodeDragging = function(node, $event){
+		$event.preventDefault();
+		if ($scope.nodeClickDown && !$scope.nodeDraggingFlag)
+		{
+		console.log("drag")
+			$scope.nodeDraggingFlag = true;
+			// console.log("class added");
+		} 
+		// console.log($scope.nodeDraggingFlag);
+	}
+
+	$scope.openNodeConsole = function(node, e){
+		console.log("open console")
+		if (!$scope.node[node].upstatus)
+		{
+			if (!$scope.nodeDraggingFlag)
+			{
+				console.log('Node down console locked');
+		        // e.preventDefault();
+		        // e.stopPropagation();
+		        var pos = getPosition(e);
+		        $('#tempElID').val(e.target.parentElement.parentElement.id);
+		        $("#context-menu_leftClick").addClass("context-menu_leftClick--active").css("left", pos.x).css("top", pos.y);
+		        console.log("open context-meniu_leftClick");
+	    	}
+	        // setTimeout(function() {
+	        //   menuState_leftClick = 1
+	        // }, 100);
+	        e.preventDefault();
+	        e.stopPropagation();
+	    
+		}
+		if ($scope.nodeDraggingFlag) 
+		{
+			e.preventDefault(); 
+			console.log('Node draged console locked')
+		}
 		$scope.nodeClickDown=false;
 		$scope.nodeDraggingFlag=false;
+		console.log($scope.nodeDraggingFlag);
+		//$(".element-menu").removeClass("nodeClick");
 	}
 
 	$scope.textClickDown=false;

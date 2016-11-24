@@ -18,7 +18,7 @@
       </section>
 
     <!-- Main content -->
-<section class="content">
+<section class="content row">
 <!-- /.content -->
 <div class="col-xs-12">
           <div class="box">
@@ -33,7 +33,7 @@
                           More Info <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu pull-right dropdown-menu__column">
-                          <li class="{{(sessionTime) ? 'active' : ''}}"><input id="check-time_id" type="checkbox" data-ng-click="sessionTime = !sessionTime" /><label class="pointer" for="check-time_id">Last session time</label>
+                          <li class="{{(Time) ? 'active' : ''}}"><input id="check-time_id" type="checkbox" data-ng-click="Time = !Time" /><label class="pointer" for="check-time_id">Last session time</label>
                          </li>
                           <li class="{{(sessionIP) ? 'active' : ''}}"><input id="check-ip_id" type="checkbox" data-ng-click="sessionIP = !sessionIP"/><label for="check-ip_id" class="pointer"> Last session ip</label>
                           </li>
@@ -100,4 +100,4 @@
 <!-- ./wrapper -->
 <!-- AdminLTE App -->
 <link rel="stylesheet" href="/themes/adminLTE/dist/css/skins/skin-blue.min.css">
-<script src="/themes/adminLTE/dist/js/app.min.js"></script>
+<script src="/themes/adminLTE/dist/js/app.js"></script>

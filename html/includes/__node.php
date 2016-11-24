@@ -388,7 +388,10 @@ class Node {
 	 */
 	public function edit($p) {
 		$modified = False;
-
+		
+		//if (isset($p['config']))
+		//	$p['config'] = str_replace('.php', '', $p['config']);
+		
 		if (isset($p['config']) && $p['config'] === '') {
 			// Config is empty, unset the current one
 			unset($this -> config);
@@ -400,7 +403,7 @@ class Node {
 			$this -> config = $p['config'];
 			$modified = True;
 		}
-
+		
 		if (isset($p['delay']) && $p['delay'] === '') {
 			// Delay is empty, unset the current one
 			unset($this -> delay);
@@ -937,7 +940,7 @@ class Node {
 	public function getConsole() {
 		if (in_array($this -> type, Array('iol', 'dynamips'))) {
 			//return 'telnet';
-			return $this -> console;
+			return (isset($this -> console) ? $this -> console : "");
 		} else if (isset($this -> console)) {
 			return $this -> console;
 		} else {

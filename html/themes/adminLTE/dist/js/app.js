@@ -242,7 +242,7 @@ function _init() {
       var _this = this;
       setTimeout(function(){
         _this.fix();
-      }, 100)
+      }, 1000)
       _this.fixSidebar();
       $(window, ".wrapper").resize(function () {
         _this.fix();

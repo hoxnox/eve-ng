@@ -18,6 +18,27 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 		'default': {'path':'/themes/adminLTE/unl_data/pages/modals/wtf.html', 'controller':'ModalInstanceCtrl'}
   };
 	
+  	$scope.mouseOverMainDiv = function($event){
+	}
+
+	// $scope.topologyRefresh = function(){
+	// 	jsPlumb.detachEveryConnection();
+	// 	jsPlumb.reset();
+	// 	initFullLab();
+	// 	openrightHide();
+	// 	// $scope.networkListRefresh();
+	// 	// $scope.nodeListRefresh();
+	// 	// for (i in $scope.node)
+	// 	// {
+	// 	// 	console.log('for scope node');
+	// 	// 	var node = $scope.node[i];
+	// 	// 	if (!$("#nodeID_" + node.id).length)
+	// 	// 	{
+	// 	// 		nodeInit(node);
+	// 	// 		console.log('init node');
+	// 	// 	}
+	// 	// }
+	// }
 
 	$scope.openModal = function (action, size) {
 	var pathToModal = (action === undefined) ? 'default' :  action;
@@ -103,14 +124,14 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 							label:result.node.ifname, 
 							id:'nodeID_'+result.node.id+'_'+result.node.ifname,
 							cssClass: "aLabel",
-							location:0.3}]
+							location:30}]
 						]
 					});
 				} 
 				if (result.connType == 'NoNo'){
 				if (result.nodesData.type == 'ethernet'){
 					var type = 'ethernet';
-					//console.log(result)
+					console.log(result, "tralalalalaal")
 					newConn=jsPlumb.connect({
 						source:'nodeID_'+result.nodesData.src.id,
 						target:'nodeID_'+result.nodesData.dst.id,
@@ -129,18 +150,18 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 							label:result.nodesData.src.ifname, 
 							id:'nodeID_'+result.nodesData.src.id+'_'+result.nodesData.src.ifname,
 							cssClass: "aLabel",
-							location:0.3}]
+							location:30}]
 						]
 					});
 					newConn.addOverlay(["Label", {
 					label:result.nodesData.dst.ifname, 
 					id:result.nodesData.dst.id+'_'+result.nodesData.dst.ifname,
 					cssClass: "aLabel",
-					location:0.7
+					location:-30
 					}]); 
 				} else if (result.nodesData.type == 'serial'){
 					var type = 'serial';
-					//console.log(result)
+					console.log(result, bbbbbbbbbbbbbb)
 					newConn=jsPlumb.connect({
 						source:'nodeID_'+result.nodesData.src.id,
 						target:'nodeID_'+result.nodesData.dst.id,
@@ -158,14 +179,14 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 							label:result.nodesData.src.ifname, 
 							id:'nodeID_'+result.nodesData.src.id+'_'+result.nodesData.src.ifname,
 							cssClass: "aLabel",
-							location:0.3}]
+							location:30}]
 						]
 					});
 					newConn.addOverlay(["Label", {
 					label:result.nodesData.dst.ifname, 
 					id:result.nodesData.dst.id+'_'+result.nodesData.dst.ifname,
 					cssClass: "aLabel",
-					location:0.7
+					location:-30
 					}]); 
 				}
 				}
@@ -339,8 +360,8 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 				console.log(result.data)
 				var icon = (result.data.type == 'bridge') ? 'Switch.png' : 'Cloud.png';
 				var elDIV='<div id="networkID_'+result.data.id+'" class="w element-menu network" style="left: '+result.data.left+'px; top: '+result.data.top+'px;" context-menu="netContext">'+
-					'<img src="images/icons/'+icon+'" class="'+icon.replace('.png','')+'_sm'+'">'+
-					'<figcaption class="figcaption-text">'+result.data.name+'</figcaption>'+
+					'<a><img src="images/icons/'+icon+'" class="'+icon.replace('.png','')+'_sm'+'"></a>'+
+					'<a class="pointer"><figcaption class="figcaption-text">'+result.data.name+'</figcaption></a>'+
 				'</div>';
 				$('#canvas').append(elDIV);
 				$('#networkID_'+result.data.id).ready(function(){ jsPlumbNodeInit($('#networkID_'+result.data.id))/*console.log('networkID_'+networkObject['id']+' ready');*/ });
@@ -471,8 +492,8 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 				for( var key in $scope.src.if.serial ) {
 					$scope.srcfullIfList[key]=$scope.src.if.serial[key];
 				}
-				//$scope.srcfullIfList = $scope.src.if.ethernet
-				//jQuery.extend($scope.srcfullIfList, $scope.src.if.serial)
+				// $scope.srcfullIfList = $scope.src.if.ethernet;
+				// jQuery.extend($scope.srcfullIfList, $scope.src.if.serial)
 				//console.log($scope.src.selectedIF)
 			}, function errorCallback(response){
 				$scope.interfListCount=false;
@@ -516,7 +537,7 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
   	$scope.addConn = function () {
 		//console.log($scope.dst.type+' '+$scope.dst.eveID+' '+$scope.dst.selectedIF)
 		//console.log($scope.src.type+' '+$scope.src.eveID+' '+$scope.src.selectedIF)
-		//if ( ($scope.dst.type == 'node' && $scope.src.type == 'network') || ($scope.dst.type == 'network' && $scope.src.type == 'node')){
+		// if ( ($scope.dst.type == 'node' && $scope.src.type == 'network') || ($scope.dst.type == 'network' && $scope.src.type == 'node')){
 		if (($scope.dst.type == 'network' && $scope.src.type == 'node')){
 			var targetNodeID = ($scope.dst.type == 'node') ? $scope.dst.eveID : $scope.src.eveID;
 			var targetNetID = ($scope.dst.type == 'network') ? $scope.dst.eveID : $scope.src.eveID;
@@ -546,101 +567,119 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 					console.log(response);
 				}
 			);
+			jsPlumb.repaintEverything();
 		}
 
 		if ( ($scope.dst.type == 'node' && $scope.src.type == 'node')){
-			console.log($scope.srcfullIfList)
-			console.log($scope.src.selectedIF)
-			if ($scope.srcfullIfList[$scope.src.selectedIF].remote_id == undefined){
-			if ($scope.srcfullIfList[$scope.dst.selectedIF].remote_id !== undefined){toastr["error"]('Incompatible connection', "Error"); return;}
-			if ($scope.srcfullIfList[$scope.src.selectedIF].network_id != 0 || $scope.dstfullIfList[$scope.dst.selectedIF].network_id != 0){toastr["error"]('Interface already used', "Error"); return;}
-			var newConnSrcData={};
-			var newConnDstData={};
-			var srcNodeID = $scope.src.eveID;
-			var dstNodeID = $scope.dst.eveID;
-			var srcIfID = $scope.src.selectedIF;
-			var dstIfID = $scope.dst.selectedIF;
-			var srcIfName = $scope.srcfullIfList[$scope.src.selectedIF].name;
-			var dstIfName = $scope.dstfullIfList[$scope.dst.selectedIF].name;
-			console.log('src node '+srcNodeID+' '+srcIfID+' '+srcIfName)
-			console.log('dst node '+dstNodeID+' '+dstIfID+' '+dstIfName)
-			console.log($scope.src.offsetLeft+' '+$scope.src.offsetTop+' '+$scope.dst.offsetLeft+' '+$scope.dst.offsetTop)
-			var x1 = $scope.src.offsetLeft;
-			var x2 = $scope.dst.offsetLeft;
-			var y1 = $scope.src.offsetTop;
-			var y2 = $scope.dst.offsetTop;
-			var x3 = 0;
-			var y3 = 0;
-			var newNetName = 'Net_'+$scope.src.name+'_'+srcIfName;
-			if (x2 !== x1) x3 = (x2 > x1) ? x1 : x2;
-			if (y2 !== y1) y3 = (y2 > y1) ? y1 : y2;
-			x3+=(Math.abs(x1-x2))/2; y3+=(Math.abs(y1-y2))/2;
-			console.log('New net '+newNetName+' coordinates: ('+x3+','+y3+')')
-			
-			$scope.result.net = { 
-				'name': newNetName,
-				'left': x3,
-				'top': y3,
-				'type': 'bridge',
-				'count': 1,
-				'postfix': 0
-			}
-			
-			$http.post('/api/labs'+$rootScope.lab+'/networks', $scope.result.net)
-			.then(
-				function successCallback(response){
-					console.log(response)
-					$scope.result.net.id=response.data.data.id;
-					newConnSrcData[''+srcIfID+'']=String($scope.result.net.id);
-					newConnDstData[''+dstIfID+'']=String($scope.result.net.id);
-					var srcRequest = $http.put('/api/labs'+$rootScope.lab+'/nodes/'+srcNodeID+'/interfaces', newConnSrcData)
-					var dstRequest = $http.put('/api/labs'+$rootScope.lab+'/nodes/'+dstNodeID+'/interfaces', newConnDstData)
-					$q.all(srcRequest,dstRequest)
-					.then(function(results){
-						console.log(results);
+			if ($scope.srcfullIfList[$scope.src.selectedIF].network_id == 0)
+			{
+				if ($scope.dstfullIfList[$scope.dst.selectedIF].network_id === undefined)
+				{
+					toastr["error"]('Incompatible connection', "Error"); 
+					return;
+				}
+				if ($scope.srcfullIfList[$scope.src.selectedIF].network_id != 0 || $scope.dstfullIfList[$scope.dst.selectedIF].network_id != 0)
+				{
+					console.log("d")
+					toastr["error"]('Interface already used', "Error"); 
+					return;
+				}
+				var newConnSrcData={};
+				var newConnDstData={};
+				var srcNodeID = $scope.src.eveID;
+				var dstNodeID = $scope.dst.eveID;
+				var srcIfID = $scope.src.selectedIF;
+				var dstIfID = $scope.dst.selectedIF;
+				var srcIfName = $scope.srcfullIfList[$scope.src.selectedIF].name;
+				var dstIfName = $scope.dstfullIfList[$scope.dst.selectedIF].name;
+				console.log('src node '+srcNodeID+' '+srcIfID+' '+srcIfName)
+				console.log('dst node '+dstNodeID+' '+dstIfID+' '+dstIfName)
+				console.log($scope.src.offsetLeft+' '+$scope.src.offsetTop+' '+$scope.dst.offsetLeft+' '+$scope.dst.offsetTop)
+				var x1 = $scope.src.offsetLeft;
+				var x2 = $scope.dst.offsetLeft;
+				var y1 = $scope.src.offsetTop;
+				var y2 = $scope.dst.offsetTop;
+				var x3 = 0;
+				var y3 = 0;
+				var newNetName = 'Net_'+$scope.src.name+'_'+srcIfName;
+				if (x2 !== x1) x3 = (x2 > x1) ? x1 : x2;
+				if (y2 !== y1) y3 = (y2 > y1) ? y1 : y2;
+				x3+=(Math.abs(x1-x2))/2; y3+=(Math.abs(y1-y2))/2;
+				console.log('New net '+newNetName+' coordinates: ('+x3+','+y3+')')
+				
+				$scope.result.net = { 
+					'name': newNetName,
+					'left': x3,
+					'top': y3,
+					'type': 'bridge',
+					'count': 1,
+					'postfix': 0
+				}
+				
+				$http.post('/api/labs'+$rootScope.lab+'/networks', $scope.result.net)
+				.then(
+					function successCallback(response){
+						console.log(response)
+						$scope.result.net.id=response.data.data.id;
+						newConnSrcData[''+srcIfID+'']=String($scope.result.net.id);
+						newConnDstData[''+dstIfID+'']=String($scope.result.net.id);
+						var srcRequest = $http.put('/api/labs'+$rootScope.lab+'/nodes/'+srcNodeID+'/interfaces', newConnSrcData)
+						var dstRequest = $http.put('/api/labs'+$rootScope.lab+'/nodes/'+dstNodeID+'/interfaces', newConnDstData)
+						$q.all(srcRequest,dstRequest)
+						.then(function(results){
+							console.log(results);
+							$scope.result.nodesData = {
+								src : { 'id' : srcNodeID, 'ifname' : srcIfName},
+								dst : { 'id' : dstNodeID, 'ifname' : dstIfName},
+								type : 'ethernet'
+							}
+							$scope.result.result=true;
+							$scope.result.connType='NoNo';
+							$uibModalInstance.close($scope.result);	
+						})
+					}, function errorCallback(response){
+						console.log('Server Error');
+						console.log(response);
+						//$uibModalInstance.close($scope.result);
+					}
+				);
+			} else 
+			{
+				if ($scope.dstfullIfList[$scope.dst.selectedIF].remote_id === undefined)
+				{
+					toastr["error"]('Incompatible connection', "Error"); 
+					return;
+				}
+				if ($scope.dstfullIfList[$scope.dst.selectedIF].remote_id !== 0 || $scope.srcfullIfList[$scope.src.selectedIF].remote_id !== 0)
+				{
+					toastr["error"]('Interface already used', "Error"); 
+					return;
+				}
+				var srcNodeID = $scope.src.eveID;
+				var dstNodeID = $scope.dst.eveID;
+				var srcIfID = $scope.src.selectedIF;
+				var dstIfID = $scope.dst.selectedIF;
+				var srcIfName = $scope.srcfullIfList[$scope.src.selectedIF].name;
+				var dstIfName = $scope.dstfullIfList[$scope.dst.selectedIF].name;
+				var newConnSrcData={};
+				newConnSrcData[''+srcIfID+'']=dstNodeID+':'+dstIfID;
+				console.log('Serial connection')
+				console.log(newConnSrcData)
+				$http.put('/api/labs'+$rootScope.lab+'/nodes/'+srcNodeID+'/interfaces', newConnSrcData)
+				.then(
+					function successCallback(response){
+						console.log(response)
 						$scope.result.nodesData = {
 							src : { 'id' : srcNodeID, 'ifname' : srcIfName},
 							dst : { 'id' : dstNodeID, 'ifname' : dstIfName},
-							type : 'ethernet'
+							type : 'serial'
 						}
 						$scope.result.result=true;
 						$scope.result.connType='NoNo';
 						$uibModalInstance.close($scope.result);	
-					})
-				}, function errorCallback(response){
-					console.log('Server Error');
-					console.log(response);
-					//$uibModalInstance.close($scope.result);
-				}
-			);
-		} else {
-			if ($scope.dstfullIfList[$scope.dst.selectedIF].remote_id === undefined){toastr["error"]('Incompatible connection', "Error"); return;}
-			if ($scope.dstfullIfList[$scope.dst.selectedIF].remote_id !== 0 || $scope.srcfullIfList[$scope.src.selectedIF].remote_id !== 0){toastr["error"]('Interface already used', "Error"); return;}
-			var srcNodeID = $scope.src.eveID;
-			var dstNodeID = $scope.dst.eveID;
-			var srcIfID = $scope.src.selectedIF;
-			var dstIfID = $scope.dst.selectedIF;
-			var srcIfName = $scope.srcfullIfList[$scope.src.selectedIF].name;
-			var dstIfName = $scope.dstfullIfList[$scope.dst.selectedIF].name;
-			var newConnSrcData={};
-			newConnSrcData[''+srcIfID+'']=dstNodeID+':'+dstIfID;
-			console.log('Serial connection')
-			console.log(newConnSrcData)
-			$http.put('/api/labs'+$rootScope.lab+'/nodes/'+srcNodeID+'/interfaces', newConnSrcData)
-			.then(
-				function successCallback(response){
-					console.log(response)
-					$scope.result.nodesData = {
-						src : { 'id' : srcNodeID, 'ifname' : srcIfName},
-						dst : { 'id' : dstNodeID, 'ifname' : dstIfName},
-						type : 'serial'
 					}
-					$scope.result.result=true;
-					$scope.result.connType='NoNo';
-					$uibModalInstance.close($scope.result);	
-				}
-			)
-		}
+				)
+			}
 		}
 
   	};
@@ -702,6 +741,7 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 		}, function errorCallback(response){
 			console.log('Server Error');
 			console.log(response.data);
+			console.log('image.tamplate' + response.data.data);
 		}
 		);
 	}
@@ -1060,18 +1100,20 @@ function editNetModalCtrl($scope, $uibModalInstance, $http, data) {
 	};
 };
 
-function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
+function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 	$scope.path=data.path;
 	$scope.anychanges=false;
 	$scope.nodeList={};
 	$scope.iconTempObj={};
 	$scope.imageTempObj={};
 	$scope.templateList={};
+	$scope.consoleTempObj={};
+	$scope.configTempObj={};
 	$scope.refreshNodeList = function(){
 	$http.get('/api/labs'+$scope.path+'/nodes')
 	.then(
 		function successCallback(response){
-			console.log(response);
+			// console.log(response);
 			$scope.nodeList=response.data.data
 			for (var key in $scope.nodeList){
 				$scope.nodeList[key].newname=$scope.nodeList[key].name
@@ -1081,7 +1123,13 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 				if ($scope.nodeList[key].ram !== undefined) $scope.nodeList[key].newram=$scope.nodeList[key].ram;
 				if ($scope.nodeList[key].ethernet !== undefined) $scope.nodeList[key].newethernet=$scope.nodeList[key].ethernet;
 				if ($scope.nodeList[key].serial !== undefined) $scope.nodeList[key].newserial=$scope.nodeList[key].serial;
-				if ($scope.nodeList[key].config !== undefined) $scope.nodeList[key].newconfig=$scope.nodeList[key].config;
+				
+				// if ($scope.nodeList[key].cpu == undefined) $scope.nodeList[key].cpu='N/A';
+				// if ($scope.nodeList[key].config !== undefined) $scope.nodeList[key].newconfig=$scope.nodeList[key].config;
+				// if ($scope.nodeList[key].consola !== undefined) $scope.nodeList[key].newconsola=$scope.nodeList[key].consola;
+				console.log('status' , $scope.nodeList[key].status);
+				if ($scope.nodeList[key].status == 0)
+					$scope.beforeEdit(key, $scope.nodeList[key].template)
 			}
 		},
 		function errorCallback(response){
@@ -1114,12 +1162,17 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 	
 	$scope.beforeEdit = function(id, template){
 		//$scope.escEditMode(id);
+		/*
 		if($scope.nodeList[id].status != 0){
 			if(confirm('Befor edit you should shutdown node. Do that now?')){
 				$scope.startstopNode(id)
 				$scope.nodeList[id].editmode=true;
 			}
-		} else $scope.nodeList[id].editmode=true;
+		} 
+		else
+		*/ 
+			$scope.nodeList[id].editmode=true;
+		
 		if ($scope.templateList[template] == undefined){
 			$http.get('/api/list/templates/' + template)
 			.then(
@@ -1195,6 +1248,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 	
 	$scope.applyChanges = function(id){
 		console.log('applyChanges')
+		// console.log("Node List" + $scope.consoleTempObj[id]);
 
 		var putdata = {
 			'template' : $scope.nodeList[id].template,
@@ -1203,7 +1257,10 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 			'name' : $scope.nodeList[id].newname,
 			'icon' : $scope.iconTempObj[id].selected.fullname,
 			'image' : $scope.imageTempObj[id].selected,
-			'postfix' : 0
+			'postfix' : 0,
+			'console' : $scope.consoleTempObj[id].selected,
+			'config' : $scope.configTempObj[id].selected.key
+
 		}
 		if ($scope.nodeList[id].cpu !== undefined) putdata.cpu=$scope.nodeList[id].newcpu;
 		if ($scope.nodeList[id].idlepc !== undefined) putdata.idlepc=$scope.nodeList[id].newidlepc;
@@ -1211,7 +1268,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 		if ($scope.nodeList[id].ram !== undefined) putdata.ram=$scope.nodeList[id].newram;
 		if ($scope.nodeList[id].ethernet !== undefined) putdata.ethernet=$scope.nodeList[id].newethernet;
 		if ($scope.nodeList[id].serial !== undefined) putdata.serial=$scope.nodeList[id].newserial;
-		if ($scope.nodeList[id].config !== undefined) putdata.config=$scope.nodeList[id].newconfig;
+		// if ($scope.nodeList[id].config !== undefined) putdata.config=$scope.nodeList[id].newconfig;
 
 		console.log(putdata);
 		$http.put('/api/labs'+$scope.path+'/nodes/'+id, putdata)
@@ -1219,8 +1276,21 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 			function successCallback(response){
 				console.log(response + 'datele salvate');
 				$scope.refreshNodeList();
-				$scope.nodeList[id].editmode = false;
-				$scope.anychanges = false;
+				// $scope.nodeList[id].editmode = false;
+				// $scope.anychanges = false;
+				
+				// $scope.nodeList[id].cpu=$scope.nodeList[id].newcpu;
+				// $scope.nodeList[id].idlepc=$scope.nodeList[id].newidlepc;
+				// $scope.nodeList[id].nvram=$scope.nodeList[id].newnvram;
+				// $scope.nodeList[id].ram=$scope.nodeList[id].newram;
+				// $scope.nodeList[id].ethernet=$scope.nodeList[id].newethernet;
+				// $scope.nodeList[id].serial=$scope.nodeList[id].newserial;
+				// $scope.nodeList[id].config=$scope.nodeList[id].newconfig;
+				// $scope.nodeList[id].name=$scope.nodeList[id].newname;
+
+				// $scope.nodeList[id].icon=$scope.iconTempObj[id].selected.fullname;
+				// $scope.nodeList[id].image=$scope.imageTempObj[id].selected;
+				// $scope.nodeList[id].console=$scope.consoleTempObj[id].selected;
 			},
 			function errorCallback(response){
 				console.log(response);
@@ -1241,6 +1311,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 			function successCallback(response){
 				//console.log(response)
 				console.log('Delete node done')
+				$scope.anychanges=false;
 				$scope.refreshNodeList();
 			}, function errorCallback(response){
 				console.log('Server Error');
@@ -1255,14 +1326,18 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 		}
 	}
 	
-
 	$scope.closeModal = function () {
   		console.log($scope.anychanges);
+  		$rootScope.topologyRefresh();
   		if ($scope.anychanges==true)
   			alert('So you need to edit some node, save and then close')
     	else
     		$uibModalInstance.dismiss();
   	};
+
+  	$scope.mouseOverMainDiv = function($event){
+
+	}
 
 	$scope.opacity = function(){
 		$(".modal-content").toggleClass("modal-content_opacity");
@@ -1270,10 +1345,9 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data) {
 
 };
 
-function netListModalCtrl($scope, $uibModalInstance, $http, data) {
-	
+function netListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 	$scope.path=data.path;
-	$scope.anychanges=false;
+	// $scope.anychanges=false;
 	$scope.netList={};
 
 	$http.get('/api/list/networks').then(
@@ -1291,7 +1365,7 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 	.then(
 		function successCallback(response){
 			console.log(response);
-			$scope.netList=response.data.data
+			$scope.netList=response.data.data;
 			for (var key in $scope.netList){
 				$scope.netList[key].newname=$scope.netList[key].name;
 				var img = "";
@@ -1304,6 +1378,7 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 				$("#networkID_" + $scope.netList[key].id).find("a img").attr("src", "/images/icons/" + img + ".png");
 			}
 		},
+
 		function errorCallback(response){
 			console.log('Server Error');
 			console.log(response);
@@ -1327,7 +1402,7 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 	
 	$scope.escEditMode = function(id){
 		for (var key in $scope.netList){
-			$scope.netList[key].editmode=false
+			$scope.netList[key].editmode=false;
 		}
 	}
 	$scope.editMode=function(id){
@@ -1343,9 +1418,10 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 		$http.put('/api/labs/'+$scope.path+'/networks/'+id, putdata)
 		.then(
 			function successCallback(response){
-				console.log(response);
+				$scope.netList[id].editmode=false;
+				// $scope.anychanges=false;
 				$scope.netListRefresh();
-				$scope.anychanges=false;
+				$scope.netList=response.data.data;
 			},
 			function errorCallback(response){
 				console.log(response);
@@ -1360,7 +1436,7 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 		console.log('Delete node with id '+id)
 		if ($scope.netList[id].count > 0) 
 			{
-				$scope.anychanges=true;
+				// $scope.anychanges=true;
 			} else 
 			{
 				$('#networkID_'+id).remove();
@@ -1369,23 +1445,26 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data) {
 			method: 'DELETE',
 			url:'/api/labs'+$scope.path+'/networks/'+id}).then(
 			function successCallback(response){
-				console.log(response)
-				console.log('Delete network done')
+				// console.log(response)
+				// console.log('Delete network done')
 				$scope.netListRefresh();
-				$scope.anychanges=false;
+				$scope.netList=response.data.data;
+				$rootScope.topologyRefresh();
+				// $scope.anychanges=false;
 			}, function errorCallback(response){
 				console.log('Server Error');
 				console.log(response);
-				$scope.anychanges=false;
+				// $scope.anychanges=false;
 			}
 		);
+
 	}
 
-  	$scope.closeModal = function () {
+  	$scope.closeModal = function() {
   		console.log($scope.anychanges);
-  		if ($scope.anychanges==true)
-  			alert('So you need to edit some network, save and then close')
-    	else
+  		// if ($scope.anychanges==true)
+  		// 	alert('So you need to edit some network, save and then close')
+    // 	else
     		$uibModalInstance.dismiss();
   	};
 

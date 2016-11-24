@@ -126,7 +126,7 @@ var contextMenuInit = function() {
    */
   function init() {
     freeSelectNode();
-    // nodeClick();
+    nodeClick();
     contextListener();
     clickListener();
     keyupListener();
@@ -135,22 +135,19 @@ var contextMenuInit = function() {
     
   }
   /*Open context menu //context-meniu_leftClick */
-  // function nodeClick(){
-  //   $(document).on("click", ".element-menu", function(e){
-  //     console.log("click la inceput")
-  //     e.preventDefault();
-  //     e.stopPropagation();
-  //     var pos = getPosition(e);
-  //     $('#tempElID').val(e.target.parentElement.parentElement.id);
-  //     $("#context-menu_leftClick").addClass("context-menu_leftClick--active").css("left", pos.x).css("top", pos.y);
-  //     console.log("open context-meniu_leftClick");
-
-  //     setTimeout(function() {
-  //       menuState_leftClick = 1
-  //     }, 100);
-  //     console.log($scope.iconTempObj)
-  //   })
-  // }
+  function nodeClick(){
+    $(document).on("click", function(e){
+      if ($(e.target).hasClass("context-menu_leftClick") || $(e.target).parents().hasClass("context-menu_leftClick"))
+      {
+        console.log("menu is clicked");
+      }
+      else
+      {
+        console.log("hide menu");
+        $("#context-menu_leftClick").removeClass("context-menu_leftClick--active")
+      }
+    })
+  }
 
   function freeSelectPopUp(){
     $(document).on("contextmenu", ".free-selected", function(e){
@@ -166,7 +163,7 @@ var contextMenuInit = function() {
         menuState_freeSelect = 1
       }, 100);
       
-      console.log($scope.iconTempObj)
+      // console.log($scope.iconTempObj)
     })
   }
   /**
@@ -174,12 +171,13 @@ var contextMenuInit = function() {
    */
   function contextListener() {
     document.addEventListener( "contextmenu", function(e) {
-      //taskItemInContext = clickInsideElement( e, taskItemClassName );
+      taskItemInContext = clickInsideElement( e, taskItemClassName );
       if ( clickInsideElement( e, taskItemClassName ) ) {
         e.preventDefault();
-		    console.log( 'Context menu on '+e.target.parentElement.parentElement.id)
-		    console.log(e.target.parentElement.parentElement.id)
-		    $('#tempElID').val(e.target.parentElement.parentElement.id)
+		    // console.log( 'Context menu on '+e.target.parentElement.parentElement.id);
+		    // console.log(e.target.parentElement.parentElement.id)
+        // console.log("a mers context meniu");
+		    $('#tempElID').val(e.target.parentElement.parentElement.id);
         toggleMenuOn(taskItemClassName);
         positionMenu(e);
       } else {
@@ -218,7 +216,6 @@ var contextMenuInit = function() {
   function clickListener() {
     document.addEventListener( "click", function(e) {
       var clickeElIsLink = clickInsideElement( e, contextMenuLinkClassName );
-
       if ( false ) {
         e.preventDefault();
         menuItemListener( clickeElIsLink );
@@ -271,12 +268,14 @@ var contextMenuInit = function() {
         if($("#tempElID").val().indexOf("networkID_") != -1)
         {
           $("#network_content").show();
+          console.log("s-a deschis network_content");
           $("#node_content").hide();
         }
         else
         {
           $("#network_content").hide();
           $("#node_content").show();
+          console.log("a trecut peste verificarea valorii");
         }
       }
 	  $("#context-menu_conn").removeClass('context-menu_conn--active')
@@ -285,7 +284,8 @@ var contextMenuInit = function() {
     if ( menuState_mainDiv !== 1 && target=="mainDiv-menu") {
       menuState_mainDiv = 1;
       $(menu_mainDiv).addClass( contextMenuActive_mainDiv );
-	  $("#context-menu_conn").removeClass('context-menu_conn--active')
+	  $("#context-menu_conn").removeClass('context-menu_conn--active');
+    $("#context-menu_leftClick").removeClass('context-menu_leftClick--active')
 	  return
     }
   }

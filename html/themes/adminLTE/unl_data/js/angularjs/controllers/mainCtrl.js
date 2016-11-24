@@ -14,12 +14,14 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
 		$scope.checkboxArray=[];
 		//Default variables ///END
 		
-		console.log('here')
+		//console.log('here')
 		
 		$scope.falseForSelAll = function(){
 			$scope.allCheckedFlag=false;
 		}
 		
+
+
 		$('body').removeClass().addClass('hold-transition skin-blue layout-top-nav');
 		//Draw current position //START
 		$scope.currentPosition = function(){
@@ -342,6 +344,11 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
 				$scope.allCheckedFlag=false;
 			}
 		}
+		$scope.uncheck_all = function()
+		{
+			$(".folder_check").prop("checked", false).trigger("change").trigger("unchecked");
+		}
+
 		$scope.openRename = function (item, $event){
 			if ($event != undefined) $event.stopPropagation();
 			$scope.hideAllEdit()

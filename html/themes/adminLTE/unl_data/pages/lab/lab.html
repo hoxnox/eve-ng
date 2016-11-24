@@ -233,7 +233,7 @@
 		      </a>
 		    </li>
 		    <li class="context-menu__item">
-		      <a class="context-menu__link pointer" my-action="delConnection">
+		      <a class="context-menu__link pointer" ng-click="deleteEl()">
 		        <i class="fa fa-times"></i> Delete Connection
 		      </a>
 		    </li>
@@ -454,7 +454,7 @@ function nodeInit(node){
 			'<i class="fa fa-plug plug-icon dropdown-toggle ep" ng-show="node['+id+'].playstopView"></i>'+
 		'</div>'+
 		'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute; z-index:2;"></div>'+
-		'<a href="{{node['+id+'].url}}" '+ntarget+' ng-click="openNodeConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer">'+
+		'<a href="{{node['+id+'].url}}" '+ntarget+' ng-click="openNodeConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer" ng-mouseup="nodeStopTouching('+id+', $event)">'+
 		'<img ng-src="/images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
 		'<a><figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind="node['+id+'].name"></figcaption></a>'+
 	'</div>';
@@ -626,7 +626,7 @@ function jsPlumbNodeInit(el){
 
     jsPlumb.makeSource(el, {
         filter: ".ep",
-        anchor: "Continuous",
+  		anchor:"BottomCenter",
         connectorStyle: { strokeStyle: "#e62e00", lineWidth: 2, outlineColor: "white", outlineWidth: 1 },
         connectionType:"basic",
         extract:{
@@ -658,7 +658,8 @@ function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 		"type":type,
 	},
 	paintStyle: {strokeStyle: (type != 'serial') ? '#1e8151' : '#ffd11a', lineWidth: 2, outlineColor: "white", outlineWidth: 1},
-	connector : (type != 'serial') ? 'Straight' : 'Straight',//'Bezier' : 'Straight',
+	// connector : (type != 'serial') ? 'Straight' : 'Straight',//'Bezier' : 'Straight',
+	connector : "Straight",
 	anchor: "Continuous",
 	detachable : false,
 	overlays:[
@@ -666,7 +667,7 @@ function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 		label:SLb, 
 		id:SID+'_'+SLb,
 		cssClass:  (SLb != '') ? "aLabel" : '',
-		location:0.3,
+		location:30,
 		events:{
 			contextmenu :function(){
 				$("#tempElID").val(DID)
@@ -681,7 +682,7 @@ function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 	label:Dlb, 
 	id:DID+'_'+Dlb,
 	cssClass: (Dlb != '') ? "aLabel" : '',
-	location:0.7,
+	location:-30,
 	
 	}]);
 

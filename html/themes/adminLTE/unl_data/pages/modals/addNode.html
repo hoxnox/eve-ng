@@ -13,6 +13,7 @@
 			<span ng-bind="item.fullname"></span>
 		</ui-select-choices>
 		</ui-select>
+
 		<!--<select class="form-control" ng-init="selectTemplate = ''" data-ng-model="selectTemplate" ng-change="viewTemplate()">
 		<option value="">- Please Select -</option>
 		<option ng-repeat="(x,y) in tempList" value="{{x}}">{{y}}</option>
@@ -30,7 +31,7 @@
 		<div class="col-md-6">
 			<div class="form-group">
 				<label>Number of nodes to add</label>
-				<input class="form-control" value="1" data-ng-model="numberNodes"/>
+				<input class="form-control" data-ng-model="numberNodes"/>
 			</div>
 		</div>
 	</div>
@@ -153,6 +154,14 @@
 				<label>Startup configuration</label>
 				<select class="form-control" data-ng-model="selectConfig">
 					<option ng-repeat="(x,y) in templateData.options.config.list" value="{{x}}">{{y}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="form-group" ng-show="templateData.options.console.type != undefined">
+				<label>{{templateData.options.console.name}}</label>
+				<select class="form-control" data-ng-model="selectConsole">
+					<option ng-repeat="(x,y) in templateData.options.console.list" value="{{x}}">{{y}}</option>
 				</select>
 			</div>
 		</div>

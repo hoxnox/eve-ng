@@ -731,8 +731,13 @@ Free select
 /*
 *Opacity for modals
 */
+.modal-content{
+  -webkit-transition: .5s;
+  transition: .5s;
+}
 .modal-content_opacity{
   opacity: 0.3;
+  
 }
 /*
 *Style for form group from EDIT LAB //START
@@ -802,4 +807,7 @@ Free select
   top: 47%;
   right: 0;
   transform:translateY(-50%);
+}
+.box-default{
+  margin-bottom: 0px;
 }

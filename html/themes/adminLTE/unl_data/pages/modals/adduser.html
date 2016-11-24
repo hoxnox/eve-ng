@@ -2,10 +2,11 @@
             <h3 class="modal-title">Add New User</h3>
 </div>
 <div class="modal-body">
-			<form role="form">
+			<form role="form" name="form">
 				<div class="form-group {{ (errorClass == 'has-error username') ? errorClass : ''}}">
                   <label>User Name</label>
-                  <input type="text" class="form-control" data-ng-model="username" placeholder="Enter username" autofocus>
+                  <input type="text" class="form-control" name="name" data-ng-model="username" placeholder="Enter username" autofocus ng-pattern="restrictNumber" ng-class="{'input--error': form.name.$valid == false, 'input': form.name.$valid == true}">
+                   <span class="chars" ng-class="{'chars--active': form.name.$valid == false, 'chars': form.name.$valid == true}">Use only [A-Za-z0-9_-]chars</span>
 				  <span class="help-block" data-ng-show="errorClass == 'has-error username'" data-ng-bind="errorMessage"></span>
                 </div>
 				
@@ -23,7 +24,8 @@
 			
                 <div class="form-group">
                   <label>Email</label>
-                  <input type="text" class="form-control" data-ng-model="email" placeholder="Enter email">
+                  <input type="text" name="email" class="form-control" data-ng-model="email" placeholder="Enter email" ng-pattern="patternEmail" ng-class="{'input--error': form.email.$valid == false, 'input': form.email.$valid == true}">
+                  <span class="chars" ng-class="{'chars--active': form.email.$valid == false, 'chars': form.email.$valid == true}">Please enter an valid email</span>
                 </div>
 				
                 <div class="form-group">
@@ -38,10 +40,10 @@
 				<label data-ng-bind="roleArray[selectRole]"></label> -->
                 </div>
 				
-				<!--<div class="form-group">
+				<div class="form-group">
                   <label>POD</label>
                   <input type="text" class="form-control" data-ng-model="pod" placeholder="Enter pod">
-                </div> -->
+                </div> 
             </form>
 </div>
 <div class="modal-footer">

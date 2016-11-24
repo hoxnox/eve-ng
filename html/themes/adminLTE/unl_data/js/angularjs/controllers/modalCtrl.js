@@ -304,6 +304,8 @@ function AddUserModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.role='';
 	$scope.podArray=[];
 	$scope.expiration='-1';
+	$scope.restrictNumber = '^[a-zA-Z0-9-_]+$';
+	$scope.patternEmail = '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$';
 	//Generate unique POD //START
 	var podArrayIndex=0;
 	for (var key in data.currentUserData){
@@ -349,11 +351,13 @@ function AddUserModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.addNewUser = function(){
 		$scope.errorClass=''; 
 		$scope.errorMessage="";
+		$scope.podError = false;
 	$scope.username = $scope.username.replace(/[\',#,$,@,\",\\,/,%,\*,\,,\.,(,),:,;,^,&,\[,\],|]/g, '')
 		if ($scope.passwdConfirm!=$scope.passwd) {$scope.errorClass='has-error passwdConfirm'; $scope.errorMessage="Password doesn't match";}
 		if ($scope.passwdConfirm=='') {$scope.errorClass='has-error passwdConfirm'; $scope.errorMessage="Password can't be empty!";}
 		if ($scope.passwd=='') {$scope.errorClass='has-error passwd'; $scope.errorMessage="Password can't be empty!";}
 		if ($scope.username=='') {$scope.errorClass='has-error username'; $scope.errorMessage="Username can't be empty!";}
+		if ($scope.passwd=='whereismypassword?') { $scope.passwd='' ;}
 		if ($scope.errorClass!=''){return;}
 		
 		$http.get('/api/users/').then(function(response){
@@ -361,46 +365,53 @@ function AddUserModalCtrl($scope, $uibModalInstance, $http, data) {
 			console.log(response.data.data)
 			//Compare unique POD //START
 			for (var key in response.data.data){
-				if (parseInt(response.data.data[key].pod) == $scope.pod) {
-					$scope.podError=true; break;
+				console.log("pod", response.data.data[key].pod);
+				if (parseInt(response.data.data[key].pod) == parseInt($scope.pod) && response.data.data[key].username != $scope.username) {
+					$scope.podError=true; 
+					break;
 				}
 			}
 			//Compare unique POD //END
 		
 		}).then(function(response){
-		if ($scope.podError){toastr["error"]("Please set unique POD value", "Error"); return;}
-		$scope.newdata = {
-			"username": $scope.username,
-			"name": $scope.name,
-			"email": $scope.email,
-			"password": $scope.passwd,
-			"role": $scope.roleArray[$scope.selectRole],
-			"expiration": $scope.expiration,
-			//"pod": $scope.pod,
-			//"pod": -1,
-			"pexpiration": $scope.pexpiration,
-		}
-		$http({
-			method: 'POST',
-			url: '/api/users',
-			data: $scope.newdata})
-					.then(
-					function successCallback(response) {
-						//console.log(response)
-						$scope.result=true;
-						$uibModalInstance.close($scope.result);
-					}, 
-					function errorCallback(response) {
-						console.log(response)
-						console.log("Unknown Error. Why did API doesn't respond?")
-						if (response.status == 412 && response.data.status == "unauthorized"){
-							console.log("Unauthorized user.")
-							$uibModalInstance.dismiss('cancel');
-							toastr["error"]("Unauthorized user", "Error");
-						}
-						//$uibModalInstance.close($scope.result);
-						toastr["error"](response.data.message, "Error");
-					});
+			
+			if ($scope.podError){
+				toastr["error"]("Please set unique POD value", "Error"); return;
+			}
+			
+			$scope.newdata = {
+				"username": $scope.username,
+				"name": $scope.name,
+				"email": $scope.email,
+				"password": $scope.passwd,
+				"role": $scope.roleArray[$scope.selectRole],
+				"expiration": $scope.expiration,
+				"pod": $scope.pod,
+				//"pod": -1,
+				"pexpiration": $scope.pexpiration,
+			}
+			
+			$http({
+				method: 'POST',
+				url: '/api/users',
+				data: $scope.newdata})
+						.then(
+						function successCallback(response) {
+							//console.log(response)
+							$scope.result=true;
+							$uibModalInstance.close($scope.result);
+						}, 
+						function errorCallback(response) {
+							console.log(response)
+							console.log("Unknown Error. Why did API doesn't respond?")
+							if (response.status == 412 && response.data.status == "unauthorized"){
+								console.log("Unauthorized user.")
+								$uibModalInstance.dismiss('cancel');
+								toastr["error"]("Unauthorized user", "Error");
+							}
+							//$uibModalInstance.close($scope.result);
+							toastr["error"](response.data.message, "Error");
+						});
 		});
 	}
 	
@@ -424,6 +435,8 @@ function EditUserModalCtrl($scope, $uibModalInstance, data, $http) {
 	$scope.errorMessage='';
 	$scope.podError=false;
 	$scope.result=false;
+	$scope.restrictNumber = '^[a-zA-Z0-9-_]+$';
+	$scope.patternEmail = '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$';
 	
 	console.log('Start edit user '+data.username)
 	$http({
@@ -478,7 +491,6 @@ function EditUserModalCtrl($scope, $uibModalInstance, data, $http) {
 		if ($scope.passwdConfirm!=$scope.passwd) {$scope.errorClass='has-error passwdConfirm'; $scope.errorMessage="Password doesn't match";}
 		if ($scope.passwdConfirm=='') {$scope.errorClass='has-error passwdConfirm'; $scope.errorMessage="Password can't be empty!";}
 		if ($scope.passwd=='') {$scope.errorClass='has-error passwd'; $scope.errorMessage="Password can't be empty!";}
-		if ($scope.passwd=='whereismypassword?') { $scope.passwd='' ;}
 		if ($scope.errorClass!=''){return;}
 		
 		$http.get('/api/users/').then(function(response){
@@ -487,7 +499,7 @@ function EditUserModalCtrl($scope, $uibModalInstance, data, $http) {
 			//Compare unique POD //START
 			for (var key in response.data.data){
 				console.log(parseInt(response.data.data[key].pod))
-				if (parseInt(response.data.data[key].pod) == parseInt($scope.pod) && response.data.data[key].username != $scope.username) {
+				if (parseInt(response.data.data[key].pod) == parseInt($scope.pod)) {
 					$scope.podError=true; break;
 				}
 			}
@@ -548,7 +560,7 @@ function MoveToModalCtrl($scope, $uibModalInstance, data, $http, $location,$inte
 	$scope.errorMessage="";
 	$scope.folderSearchList=[];
 	$scope.currentSearchPath='';
-	$scope.newpath="";
+	$scope.newpath="/";
 	$scope.openDropdown="";
 	$scope.pathDeeper=0;
 	$scope.pathDeeperCheck=0;
@@ -617,6 +629,9 @@ function MoveToModalCtrl($scope, $uibModalInstance, data, $http, $location,$inte
 		$("#newPathInput").focus();
 	}
 	
+	$scope.deselect = function(){
+	
+	}
 	
 	$scope.move = function(){
 		$scope.openDropdown="";

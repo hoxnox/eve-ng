@@ -307,7 +307,9 @@ function apiGetLabNodes($lab,$html5,$username) {
 				'template' => $node -> getTemplate(),
 				'type' => $node -> getNType(),
 				'top' => $node -> getTop(),
-				'url' => $node -> getConsoleUrl($html5,$username)
+				'url' => $node -> getConsoleUrl($html5,$username),
+				'config_list' => listNodeConfigTemplates(),
+				'config' => $node->getConfig()
 			);
 
 			if ($node -> getNType() == 'iol') {
