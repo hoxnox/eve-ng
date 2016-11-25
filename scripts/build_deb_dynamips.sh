@@ -10,6 +10,7 @@ RELEASE="$(cat ${SRC_DIR}/VERSION | cut -d- -f2)"
 
 cat ${CONTROL} | sed "s/%VERSION%/${VERSION}/" | sed "s/%RELEASE%/${RELEASE}/" > ${CONTROL_DIR}/control
 
+
 # Dynamips
 mkdir -p ${DATA_DIR}/usr/bin ${DATA_DIR}/usr/share/man/man1 ${DATA_DIR}/usr/share/man/man7
 cp -a /usr/bin/dynamips ${DATA_DIR}/usr/bin

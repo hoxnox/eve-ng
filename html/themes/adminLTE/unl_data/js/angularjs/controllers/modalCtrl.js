@@ -491,6 +491,7 @@ function EditUserModalCtrl($scope, $uibModalInstance, data, $http) {
 		if ($scope.passwdConfirm!=$scope.passwd) {$scope.errorClass='has-error passwdConfirm'; $scope.errorMessage="Password doesn't match";}
 		if ($scope.passwdConfirm=='') {$scope.errorClass='has-error passwdConfirm'; $scope.errorMessage="Password can't be empty!";}
 		if ($scope.passwd=='') {$scope.errorClass='has-error passwd'; $scope.errorMessage="Password can't be empty!";}
+		if ($scope.passwd=='whereismypassword?') { $scope.passwd='' ;}
 		if ($scope.errorClass!=''){return;}
 		
 		$http.get('/api/users/').then(function(response){

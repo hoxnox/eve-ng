@@ -296,11 +296,11 @@ function apiAddUUser($db, $p) {
 	try {
 		// Update PODs
 		if (isset($p['pod']) && $p['pod'] !== '-1') {
-			$result = $statement -> fetch();
+			//$result = $statement -> fetch();
 			if (!isset($p['pexpiration'])) {
 				$p['pexpiration'] = '-1';
 			}
-			$query = 'INSERT OR REPLACE INTO pods (id, expiration, username) VALUES(:id, :expiration, :username);';
+			$query = 'INSERT INTO pods (id, expiration, username) VALUES(:id, :expiration, :username);';
 			$statement = $db -> prepare($query);
 			$statement -> bindParam(':id', $p['pod'], PDO::PARAM_INT);
 			$statement -> bindParam(':expiration', $p['pexpiration'], PDO::PARAM_STR);
