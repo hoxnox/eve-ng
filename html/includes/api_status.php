@@ -94,8 +94,8 @@ function apiGetSwapUsage() {
 	$cmd = 'free';
 	exec($cmd, $o, $rc);
 	if ($rc == 0) {
-		$total = (int) preg_replace('/^Swap:\ +([0-9\.]+)\ +([0-9\.]+)\ +([0-9\.]+)$/', '$1', $o[3]);
-		$used = (int) preg_replace('/^Swap:\ +([0-9\.]+)\ +([0-9\.]+)\ +([0-9\.]+)$/', '$3', $o[3]);
+		$total = (int) preg_replace('/^Swap:\ +([0-9\.]+)\ +([0-9\.]+)\ +([0-9\.]+)$/', '$1', $o[2]);
+		$used = (int) preg_replace('/^Swap:\ +([0-9\.]+)\ +([0-9\.]+)\ +([0-9\.]+)$/', '$3', $o[2]);
 		return 100 - round($used / $total * 100);
 	} else {
 		return -1;

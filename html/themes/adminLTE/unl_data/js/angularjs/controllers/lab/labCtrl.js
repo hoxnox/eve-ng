@@ -33,6 +33,8 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	// }
 
 	$scope.topologyRefresh = function(){
+		$state.reload();
+		return;
 		jsPlumb.detachEveryConnection();
 		jsPlumb.reset();
 		initFullLab();
@@ -175,6 +177,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			{
 				var node = $scope.node[i];
 				$scope.wipeNode(node.id);
+				
 			}
 		}
 	}
@@ -185,9 +188,17 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			id = $("#tempElID").val();
 			id = id.replace("nodeID_", "");
 		}
-		$http.get('/api/labs'+$rootScope.lab+'/nodes/'+id+'/wipe');
+		$http.get('/api/labs'+$rootScope.lab+'/nodes/'+id+'/wipe').then(
+			function successCallback(response){
+				toastr["success"](response.data.message, "success");
+			},
+			function errorCallback(response){
+				toastr["error"](response.data.message, "Error");
+			}
+		);
 		$scope.stopThisNode();
 		console.log("s-a transmis wipe")
+		 
 	}
 	///////////////////////////////////////////////
 	//// Wipe all nodes /END
@@ -505,12 +516,13 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		if($("#freeSelect").hasClass('noneActive'))
 		{
 			$("#freeSelect").removeClass("noneActive").addClass("activeFreeSelect");
-			console.log('clasa active s-a adaugat');
-		}else if ($("#freeSelect").hasClass('activeFreeSelect'))
+			// console.log('clasa active s-a adaugat');
+		}
+		else if ($("#freeSelect").hasClass('activeFreeSelect'))
 		{
 			$("#freeSelect").removeClass("activeFreeSelect").addClass("noneActive");
 			$(".element-menu").removeClass("free-selected");
-			console.log('clasa active s-a sters');
+			// console.log('clasa active s-a sters');
 		}
 		
 	}
@@ -562,10 +574,21 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 				console.log('Node down console locked');
 		        // e.preventDefault();
 		        // e.stopPropagation();
-		        var pos = getPosition(e);
-		        $('#tempElID').val(e.target.parentElement.parentElement.id);
-		        $("#context-menu_leftClick").addClass("context-menu_leftClick--active").css("left", pos.x).css("top", pos.y);
-		        console.log("open context-meniu_leftClick");
+		        if($('#freeSelect').hasClass('activeFreeSelect'))
+		        {
+		        	if ($(e.target).parents(".element-menu").hasClass('free-selected'))
+		        		$(e.target).parents(".element-menu").removeClass('free-selected');
+		        	else
+		        		$(e.target).parents(".element-menu").addClass('free-selected');
+		        }
+		        else
+		        {
+			        var pos = getPosition(e);
+			        $('#tempElID').val(e.target.parentElement.parentElement.id);
+			        $("#context-menu_leftClick").addClass("context-menu_leftClick--active").css("left", pos.x).css("top", pos.y);
+			        console.log("open context-meniu_leftClick");	
+		        }
+		        
 	    	}
 	        // setTimeout(function() {
 	        //   menuState_leftClick = 1
@@ -577,7 +600,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		if ($scope.nodeDraggingFlag) 
 		{
 			e.preventDefault(); 
-			console.log('Node draged console locked')
+			// console.log('Node draged console locked')
 		}
 		$scope.nodeClickDown=false;
 		$scope.nodeDraggingFlag=false;

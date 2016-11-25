@@ -51,7 +51,7 @@
 		</div>
 	</div>
 	</div>
-	<div class="table-responsive">
+	<div class="">
 	<table class="table">
 	<thead>
 		<tr>
@@ -144,7 +144,7 @@
 		</td>
 		<td ng-show="hideRAM">
 			<text ng-show="!item.editmode">{{(item.ram == undefined) ? 'N/A' : item.ram}}</text>
-			<input ng-init="item.newram = item.ram" ng-model="item.newram" ng-blur="applyChanges(id)" ng-show="(item.ram != undefined) ? 'N/A' : item.ram && item.editmode" style="width:40px; padding-left:2px;"/><!--  -->
+			<input ng-init="item.newram = item.ram" ng-model="item.newram" ng-blur="applyChanges(id)" ng-show="item.ram != undefined && item.editmode" style="width:40px; padding-left:2px;"/><!--  -->
 		</td>
 		<td>
 			<text ng-show="!item.editmode">{{item.ethernet}}</text>
@@ -158,7 +158,7 @@
 		<td class="consoleList" >
 			<div ng-show="item.console">
 				<text ng-show="!item.editmode">{{item.console}}</text>
-				<ui-select ng-init="consoleTempObj[id].selected=item.console; consoleTab = ['rdp','vnc','telnet'] ;"  ng-model="consoleTempObj[id].selected" ng-change="applyChanges(id)" ng-show="item.editmode"><!---->
+				<ui-select ng-init="consoleTempObj[id].selected=item.console; consoleTab = ['rdp','vnc','telnet'];"  ng-model="consoleTempObj[id].selected" ng-change="applyChanges(id)" ng-show="item.editmode"><!---->
 					<ui-select-match>
 						<span ng-bind="consoleTempObj[id].selected"></span>
 					</ui-select-match>
@@ -183,7 +183,7 @@
 		</td>
 		<td>
 			<div>
-				<button type="button" class="btn btn-xs btn-flat {{ (item.startLoading) ? 'm-progress' : ''}} min" ng-disabled="item.editmode" tooltip-placement="top" uib-tooltip="Start node" ng-click="startstopNode(id); item.editmode = false" ng-show="item.status != 2"><i class="fa fa-play text-success" aria-hidden="true"></i></button>
+				<button type="button" class="btn btn-xs btn-flat {{ (item.startLoading) ? 'm-progress' : ''}} min" tooltip-placement="top" uib-tooltip="Start node" ng-click="startstopNode(id); item.editmode = false" ng-show="item.status != 2"><i class="fa fa-play text-success" aria-hidden="true"></i></button>
 				<button type="button" class="btn btn-xs btn-flat {{ (item.startLoading) ? 'm-progress' : ''}} min" tooltip-placement="top" uib-tooltip="Stop node" ng-click="beforeEdit(id, item.template); startstopNode(id); " ng-show="item.status == 2"><i class="fa fa-stop text-danger" aria-hidden="true"></i></button>
 				<!-- <button type="button" class="btn btn-xs btn-flat" tooltip-placement="top" uib-tooltip="Edit node" ng-click="beforeEdit(id, item.template)" ng-show="!item.editmode"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button> -->
 				<!-- <button type="button" class="btn btn-xs" tooltip-placement="top" uib-tooltip="Cancel changes" ng-click="cancelChanges(id)" ng-show="item.editmode"><i class="fa fa-ban" aria-hidden="true"></i></button> -->

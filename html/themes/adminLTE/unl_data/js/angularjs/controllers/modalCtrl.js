@@ -15,7 +15,7 @@ function ModalCtrl($scope, $uibModal, $log) {
   $scope.openModal = function (action , edituser, size) {
 	$scope.edituser = (edituser === undefined) ? '' :  edituser;
 	var pathToModal = (action === undefined) ? 'default' :  action;
-	console.log(size + 'aaaaaaaaaa');
+	// console.log(size + 'aaaaaaaaaa');
     var modalInstance = $uibModal.open({
       animation: $scope.animationsEnabled,
       templateUrl: $scope.modalActions[pathToModal]['path'],
@@ -560,7 +560,7 @@ function MoveToModalCtrl($scope, $uibModalInstance, data, $http, $location,$inte
 	$scope.errorMessage="";
 	$scope.folderSearchList=[];
 	$scope.currentSearchPath='';
-	$scope.newpath="/";
+	$scope.newpath="";
 	$scope.openDropdown="";
 	$scope.pathDeeper=0;
 	$scope.pathDeeperCheck=0;
@@ -568,10 +568,18 @@ function MoveToModalCtrl($scope, $uibModalInstance, data, $http, $location,$inte
 	$scope.localSearch="";
 	$scope.blockButtons=false;
 	$scope.blockButtonsClass='';
+	// $scope.inputSlash=$('#newPathInput');
 	//$("#newPathInput").dropdown();
 	console.log($scope.filedata)
 	console.log($scope.folderdata)
 	
+	// $scope.inputSlash = function(){
+	// 	$('#newPathInput').focus();
+	// 	var inputSlash = $('#newPathInput').val();
+	// 	inputSlash.val('/');
+	// 	inputSlash.val(inputSlash);
+	// }
+
 	$scope.fastSearch = function(pathInput){
 		$scope.errorMessage="";
 		var re = /^\//;
@@ -627,6 +635,7 @@ function MoveToModalCtrl($scope, $uibModalInstance, data, $http, $location,$inte
 		$scope.newpath=fastPath;
 		$scope.fastSearch(fastPath);
 		$("#newPathInput").focus();
+
 	}
 	
 	$scope.deselect = function(){
@@ -637,10 +646,11 @@ function MoveToModalCtrl($scope, $uibModalInstance, data, $http, $location,$inte
 		$scope.openDropdown="";
 		$scope.folderfound=true;
 		var re = /^\/.*\/$/;
+		$scope.newpath = "/" + $scope.newpath
 		console.log($scope.newpath.search(re))
 		$scope.errorMessage="";
 		if ($scope.newpath == "") {$scope.errorMessage="New path can't be empty"; return;}
-		if ($scope.newpath.search(re) == -1) {$scope.errorMessage="Unknown path format, be sure that you added '/' to the end"; return;}
+		if ($scope.newpath.search(re) == -1 && $scope.newpath != "/") {$scope.errorMessage="Unknown path format, be sure that you added '/' to the end"; return;}
 		if ($scope.pathForTest == $scope.newpath) {$scope.errorMessage="Path can't be the same"; return;}
 		
 		for (i = 0; i < $scope.folderdata.length; i++) {

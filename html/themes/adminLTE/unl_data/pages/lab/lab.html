@@ -446,6 +446,7 @@ function nodeInit(node){
 	$scope.node[node.id].playstop=false;
 	$scope.node[node.id].playstopView=false;
 	$scope.node[node.id].upstatus=(node.status == 2) ? true : false;
+	console.log("upstatus1111111111111" , $scope.node[node.id].upstatus)
 	var elDIV=
 		'<div id="nodeID_'+node.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+node.left+'px; top: '+node.top+'px;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
 		'<div class="play-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && !node['+id+'].upstatus" title="Start node"><i class="fa fa-play play-icon" aria-hidden="true"></i></div>'+
@@ -626,7 +627,7 @@ function jsPlumbNodeInit(el){
 
     jsPlumb.makeSource(el, {
         filter: ".ep",
-  		anchor:"BottomCenter",
+  		anchor:"Continuous",
         connectorStyle: { strokeStyle: "#e62e00", lineWidth: 2, outlineColor: "white", outlineWidth: 1 },
         connectionType:"basic",
         extract:{

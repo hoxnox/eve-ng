@@ -126,46 +126,39 @@ var contextMenuInit = function() {
    */
   function init() {
     freeSelectNode();
-    nodeClick();
     contextListener();
     clickListener();
     keyupListener();
     resizeListener();
-    freeSelectPopUp();
+    clilckHidePopUp();
     
   }
   /*Open context menu //context-meniu_leftClick */
-  function nodeClick(){
-    $(document).on("click", function(e){
-      if ($(e.target).hasClass("context-menu_leftClick") || $(e.target).parents().hasClass("context-menu_leftClick"))
+
+  function clilckHidePopUp(){
+    $(document).on('click', function(e){
+      if ($(e.target).hasClass("context-menu_freeSelect") || $(e.target).parents().hasClass("context-menu_freeSelect"))
       {
-        console.log("menu is clicked");
+        // console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
       }
       else
       {
         console.log("hide menu");
+        $("#context-menu_freeSelect").removeClass("context-menu_freeSelect--active")
+      }
+      if ($(e.target).hasClass("context-menu_leftClick") || $(e.target).parents().hasClass("context-menu_leftClick"))
+      {
+        // console.log("menu is clicked");
+      }
+      else
+      {
+        // console.log("hide menu");
         $("#context-menu_leftClick").removeClass("context-menu_leftClick--active")
       }
     })
   }
 
-  function freeSelectPopUp(){
-    $(document).on("contextmenu", ".free-selected", function(e){
-      console.log("click la inceput");
-      e.preventDefault();
-      e.stopPropagation();
-      var pos = getPosition(e);
-      $("#context-menu_freeSelect").addClass("context-menu_freeSelect--active").css("left", pos.x).css("top", pos.y);
-      $("#context-menu").removeClass("context-menu--active");
-      console.log("open context-meniu_freeSelect");
-
-      setTimeout(function() {
-        menuState_freeSelect = 1
-      }, 100);
-      
-      // console.log($scope.iconTempObj)
-    })
-  }
+  
   /**
    * Listens for contextmenu events.
    */
@@ -178,8 +171,18 @@ var contextMenuInit = function() {
 		    // console.log(e.target.parentElement.parentElement.id)
         // console.log("a mers context meniu");
 		    $('#tempElID').val(e.target.parentElement.parentElement.id);
-        toggleMenuOn(taskItemClassName);
-        positionMenu(e);
+        var pos = getPosition(e);
+        if ($(e.target.parentElement.parentElement).hasClass('free-selected'))
+        {
+          $("#context-menu_freeSelect").addClass("context-menu_freeSelect--active").css("left", pos.x).css("top", pos.y);
+          $("#context-menu").removeClass("context-menu--active");
+        }
+        else
+        {
+          $("#context-menu_freeSelect").removeClass("context-menu_freeSelect--active");
+          toggleMenuOn(taskItemClassName);
+          positionMenu(e);
+        }
       } else {
         taskItemInContext = null;
         toggleMenuOff(taskItemClassName);

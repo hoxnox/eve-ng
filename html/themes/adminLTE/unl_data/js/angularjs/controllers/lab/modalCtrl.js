@@ -103,8 +103,9 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 			console.log(result)
 			if (result.result){
 				if (result.connType == 'NoNe'){
-					//console.log(result)
+					// console.log(result, '11111111111')
 					var type = 'ethernet';
+					var type = 'sereal';
 					console.log(result)
 					jsPlumb.connect({
 						source:'nodeID_'+result.node.id,
@@ -131,7 +132,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 				if (result.connType == 'NoNo'){
 				if (result.nodesData.type == 'ethernet'){
 					var type = 'ethernet';
-					console.log(result, "tralalalalaal")
+					// console.log(result, "22222222222")
 					newConn=jsPlumb.connect({
 						source:'nodeID_'+result.nodesData.src.id,
 						target:'nodeID_'+result.nodesData.dst.id,
@@ -161,7 +162,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 					}]); 
 				} else if (result.nodesData.type == 'serial'){
 					var type = 'serial';
-					console.log(result, bbbbbbbbbbbbbb)
+					// console.log(result, '33333333333')
 					newConn=jsPlumb.connect({
 						source:'nodeID_'+result.nodesData.src.id,
 						target:'nodeID_'+result.nodesData.dst.id,
@@ -519,9 +520,9 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 				for( var key in $scope.dst.if.serial ) {
 					$scope.dstfullIfList[key]=$scope.dst.if.serial[key];
 				}
-				//$scope.dstfullIfList = $scope.dst.if.ethernet
-				//jQuery.extend($scope.dstfullIfList, $scope.dst.if.serial)
-				//console.log($scope.dst.selectedIF)
+				// $scope.dstfullIfList = $scope.dst.if.ethernet
+				// jQuery.extend($scope.dstfullIfList, $scope.dst.if.serial)
+				// console.log($scope.dst.selectedIF)
 			}, function errorCallback(response){
 				$scope.interfListCount=false;
 				console.log('Server Error');
@@ -623,8 +624,8 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 						$scope.result.net.id=response.data.data.id;
 						newConnSrcData[''+srcIfID+'']=String($scope.result.net.id);
 						newConnDstData[''+dstIfID+'']=String($scope.result.net.id);
-						var srcRequest = $http.put('/api/labs'+$rootScope.lab+'/nodes/'+srcNodeID+'/interfaces', newConnSrcData)
-						var dstRequest = $http.put('/api/labs'+$rootScope.lab+'/nodes/'+dstNodeID+'/interfaces', newConnDstData)
+						var srcRequest = $http.put('/api/labs'+$rootScope.lab+'/nodes/'+srcNodeID+'/interfaces', newConnSrcData);
+						var dstRequest = $http.put('/api/labs'+$rootScope.lab+'/nodes/'+dstNodeID+'/interfaces', newConnDstData);
 						$q.all(srcRequest,dstRequest)
 						.then(function(results){
 							console.log(results);
@@ -771,6 +772,7 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 		if ($scope.templateData.options.idlepc != undefined) $scope.result.data.idlepc = $scope.templateData.options.idlepc.value;
 		if ($scope.templateData.options.slot1 != undefined) $scope.result.data.slot1 = $scope.selectSlot1;
 		if ($scope.templateData.options.slot2 != undefined) $scope.result.data.slot2 = $scope.selectSlot2;
+		if ($scope.templateData.options.serial != undefined) $scope.result.data.serial = $scope.templateData.options.serial.value;
 		if ($scope.numberNodes != undefined) $scope.result.data.numberNodes = $scope.numberNodes;
 		
 		$http({
@@ -945,7 +947,7 @@ function editNodeModalCtrl($scope, $uibModalInstance, $http, data, $state) {
 	$http.get('/api/labs'+$scope.path+'/nodes/'+id)
 	.then(
 		function successCallback(response){
-			console.log(response);
+			// console.log(response, 'response when open editNode ');
 			$scope.nodeInfo=response.data.data
 			$scope.nodeNameOld=$scope.nodeInfo.name;
 			$http.get('/api/list/templates/'+$scope.nodeInfo.template)
@@ -954,6 +956,10 @@ function editNodeModalCtrl($scope, $uibModalInstance, $http, data, $state) {
 				$scope.nodeTemplate = response.data.data;
 				$scope.selectIcon = $scope.nodeInfo.icon;
 				$scope.selectImage = $scope.nodeInfo.image;
+				$scope.selectSlot1 = $scope.nodeInfo.slot1;
+				$scope.selectSlot2 = $scope.nodeInfo.slot2;
+				$scope.selectConfig = ($scope.nodeTemplate.options.config != undefined) ? $scope.nodeTemplate.options.config.value : '';
+				$scope.selectConsole = ($scope.nodeTemplate.options.console != undefined) ? $scope.nodeTemplate.options.console.value : '';
 			})
 		}
 	)
@@ -969,7 +975,7 @@ function editNodeModalCtrl($scope, $uibModalInstance, $http, data, $state) {
 			'name' : $scope.nodeInfo.name,
 			'icon' : $scope.selectIcon,
 			'image' : $scope.selectImage,
-			'postfix' : 0
+			'postfix' : 0,
 		}
 		if ($scope.nodeInfo.cpu !== undefined) putdata.cpu=$scope.nodeInfo.cpu;
 		if ($scope.nodeInfo.idlepc !== undefined) putdata.idlepc=$scope.nodeInfo.idlepc;
@@ -977,11 +983,13 @@ function editNodeModalCtrl($scope, $uibModalInstance, $http, data, $state) {
 		if ($scope.nodeInfo.ram !== undefined) putdata.ram=$scope.nodeInfo.ram;
 		if ($scope.nodeInfo.ethernet !== undefined) putdata.ethernet=$scope.nodeInfo.ethernet;
 		if ($scope.nodeInfo.serial !== undefined) putdata.serial=$scope.nodeInfo.serial;
+		if ($scope.nodeInfo.slot1 != undefined) putdata.slot1 = $scope.selectSlot1;
+		if ($scope.nodeInfo.slot2 != undefined) putdata.slot2 = $scope.selectSlot2;
 		console.log(putdata)
 		$http.put('/api/labs/'+$scope.path+'/nodes/'+id, putdata)
 		.then(
 			function successCallback(response){
-				console.log(response);
+				// console.log(response, "qqqqqqqqqqqqqqqqqqqqqqqqqq");
 				$scope.result.result=true;
 				$uibModalInstance.close($scope.result);
 				$state.reload();
@@ -992,9 +1000,9 @@ function editNodeModalCtrl($scope, $uibModalInstance, $http, data, $state) {
 		)
 	}
 
-  $scope.closeModal = function () {
-    $uibModalInstance.dismiss('cancel');
-  };
+  	$scope.closeModal = function () {
+    	$uibModalInstance.dismiss('cancel');
+  	};
 };
 
 function AddNetModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
@@ -1100,7 +1108,7 @@ function editNetModalCtrl($scope, $uibModalInstance, $http, data) {
 	};
 };
 
-function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
+function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $state) {
 	$scope.path=data.path;
 	$scope.anychanges=false;
 	$scope.nodeList={};
@@ -1138,6 +1146,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 		}
 	)
 	}
+
 
 	// $http.get('/api/icons')
 	// .then(
@@ -1268,7 +1277,6 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 		if ($scope.nodeList[id].ram !== undefined) putdata.ram=$scope.nodeList[id].newram;
 		if ($scope.nodeList[id].ethernet !== undefined) putdata.ethernet=$scope.nodeList[id].newethernet;
 		if ($scope.nodeList[id].serial !== undefined) putdata.serial=$scope.nodeList[id].newserial;
-		// if ($scope.nodeList[id].config !== undefined) putdata.config=$scope.nodeList[id].newconfig;
 
 		console.log(putdata);
 		$http.put('/api/labs'+$scope.path+'/nodes/'+id, putdata)
@@ -1322,17 +1330,20 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 	$scope.escEditMode = function(id){
 		for (var key in $scope.nodeList){
 			$scope.cancelChanges(id)
-			$scope.nodeList[key].editmode=false
+			$scope.nodeList[key].editmode=false;
 		}
 	}
 	
 	$scope.closeModal = function () {
-  		console.log($scope.anychanges);
-  		$rootScope.topologyRefresh();
-  		if ($scope.anychanges==true)
-  			alert('So you need to edit some node, save and then close')
-    	else
+  		// console.log($scope.anychanges);
+  		// $rootScope.topologyRefresh();
+  		// if ($scope.anychanges==true)
+  		// 	alert('So you need to edit some node, save and then close')
+    // 	else
+    		$state.reload();
     		$uibModalInstance.dismiss();
+    		
+
   	};
 
   	$scope.mouseOverMainDiv = function($event){
@@ -1689,7 +1700,7 @@ function editLabModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 	$scope.editLab = {};
 	$scope.digits = {};
 	$scope.restrictTest = '\\d+';
-	$scope.restrictNumber = '^[a-zA-Z0-9-_]+$';
+	$scope.restrictNumber = '^[a-zA-Z0-9-_ ]+$';
 
 	$http.get('/api/labs'+$scope.path)
 	.then(
