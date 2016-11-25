@@ -499,7 +499,7 @@ function EditUserModalCtrl($scope, $uibModalInstance, data, $http) {
 			//Compare unique POD //START
 			for (var key in response.data.data){
 				console.log(parseInt(response.data.data[key].pod))
-				if (parseInt(response.data.data[key].pod) == parseInt($scope.pod)) {
+				if (parseInt(response.data.data[key].pod) == parseInt($scope.pod) && response.data.data[key].username != $scope.username) {
 					$scope.podError=true; break;
 				}
 			}
