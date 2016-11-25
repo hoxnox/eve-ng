@@ -1,33 +1,26 @@
 #!/bin/bash
 CONTROL="/usr/src/eve-ng-public-dev/debian/dynamips_control.template"
+CHANGELOG="/usr/src/eve-ng-public-dev/debian/dynamips_changelog.template"
 SRC_DIR="/usr/src/eve-ng-public-dev"
 ARCH=$(cat ${CONTROL} | grep Architecture | cut -d: -f2 | sed 's/ //')
 BUILD_DIR="/build"
-CONTROL_DIR="$(mktemp -dt)"
-DATA_DIR="$(mktemp -dt)"
 VERSION="$(cat ${SRC_DIR}/VERSION | cut -d- -f1)"
 RELEASE="$(cat ${SRC_DIR}/VERSION | cut -d- -f2)"
 
-cat ${CONTROL} | sed "s/%VERSION%/${VERSION}/" | sed "s/%RELEASE%/${RELEASE}/" > ${CONTROL_DIR}/control
-
-
-# Dynamips
-mkdir -p ${DATA_DIR}/usr/bin ${DATA_DIR}/usr/share/man/man1 ${DATA_DIR}/usr/share/man/man7
-cp -a /usr/bin/dynamips ${DATA_DIR}/usr/bin
-cp -a /usr/bin/nvram_export ${DATA_DIR}/usr/bin
-cp -a /usr/share/man/man1/dynamips.* ${DATA_DIR}/usr/share/man/man1
-cp -a /usr/share/man/man1/nvram_export.* ${DATA_DIR}/usr/share/man/man1
-cp -a /usr/share/man/man7/hypervisor_mode.* ${DATA_DIR}/usr/share/man/man7
-
-# Building the package
-cd ${DATA_DIR}
-tar czf data.tar.gz *
-find -type f -exec md5sum {} \; >> ${CONTROL_DIR}/md5sums
-echo 2.0 > ${CONTROL_DIR}/debian-binary
-cd ${CONTROL_DIR}
-tar czf control.tar.gz md5sums control
-cd ${SRC_DIR}
-DISTNAME=$(lsb_release -c -s)
+# get source first
+apt-get build-dep dynamips
+apt-get install dh-make
+cd /usr/src
+rm -fr dynamips*
+wget -c "https://github.com/GNS3/dynamips/archive/v0.2.14.zip"
+unzip v0.2.14.zip
+cd dynamips-0.2.14/common
+patch dynamips.c < /usr/src/eve-ng-public-dev/patch/dynamips-0.2.12.patch 
+cd ..
+dh_make -y --createorig -s -p eve-ng-dynamips
+cat ${CONTROL} | sed "s/%VERSION%/${VERSION}/" | sed "s/%RELEASE%/${RELEASE}/" > debian/control
+cat ${CHANGELOG} | sed "s/%VERSION%/${VERSION}/" | sed "s/%RELEASE%/${RELEASE}/" > debian/changelog
+dpkg-buildpackage -b 2>/dev/null
 mkdir -p ${BUILD_DIR}/apt/pool/${DISTNAME}/e/eve-ng-dynamips
-ar -cr ${BUILD_DIR}/apt/pool/${DISTNAME}/e/eve-ng-dynamips/eve-ng-dynamips_${VERSION}-${RELEASE}_${ARCH}.deb ${CONTROL_DIR}/debian-binary ${CONTROL_DIR}/control.tar.gz ${DATA_DIR}/data.tar.gz
-rm -rf ${CONTROL_DIR} ${DATA_DIR}
+mv ../eve-ng-dynamips_${VERSION}-${RELEASE}_amd64.deb ${BUILD_DIR}/apt/pool/${DISTNAME}/e/eve-ng-dynamips/
+ls -l ${BUILD_DIR}/apt/pool/${DISTNAME}/e/eve-ng-dynamips/

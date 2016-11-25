@@ -1,12 +1,12 @@
-Package: eve-ng-dynamips
-Version: %VERSION%-%RELEASE%
-Name: Unified Networking Lab - Dynamips
-Architecture: amd64
+Source: eve-ng-dynamips
 Maintainer: Andrea Dainese <andrea.dainese@gmail.com>
 Homepage: http://www.unetlab.com/
-Installed-Size: 1044
 Section: devel
 Priority: optional
+
+Package: eve-ng-dynamips
+Architecture: amd64
+Section: devel
 Conflicts: dynamips, unetlab-dynamips
 Replaces: dynamips, unetlab-dynamips
 Description: Dynamips files for Eve-NG.
