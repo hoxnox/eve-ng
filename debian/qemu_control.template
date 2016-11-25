@@ -7,7 +7,7 @@ Homepage: http://www.unetlab.com/
 Installed-Size: 80420
 Section: devel
 Priority: optional
-Depends: libaio1
+Depends: libaio1, libasound2, libbluetooth3, libbrlapi0.6, libc6, libcacard0, libfdt1, libgcc1, libglib2.0-0, libgnutls30, libjpeg8, libncurses5, libnettle6, libnuma1, libpixman-1-0, libpng12-0, libpulse0, librbd1, libsasl2-2, libiscsi2, libsdl1.2debian, libseccomp2, libspice-server1, libtinfo5, libusb-1.0-0, libusbredirparser1, libuuid1, libx11-6, libxen-4.6, libxenstore3.0, zlib1g
 Conflicts: unetlab-qemu
 Replaces: unetlab-qemu
 Description: QEMU files for Eve-NG.
