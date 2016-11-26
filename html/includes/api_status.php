@@ -50,7 +50,7 @@ function apiGetDiskUsage() {
  *
  * @return  Array                       RAM usage (percentage) as cache and data or -1 if not valid
  */
-function apiGetMemUsage() {
+function apiGetOldMemUsage() {
 	// Checking RAM usage
 	$cmd = 'free';
 	exec($cmd, $o, $rc);
@@ -62,6 +62,20 @@ function apiGetMemUsage() {
 	} else {
 		return Array(-1, -1);
 	}
+}
+
+function apiGetMemUsage() {
+	$data = explode("\n", file_get_contents("/proc/meminfo"));
+	array_pop($data) ;
+	$meminfo = array();
+	foreach ($data as $line) {
+		list($key, $val) = explode(":", $line);
+		$meminfo[$key] = (int) preg_replace('/^([0-9\.]+)\ +.*$/','$1',trim($val));
+	}
+	$total=$meminfo["MemTotal"];
+	$cached=$meminfo["Cached"];
+	$avail=$meminfo["MemAvailable"];
+	return Array(round($cached / $total * 100), round($avail / $total * 100));
 }
 
 /*
