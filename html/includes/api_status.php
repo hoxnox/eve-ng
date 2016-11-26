@@ -75,7 +75,7 @@ function apiGetMemUsage() {
 	$total=$meminfo["MemTotal"];
 	$cached=$meminfo["Cached"];
 	$avail=$meminfo["MemAvailable"];
-	return Array(round($cached / $total * 100), round($avail / $total * 100));
+	return Array(round(100 - ($cached / $total * 100)), round(100 - ($avail / $total * 100)));
 }
 
 /*
