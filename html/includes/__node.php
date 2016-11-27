@@ -286,7 +286,8 @@ class Node {
 				error_log(date('M d H:i:s ').'WARNING: '.$GLOBALS['messages'][40025]);
 				$p['image'] = '';
 			} else {
-				$p['image'] = end(listNodeImages($p['type'], $p['template']));
+				$imglist=listNodeImages($p['type'], $p['template']);
+				$p['image'] = end($imglist);
 			}
 		}
 
