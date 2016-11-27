@@ -524,15 +524,15 @@ function shapeInit(shapeObj){
 function textInit(textObj){
 	var id = textObj.id;
 	var t_target = '';
-	var fontColor = textObj.data.fontColor || 'black';
-	var bgColor = textObj.data.fontColor || 'white';
-	var fontSize = textObj.data.fontSize || '25';
+	var fontColor = textObj.newdata.fontColor || 'black';
+	var bgColor = textObj.newdata.bgColor || 'white';
+	var fontSize = textObj.newdata.fontSize || '25';
 	$scope.text[textObj.id]=textObj;
 	var coordinates = 'position:absolute;left:' + textObj['left'] + 'px;top:' + textObj['top'] + 'px;';
 	var elDIV=
-		'<div id="textID_'+textObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+textObj.data.left+'px; top: '+textObj.data.top+'px;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
+		'<div id="textID_'+textObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+textObj.newdata.left+'; top: '+textObj.newdata.top+';" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
 		'<div><p style="font-size:' + fontSize + 'px; color: ' + fontColor +';" ng-mousedown="textTouching('+id+', $event)" ng-mousemove="textDragging('+id+', $event)" class="pointer">'+
-		textObj.data.text + '</p>'+
+		textObj.newdata.text + '</p>'+
 		'</div></div>';
 	
 	$scope.compileNewElement(elDIV, 'textID_'+textObj.id, textObj)

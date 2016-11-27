@@ -100,7 +100,8 @@ function apiGetLabTextObject($lab, $id) {
 			'id' => $id,
 			'name' => $textobject -> getName(),
 			'type' => $textobject -> getNType(),
-			'data' => $textobject -> getData()
+			'data' => $textobject -> getData(),
+			'newdata' => $textobject -> getNewData()
 		);
 	} else {
 		$output['code'] = 404;

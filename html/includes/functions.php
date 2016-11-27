@@ -1097,4 +1097,36 @@ function addHtml5Perm($port,$tenant) {
         }
 
 }
+
+function style_to_object($style) {
+        $return = array();
+        $divstyle = explode ( ";", $style );
+        array_pop($divstyle);
+        foreach ( $divstyle as $param ) {
+                $key=trim(explode(":",$param)[0]);
+                $value=trim(explode(":",$param)[1]);
+                $return[$key]=$value;
+        }
+        return $return;
+}
+function data_to_textobjattr($data) {
+	$return = array();
+	$text = "";
+	$dom = new DOMDocument();
+	$dom->loadHTML(base64_decode($data));	
+	$pstyle=style_to_object($dom->documentElement->getElementsByTagName("div")->item(0)->getAttribute("style"));
+	$doc=$dom->documentElement->getElementsByTagName("p")->item(0);
+	$childs=$doc->childNodes;
+	for ( $i=0 ; $i < $childs->length ; $i++ ) {
+        	$text.=$dom->saveXML($childs->item($i));
+	}
+	$tstyle=style_to_object($dom->documentElement->getElementsByTagName("p")->item(0)->getAttribute("style"));
+	$return['text']=$text;
+	$return['top']=$pstyle['top'];
+	$return['left']=$pstyle['left'];
+	$return['fontColor']=$tstyle['color'];
+	$return['bgColor']=$tstyle['background-color'];
+	$return['fontSize']=$tstyle['font-size'];
+	return $return;
+}
 ?>

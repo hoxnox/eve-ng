@@ -19,6 +19,7 @@
 
 class TextObject {
 	private $data;
+	private $newdata;
 	private $id;
 	private $name;
 	private $type;
@@ -63,6 +64,15 @@ class TextObject {
 		$this -> id = (int) $id;
 		$this -> type = $p['type'];
 		if (isset($p['name'])) $this -> name = htmlentities($p['name']);
+		if ( $this -> type == "text" ) {
+			$extra = data_to_textobjattr($this -> data);
+			$this -> newdata['text'] = $extra['text'];
+			$this -> newdata['top'] = $extra['top'];
+			$this -> newdata['left'] = $extra['left'];
+			$this -> newdata['fontColor'] = $extra['fontColor'];
+			$this -> newdata['bgColor'] = $extra['bgColor'];
+			$this -> newdata['fontSize'] = $extra['fontSize'];
+		}
 	}
 
 	/**
@@ -136,5 +146,14 @@ class TextObject {
 	public function getNType() {
 		return $this -> type;
 	}
+	/**
+	 * Method to get the object left.
+	 *
+	 * @return  string                      The object type
+	 */
+	public function getNewData() {
+		return $this -> newdata;
+	}
+	
 }
 ?>
