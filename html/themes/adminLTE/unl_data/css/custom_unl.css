@@ -811,3 +811,6 @@ Free select
 .box-default{
   margin-bottom: 0px;
 }
+.jsplumb-connector { z-index:1000; }
+.jsplumb-endpoint { z-index:1001; }
+.jsplumb-overlay { z-index:1002; }

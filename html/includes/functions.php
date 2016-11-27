@@ -1173,7 +1173,11 @@ function datatoSquareAttr($data) {
 	$return['svgHeight'] = $svg["attributes"]["HEIGHT"];
 	$return['zindex'] = $style['z-index'];
 	$return["stroke"] = $square["attributes"]["STROKE"];
-	isset($square["attributes"]["STROKE-DASHARRAY"]) && $return["strokeDashArray"] = $square["attributes"]["STROKE-DASHARRAY"];
+	if ( isset($square["attributes"]["STROKE-DASHARRAY"]) ) {
+		 $return["strokeDashArray"] = $square["attributes"]["STROKE-DASHARRAY"];
+	} else {
+		 $return["strokeDashArray"] = "0,0" ;
+	}
 	$return["borderWidth"] = $square["attributes"]["STROKE-WIDTH"];
 	$return["bgcolor"] = $square["attributes"]["FILL"];
 	return $return;
