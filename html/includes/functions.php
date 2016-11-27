@@ -1113,7 +1113,11 @@ function data_to_textobjattr($data) {
 	$return = array();
 	$text = "";
 	$dom = new DOMDocument();
-	$dom->loadHTML(base64_decode($data));	
+	if ( preg_match ( "/style/i", $data )) {
+		$dom->loadHTML($data);
+	} else {
+		$dom->loadHTML(base64_decode($data));
+	}	
 	$pstyle=style_to_object($dom->documentElement->getElementsByTagName("div")->item(0)->getAttribute("style"));
 	$doc=$dom->documentElement->getElementsByTagName("p")->item(0);
 	$childs=$doc->childNodes;
@@ -1138,7 +1142,11 @@ function data_to_textobjattr($data) {
 function dataToCircleAttr($data) {
 	$return = array();
 	$p = xml_parser_create();
-	xml_parse_into_struct($p, base64_decode($data), $vals, $index);
+	if ( preg_match ( "/circle/i", $data )) {
+		xml_parse_into_struct($data, $vals, $index);
+	} else { 
+		xml_parse_into_struct($p, base64_decode($data), $vals, $index);
+	}
 	$svg=$vals[$index["SVG"][0]];
 	$style=(style_to_object($vals[$index["DIV"][0]]["attributes"]["STYLE"]));
 	$circle=$vals[$index["ELLIPSE"][0]];
@@ -1156,12 +1164,21 @@ function dataToCircleAttr($data) {
 	$return['svgWidth'] = $svg["attributes"]["WIDTH"];
 	$return['svgHeight'] = $svg["attributes"]["HEIGHT"];
 	$return['zindex'] = $style['z-index'];
+	if (isset ($style['transform']) ) {
+		$return['transform'] = $style['transform'];
+	} else {
+		$return['transform'] = "rotate(0deg)";
+	}
 	return $return;
 }
 function datatoSquareAttr($data) {
 	$return = array();
 	$p = xml_parser_create();
-	xml_parse_into_struct($p, preg_replace('/"=""/','',base64_decode($data)), $vals, $index);
+	if ( preg_match ( "/rect/i", $data )) {
+		xml_parse_into_struct($p, preg_replace('/"=""/','',$data), $vals, $index);
+	} else {
+		xml_parse_into_struct($p, preg_replace('/"=""/','',base64_decode($data)), $vals, $index);
+	}
 	$svg=$vals[$index["SVG"][0]];
 	$square=$vals[$index["RECT"][0]];
 	$style=(style_to_object($vals[$index["DIV"][0]]["attributes"]["STYLE"]));
@@ -1180,6 +1197,11 @@ function datatoSquareAttr($data) {
 	}
 	$return["borderWidth"] = $square["attributes"]["STROKE-WIDTH"];
 	$return["bgcolor"] = $square["attributes"]["FILL"];
+	if (isset ($style['transform']) ) {
+		$return['transform'] = $style['transform'];
+	} else {
+		$return['transform'] = "rotate(0deg)";
+	}
 	return $return;
 }
 ?>
