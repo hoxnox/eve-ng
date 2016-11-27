@@ -65,13 +65,13 @@ class TextObject {
 		$this -> type = $p['type'];
 		if (isset($p['name'])) $this -> name = htmlentities($p['name']);
 		if ( $this -> type == "text" ) {
-			$extra = data_to_textobjattr($this -> data);
-			$this -> newdata['text'] = $extra['text'];
-			$this -> newdata['top'] = $extra['top'];
-			$this -> newdata['left'] = $extra['left'];
-			$this -> newdata['fontColor'] = $extra['fontColor'];
-			$this -> newdata['bgColor'] = $extra['bgColor'];
-			$this -> newdata['fontSize'] = $extra['fontSize'];
+			$this -> newdata = data_to_textobjattr($this -> data);
+		}
+		if ( $this -> type == "circle" ) {
+			$this -> newdata = dataToCircleAttr($this -> data);
+		}
+		if ( $this -> type == "square" ) {
+			$this -> newdata = dataToSquareAttr($this -> data);
 		}
 	}
 

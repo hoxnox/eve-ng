@@ -1121,12 +1121,61 @@ function data_to_textobjattr($data) {
         	$text.=$dom->saveXML($childs->item($i));
 	}
 	$tstyle=style_to_object($dom->documentElement->getElementsByTagName("p")->item(0)->getAttribute("style"));
-	$return['text']=$text;
-	$return['top']=$pstyle['top'];
-	$return['left']=$pstyle['left'];
-	$return['fontColor']=$tstyle['color'];
-	$return['bgColor']=$tstyle['background-color'];
-	$return['fontSize']=$tstyle['font-size'];
+	$return['text'] = $text;
+	$return['top'] = preg_replace('/px/','',$pstyle['top']);
+	$return['left'] = preg_replace('/px/','',$pstyle['left']);
+	$return['fontColor'] = $tstyle['color'];
+	$return['bgColor'] = $tstyle['background-color'];
+	$return['fontSize'] = $tstyle['font-size'];
+	$return['zindex'] = $pstyle['z-index'];
+	if (isset ($pstyle['transform']) ) {
+		$return['transform'] = $pstyle['transform'];
+	} else {
+		$return['transform'] = "rotate(0deg)";
+	}
+	return $return;
+}
+function dataToCircleAttr($data) {
+	$return = array();
+	$p = xml_parser_create();
+	xml_parse_into_struct($p, base64_decode($data), $vals, $index);
+	$svg=$vals[$index["SVG"][0]];
+	$style=(style_to_object($vals[$index["DIV"][0]]["attributes"]["STYLE"]));
+	$circle=$vals[$index["ELLIPSE"][0]];
+	$return["borderWidth"] = $circle["attributes"]["STROKE-WIDTH"];
+	$return["stroke"] = $circle["attributes"]["STROKE"];
+	$return["bgcolor"] = $circle["attributes"]["FILL"];
+	$return["cx"] = $circle["attributes"]["CX"];
+	$return["cy"] = $circle["attributes"]["CY"];
+	$return["rx"] = $circle["attributes"]["RX"];
+	$return["ry"] = $circle["attributes"]["RY"];
+	$return['top'] = preg_replace('/px/','',$style['top']);
+	$return['left'] = preg_replace('/px/','',$style['left']);
+	$return['width'] = preg_replace('/px/','',$style['width']);
+	$return['height'] = preg_replace('/px/','',$style['height']);
+	$return['svgWidth'] = $svg["attributes"]["WIDTH"];
+	$return['svgHeight'] = $svg["attributes"]["HEIGHT"];
+	$return['zindex'] = $style['z-index'];
+	return $return;
+}
+function datatoSquareAttr($data) {
+	$return = array();
+	$p = xml_parser_create();
+	xml_parse_into_struct($p, preg_replace('/"=""/','',base64_decode($data)), $vals, $index);
+	$svg=$vals[$index["SVG"][0]];
+	$square=$vals[$index["RECT"][0]];
+	$style=(style_to_object($vals[$index["DIV"][0]]["attributes"]["STYLE"]));
+	$return['top'] = preg_replace('/px/','',$style['top']);
+	$return['left'] = preg_replace('/px/','',$style['left']);
+	$return['width'] = preg_replace('/px/','',$style['width']);
+	$return['height'] = preg_replace('/px/','',$style['height']);
+	$return['svgWidth'] = $svg["attributes"]["WIDTH"];
+	$return['svgHeight'] = $svg["attributes"]["HEIGHT"];
+	$return['zindex'] = $style['z-index'];
+	$return["stroke"] = $square["attributes"]["STROKE"];
+	isset($square["attributes"]["STROKE-DASHARRAY"]) && $return["strokeDashArray"] = $square["attributes"]["STROKE-DASHARRAY"];
+	$return["borderWidth"] = $square["attributes"]["STROKE-WIDTH"];
+	$return["bgcolor"] = $square["attributes"]["FILL"];
 	return $return;
 }
 ?>

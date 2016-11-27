@@ -403,7 +403,8 @@ function initFullLab(){
 }
 function drowObject(obj){
 	if(obj.type == 'text')	getTextObject(obj.id).then(function(data){textInit(data)});
-	if(obj.type == 'shape') getTextObject(obj.id).then(function(data){shapeInit(data)});
+	if(obj.type == 'circle') getTextObject(obj.id).then(function(data){shapeInit(data)});
+	if(obj.type == 'square') getTextObject(obj.id).then(function(data){shapeInit(data)});
 }
 // Get Text Object By Id
 function getTextObject(id) {
@@ -448,13 +449,13 @@ function nodeInit(node){
 	$scope.node[node.id].upstatus=(node.status == 2) ? true : false;
 	console.log("upstatus1111111111111" , $scope.node[node.id].upstatus)
 	var elDIV=
-		'<div id="nodeID_'+node.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+node.left+'px; top: '+node.top+'px;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
+		'<div id="nodeID_'+node.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+node.left+'px; top: '+node.top+'px; z-index: 1001;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
 		'<div class="play-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && !node['+id+'].upstatus" title="Start node"><i class="fa fa-play play-icon" aria-hidden="true"></i></div>'+
 		'<div class="stop-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && node['+id+'].upstatus" title="Stop node"><i class="fa fa-stop stop-icon" aria-hidden="true"></i></div>'+
 		'<div class="tag" title="Connect to another node">'+
 			'<i class="fa fa-plug plug-icon dropdown-toggle ep" ng-show="node['+id+'].playstopView"></i>'+
 		'</div>'+
-		'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute; z-index:2;"></div>'+
+		'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute;"></div>'+
 		'<a href="{{node['+id+'].url}}" '+ntarget+' ng-click="openNodeConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer" ng-mouseup="nodeStopTouching('+id+', $event)">'+
 		'<img ng-src="/images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
 		'<a><figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind="node['+id+'].name"></figcaption></a>'+
@@ -468,49 +469,43 @@ function nodeInit(node){
 
 function shapeInit(shapeObj){
 	var id = shapeObj.id;
-	var z_index = 1001;
+	var zindex = shapeObj.newdata.zindex;
 	var sideSize = shapeObj.shapeSideSize ? shapeObj.shapeSideSize : 150;
 
 	console.log("shapeElement", shapeObj)
 	var coordinates = 'position:absolute;left:' + shapeObj.data.left + 'px;top:' + shapeObj.data.top + 'px;';
 	var elDIV = "";
-	if(shapeObj.data.shapeType == 'square'){
+	if(shapeObj.type == 'square'){
 		elDIV =
 			'<div id="shapeID_'+shapeObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" ' +
-			'style="left: '+shapeObj.data.left+'px; top: '+shapeObj.data.top+'px; width: " ' + sideSize + 'px; height: " ' + sideSize + 'px; ' +
+			'style="display: inline; z-index: ' + zindex + ' ; left: '+shapeObj.newdata.left+'px; top: '+shapeObj.newdata.top+'px; width: ' + shapeObj.newdata.width + 'px; height: ' + shapeObj.newdata.height + 'px;" ' +
 			'ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
-
-			// '<div id="customShape' + shape_options['id'] + '" class="customShape context-menu" data-path="' + customShape_id + '" ' +
-			// 'style="display:inline;z-index:' + z_index + ';' + coordinates + '" ' +
-			// 'width="' + shape_options['shape_width/height'] + 'px" height="' + shape_options['shape_width/height'] + 'px" >' +
-				'<svg width="' + sideSize + '" height="' + sideSize + '">' +
-					'<rect width="' + sideSize + '" ' +
-					'height="' + sideSize + '" ' +
-					'fill ="' + shapeObj.data.bgColor + '" ' +
-					'stroke-width ="' + shapeObj.data.borderWidth + '" ' +
-					'stroke ="' + shapeObj.data.borderColor + '" ' + shapeObj.data.borderType +
-					'"/>' +
+				'<svg width="' + shapeObj.newdata.svgWidth + '" height="' + shapeObj.newdata.svgHeight + '">' +
+					'<rect width="' + shapeObj.newdata.width + '" ' +
+					'height="' + shapeObj.newdata.height + '" ' +
+					'fill ="' + shapeObj.newdata.bgcolor + '" ' +
+					'stroke-width ="' + shapeObj.newdata.borderWidth + '" ' +
+					'stroke ="' + shapeObj.newdata.stroke + '" ' + 
+					'stroke-dasharray ="' + shapeObj.newdata.strokeDashArray + '" ' +
+					'/>' +
 				'Sorry, your browser does not support inline SVG.' +
 				'</svg>' +
 			'</div>';
 	} else {
-		var radius = sideSize / 2 - shapeObj.data.borderWidth / 2;
+		var radius = sideSize / 2 - shapeObj.newdata.borderWidth / 2;
 		elDIV =
 			'<div id="shapeID_'+shapeObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" ' +
-			'style="left: '+shapeObj.data.left+'px; top: '+shapeObj.data.top+'px; width: " ' + sideSize + 'px; height: " ' + sideSize + 'px; ' +
+			'style="display: inline; z-index: ' + zindex + ' ; left: '+shapeObj.newdata.left+'px; top: '+shapeObj.newdata.top+'px; width: ' + shapeObj.newdata.width + 'px; height: ' + 
+			shapeObj.newdata.height + 'px; right: auto; bottom: auto;" ' +
 			'ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
-
-				// '<div id="customShape' + shape_options['id'] + '" class="customShape context-menu" data-path="' + customShape_id + '" ' +
-				// 'style="display:inline;z-index:' + z_index + ';' + coordinates + '" ' +
-				// 'width="' + shape_options['shape_width/height'] + 'px" height="' + shape_options['shape_width/height'] + 'px" >' +
-				'<svg width="' + sideSize + '" height="' + sideSize + '">' +
-					'<ellipse cx="' + (radius + shapeObj.data.borderWidth / 2 ) + '" ' +
-					'cy="' + (radius + shapeObj.data.borderWidth / 2 ) + '" ' +
-					'rx="' + radius + '" ' +
-					'ry="' + radius + '" ' +
-					'stroke ="' + shapeObj.data.borderColor + '" ' +
-					'stroke-width="' + shapeObj.data.borderWidth / 2 + '" ' + shapeObj.data.borderType +
-					' fill ="' + shapeObj.data.bgColor + '" ' +
+				'<svg width="' + shapeObj.newdata.svgWidth + '" height="' + shapeObj.newdata.svgHeight + '">' +
+					'<ellipse cx="' + shapeObj.newdata.cx + '" ' +
+					'cy="' + shapeObj.newdata.cy + '" ' +
+					'rx="' + shapeObj.newdata.rx + '" ' +
+					'ry="' + shapeObj.newdata.ry + '" ' +
+					'stroke ="' + shapeObj.newdata.stroke + '" ' +
+					'stroke-width="' + shapeObj.newdata.borderWidth + '" ' + 
+					' fill ="' + shapeObj.newdata.bgcolor + '" ' +
 					'/>' +
 				'Sorry, your browser does not support inline SVG.' +
 				'</svg>' +
@@ -518,20 +513,23 @@ function shapeInit(shapeObj){
 	}
 		// '<p style="font-size:' + shapeObj.fontSize + 'px; color: ' + shapeObj.fontColor +';" ng-mousedown="textTouching('+id+', $event)" ng-mousemove="textDragging('+id+', $event)" class="pointer">'+
 		// shapeObj['text'] + '</p>'+
-	$scope.compileNewElement(elDIV, 'shapeID_'+id, shapeObj.data)
+	//alert(elDIV);
+	$scope.compileNewElement(elDIV, 'shapeID_'+id, shapeObj)
 }
 
 function textInit(textObj){
 	var id = textObj.id;
 	var t_target = '';
+	var zindex = textObj.newdata.zindex ;
 	var fontColor = textObj.newdata.fontColor || 'black';
 	var bgColor = textObj.newdata.bgColor || 'white';
 	var fontSize = textObj.newdata.fontSize || '25';
+	var transform = textObj.newdata.transform || 'rotate(0deg)';
 	$scope.text[textObj.id]=textObj;
 	var coordinates = 'position:absolute;left:' + textObj['left'] + 'px;top:' + textObj['top'] + 'px;';
 	var elDIV=
-		'<div id="textID_'+textObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+textObj.newdata.left+'; top: '+textObj.newdata.top+';" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
-		'<div><p style="font-size:' + fontSize + 'px; color: ' + fontColor +';" ng-mousedown="textTouching('+id+', $event)" ng-mousemove="textDragging('+id+', $event)" class="pointer">'+
+		'<div id="textID_'+textObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+textObj.newdata.left+'px; top: '+textObj.newdata.top+'px; z-index: ' + zindex + ';width: auto; right: auto; height: 681.625px; bottom: auto; transform: ' + transform + ';white-space: nowrap;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
+		'<div><p style="font-size:' + fontSize + 'px; color: ' + fontColor +'; background-color: ' + bgColor + ';" ng-mousedown="textTouching('+id+', $event)" ng-mousemove="textDragging('+id+', $event)" class="pointer">'+
 		textObj.newdata.text + '</p>'+
 		'</div></div>';
 	
@@ -544,7 +542,7 @@ function networkInit(networkObject){
 	// console.log($scope.networks)
 	// console.log($scope.networks[id])
 	var icon = (networkObject.type == 'bridge') ? 'Switch.png' : 'Cloud.png';
-	var elDIV='<div id="networkID_'+networkObject['id']+'" class="w element-menu network" style="left: '+networkObject.left+'px; top: '+networkObject.top+'px;" context-menu="netContext">'+
+	var elDIV='<div id="networkID_'+networkObject['id']+'" class="w element-menu network" style="left: '+networkObject.left+'px; top: '+networkObject.top+'px; z-index: 1000;" context-menu="netContext">'+
 		//'<div class="tag"><i class="fa fa-plug plug-icon ep" aria-hidden="true"></i></div>'+
 		'<a><img src="/images/icons/'+icon+'" class="'+icon.replace('.png','')+'_sm'+'"></a>'+
 		'<a class="pointer"><figcaption class="figcaption-text '+icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind="networks['+id+'].name"></figcaption></a>'+
