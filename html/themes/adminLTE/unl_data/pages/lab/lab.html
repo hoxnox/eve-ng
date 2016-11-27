@@ -543,7 +543,7 @@ function networkInit(networkObject){
 	// console.log($scope.networks)
 	// console.log($scope.networks[id])
 	var icon = (networkObject.type == 'bridge') ? 'Switch.png' : 'Cloud.png';
-	var elDIV='<div id="networkID_'+networkObject['id']+'" class="w element-menu network" style="left: '+networkObject.left+'px; top: '+networkObject.top+'px; z-index: 1;" context-menu="netContext">'+
+	var elDIV='<div id="networkID_'+networkObject['id']+'" class="w element-menu network" style="left: '+networkObject.left+'px; top: '+networkObject.top+'px; z-index: 1000;" context-menu="netContext">'+
 		//'<div class="tag"><i class="fa fa-plug plug-icon ep" aria-hidden="true"></i></div>'+
 		'<a><img src="/images/icons/'+icon+'" class="'+icon.replace('.png','')+'_sm'+'"></a>'+
 		'<a class="pointer"><figcaption class="figcaption-text '+icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind="networks['+id+'].name"></figcaption></a>'+
