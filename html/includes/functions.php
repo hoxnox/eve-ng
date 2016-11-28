@@ -1114,7 +1114,7 @@ function data_to_textobjattr($data) {
 	$text = "";
 	$dom = new DOMDocument();
 	if ( preg_match ( "/style/i", $data )) {
-		$dom->loadHTML($data);
+		$dom->loadHTML(htmlspecialchars_decode($data));
 	} else {
 		$dom->loadHTML(base64_decode($data));
 	}	
@@ -1129,8 +1129,9 @@ function data_to_textobjattr($data) {
 	$return['top'] = preg_replace('/px/','',$pstyle['top']);
 	$return['left'] = preg_replace('/px/','',$pstyle['left']);
 	$return['fontColor'] = $tstyle['color'];
+	$return['fontWeight'] = $tstyle['font-weight'];
 	$return['bgColor'] = $tstyle['background-color'];
-	$return['fontSize'] = $tstyle['font-size'];
+	$return['fontSize'] = preg_replace('/px/','',$tstyle['font-size']);
 	$return['zindex'] = $pstyle['z-index'];
 	if (isset ($pstyle['transform']) ) {
 		$return['transform'] = $pstyle['transform'];
@@ -1142,8 +1143,8 @@ function data_to_textobjattr($data) {
 function dataToCircleAttr($data) {
 	$return = array();
 	$p = xml_parser_create();
-	if ( preg_match ( "/circle/i", $data )) {
-		xml_parse_into_struct($data, $vals, $index);
+	if ( preg_match ( "/style/i", $data )) {
+		xml_parse_into_struct($p, htmlspecialchars_decode($data), $vals, $index);
 	} else { 
 		xml_parse_into_struct($p, base64_decode($data), $vals, $index);
 	}
@@ -1164,6 +1165,11 @@ function dataToCircleAttr($data) {
 	$return['svgWidth'] = $svg["attributes"]["WIDTH"];
 	$return['svgHeight'] = $svg["attributes"]["HEIGHT"];
 	$return['zindex'] = $style['z-index'];
+	if ( isset($circle["attributes"]["STROKE-DASHARRAY"]) ) {
+		$return["strokeDashArray"] = $circle["attributes"]["STROKE-DASHARRAY"];
+	} else {
+		$return["strokeDashArray"] = "0,0" ;
+        }
 	if (isset ($style['transform']) ) {
 		$return['transform'] = $style['transform'];
 	} else {
@@ -1174,8 +1180,8 @@ function dataToCircleAttr($data) {
 function datatoSquareAttr($data) {
 	$return = array();
 	$p = xml_parser_create();
-	if ( preg_match ( "/rect/i", $data )) {
-		xml_parse_into_struct($p, preg_replace('/"=""/','',$data), $vals, $index);
+	if ( preg_match ( "/style/i", $data )) {
+		xml_parse_into_struct($p, preg_replace('/"=""/','',htmlspecialchars_decode($data)), $vals, $index);
 	} else {
 		xml_parse_into_struct($p, preg_replace('/"=""/','',base64_decode($data)), $vals, $index);
 	}

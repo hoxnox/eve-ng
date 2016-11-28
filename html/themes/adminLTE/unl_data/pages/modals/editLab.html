@@ -17,7 +17,7 @@
 		                <label class="col-md-2 control-label control-label_custom_pos">Name<sup class="sup-star">*</sup></label>
 		                <div class="col-md-10">
 		                    <input class="form-control autofocus" name="name" ng-model="labData.name" required type="text" autofocus="autofocus" ng-pattern="restrictNumber" ng-class="{'input--error': formLabEdit.name.$valid == false, 'input': formLabEdit.name.$valid == true}">
-		                    <span class="chars" ng-class="{'chars--active': formLabEdit.name.$valid == false, 'chars': formLabEdit.name.$valid == true}">Use only [A-Za-z0-9_-]chars</span>
+		                    <span class="chars" ng-class="{'chars--active': formLabEdit.name.$valid == false, 'chars': formLabEdit.name.$valid == true}">Use only [A-Za-z0-9_- ]chars</span>
 		                </div>
 		            </div>
 		            <div class="form-group row">

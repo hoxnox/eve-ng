@@ -373,9 +373,9 @@ td.imageList .ui-select-container .ui-select-choices{
 }
 
 .aLabel.jsplumb-hover {
-    background-color: #aaa;
-    color: white;
-    z-index: 5;
+  background-color: #aaa;
+  color: white;
+  z-index: 1005;
 }
 .jsplumb-source-hover:not(.noborderRadius), .jsplumb-target-hover:not(.noborderRadius) {
    -webkit-filter: invert(100%);
@@ -383,9 +383,9 @@ td.imageList .ui-select-container .ui-select-choices{
    filter: invert(100%);
 }
 .jsplumb-drag-hover {
-   -webkit-filter: invert(100%);
-    -webkit-transition: 0.25s ease-in-out;
-   filter: invert(100%);
+ -webkit-filter: invert(100%);
+  -webkit-transition: 0.25s ease-in-out;
+ filter: invert(100%);
 }
 
 .aLabel {

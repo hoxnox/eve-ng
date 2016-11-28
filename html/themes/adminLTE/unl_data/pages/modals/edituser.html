@@ -30,7 +30,7 @@
         <div class="form-group">
                   <label>Name</label>
                   <input type="text" class="form-control" name="name" data-ng-model="name" placeholder="Enter name" autofocus ng-pattern="restrictNumber" ng-class="{'input--error': form.name.$valid == false, 'input': form.name.$valid == true}">
-                   <span class="chars" ng-class="{'chars--active': form.name.$valid == false, 'chars': form.name.$valid == true}">Use only [A-Za-z0-9_-]chars</span>
+                   <span class="chars" ng-class="{'chars--active': form.name.$valid == false, 'chars': form.name.$valid == true}">Use only [A-Za-z0-9_- ]chars</span>
           <span class="help-block" data-ng-show="errorClass == 'has-error username'" data-ng-bind="errorMessage"></span>
                 </div>
 				

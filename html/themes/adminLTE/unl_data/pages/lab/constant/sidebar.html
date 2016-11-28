@@ -1,5 +1,5 @@
  <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar" style="height: auto;" data-ng-controller="HeaderController">
+    <section class="sidebar" style="height: auto;z-index: 10000;" data-ng-controller="HeaderController">
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu">
         <li class="header">MAIN NAVIGATION</li>
@@ -49,7 +49,7 @@
         <li class="treeview {{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">
           <a class="pointer">
             <i class="glyphicon glyphicon-th"></i>
-            <span style="width:228px" class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">More actions</span>
+            <span style="width:228px; z-index: 10000;" class="{{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}">More actions</span>
             <i class="fa fa-angle-left pull-right"></i>
           </a>
           <ul class="treeview-menu {{(!changedCursorNode && !changedCursorNet) ? 'openright' : ''}}" style="width:228px">

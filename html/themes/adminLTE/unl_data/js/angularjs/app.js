@@ -61,7 +61,7 @@ app_main_unl.config(['$controllerProvider', function($controllerProvider) {
 }]);
 
 app_main_unl.config(['$compileProvider', function($compileProvider) {
-   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|telnet):/);
+   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|telnet|vnc|rdp):/);
 }]);
 
 app_main_unl.directive('myEnter', function () {

@@ -19,14 +19,14 @@
 		<tr ng-repeat="(id,item) in netList" class="{{(item.editmode) ? 'bg-warning' : ''}}">
 		<td>{{id}}</td>
 		<td>
-			<!-- <text ng-show="!item.editmode" ng-click="editMode(id)">{{item.name}}</text> -->
-			<input ng-init="item.newname = item.name" ng-model="item.newname" ng-blur="applyChanges(id)" ng-change="$parent.anychanges = true" style="padding-left:2px;"/> 
-			<!-- ng-show="item.editmode" -->
+			<text ng-show="!item.editmode" ng-click="editMode(id)">{{item.name}}</text>
+			<input ng-init="item.newname = item.name" ng-show="item.editmode" ng-model="item.newname" ng-blur="applyChanges(id)" ng-change="$parent.anychanges = true" style="padding-left:2px;"/> 
+			<!--  -->
 		</td>
 		<td>
-			<!-- <text ng-show="!item.editmode" ng-click="editMode(id)">{{item.type}}</text> -->
-			<select class="form-control-networks" ng-init="item.newtype = item.type" ng-model="item.newtype" ng-blur="applyChanges(id)" ng-change="$parent.anychanges = true" data-ng-options="x for x in netListType"></select>
-			<!-- ng-show="item.editmode" -->
+			<text ng-show="!item.editmode" ng-click="editMode(id)">{{item.type}}</text>
+			<select class="form-control-networks" ng-show="item.editmode" ng-init="item.newtype = item.type" ng-model="item.newtype" ng-blur="applyChanges(id)" ng-change="$parent.anychanges = true" data-ng-options="x for x in netListType"></select>
+			<!--  -->
 		</td>
 		<td>{{item.count}}</td>
 		<td>

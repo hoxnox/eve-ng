@@ -66,7 +66,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			}
 		)
 	}
-	$scope.networkListRefresh()
+	$scope.networkListRefresh();
 	
 	$scope.nodeListRefresh = function(){
 		$http.get('/api/labs'+$rootScope.lab+'/nodes')
@@ -203,6 +203,10 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	///////////////////////////////////////////////
 	//// Wipe all nodes /END
 
+	$scope.getNameNode = function(){
+
+	}
+
 	///////////////////////////////////////////////
 	//// Start/Stop Node //START
 	$scope.startThisNode = function(id){
@@ -278,6 +282,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			id = $("#tempElID").val();
 			id = id.replace("nodeID_", "");
 		}
+
 		if(!$scope.node[id].upstatus){
 			//START NODE //START
 			$scope.node[id].loadclassShow=true;
@@ -315,6 +320,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 					console.log(response.data);
 					toastr["error"](response.data.message, "Error");
 				}
+				
 			);
 			//$timeout(function () {
 			//	$scope.node[id].upstatus=false;
@@ -584,8 +590,13 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		        else
 		        {
 			        var pos = getPosition(e);
-			        $('#tempElID').val(e.target.parentElement.parentElement.id);
+			        var elem_id = e.target.parentElement.parentElement.id;
+				    $('#tempElID').val(elem_id);
+			        var title = $(e.target.parentElement.parentElement).find(".figcaption-text").text();
+			        elem_id = elem_id.replace("nodeID_", "");
+			        $("#menu_title_left").text(title + " (" + elem_id + ")");
 			        $("#context-menu_leftClick").addClass("context-menu_leftClick--active").css("left", pos.x).css("top", pos.y);
+			      	$("#context-menu").removeClass("context-menu--active");
 			        console.log("open context-meniu_leftClick");	
 		        }
 		        

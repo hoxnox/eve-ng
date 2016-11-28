@@ -116,7 +116,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 							"type":type,
 						},
 						paintStyle: {strokeStyle: (type != 'serial') ? '#1e8151' : '#ffd11a', lineWidth: 2, outlineColor: "white", outlineWidth: 1},
-						//connector : (type != 'serial') ? 'Bezier' : 'Straight',
+						// connector : (type != 'serial') ? 'Bezier' : 'Straight',
 						connector : "Straight",
 						anchor: "Continuous",
 						detachable : false,
@@ -173,6 +173,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 						},
 						paintStyle: {strokeStyle: (type != 'serial') ? '#1e8151' : '#ffd11a', lineWidth: 2, outlineColor: "white", outlineWidth: 1},
 						connector : (type != 'serial') ? 'Bezier' : 'Straight',
+						// connector : "Straight",
 						anchor: "Continuous",
 						detachable : false,
 						overlays:[
@@ -503,6 +504,7 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 			}
 		);
 	}
+	
 	if ($scope.dst.type == 'node'){
 		$http.get('/api/labs'+$rootScope.lab+'/nodes/'+$scope.dst.eveID+'/interfaces').then(
 			function successCallback(response){
@@ -522,7 +524,7 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 				}
 				// $scope.dstfullIfList = $scope.dst.if.ethernet
 				// jQuery.extend($scope.dstfullIfList, $scope.dst.if.serial)
-				// console.log($scope.dst.selectedIF)
+				console.log($scope.dst.selectedIF)
 			}, function errorCallback(response){
 				$scope.interfListCount=false;
 				console.log('Server Error');
@@ -685,6 +687,10 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 
   	};
   	jsPlumb.repaintEverything();
+
+  	$scope.opacity = function(){
+		$(".modal-content").toggleClass("modal-content_opacity");
+	}
 };
 
 function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
@@ -1117,6 +1123,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 	$scope.templateList={};
 	$scope.consoleTempObj={};
 	$scope.configTempObj={};
+	$scope.lastId = 0;
 	$scope.refreshNodeList = function(){
 	$http.get('/api/labs'+$scope.path+'/nodes')
 	.then(
@@ -1136,8 +1143,8 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 				// if ($scope.nodeList[key].config !== undefined) $scope.nodeList[key].newconfig=$scope.nodeList[key].config;
 				// if ($scope.nodeList[key].consola !== undefined) $scope.nodeList[key].newconsola=$scope.nodeList[key].consola;
 				console.log('status' , $scope.nodeList[key].status);
-				if ($scope.nodeList[key].status == 0)
-					$scope.beforeEdit(key, $scope.nodeList[key].template)
+				//if ($scope.nodeList[key].status == 0)
+				//	$scope.beforeEdit(key, $scope.nodeList[key].template)
 			}
 		},
 		function errorCallback(response){
@@ -1168,18 +1175,45 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
   	}
 	$scope.refreshNodeList();
 
-	
+	$scope.escEditMode = function(id){
+		for (var key in $scope.nodeList){
+			$scope.cancelChanges(id)
+			$scope.nodeList[key].editmode=false;
+		}
+	}
+
+	$scope.cancelChanges = function(id){
+		//console.log($scope.nodeList[id])
+		$scope.nodeList[id].newname=$scope.nodeList[id].name
+		$scope.imageTempObj[id].selected=$scope.nodeList[id].image
+		if ($scope.nodeList[id].cpu !== undefined) $scope.nodeList[id].newcpu=$scope.nodeList[id].cpu;
+		if ($scope.nodeList[id].idlepc !== undefined) $scope.nodeList[id].newidlepc=$scope.nodeList[id].idlepc;
+		if ($scope.nodeList[id].nvram !== undefined) $scope.nodeList[id].newnvram=$scope.nodeList[id].nvram;
+		if ($scope.nodeList[id].ram !== undefined) $scope.nodeList[id].newram=$scope.nodeList[id].ram;
+		if ($scope.nodeList[id].ethernet !== undefined) $scope.nodeList[id].newethernet=$scope.nodeList[id].ethernet;
+		if ($scope.nodeList[id].serial !== undefined) $scope.nodeList[id].newserial=$scope.nodeList[id].serial;
+		if ($scope.nodeList[id].serial !== undefined) $scope.nodeList[id].newconfig=$scope.nodeList[id].config;
+		$scope.iconTempObj[id].selected.fullname=$scope.nodeList[id].icon;
+		$scope.imageTempObj[id].selected.brname=$scope.nodeList[id].icon.replace('.png','');
+		$scope.nodeList[id].editmode=false;
+	}
+
 	$scope.beforeEdit = function(id, template){
-		//$scope.escEditMode(id);
-		/*
+		$scope.escEditMode(id);
+		if ($scope.lastId != id && $scope.lastId != 0)
+		{
+			$scope.nodeList[$scope.lastId].editmode = false;
+		}	
+		$scope.lastId = id;
+
 		if($scope.nodeList[id].status != 0){
 			if(confirm('Befor edit you should shutdown node. Do that now?')){
-				$scope.startstopNode(id)
+				$scope.startstopNode(id);
 				$scope.nodeList[id].editmode=true;
 			}
 		} 
 		else
-		*/ 
+		 
 			$scope.nodeList[id].editmode=true;
 		
 		if ($scope.templateList[template] == undefined){
@@ -1203,7 +1237,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 				}
 			)
 		}
-		console.log("done")
+		console.log("done");
 	}
 	
 	$scope.startstopNode = function(id){
@@ -1237,22 +1271,6 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 			);
 			//STOP NODE //END
 		} else toastr["error"]('Unknown error', "Error");
-	}
-	
-	$scope.cancelChanges = function(id){
-		//console.log($scope.nodeList[id])
-		$scope.nodeList[id].newname=$scope.nodeList[id].name
-		$scope.imageTempObj[id].selected=$scope.nodeList[id].image
-		if ($scope.nodeList[id].cpu !== undefined) $scope.nodeList[id].newcpu=$scope.nodeList[id].cpu;
-		if ($scope.nodeList[id].idlepc !== undefined) $scope.nodeList[id].newidlepc=$scope.nodeList[id].idlepc;
-		if ($scope.nodeList[id].nvram !== undefined) $scope.nodeList[id].newnvram=$scope.nodeList[id].nvram;
-		if ($scope.nodeList[id].ram !== undefined) $scope.nodeList[id].newram=$scope.nodeList[id].ram;
-		if ($scope.nodeList[id].ethernet !== undefined) $scope.nodeList[id].newethernet=$scope.nodeList[id].ethernet;
-		if ($scope.nodeList[id].serial !== undefined) $scope.nodeList[id].newserial=$scope.nodeList[id].serial;
-		if ($scope.nodeList[id].serial !== undefined) $scope.nodeList[id].newconfig=$scope.nodeList[id].config;
-		$scope.iconTempObj[id].selected.fullname=$scope.nodeList[id].icon;
-		$scope.imageTempObj[id].selected.brname=$scope.nodeList[id].icon.replace('.png','');
-		$scope.nodeList[id].editmode=false;
 	}
 	
 	$scope.applyChanges = function(id){
@@ -1327,12 +1345,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 			}
 		);
 	}
-	$scope.escEditMode = function(id){
-		for (var key in $scope.nodeList){
-			$scope.cancelChanges(id)
-			$scope.nodeList[key].editmode=false;
-		}
-	}
+	
 	
 	$scope.closeModal = function () {
   		// console.log($scope.anychanges);
@@ -1358,6 +1371,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 
 function netListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 	$scope.path=data.path;
+	$scope.astNetId = 0;
 	// $scope.anychanges=false;
 	$scope.netList={};
 
@@ -1416,7 +1430,13 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 			$scope.netList[key].editmode=false;
 		}
 	}
+
 	$scope.editMode=function(id){
+		if ($scope.astNetId != id && $scope.astNetId != 0)
+		{
+			$scope.nodeList[$scope.lastNetId].editmode = false;
+		}	
+		$scope.astNetId = id;
 		//$scope.cancelChanges();
 		$scope.netList[id].editmode=true;
 		

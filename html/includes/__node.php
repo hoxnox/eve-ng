@@ -1408,6 +1408,7 @@ class Node {
 						}
 					}
 				}
+				
 				// Setting CMD flags
 				$this -> flags_eth = '-e '.$this -> ethernet;  // Number of Ethernet interfaces
 				break;

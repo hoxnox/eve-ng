@@ -170,7 +170,13 @@ var contextMenuInit = function() {
 		    // console.log( 'Context menu on '+e.target.parentElement.parentElement.id);
 		    // console.log(e.target.parentElement.parentElement.id)
         // console.log("a mers context meniu");
-		    $('#tempElID').val(e.target.parentElement.parentElement.id);
+        var elem_id = e.target.parentElement.parentElement.id;
+		    $('#tempElID').val(elem_id);
+        var title = $(e.target.parentElement.parentElement).find(".figcaption-text").text();
+        
+        elem_id = elem_id.replace("nodeID_", "");
+        $("#menu_title").text(title + " (" + elem_id + ")");
+        
         var pos = getPosition(e);
         if ($(e.target.parentElement.parentElement).hasClass('free-selected'))
         {
@@ -204,7 +210,10 @@ var contextMenuInit = function() {
         $(document).on('click', ".element-menu", function(e) {
           if($("#freeSelect").hasClass("activeFreeSelect") )
           {
-            $(this).toggleClass('free-selected')       
+            $(this).toggleClass('free-selected');
+            e.preventDefault();
+            e.stopPropagation();
+
           }
           else
           {

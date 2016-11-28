@@ -146,7 +146,7 @@ function AddElModalCtrl($scope, $uibModalInstance, data, $http) {
 	$scope.errorClass='';
 	$scope.errorMessage='';
 	$scope.restrictTest = '\\d+';
-	$scope.restrictNumber = '^[a-zA-Z0-9-_]+$';
+	$scope.restrictNumber = '^[a-zA-Z0-9-_ ]+$';
 	
 	$scope.addNewLab = function () {
 		
@@ -304,7 +304,7 @@ function AddUserModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.role='';
 	$scope.podArray=[];
 	$scope.expiration='-1';
-	$scope.restrictNumber = '^[a-zA-Z0-9-_]+$';
+	$scope.restrictNumber = '^[a-zA-Z0-9-_ ]+$';
 	$scope.patternEmail = '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$';
 	//Generate unique POD //START
 	var podArrayIndex=0;

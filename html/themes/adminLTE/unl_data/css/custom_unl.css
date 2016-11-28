@@ -811,6 +811,21 @@ Free select
 .box-default{
   margin-bottom: 0px;
 }
+/*
+* Style for menu with folder and lab list from main page //END
+*/
+/*
+* Style for contextmenu  //START
+*/
+#menu_title, #menu_title_left{
+  color: #317087;
+  display: block;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.42857;
+  padding: 3px 14px;
+  white-space: nowrap;
+}
 .jsplumb-connector { z-index:1000; }
 .jsplumb-endpoint { z-index:1001; }
 .jsplumb-overlay { z-index:1002; }
