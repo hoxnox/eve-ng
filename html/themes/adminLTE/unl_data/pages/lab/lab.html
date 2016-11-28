@@ -529,7 +529,7 @@ function textInit(textObj){
 	$scope.text[textObj.id]=textObj;
 	var coordinates = 'position:absolute;left:' + textObj['left'] + 'px;top:' + textObj['top'] + 'px;';
 	var elDIV=
-		'<div id="textID_'+textObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+textObj.newdata.left+'px; top: '+textObj.newdata.top+'px; z-index: ' + zindex + ';width: auto; right: auto; height: 681.625px; bottom: auto; transform: ' + transform + ';white-space: nowrap;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
+		'<div id="textID_'+textObj.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+textObj.newdata.left+'px; top: '+textObj.newdata.top+'px; z-index: ' + zindex + ';width: auto; right: auto; height: auto; bottom: auto; transform: ' + transform + ';white-space: nowrap;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
 		'<div><p style="font-size:' + fontSize + 'px; color: ' + fontColor +'; background-color: ' + bgColor + ';" ng-mousedown="textTouching('+id+', $event)" ng-mousemove="textDragging('+id+', $event)" class="pointer">'+
 		textObj.newdata.text + '</p>'+
 		'</div></div>';
