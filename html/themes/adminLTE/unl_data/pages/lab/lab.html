@@ -5,12 +5,12 @@
 	<!-- Content Wrapper. Contains page content 
 
 	<header class="main-header" data-ng-include="'/themes/adminLTE/unl_data/pages/lab/constant/header.html'" data-ng-controller="HeaderController"></header>-->
-	<header class="main-header">
+	<header class="main-header"style="z-index: 10001;">
 	<a href="#/lab" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/mainLogo.png" style="width:50px;height:19px"></span>
+      <span class="logo-mini" style="z-index: 10001;"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/mainLogo.png" style="width:50px;height:19px"></span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/mainLogo.png" style="width:104px;height:40px"></span>
+      <span class="logo-lg" style="z-index: 10001;"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/mainLogo.png" style="width:104px;height:40px"></span>
     </a>
 	 <nav class="navbar" style="width: 42px; position: absolute;">
       <!-- Sidebar toggle button-->
@@ -22,7 +22,7 @@
       </a>
 	 </nav>
 	</header>
-	<aside class="main-sidebar" data-ng-include="'/themes/adminLTE/unl_data/pages/lab/constant/sidebar.html'"></aside>
+	<aside class="main-sidebar" style="z-index: 10000;" data-ng-include="'/themes/adminLTE/unl_data/pages/lab/constant/sidebar.html'"></aside>
 
 	
    
@@ -338,6 +338,16 @@ function initFullLab(){
 	if (fullPathToFile===undefined || fullPathToFile===null){console.log('Error. Sorry.'); $.unblockUI(); return;}
 	//$.when(nodeGet(), networkGet()).then(topologyGet())
 	$.when(
+		$.get('/api/labs'+fullPathToFile+'/textobjects', function(data){ ///GET ALL TEXT OBJECTS FROM SERVER///
+			var stopFlag = 0;
+			var textsNumber = ObjectLength(data.data)
+			for (var key in data.data){
+				netArray[stopFlag] = key;
+				stopFlag++;
+				drowObject(data.data[key])
+				//if (stopFlag === networksNumber) {console.log('hereNet'); netReady=true;}
+			}
+		}),
 		$.get('/api/labs'+fullPathToFile+'/nodes', function(data) {  ///GET ALL NODES FROM SERVER///
 			console.log("node data",data.data)
 			var stopFlag=0;
@@ -347,16 +357,6 @@ function initFullLab(){
 				stopFlag++
 				nodeInit(data.data[key])
 				//if (stopFlag === nodesNumber) {console.log('hereNode'); nodeReady=true;}
-			}
-		}),
-		$.get('/api/labs'+fullPathToFile+'/textobjects', function(data){ ///GET ALL TEXT OBJECTS FROM SERVER///
-			var stopFlag = 0;
-			var textsNumber = ObjectLength(data.data)
-			for (var key in data.data){
-				netArray[stopFlag] = key;
-				stopFlag++;
-				drowObject(data.data[key])
-				//if (stopFlag === networksNumber) {console.log('hereNet'); netReady=true;}
 			}
 		}),
 		$.get('/api/labs'+fullPathToFile+'/networks', function(data) { ///GET ALL NETWORKS FROM SERVER///
@@ -449,7 +449,7 @@ function nodeInit(node){
 	$scope.node[node.id].upstatus=(node.status == 2) ? true : false;
 	console.log("upstatus1111111111111" , $scope.node[node.id].upstatus)
 	var elDIV=
-		'<div id="nodeID_'+node.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+node.left+'px; top: '+node.top+'px; z-index: 1000;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
+		'<div id="nodeID_'+node.id+'" class="w element-menu {{ (!node['+id+'].upstatus) ? \'mover\' : \'\'}}" style="left: '+node.left+'px; top: '+node.top+'px; z-index: 1001;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
 		'<div class="play-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && !node['+id+'].upstatus" title="Start node"><i class="fa fa-play play-icon" aria-hidden="true"></i></div>'+
 		'<div class="stop-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && node['+id+'].upstatus" title="Stop node"><i class="fa fa-stop stop-icon" aria-hidden="true"></i></div>'+
 		'<div class="tag" title="Connect to another node">'+
@@ -543,7 +543,7 @@ function networkInit(networkObject){
 	// console.log($scope.networks)
 	// console.log($scope.networks[id])
 	var icon = (networkObject.type == 'bridge') ? 'Switch.png' : 'Cloud.png';
-	var elDIV='<div id="networkID_'+networkObject['id']+'" class="w element-menu network" style="left: '+networkObject.left+'px; top: '+networkObject.top+'px; z-index: 1000;" context-menu="netContext">'+
+	var elDIV='<div id="networkID_'+networkObject['id']+'" class="w element-menu network" style="left: '+networkObject.left+'px; top: '+networkObject.top+'px; z-index: 1001;" context-menu="netContext">'+
 		//'<div class="tag"><i class="fa fa-plug plug-icon ep" aria-hidden="true"></i></div>'+
 		'<a><img src="/images/icons/'+icon+'" class="'+icon.replace('.png','')+'_sm'+'"></a>'+
 		'<a class="pointer"><figcaption class="figcaption-text '+icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind="networks['+id+'].name"></figcaption></a>'+
