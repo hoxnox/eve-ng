@@ -42,12 +42,13 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 
 	$scope.openModal = function (action, size) {
 	var pathToModal = (action === undefined) ? 'default' :  action;
+	$(".modal").modal('close');
     var modalInstance = $uibModal.open({
       animation: $scope.animationsEnabled,
       templateUrl: $scope.modalActions[pathToModal]['path'],   
       controller: $scope.modalActions[pathToModal]['controller'],
       size: size,
-      backdrop: (size == 'megalg') ? false : true,
+      backdrop: true,
       resolve: {
         data: function () {
         	console.log("modal js linia 27")
@@ -228,8 +229,8 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 						$scope.node[node.id[k]].upstatus=(node.status == 2) ? true : false;
 						var elDIV=
 							'<div id="nodeID_'+id+'" class="w element-menu" style="left: '+node.left+'px; top: '+node.top+'px;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
-							'<div class="play-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && !node['+id+'].upstatus" title="Start node"><i class="fa fa-play play-icon" aria-hidden="true"></i></div>'+
-							'<div class="stop-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && node['+id+'].upstatus" title="Stop node"><i class="fa fa-stop stop-icon" aria-hidden="true"></i></div>'+
+							'<!--<div class="play-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && !node['+id+'].upstatus" title="Start node"><i class="fa fa-play play-icon" aria-hidden="true"></i></div>'+
+							'<div class="stop-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && node['+id+'].upstatus" title="Stop node"><i class="fa fa-stop stop-icon" aria-hidden="true"></i></div>-->'+
 							'<div class="tag" title="Connect to another node">'+
 								'<i class="fa fa-plug plug-icon dropdown-toggle ep" ng-show="node['+id+'].playstopView" ng-click="getIntrfInfo('+id+')" data-toggle="dropdown"></i>'+
 							'</div>'+
@@ -426,10 +427,10 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 
 function ModalInstanceCtrl($scope, $uibModalInstance) {
 
-  $scope.closeModal = function () {
-    $uibModalInstance.dismiss('cancel');
-  };
-};
+  	$scope.closeModal = function () {
+	    $uibModalInstance.dismiss('cancel');
+	  };
+	};
 
 function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q) {
 	
@@ -515,6 +516,7 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 				for( var key in $scope.dst.if.ethernet ) {
 					if ($scope.dst.if.ethernet[key].network_id == 0) {$scope.dst.selectedIF=key; break;}
 					if ($scope.dst.selectedIF == '') $scope.dst.selectedIF=key;
+					console.log($scope.dst.selectedIF);
 				}
 				for( var key in $scope.dst.if.ethernet ) {
 					$scope.dstfullIfList[key]=$scope.dst.if.ethernet[key]
@@ -538,7 +540,7 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
   	};
   
   	$scope.addConn = function () {
-		//console.log($scope.dst.type+' '+$scope.dst.eveID+' '+$scope.dst.selectedIF)
+		// console.log($scope.dst.type+' '+$scope.dst.eveID+' '+$scope.dst.selectedIF)
 		//console.log($scope.src.type+' '+$scope.src.eveID+' '+$scope.src.selectedIF)
 		// if ( ($scope.dst.type == 'node' && $scope.src.type == 'network') || ($scope.dst.type == 'network' && $scope.src.type == 'node')){
 		if (($scope.dst.type == 'network' && $scope.src.type == 'node')){
@@ -949,7 +951,6 @@ function editNodeModalCtrl($scope, $uibModalInstance, $http, data, $state) {
 	$scope.path = data.path
 	$scope.result = {};
 	$scope.result.result=false;
-	
 	$http.get('/api/labs'+$scope.path+'/nodes/'+id)
 	.then(
 		function successCallback(response){
@@ -964,8 +965,8 @@ function editNodeModalCtrl($scope, $uibModalInstance, $http, data, $state) {
 				$scope.selectImage = $scope.nodeInfo.image;
 				$scope.selectSlot1 = $scope.nodeInfo.slot1;
 				$scope.selectSlot2 = $scope.nodeInfo.slot2;
-				$scope.selectConfig = ($scope.nodeTemplate.options.config != undefined) ? $scope.nodeTemplate.options.config.value : '';
-				$scope.selectConsole = ($scope.nodeTemplate.options.console != undefined) ? $scope.nodeTemplate.options.console.value : '';
+				$scope.selectConsole = $scope.nodeInfo.console;
+				$scope.selectConfig = $scope.nodeInfo.config + "";
 			})
 		}
 	)
@@ -991,6 +992,8 @@ function editNodeModalCtrl($scope, $uibModalInstance, $http, data, $state) {
 		if ($scope.nodeInfo.serial !== undefined) putdata.serial=$scope.nodeInfo.serial;
 		if ($scope.nodeInfo.slot1 != undefined) putdata.slot1 = $scope.selectSlot1;
 		if ($scope.nodeInfo.slot2 != undefined) putdata.slot2 = $scope.selectSlot2;
+		if ($scope.nodeInfo.console != undefined) putdata.console = $scope.selectConsole;
+		if ($scope.nodeInfo.config != undefined) putdata.config = $scope.selectConfig;
 		console.log(putdata)
 		$http.put('/api/labs/'+$scope.path+'/nodes/'+id, putdata)
 		.then(
@@ -1153,8 +1156,6 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 		}
 	)
 	}
-
-
 	// $http.get('/api/icons')
 	// .then(
 	// 	function successCallback(response){
@@ -1289,19 +1290,19 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 			'config' : $scope.configTempObj[id].selected.key
 
 		}
-		if ($scope.nodeList[id].cpu !== undefined) putdata.cpu=$scope.nodeList[id].newcpu;
-		if ($scope.nodeList[id].idlepc !== undefined) putdata.idlepc=$scope.nodeList[id].newidlepc;
-		if ($scope.nodeList[id].nvram !== undefined) putdata.nvram=$scope.nodeList[id].newnvram;
-		if ($scope.nodeList[id].ram !== undefined) putdata.ram=$scope.nodeList[id].newram;
-		if ($scope.nodeList[id].ethernet !== undefined) putdata.ethernet=$scope.nodeList[id].newethernet;
-		if ($scope.nodeList[id].serial !== undefined) putdata.serial=$scope.nodeList[id].newserial;
+		if ($scope.nodeList[id].cpu !== undefined) putdata.cpu=$scope.nodeList[id].cpu;
+		if ($scope.nodeList[id].idlepc !== undefined) putdata.idlepc=$scope.nodeList[id].idlepc;
+		if ($scope.nodeList[id].nvram !== undefined) putdata.nvram=$scope.nodeList[id].nvram;
+		if ($scope.nodeList[id].ram !== undefined) putdata.ram=$scope.nodeList[id].ram;
+		if ($scope.nodeList[id].ethernet !== undefined) putdata.ethernet=$scope.nodeList[id].ethernet;
+		if ($scope.nodeList[id].serial !== undefined) putdata.serial=$scope.nodeList[id].serial;
 
 		console.log(putdata);
 		$http.put('/api/labs'+$scope.path+'/nodes/'+id, putdata)
 		.then(
 			function successCallback(response){
 				console.log(response + 'datele salvate');
-				$scope.refreshNodeList();
+				// $scope.refreshNodeList();
 				// $scope.nodeList[id].editmode = false;
 				// $scope.anychanges = false;
 				
@@ -1355,13 +1356,15 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
     // 	else
     		$state.reload();
     		$uibModalInstance.dismiss();
-    		
-
   	};
 
-  	$scope.mouseOverMainDiv = function($event){
-
-	}
+  	$scope.closeBeforeEdit = function(id, template){
+  		$(document).on('click', '.modal', function(e){
+  			$scope.lastId = 1;
+  			console.log('click on modalclass');
+  		})
+  	}
+  	$scope.closeBeforeEdit();
 
 	$scope.opacity = function(){
 		$(".modal-content").toggleClass("modal-content_opacity");
@@ -1451,8 +1454,8 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 			function successCallback(response){
 				$scope.netList[id].editmode=false;
 				// $scope.anychanges=false;
-				$scope.netListRefresh();
-				$scope.netList=response.data.data;
+				// $scope.netListRefresh();
+				// $scope.netList=response.data.data;
 			},
 			function errorCallback(response){
 				console.log(response);
@@ -1605,10 +1608,10 @@ function sysStatModalCtrl($scope, $uibModalInstance, $http, $interval, $rootScop
 				$scope.systemstat()
     }, 2000, 15);
 
-  $scope.closeModal = function () {
-	$interval.cancel(stop);
-    $uibModalInstance.dismiss('cancel');
-  };
+	$scope.closeModal = function () {
+		$interval.cancel(stop);
+		$uibModalInstance.dismiss('cancel');
+	};
 };
 
 
@@ -1625,9 +1628,10 @@ function startUpConfigModalCtrl($scope, $uibModalInstance, $http, data) {
 			console.log(response);
 		}
 	);
+
 	$scope.closeModal = function () {
-    $uibModalInstance.dismiss('cancel');
-  };
+		$uibModalInstance.dismiss('cancel');
+	};
  	 $scope.openConfigForm = function (id){
 		$("#stockdata").val(id);
 		$http.get('/api/labs'+$scope.path+'/configs/' + id)

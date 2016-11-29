@@ -60,9 +60,9 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
 				$scope.currentPosition();
 				$.unblockUI();
 				//console.log($scope.rootDir)
-				setTimeout(function(){
-					$scope.getLabInfo($scope.rootDir.labs[0].path, $scope.rootDir.labs[0].file);
-				}, 1000)
+				// setTimeout(function(){
+				// 	$scope.getLabInfo($scope.rootDir.labs[0].path, $scope.rootDir.labs[0].file);
+				// }, 1000)
 			}, 
 			function errorCallback(response) {
 				$.unblockUI();
@@ -311,7 +311,8 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
 			//console.log(itemType+item.name)
 			//console.log($scope.checkboxArray[itemType+item.name])
 			$scope.checkboxArray[itemType+item.name].checked=!$scope.checkboxArray[itemType+item.name].checked;
-			$scope.falseForSelAll(); $scope.hideAllEdit();
+			$scope.falseForSelAll(); 
+			$scope.hideAllEdit();
 		}
 		//Select element by clicking on <td> //END
 		///////////////////////////////////////////////////////

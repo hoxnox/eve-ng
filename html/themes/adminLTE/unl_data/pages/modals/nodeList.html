@@ -74,12 +74,12 @@
 	<tbody class="tbodyNodeList">
 		<tr ng-repeat="(id,item) in nodeList" class="{{(item.status == 2) ? 'bg-info' : ''}} {{(item.editmode) ? 'bg-warning' : ''}}">
 		<td>{{id}}</td>
-		<td>
-			<text ng-show="!item.editmode" ng-click="beforeEdit(id, item.template)">{{item.name}}</text>
-			<input ng-init="item.newname = item.name" ng-model="item.newname" ng-blur="applyChanges(id)" ng-change="item.name" style="width:80px; padding-left:2px;" ng-show="item.editmode"/> <!--  -->
+		<td ng-click="beforeEdit(id, item.template)">
+			<text ng-show="!item.editmode">{{item.name}}</text>
+			<input ng-init="item.newname = item.name" ng-model="item.name" ng-blur="applyChanges(id)" ng-change="item.name" style="width:80px; padding-left:2px;" ng-show="item.editmode"/> <!--  -->
 
 		</td>
-		<td class="td">
+		<td class="td" ng-click="beforeEdit(id, item.template)">
 		<!--	<label>Select icon to change it by click on </label>
 			<div class="row form-group-selection" ng-click="show = !show">
 				<div class="col-md-4">
@@ -104,7 +104,7 @@
 					</div>
 				</div>
 		    </div>-->
-			<img ng-src="/images/icons/{{item.icon}}" width="30" height="auto" ng-show="!item.editmode" ng-click="beforeEdit(id, item.template)"/>
+			<img ng-src="/images/icons/{{item.icon}}" width="30" height="auto" ng-show="!item.editmode"/>
 			<ui-select ng-init="iconTempObj[id].selected.fullname=item.icon; iconTempObj[id].selected.brname=item.icon.replace('.png','')" ng-model="iconTempObj[id].selected" ng-change="applyChanges(id)" ng-show="item.editmode"> <!--  -->
 				<ui-select-match>
 					<img ng-src="/images/icons/{{iconTempObj[id].selected.fullname}}" width="15" height="auto"/>
@@ -118,8 +118,8 @@
 		</td>
 		<td>{{item.template}}</td>
 
-		<td class="imageList">
-			<text ng-show="!item.editmode" ng-click="beforeEdit(id, item.template)">{{item.image}}</text>
+		<td class="imageList" ng-click="beforeEdit(id, item.template)">
+			<text ng-show="!item.editmode">{{item.image}}</text>
 			<ui-select ng-init="imageTempObj[id].selected=item.image;" ng-model="imageTempObj[id].selected"  ng-change="applyChanges(id)" ng-show="item.editmode"><!--  -->
 				<ui-select-match>
 					<span ng-bind="imageTempObj[id].selected"></span>
@@ -129,35 +129,35 @@
 				</ui-select-choices>
 			</ui-select>
 		</td>
-		<td ng-show="hideCPU">
-			<text ng-show="!item.editmode" ng-click="beforeEdit(id, item.template)">{{(item.cpu == undefined) ? 'N/A' : item.cpu}}</text>
-			<input ng-init="item.newcpu = item.cpu" ng-model="item.newcpu" ng-blur="applyChanges(id)" ng-show="item.cpu != undefined && item.editmode" style="width:40px; padding-left:2px;"/><!--  -->
+		<td ng-show="hideCPU" ng-click="beforeEdit(id, item.template)">
+			<text ng-show="!item.editmode">{{(item.cpu == undefined) ? 'N/A' : item.cpu}}</text>
+			<input ng-init="item.newcpu = item.cpu" ng-model="item.cpu" ng-blur="applyChanges(id)" ng-show="item.cpu != undefined && item.editmode" style="width:40px; padding-left:2px;"/><!--  -->
 		</td>
-		<td ng-show="hideIdlepc">
-			<text ng-show="!item.editmode" ng-click="beforeEdit(id, item.template)">{{(item.idlepc == undefined) ? 'N/A' : item.idlepc}}</text>
-			<input ng-init="item.newidlepc = item.idlepc" ng-model="item.newidlepc" ng-blur="applyChanges(id)" ng-show="item.idlepc != undefined  && item.editmode" style="width:80px; padding-left:2px;"/><!--  -->
+		<td ng-show="hideIdlepc" ng-click="beforeEdit(id, item.template)">
+			<text ng-show="!item.editmode">{{(item.idlepc == undefined) ? 'N/A' : item.idlepc}}</text>
+			<input ng-init="item.newidlepc = item.idlepc" ng-model="item.idlepc" ng-blur="applyChanges(id)" ng-show="item.idlepc != undefined  && item.editmode" style="width:80px; padding-left:2px;"/><!--  -->
 
 		</td>
-		<td ng-show="hideNVRAM"> 
-			<text ng-show="!item.editmode" ng-click="beforeEdit(id, item.template)">{{(item.nvram == undefined) ? 'N/A' : item.nvram}}</text>
-			<input ng-init="item.newnvram = item.nvram" ng-model="item.newnvram" ng-blur="applyChanges(id)" ng-show="item.nvram != undefined  && item.editmode" style="width:40px; padding-left:2px;"/> <!-- -->
+		<td ng-show="hideNVRAM" ng-click="beforeEdit(id, item.template)"> 
+			<text ng-show="!item.editmode">{{(item.nvram == undefined) ? 'N/A' : item.nvram}}</text>
+			<input ng-init="item.newnvram = item.nvram" ng-model="item.nvram" ng-blur="applyChanges(id)" ng-show="item.nvram != undefined  && item.editmode" style="width:40px; padding-left:2px;"/> <!-- -->
 		</td>
-		<td ng-show="hideRAM">
-			<text ng-show="!item.editmode" ng-click="beforeEdit(id, item.template)">{{(item.ram == undefined) ? 'N/A' : item.ram}}</text>
-			<input ng-init="item.newram = item.ram" ng-model="item.newram" ng-blur="applyChanges(id)" ng-show="item.ram != undefined && item.editmode" style="width:40px; padding-left:2px;"/><!--  -->
+		<td ng-show="hideRAM" ng-click="beforeEdit(id, item.template)">
+			<text ng-show="!item.editmode" >{{(item.ram == undefined) ? 'N/A' : item.ram}}</text>
+			<input ng-init="item.newram = item.ram" ng-model="item.ram" ng-blur="applyChanges(id)" ng-show="item.ram != undefined && item.editmode" style="width:40px; padding-left:2px;"/><!--  -->
 		</td>
-		<td>
-			<text ng-show="!item.editmode" ng-click="beforeEdit(id, item.template)">{{item.ethernet}}</text>
-			<input ng-init="item.newethernet = item.ethernet" ng-model="item.newethernet" ng-blur="applyChanges(id)" ng-show="item.ethernet != undefined && item.editmode" style="width:40px; padding-left:2px;"/><!-- -->
+		<td ng-click="beforeEdit(id, item.template)">
+			<text ng-show="!item.editmode">{{item.ethernet}}</text>
+			<input ng-init="item.newethernet = item.ethernet" ng-model="item.ethernet" ng-blur="applyChanges(id)" ng-show="item.ethernet != undefined && item.editmode" style="width:40px; padding-left:2px;"/><!-- -->
 		</td>
-		<td ng-show="hideSer">
-			<text ng-show="!item.editmode" ng-click="beforeEdit(id, item.template)">{{item.serial}}</text>
-			<input ng-init="item.newserial = item.serial" ng-model="item.newserial" ng-blur="applyChanges(id)" ng-show="item.serial != undefined && item.editmode" style="width:40px; padding-left:2px;"/> <!-- -->
+		<td ng-show="hideSer" ng-click="beforeEdit(id, item.template)">
+			<text ng-show="!item.editmode">{{item.serial}}</text>
+			<input ng-init="item.newserial = item.serial" ng-model="item.serial" ng-blur="applyChanges(id)" ng-show="item.serial != undefined && item.editmode" style="width:40px; padding-left:2px;"/> <!-- -->
 		</td>
 		
-		<td class="consoleList" >
+		<td class="consoleList" ng-click="beforeEdit(id, item.template)">
 			<div ng-show="item.console">
-				<text ng-show="!item.editmode" ng-click="beforeEdit(id, item.template)">{{item.console}}</text>
+				<text ng-show="!item.editmode">{{item.console}}</text>
 				<ui-select ng-init="consoleTempObj[id].selected=item.console; consoleTab = ['rdp','vnc','telnet'];"  ng-model="consoleTempObj[id].selected" ng-change="applyChanges(id)" ng-show="item.editmode"><!---->
 					<ui-select-match>
 						<span ng-bind="consoleTempObj[id].selected"></span>
@@ -168,9 +168,9 @@
 				</ui-select>
 			</div>
 		</td>
-		<td>
+		<td ng-click="beforeEdit(id, item.template)"> 
 			<div>
-				<text ng-show="!item.editmode" ng-click="beforeEdit(id, item.template)"> {{ (item.config == 0) ? 'None' : 'Exported' }} </text>
+				<text ng-show="!item.editmode"> {{ (item.config == 0) ? 'None' : 'Exported' }} </text>
 				<ui-select ng-init="configList = [{'val' : 'none', 'key' : 0},{ 'val' : 'exported', 'key':1}]; configTempObj[id].selected=configList[item.config];"  ng-model="configTempObj[id].selected" ng-change="applyChanges(id)" ng-show="item.editmode">
 					<ui-select-match>
 						<span ng-bind="configTempObj[id].selected.val"></span>

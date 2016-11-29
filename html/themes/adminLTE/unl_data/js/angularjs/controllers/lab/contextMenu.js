@@ -113,7 +113,13 @@ var contextMenuInit = function() {
   var menuState_leftClick = 0;
   var menuState_freeSelect = 0;
   var menuWidth;
+  var menuWidth_main;
+  var menuWidth_left;
+  var menuWidth_free;
   var menuHeight;
+  var menuHeight_main;
+  var menuHeight_left;
+  var menuHeight_free;
   var menuPosition;
   var menuPositionX;
   var menuPositionY;
@@ -131,9 +137,22 @@ var contextMenuInit = function() {
     keyupListener();
     resizeListener();
     clilckHidePopUp();
+    // countOpenContextMenu();
     
   }
   /*Open context menu //context-meniu_leftClick */
+  // function countOpenContextMenu(){
+  //   $(document).on('click', function(e){
+  //     var h1 = $( window ).height();
+  //     var h2 = $(e.target.parentElement.parentElement);
+  //     var h3 = $('#context-menu').height();
+  //     console.log(h1, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+  //     console.log(h2, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+  //     console.log(h3, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+  //   })
+  // }
+
+
 
   function clilckHidePopUp(){
     $(document).on('click', function(e){
@@ -182,6 +201,7 @@ var contextMenuInit = function() {
         {
           $("#context-menu_freeSelect").addClass("context-menu_freeSelect--active").css("left", pos.x).css("top", pos.y);
           $("#context-menu").removeClass("context-menu--active");
+          positionMenu(e);
         }
         else
         {
@@ -213,7 +233,6 @@ var contextMenuInit = function() {
             $(this).toggleClass('free-selected');
             e.preventDefault();
             e.stopPropagation();
-
           }
           else
           {
@@ -264,7 +283,7 @@ var contextMenuInit = function() {
    * Turns the custom context menu on.
    */
   function toggleMenuOn(target) {
-	toggleMenuOff('closeAll')
+	toggleMenuOff('closeAll');
 	if ( menuState !== 1 && target=="element-menu") {
       menuState = 1;
       menu.classList.add( contextMenuActive );
@@ -336,27 +355,61 @@ var contextMenuInit = function() {
     clickCoordsY = clickCoords.y;
 
     menuWidth = menu.offsetWidth + 4;
-    menuWidth = menu_mainDiv.offsetWidth + 4;
+    menuWidth_main = menu_mainDiv.offsetWidth + 4;
+    menuWidth_free = menu_freeSelect.offsetWidth + 4;
     menuHeight = menu.offsetHeight + 4;
-    menuHeight = menu_mainDiv.offsetHeight + 4;
+    menuHeight_main = menu_mainDiv.offsetHeight + 4;
+    menuHeight_free = menu_freeSelect.offsetHeight + 4;
 
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
 
     if ( (windowWidth - clickCoordsX) < menuWidth ) {
       menu.style.left = windowWidth - menuWidth + "px";
-      menu_mainDiv.style.left = windowWidth - menuWidth + "px";
     } else {
       menu.style.left = clickCoordsX + "px";
-      menu_mainDiv.style.left = clickCoordsX + "px";
     }
 
     if ( (windowHeight - clickCoordsY) < menuHeight ) {
       menu.style.top = windowHeight - menuHeight + "px";
-      menu_mainDiv.style.top = windowHeight - menuHeight + "px";
     } else {
       menu.style.top = clickCoordsY + "px";
+    }
+    ////////////////////////////////////////////////////////////////
+    if ( (windowWidth - clickCoordsX) < menuWidth_main ) {
+      menu_mainDiv.style.left = windowWidth - menuWidth_main + "px";
+    } else {
+      menu_mainDiv.style.left = clickCoordsX + "px";
+    }
+
+    if ( (windowHeight - clickCoordsY) < menuHeight_main ) {
+      menu_mainDiv.style.top = windowHeight - menuHeight_main + "px";
+    } else {
       menu_mainDiv.style.top = clickCoordsY + "px";
+    }
+    ////////////////////////////////////////////////////////////////
+    if ( (windowWidth - clickCoordsX) < menuWidth_left ) {
+      menu_leftClick.style.left = windowWidth - menuWidth_left + "px";
+    } else {
+      menu_leftClick.style.left = clickCoordsX + "px";
+    }
+
+    if ( (windowHeight - clickCoordsY) < menuHeight_left ) {
+      menu_leftClick.style.top = windowHeight - menuHeight_left + "px";
+    } else {
+      menu_leftClick.style.top = clickCoordsY + "px";
+    }
+    ////////////////////////////////////////////////////////////////
+    if ( (windowWidth - clickCoordsX) < menuWidth_free ) {
+      menu_freeSelect.style.left = windowWidth - menuWidth_free + "px";
+    } else {
+      menu_freeSelect.style.left = clickCoordsX + "px";
+    }
+    console.log("11111111111");
+    if ( (windowHeight - clickCoordsY) < menuHeight_free ) {
+      menu_freeSelect.style.top = windowHeight - menuHeight_free + "px";
+    } else {
+      menu_freeSelect.style.top = clickCoordsY + "px";
     }
   }
 
@@ -410,8 +463,10 @@ jsPlumb.bind("contextmenu", function (c,e) {
 	var menu = document.querySelector("#context-menu_conn");
 	var menuItems = menu.querySelectorAll(".context-menu__item_conn");
 	var menuState = 0;
-	var menuWidth;
-	var menuHeight;
+  var menuWidth;
+	var menuWidth_main;
+  var menuHeight;
+	
 	var menuPosition;
 	var menuPositionX;
 	var menuPositionY;

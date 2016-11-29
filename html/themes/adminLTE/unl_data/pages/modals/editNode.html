@@ -118,15 +118,15 @@
     </div>
     <div class="row">
 	    <div class="col-md-6">
-	    	<div class="form-group" ng-show="nodeTemplate.options.config.type != undefined">
+	    	<div class="form-group" ng-show="nodeInfo.config != undefined">
 				<label>Startup configuration</label>
-				<select class="form-control" data-ng-model="selectConfig">
+				<select class="form-control" data-ng-model="selectConfig"><!-- convert-to-number ng-options="key as value for (key , value) in nodeTemplate.options.config.list" -->
 					<option ng-repeat="(x,y) in nodeTemplate.options.config.list" value="{{x}}">{{y}}</option>
-				</select>
+				</select> 
 		    </div>
 	    </div>
 	    <div class="col-md-6">
-			<div class="form-group" ng-show="nodeTemplate.options.console.type != undefined">
+			<div class="form-group" ng-show="nodeInfo.console != ''">
 				<label>{{nodeTemplate.options.console.name}}</label>
 				<select class="form-control" data-ng-model="selectConsole">
 					<option ng-repeat="(x,y) in nodeTemplate.options.console.list" value="{{x}}">{{y}}</option>
