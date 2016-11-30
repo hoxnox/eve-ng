@@ -5,12 +5,12 @@
 	<!-- Content Wrapper. Contains page content 
 
 	<header class="main-header" data-ng-include="'/themes/adminLTE/unl_data/pages/lab/constant/header.html'" data-ng-controller="HeaderController"></header>-->
-	<header class="main-header"style="z-index: 10001;">
+	<header class="main-header" style="z-index: 1049;">
 	<a href="#/lab" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini" style="z-index: 10001;"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/mainLogo.png" style="width:50px;height:19px"></span>
+      <span class="logo-mini" style="z-index: 1049;"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/mainLogo.png" style="width:50px;height:19px"></span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg" style="z-index: 10001;"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/mainLogo.png" style="width:104px;height:40px"></span>
+      <span class="logo-lg" style="z-index: 1049;"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/mainLogo.png" style="width:104px;height:40px"></span>
     </a>
 	 <nav class="navbar" style="width: 42px; position: absolute;">
       <!-- Sidebar toggle button-->
@@ -22,7 +22,7 @@
       </a>
 	 </nav>
 	</header>
-	<aside class="main-sidebar" style="z-index: 10000;" data-ng-include="'/themes/adminLTE/unl_data/pages/lab/constant/sidebar.html'"></aside>
+	<aside class="main-sidebar" style="z-index: 1048;" data-ng-include="'/themes/adminLTE/unl_data/pages/lab/constant/sidebar.html'"></aside>
 
 	
    
@@ -573,7 +573,7 @@ function topologyInit(topologyObject){
 	var destinationLabel = topologyObject.destination_label;
 	var type = topologyObject.type;
 	//console.log(sourceID+' '+destinationID+' '+sourceLabel+' '+destinationLabel)
-	jsPlumbMakeConnection(sourceID,destinationID,sourceLabel,destinationLabel,type)
+	jsPlumbMakeConnection(sourceID,destinationID,sourceLabel,destinationLabel,type);
 	///Make connection //END
 }
 function jsPlumbObjectInit(el, data){
@@ -649,7 +649,7 @@ function jsPlumbNodeInit(el){
 
 function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 	//console.log(SID+' '+DID+' '+SLb+' '+Dlb)
-	var conn_temp = {};
+	var conn_temp = {}; 
 	conn_temp = jsPlumb.connect({
 	source:SID,
 	target:DID,
@@ -671,7 +671,7 @@ function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 		location:30,
 		events:{
 			contextmenu :function(){
-				$("#tempElID").val(DID)
+				$("#tempElID").val(DID);
 			}
 		}
 		

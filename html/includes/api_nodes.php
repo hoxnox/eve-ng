@@ -45,7 +45,7 @@ function apiAddLabNode($lab, $p, $o) {
 		}
 		$id = $lab -> getFreeNodeId();
 		// Adding node_id to node_name if required
-		if ($o == True && $default_name) $p['name'] = $default_name.$lab -> getFreeNodeId();
+		if ($o == True && $default_name || $numberNodes > 1) $p['name'] = $default_name.$lab -> getFreeNodeId();
 		
 		// Adding the node
 		$rc = $lab -> addNode($p);

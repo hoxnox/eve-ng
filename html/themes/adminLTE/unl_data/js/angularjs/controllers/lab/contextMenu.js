@@ -405,7 +405,6 @@ var contextMenuInit = function() {
     } else {
       menu_freeSelect.style.left = clickCoordsX + "px";
     }
-    console.log("11111111111");
     if ( (windowHeight - clickCoordsY) < menuHeight_free ) {
       menu_freeSelect.style.top = windowHeight - menuHeight_free + "px";
     } else {
@@ -608,4 +607,13 @@ $(".higlited").each(function(){
   id = id.replace("nodeID_", "");
 })
         */
+
+$('a#to3heart').click(function(){
+    $('#portfolioModal2').modal({onShow: function (dialog) {
+        $.modal.close()
+        $('#portfolioModal1').modal('show'); 
+            return false;
+        }
+    });
+});
 

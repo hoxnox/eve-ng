@@ -40,9 +40,9 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 	// 	// }
 	// }
 
-	$scope.openModal = function (action, size) {
+
+	$scope.openModal = function (action, size, $uibModalInstance) {
 	var pathToModal = (action === undefined) ? 'default' :  action;
-	$(".modal").modal('close');
     var modalInstance = $uibModal.open({
       animation: $scope.animationsEnabled,
       templateUrl: $scope.modalActions[pathToModal]['path'],   
@@ -51,7 +51,8 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
       backdrop: true,
       resolve: {
         data: function () {
-        	console.log("modal js linia 27")
+        	console.log("modal js linia 27");
+        	// console.log("open modal 11111111111111111");
 			switch(action) {
 				case 'addConn':
 						return {'src': $scope.addConnSrc, 'dst': $scope.addConnDst, 'path': $rootScope.lab, 'allNet':$scope.allNetworks};
@@ -424,13 +425,16 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
   };	
 	
 }
+// $scope.closeModal = function ($uibModalInstance) {
+//     $uibModalInstance.dismiss('cancel');
+// }
 
 function ModalInstanceCtrl($scope, $uibModalInstance) {
 
   	$scope.closeModal = function () {
-	    $uibModalInstance.dismiss('cancel');
-	  };
+		$uibModalInstance.dismiss('cancel');
 	};
+};
 
 function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q) {
 	
@@ -483,6 +487,7 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 			function successCallback(response){
 				//console.log(response)
 				$scope.src.if=response.data.data
+				// console.log($scope.src.if);
 				$scope.src.selectedIF='';
 				if($scope.dst.type != 'node') $scope.src.if.serial=[];
 				for( var key in $scope.src.if.ethernet ) {
@@ -490,16 +495,17 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 					if ($scope.src.selectedIF == '') $scope.src.selectedIF=key;
 				}
 				for( var key in $scope.src.if.ethernet ) {
-					$scope.srcfullIfList[key]=$scope.src.if.ethernet[key]
+					$scope.srcfullIfList[key] = $scope.src.if.ethernet[key]
+					console.log($scope.src.if.ethernet[key]);
 				}
 				for( var key in $scope.src.if.serial ) {
-					$scope.srcfullIfList[key]=$scope.src.if.serial[key];
+					$scope.srcfullIfList[key] = $scope.src.if.serial[key];
 				}
 				// $scope.srcfullIfList = $scope.src.if.ethernet;
 				// jQuery.extend($scope.srcfullIfList, $scope.src.if.serial)
 				//console.log($scope.src.selectedIF)
 			}, function errorCallback(response){
-				$scope.interfListCount=false;
+				$scope.interfListCount = false;
 				console.log('Server Error');
 				console.log(response.data);
 			}
@@ -707,6 +713,7 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 	$scope.viewTemplateSwitch=false;
 	$scope.tempObject=data.object;
 	$scope.numberNodes = 1;
+	$scope.restrictSpace = '^[a-zA-Z0-9-_]+$';
 	 
 	$scope.select_image = function(x){
   		$scope.selectIcon = x;
@@ -782,22 +789,30 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 		if ($scope.templateData.options.slot2 != undefined) $scope.result.data.slot2 = $scope.selectSlot2;
 		if ($scope.templateData.options.serial != undefined) $scope.result.data.serial = $scope.templateData.options.serial.value;
 		if ($scope.numberNodes != undefined) $scope.result.data.numberNodes = $scope.numberNodes;
-		
-		$http({
-			method: 'POST',
-			url:'/api/labs'+$rootScope.lab+'/nodes',
-			data: $scope.result.data}).then(
-			function successCallback(response){
-				console.log(response)
-				$scope.result.data.id=response.data.data.id;
-				$scope.result.result=true;
-				$uibModalInstance.close($scope.result);
-			}, function errorCallback(response){
-				console.log('Server Error');
-				console.log(response);
-				//$uibModalInstance.close($scope.result);
-			}
-		);
+		if (!$scope.formAddNode.name.$valid)
+		{
+			console.log("error1");
+			toastr["error"]("Error", "Error");
+			console.log("error2");
+		}
+		else
+		{
+			$http({
+				method: 'POST',
+				url:'/api/labs'+$rootScope.lab+'/nodes',
+				data: $scope.result.data}).then(
+				function successCallback(response){
+					console.log(response)
+					$scope.result.data.id=response.data.data.id;
+					$scope.result.result=true;
+					$uibModalInstance.close($scope.result);
+				}, function errorCallback(response){
+					console.log('Server Error');
+					console.log(response);
+					//$uibModalInstance.close($scope.result);
+				}
+			);
+		}
 	}
 	$scope.closeModal = function () {
 		$uibModalInstance.dismiss('cancel');
@@ -1282,7 +1297,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 			'template' : $scope.nodeList[id].template,
 			'type' : $scope.nodeList[id].template,
 			'id' : id,
-			'name' : $scope.nodeList[id].newname,
+			'name' : $scope.nodeList[id].name,
 			'icon' : $scope.iconTempObj[id].selected.fullname,
 			'image' : $scope.imageTempObj[id].selected,
 			'postfix' : 0,
@@ -1358,13 +1373,13 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
     		$uibModalInstance.dismiss();
   	};
 
-  	$scope.closeBeforeEdit = function(id, template){
-  		$(document).on('click', '.modal', function(e){
-  			$scope.lastId = 1;
-  			console.log('click on modalclass');
-  		})
-  	}
-  	$scope.closeBeforeEdit();
+  	// $scope.closeBeforeEdit = function(id, template){
+  	// 	$(document).on('click', '.modal', function(e){
+  	// 		$scope.nodeList[id].editmode = false;
+  	// 		console.log('click on modalclass');
+  	// 	})
+  	// }
+  	// $scope.closeBeforeEdit();
 
 	$scope.opacity = function(){
 		$(".modal-content").toggleClass("modal-content_opacity");
@@ -1372,7 +1387,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 
 };
 
-function netListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
+function netListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $state) {
 	$scope.path=data.path;
 	$scope.astNetId = 0;
 	// $scope.anychanges=false;
@@ -1446,16 +1461,15 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 	}
 	$scope.applyChanges=function(id){
 		var putdata = {
-			'name' : $scope.netList[id].newname,
-			'type' : $scope.netList[id].newtype,
+			'name' : $scope.netList[id].name,
+			'type' : $scope.netList[id].type,
 		}
 		$http.put('/api/labs/'+$scope.path+'/networks/'+id, putdata)
 		.then(
 			function successCallback(response){
 				$scope.netList[id].editmode=false;
 				// $scope.anychanges=false;
-				// $scope.netListRefresh();
-				// $scope.netList=response.data.data;
+				$scope.netListRefresh();
 			},
 			function errorCallback(response){
 				console.log(response);
@@ -1500,6 +1514,7 @@ function netListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
   		// 	alert('So you need to edit some network, save and then close')
     // 	else
     		$uibModalInstance.dismiss();
+    		$state.reload();
   	};
 
   	$scope.opacity = function(){
@@ -1668,8 +1683,7 @@ function startUpConfigModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.opacity = function(){
 		$(".modal-content").toggleClass("modal-content_opacity");
 	}
-	
-}
+};
 
 function labDetailsModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.path=data.path;
@@ -1692,7 +1706,7 @@ function labDetailsModalCtrl($scope, $uibModalInstance, $http, data) {
   	$scope.opacity = function(){
 		$(".modal-content").toggleClass("modal-content_opacity");
 	}
-}
+};
 
 function configObjectModalCtrl($scope, $uibModalInstance, $http, data) {
 	console.log("se incarca")
@@ -1716,7 +1730,8 @@ function configObjectModalCtrl($scope, $uibModalInstance, $http, data) {
   	$scope.opacity = function(){
 		$(".modal-content").toggleClass("modal-content_opacity");
 	}
-}
+};
+
 function editLabModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 	console.log("se incarca")
 	$scope.path = data.path;
@@ -1792,10 +1807,8 @@ function editLabModalCtrl($scope, $uibModalInstance, $http, data, $rootScope) {
 				console.log(response);
 			}
 		)
-	}
-
-	
-}
+	}	
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

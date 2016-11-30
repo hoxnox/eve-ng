@@ -901,11 +901,9 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	//////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 	$scope.editEl = function(){
 		closePopUp();
-		$scope.tempElID=$('#tempElID').val()
+		$scope.tempElID=$('#tempElID').val();
 		var type = ($scope.tempElID.search('node') != -1) ? 'node' : 'network';
 		var id = (type == 'node') ? $scope.tempElID.replace('nodeID_','') : $scope.tempElID.replace('networkID_','');
 		$scope.tempEldata = {
@@ -931,13 +929,13 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		src.id = (src.type == 'node') ? conn.source.id.replace('nodeID_','') : conn.source.id.replace('networkID_','');
 		dst.id = (dst.type == 'node') ? conn.target.id.replace('nodeID_','') : conn.target.id.replace('networkID_','');
 		var urlCalls = [];
-		ifs = conn.getParameters()
+		ifs = conn.getParameters();
 		console.log(ifs)
 		if (ifs.type == 'ethernet'){
 		if (src.type == 'node' && dst.type == 'node'){
 			$scope.getIntrfInfo(src.id).then(function(something){
 				console.log(something)
-				//console.log(conn.getParameters())
+				console.log(conn.getParameters())
 				var network_id = "";
 				var finalPrepare = {}
 				var tempObj = {}
@@ -973,7 +971,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 				var finalPrepare = {}
 				var tempObj = {}
 				for (var key in something.ethernet){
-					if (something.ethernet[key].name==ifs.interfSrc) {something.ethernet[key].network_id="";
+					if (something.ethernet[key].name == ifs.interfSrc) {something.ethernet[key].network_id="";
 						tempObj[''+key+'']=String(something.ethernet[key].network_id)
 						jQuery.extend(finalPrepare, tempObj)
 					}
