@@ -40,6 +40,8 @@ function apiLogin($db, $html5_db, $p, $cookie) {
 		$hash = hash('sha256', $p['password']);
 	}
 
+	if (!isset($p['html5'])) $p['html5'] = 1;
+
 	$rc = deleteSessions($db, $username);
 	if ($rc !== 0) {
 		// Cannot delete old sessions
