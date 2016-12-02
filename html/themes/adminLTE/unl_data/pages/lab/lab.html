@@ -50,6 +50,13 @@
 			
 			<span ng-init="init()"></span>
 		<!--</section> -->
+		<div class="notifications" id="messages">
+			<p> <i class="fa fa-bell-o"></i><span>Notifications</span></p>
+			<div class="inner">
+				
+			</div>
+		</div>
+
 	</div><!-- /.content-wrapper --> 
 	<!-- Main Footer 
 	<div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/footer.html'"></div> -->
@@ -704,5 +711,16 @@ function dirname(path) {
         return dir;
     }
 }
+
+///// Delete messagess from notification /////
+function delMess(){
+	console.log('init');
+	$(document).on('click', '.del-mess', function(){
+		console.log('11111');
+		$(this).parent().remove();
+		console.log('22222');
+	})
+}
+delMess();
 
 </script>

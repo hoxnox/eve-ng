@@ -9,11 +9,11 @@
 			<img ng-src="{{src.icon}}" class="{{src.iconClass}} img-responsive" style="margin:0 auto;">
 			<div style="width:3px;height: {{ (src.type == 'network') ? 0 : 60}}px; margin: 0 auto; background-color:#444"></div>
 			<div style="margin: 0 auto; width:50%; text-align:center;" ng-show="src.type != 'network'">
-				<text class="aLabel text-center" >{{srcfullIfList[src.selectedIF].name}}</text>
+				<text class="aLabel text-center" >{{srcInfoList[src.selectedIF].name}}</text>
 			</div>
 			<div style="width:3px;height:160px; margin: 0 auto; background-color:#444"></div>
 			<div style="margin: 0 auto; width:50%; text-align:center;" ng-show="dst.type != 'network'">
-				<text class="aLabel text-center" >{{dstfullIfList[dst.selectedIF].name}}</text>
+				<text class="aLabel text-center" >{{dstInfoList[dst.selectedIF].name}}</text>
 			</div>
 			<div style="width:3px;height: {{ (dst.type == 'network') ? 0 : 60}}px; margin: 0 auto; background-color:#444"></div>
 			<img ng-src="{{dst.icon}}" class="{{dst.iconClass}} img-responsive" style="margin:0 auto;">
@@ -30,9 +30,9 @@
 
 			<div class="form-group" ng-show="src.type != 'network'">
 			<label for="sourceInterf_addConn">Choose Interface for {{src.name}}</label>
-			<select class="form-control" ng-model="src.selectedIF">
-					<option ng-repeat="(srcethkey, srceth) in src.if.ethernet" value="{{srcethkey}}">{{srceth.name}} {{(srceth.network_id == 0) ? '' : ' connected to '+allNet[srceth.network_id].name}}</option>
-					<option ng-repeat="(srcserkey,srcser) in src.if.serial" value="{{srcserkey}}">{{srcser.name}} {{(srcser.remote_id == 0) ? '' : ' connected to '+nodeList[srcser.remote_id].name+' '+srcser.remote_if_name}}</option>
+			<select class="form-control" ng-model="src.selectedIF" convert-to-number>
+					<option ng-repeat="(srcethkey, srceth) in src.if.ethernet" value="{{srceth.id ? srceth.id : 0}}">{{srceth.name}} {{(srceth.network_id == 0) ? '' : ' connected to '+allNet[srceth.network_id].name}}</option>
+					<option ng-repeat="(srcserkey,srcser) in src.if.serial" value="{{srcser.id}}">{{srcser.name}} {{(srcser.remote_id == 0) ? '' : ' connected to '+nodeList[srcser.remote_id].name+' '+srcser.remote_if_name}}</option>
 			</select>
 			<div style="width:3px;height:30px;"></div>
 			<!--type pus de mine-->
@@ -43,8 +43,8 @@
 			<div style="width:3px;height:30px;"></div>
 			<div class="form-group" ng-show="dst.type != 'network'">
 			<label for="sourceInterf_addConn">Choose Interface for {{dst.name}}</label>
-			<select class="form-control" ng-model="dst.selectedIF">
-					<option ng-repeat="(dstethkey,dsteth) in dst.if.ethernet" value="{{dstethkey}}">{{dsteth.name}} <strong>{{(dsteth.network_id == 0) ? '' : 'connected to '+allNet[dsteth.network_id].name}}</strong></option>
+			<select class="form-control" ng-model="dst.selectedIF" convert-to-number>
+					<option ng-repeat="(dstethkey,dsteth) in dst.if.ethernet" value="{{dsteth.id ? dsteth.id : 0}}">{{dsteth.name}} <strong>{{(dsteth.network_id == 0) ? '' : 'connected to '+allNet[dsteth.network_id].name}}</strong></option>
 					<option ng-repeat="(dstserkey,dstser) in dst.if.serial" value="{{dstserkey}}">{{dstser.name}} {{(dstser.remote_id == 0) ? '' : ' connected to '+nodeList[dstser.remote_id].name+' '+dstser.remote_if_name}}</option>
 			</select>
 			</div>

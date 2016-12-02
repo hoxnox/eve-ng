@@ -15,17 +15,22 @@
 		<th>Action</th>
 		</tr>
 	</thead>
-	<tbody >
+	<tbody class="tbodyNetList">
 		<tr ng-repeat="(id,item) in netList" class="{{(item.editmode) ? 'bg-warning' : ''}}">
 		<td>{{id}}</td>
-		<td>
-			<text ng-show="!item.editmode" ng-click="editMode(id)">{{item.name}}</text>
-			<input ng-init="item.newname = item.name" ng-show="item.editmode" ng-model="item.name" ng-blur="applyChanges(id)" ng-change="$parent.anychanges = true" style="padding-left:2px;"/> 
+		<td ng-click="editMode(id)">
+			<form name="formNetList[{{id}}]">
+				
+				<text ng-show="!item.editmode">{{item.name}}</text>
+				<input name="name" ng-pattern="restrictSpace" ng-init="item.newname = item.name" ng-show="item.editmode" ng-model="item.name" ng-blur="applyChanges(id)" style="padding-left:2px;"/> 
+				<span style="display: none;">{{$parent.formNetListValid[id] = formNetList[id].name.$valid}}</span>
+
 			<!--  -->
+			</form>
 		</td>
-		<td>
-			<text ng-show="!item.editmode" ng-click="editMode(id)">{{item.type}}</text>
-			<select class="form-control-networks" ng-show="item.editmode" ng-init="item.newtype = item.type" ng-model="item.type" ng-blur="applyChanges(id)" ng-change="$parent.anychanges = true" data-ng-options="x for x in netListType"></select>
+		<td ng-click="editMode(id)">
+			<text ng-show="!item.editmode" >{{item.type}}</text>
+			<select class="form-control-networks" ng-show="item.editmode" ng-init="item.newtype = item.type" ng-model="item.type" ng-blur="applyChanges(id)" data-ng-options="x for x in netListType"></select>
 			<!--  -->
 		</td>
 		<td>{{item.count}}</td>

@@ -502,6 +502,85 @@ td.imageList .ui-select-container .ui-select-choices{
 .m-progress.min:before {
     width:16px;
     height:16px;
-  margin-top: -8px;
+    margin-top: -8px;
     margin-left: -8px;
 }
+/* Style for notifications */
+.notifications{
+  bottom: auto;
+  left: auto;
+  position: fixed;
+  right: 1%;
+  top: 0;
+  width: 300px;
+  z-index: 100000;
+  background-color:#34444c;
+  overflow:hidden;
+  padding: 3px;
+  color: #fff;
+  max-height: 35px;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+     -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+       -o-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  // transition: 0.5s;
+}
+.notifications:hover{
+  max-height: 100%;
+  overflow: auto;
+
+}
+.notifications p{
+  display: block;
+  height: 28px;
+  line-height: 28px;
+  padding: 0 0 0 3px;
+  font-weight: bold;
+  font-size: 15px;
+  margin: 0;
+}
+.notifications .fa:before{
+  margin-right: 5px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.success{
+  padding: 5px;
+  background-color: #4CAF50;
+  margin-bottom: 1px;
+}
+.success .fa:before{
+  font-size: 14px;
+}
+.success .fa-remove{
+  float: right;
+  margin-top: 3px;
+  color: #f2f2f2;
+}
+.success .fa-remove:hover{
+  color: #fff;
+  cursor: pointer;
+}
+.error{
+  padding: 5px;
+  background-color: #990000;
+  margin-bottom: 1px;
+}
+.error .fa:before{
+  font-size: 14px;
+}
+.error .fa-remove{
+  float: right;
+  margin-top: 3px;
+  color: #f2f2f2;
+}
+.error .fa-remove:hover{
+  color: #fff;
+  cursor: pointer;
+}
+.toast-top-right {  
+    top: 40px; 
+    right: 1%; 
+} 

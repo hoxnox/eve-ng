@@ -164,6 +164,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	$scope.wipeAllNode = function(){
 		closePopUp();
 		openrightHide();
+		console.log("wipe 111");
 		var h_flague = false;
 		$(".free-selected").each(function(){
 		  var id = $(this).attr("id");
@@ -178,6 +179,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			{
 				var node = $scope.node[i];
 				$scope.wipeNode(node.id);
+				console.log("wipe 222");
 				
 			}
 		}
@@ -193,9 +195,11 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		$http.get('/api/labs'+$rootScope.lab+'/nodes/'+id+'/wipe').then(
 			function successCallback(response){
 				toastr["success"](response.data.message, "success");
+				$("#messages .inner").append("<div class='success'> <i class='fa fa-check'></i>" +response.data.message + "<i class='fa fa-remove del-mess'></i></div>");
 			},
 			function errorCallback(response){
 				toastr["error"](response.data.message, "Error");
+				$("#messages .inner").append("<div class='error'> <i class='fa fa-exclamation-triangle '></i>" +response.data.message + "<i class='fa fa-remove del-mess'></i></div>");
 			}
 		);
 		$scope.stopThisNode();
@@ -205,9 +209,6 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	///////////////////////////////////////////////
 	//// Wipe all nodes /END
 
-	$scope.getNameNode = function(){
-
-	}
 
 	///////////////////////////////////////////////
 	//// Start/Stop Node //START
@@ -296,12 +297,15 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 					$scope.node[id].upstatus=true;
 					$scope.node[id].loadclassShow=false;
 					$scope.node[id].status=2;
+					toastr["success"](response.data.message, "Success");
+					$("#messages .inner").append("<div class='success'> <i class='fa fa-check'></i>" +response.data.message + "<i class='fa fa-remove del-mess'></i></div>");
 				}, function errorCallback(response){
 					$scope.node[id].upstatus=false;
 					$scope.node[id].loadclassShow=false;
 					console.log('Server Error');
 					console.log(response.data);
 					toastr["error"](response.data.message, "Error");
+					$("#messages .inner").append("<div class='error'> <i class='fa fa-exclamation-triangle '></i>" +response.data.message + "<i class='fa fa-remove del-mess'></i></div>");
 				}
 			);
 			//$timeout(function () {
@@ -318,6 +322,8 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 					$scope.node[id].upstatus=false;
 					$scope.node[id].status=0;
 					$scope.node[id].loadclassShow=false;
+					toastr["success"](response.data.message, "Success");
+					$("#messages .inner").append("<div class='success'> <i class='fa fa-check'></i>" +response.data.message + "<i class='fa fa-remove del-mess'></i></div>");
 				}, function errorCallback(response){
 					$scope.node[id].upstatus=false;
 					$scope.node[id].loadclassShow=false;
@@ -833,29 +839,34 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		if (confirm('Are you sure?')){
 			console.log("deteling id + type: "+ id+' '+type)
 			var h_flague = false;
-			$(".free-selected").each(function(){
+			$(".free-selected").each(function(ii){
+				console.log("each select")
 		  		var id = $(this).attr("id");
-		  		if (id.indexOf("nodeID_") != -1) 
+				console.log(id.indexOf("nodeID_"));
+				console.log(id.indexOf("networkID_"));
+				if (id.indexOf("nodeID_") != -1) 
 		  		{
 		  			id = id.replace("nodeID_", "");
 			  		var node = $scope.node[id];
-					$http({
-						method: 'DELETE',
-						url:'/api/labs'+$rootScope.lab+'/'+type+'s/'+id}).then(
-						function successCallback(response){
-							console.log(response)
-							jsPlumb.select({source:type+'ID_'+id}).detach();
-							jsPlumb.select({target:type+'ID_'+id}).detach();
-							var selector = element ? element : type; 
-							console.log($('#'+selector+'ID_'+id))
-							$('#' + selector +'ID_'+id).remove()
-						}, function errorCallback(response){
-							console.log('Server Error');
-							console.log(response);
-						}
-					);
+					setTimeout(function(){
+						$http({
+							method: 'DELETE',
+							url:'/api/labs'+$rootScope.lab+'/'+type+'s/'+id}).then(
+							function successCallback(response){
+								console.log(response)
+								jsPlumb.select({source:type+'ID_'+id}).detach();
+								jsPlumb.select({target:type+'ID_'+id}).detach();
+								var selector = element ? element : type; 
+								console.log($('#'+selector+'ID_'+id))
+								$('#' + selector +'ID_'+id).remove()
+							}, function errorCallback(response){
+								console.log('Server Error');
+								console.log(response);
+							}
+						);
+					}, ii * 750 , id, node);
 		  		}
-		  		if (id.indexOf("networkID_") !=1) 
+		  		if (id.indexOf("networkID_") != -1) 
 		  		{
 		  			id = id.replace("networkID_", "");
 			  		var node = $scope.node[id];
@@ -879,6 +890,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			})
 			if (!h_flague)
 			{
+				console.log("aaa");
 				$http({
 					method: 'DELETE',
 					url:'/api/labs'+$rootScope.lab+'/'+type+'s/'+id}).then(

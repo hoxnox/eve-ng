@@ -25,9 +25,9 @@
 			<div class="col-md-6">
 				<div class="form-group {{errorClass}}">
 					<label>Node name</label>
-					<input type="text" class="form-control" name="name" data-ng-model="templateData.options.name.value" placeholder="Enter node name" autofocus="autofocus" ng-pattern="restrictSpace"/>
+					<input type="text" class="form-control" name="name" data-ng-model="templateData.options.name.value" placeholder="Enter node name" autofocus="autofocus" data-ng-pattern="restrictSpace"/>
 					<span class="chars" ng-class="{'chars--active': formAddNode.name.$valid == false, 'chars': formAddNode.name.$valid == true}">Use only [A-Za-z0-9_- ]chars</span>
-					<span class="help-block" data-ng-show="errorClass != ''" data-ng-bind="errorMessage"></span>
+					<!-- <span class="help-block" data-ng-show="errorClass != ''" data-ng-bind="errorMessage"></span> -->
 				</div>
 			</div>
 			<div class="col-md-6">
