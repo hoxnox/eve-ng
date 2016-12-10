@@ -732,8 +732,8 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	$scope.newConnModal = function(conn){
 		if ($scope.ready){
 			//console.log(conn)
-			$scope.addConnSrc=conn.source
-			$scope.addConnDst=conn.target
+			$scope.addConnSrc=conn.source;
+			$scope.addConnDst=conn.target;
 			var src = {};
 			src.type = ($scope.addConnSrc.id.search('node') != -1) ? 'node' : 'network';
 			var dst = {};
@@ -933,16 +933,22 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	}
 	
 	$scope.delConn = function(conn){
-		var ifs = {}
-		var src = {}
-		var dst = {}
+		var ifs = {};
+		var src = {};
+		var dst = {};
+		// console.log(11111);
+		// console.log(conn, 1234);
 		src.type = (conn.source.id.search('node') != -1) ? 'node' : 'network';
+		// console.log(src.type);
 		dst.type = (conn.target.id.search('node') != -1) ? 'node' : 'network';
+		// console.log(dst.type);
 		src.id = (src.type == 'node') ? conn.source.id.replace('nodeID_','') : conn.source.id.replace('networkID_','');
+		// console.log(src.id);
 		dst.id = (dst.type == 'node') ? conn.target.id.replace('nodeID_','') : conn.target.id.replace('networkID_','');
+		// console.log(dst.id);
 		var urlCalls = [];
 		ifs = conn.getParameters();
-		console.log(ifs)
+		// console.log(ifs)
 		if (ifs.type == 'ethernet'){
 		if (src.type == 'node' && dst.type == 'node'){
 			$scope.getIntrfInfo(src.id).then(function(something){

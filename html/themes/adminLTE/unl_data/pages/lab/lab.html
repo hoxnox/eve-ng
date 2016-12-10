@@ -571,6 +571,8 @@ function topologyInit(topologyObject){
 			var netID = topologyObject.source.replace("network",'');
 		}
 	}
+	console.log("topology")
+	console.log(topologyObject)
 	///Show hidden network //End
 	///////////////////////////
 	///Make connection //START
@@ -580,7 +582,11 @@ function topologyInit(topologyObject){
 	var destinationLabel = topologyObject.destination_label;
 	var type = topologyObject.type;
 	//console.log(sourceID+' '+destinationID+' '+sourceLabel+' '+destinationLabel)
-	jsPlumbMakeConnection(sourceID,destinationID,sourceLabel,destinationLabel,type);
+	if (topologyObject.network_id)
+		var network_id = topologyObject.network_id;
+	else
+		var network_id = null;
+	jsPlumbMakeConnection(sourceID,destinationID,sourceLabel,destinationLabel,type, network_id);
 	///Make connection //END
 }
 function jsPlumbObjectInit(el, data){
@@ -654,7 +660,9 @@ function jsPlumbNodeInit(el){
 	
 }
 
-function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
+var connections = {};
+
+function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type, network_id){
 	//console.log(SID+' '+DID+' '+SLb+' '+Dlb)
 	var conn_temp = {}; 
 	conn_temp = jsPlumb.connect({
@@ -678,7 +686,7 @@ function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 		location:30,
 		events:{
 			contextmenu :function(){
-				$("#tempElID").val(DID);
+				$("#tempElID").val("networkID_" + network_id);
 			}
 		}
 		
@@ -691,9 +699,14 @@ function jsPlumbMakeConnection(SID,DID,SLb,Dlb,type){
 	id:DID+'_'+Dlb,
 	cssClass: (Dlb != '') ? "aLabel" : '',
 	location:-30,
+	events:{
+		contextmenu :function(){
+			$("#tempElID").val("networkID_" + network_id);
+		}
+	}
 	
 	}]);
-
+	connections[network_id] = conn_temp;
 }
 
 

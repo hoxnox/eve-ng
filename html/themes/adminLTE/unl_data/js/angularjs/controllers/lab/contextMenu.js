@@ -592,7 +592,13 @@ jsPlumb.bind("contextmenu", function (c,e) {
 		toggleMenuOff_conn();
 		switch (link.getAttribute("my-action")){
 			case 'delConnection':
-			$scope.delConn(c)
+      var e_id = $('#tempElID').val();
+      // console.log(e_id, 111);
+      var id = e_id.replace('networkID_','');
+      // console.log(id, 222);
+      console.log(id, "a1");
+      console.log(connections,"a2");
+      $scope.delConn(connections[id])
 			break;
 		}
 	}

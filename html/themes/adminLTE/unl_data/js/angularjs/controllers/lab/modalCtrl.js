@@ -459,7 +459,7 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 	$scope.dst.eveID = ($scope.dst.type == 'node') ? data.dst.id.replace('nodeID_','') : data.dst.id.replace('networkID_','');
 	$scope.src.if={}
 	$scope.dst.if={}
-	
+
 	$http.get('/api/labs'+$rootScope.lab+'/nodes')
 	.then(
 		function successCallback(response){
@@ -483,7 +483,14 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 	$http.get('/api/labs'+$rootScope.lab+'/networks').then(
 		function successCallback(response){
 			//console.log(response)
-			$scope.allNet=response.data.data
+			$scope.allNet=response.data.data;
+
+			if ($scope.dst.type != "node")
+			{
+				$scope.selectNetType= $scope.allNet[$scope.dst.eveID].type;				
+			}
+			console.log($scope.dst)
+
 		}, function errorCallback(response){
 			console.log('Server Error');
 			console.log(response.data);
@@ -688,7 +695,11 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 			var targetIfID = ($scope.dst.type == 'node') ? $scope.dst.selectedIF : $scope.src.selectedIF;
 			var targetIfName = ($scope.dst.type == 'node') ? $scope.dstInfoList[targetIfID].name : $scope.srcInfoList[targetIfID].name;
 			var targetIfNet = ($scope.dst.type == 'node') ? $scope.dstInfoList[targetIfID].network_id : $scope.srcInfoList[targetIfID].network_id;
-			if (targetIfNet != 0){toastr["error"]('Interface already used', "Error"); return;}
+			if (targetIfNet != 0)
+			{
+				toastr["error"]('Interface already used', "Error"); 
+				return;
+			}
 			console.log(targetNodeID+' '+' '+targetNetID+' '+targetIfID);
 			var newConnData={};
 			newConnData[''+targetIfID+'']=String(targetNetID);
@@ -1219,7 +1230,7 @@ function AddNetModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 };
 
 function editNetModalCtrl($scope, $uibModalInstance, $http, data) {
-	$scope.restrictSpace = '^[a-zA-Z0-9-_]+$';
+	$scope.restrictSpace = '^[a-zA-Z0-9-_/]+$';
 	$scope.netInfo={};
 	$scope.netList={}
 	$scope.path = data.path;
@@ -1290,7 +1301,6 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 	$scope.lastId = 0;
 	$scope.restrictSpace = '^[a-zA-Z0-9-_()/]+$';
 	$scope.formNodeListValid = [];
-	console.log($scope.formNodeListValid, "NodeList 1");
 	$scope.refreshNodeList = function(){
 	$http.get('/api/labs'+$scope.path+'/nodes')
 	.then(
@@ -1469,7 +1479,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 		}
 		else
 		{
-			console.log($scope.formNodeListValid, "NodeList 3");
+			// console.log($scope.formNodeListValid, "NodeList 3");
 			console.log(putdata);
 			$http.put('/api/labs'+$scope.path+'/nodes/'+id, putdata)
 			.then(

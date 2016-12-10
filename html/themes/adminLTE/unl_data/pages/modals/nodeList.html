@@ -128,10 +128,11 @@
 						<span ng-bind="imageTempObj[id].selected"></span>
 					</ui-select-match>
 					<ui-select-choices repeat="image in (templateList[item.template].image.array | filter: $select.search)">
-						<span ng-bind="image" title="{{image}}"></span>
+						<span ng-bind="image" title="{{ imageTempObj[id].selected }}"></span>
 					</ui-select-choices>
 				</ui-select>
 			</td>
+
 			<td ng-show="hideCPU" ng-click="beforeEdit(id, item.template)">
 				<text ng-show="!item.editmode">{{(item.cpu == undefined) ? 'N/A' : item.cpu}}</text>
 				<input ng-init="item.newcpu = item.cpu" ng-model="item.cpu" ng-blur="applyChanges(id)" ng-show="item.cpu != undefined && item.editmode" style="width:40px; padding-left:2px;"/><!--  -->

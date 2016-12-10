@@ -129,7 +129,7 @@
 		    </div>
 		    <div class="col-md-6">
 				<div class="form-group" ng-show="nodeInfo.console != ''">
-					<label>{{nodeTemplate.options.console.name}}</label>
+					<label>{{ nodeTemplate.options.console.name }}</label>
 					<select class="form-control" data-ng-model="selectConsole">
 						<option ng-repeat="(x,y) in nodeTemplate.options.console.list" value="{{x}}">{{y}}</option>
 					</select>
@@ -137,7 +137,7 @@
 			</div>
 		    <div class="col-md-6">
 				<div class="form-group" ng-show="nodeTemplate.options.serial.type != undefined">
-					<label>{{nodeTemplate.options.serial.name}}</label>
+					<label>{{ nodeTemplate.options.serial.names }}</label>
 					<input class="form-control" data-ng-model="nodeInfo.serial"/>
 				</div>
 		    </div>
