@@ -33,7 +33,7 @@
 $p['type'] = 'qemu';
 $p['name'] = 'vQFX-RE';
 $p['icon'] = 'JunipervQFXre.png';
-$p['cpu'] = 1;
+$p['cpu'] = 2;
 $p['ram'] = 2048;
 $p['ethernet'] = 15;
 $p['console'] = 'telnet';
