@@ -2105,7 +2105,7 @@ class Node {
 							$this -> flags_eth .= ' -netdev tap,id=net'.$i.',ifname=vunl'.$this -> tenant.'_'.$this -> id.'_'.$i.',script=no';
 						}
 						break;
-						case 'vmxvcp':
+					case 'vmxvcp':
 						for ($i = 0; $i < $this -> ethernet; $i++) {
 							if (isset($old_ethernets[$i])) {
 								// Previous interface found, copy from old one
@@ -2131,7 +2131,7 @@ class Node {
 							$this -> flags_eth .= ' -netdev tap,id=net'.$i.',ifname=vunl'.$this -> tenant.'_'.$this -> id.'_'.$i.',script=no';
 						}
 						break;
-						case 'vmxvfp':
+					case 'vmxvfp':
 						for ($i = 0; $i < $this -> ethernet; $i++) {
 							if (isset($old_ethernets[$i])) {
 								// Previous interface found, copy from old one
@@ -2166,9 +2166,9 @@ class Node {
                                                                 if ($i == 0) {
                                                                         $n = 'em0 / fxp0';                      // Interface name
                                                                 } else if ($i == 1) {
-                                                                        $n = 'em1 / Internal use';              // Interface name
+                                                                        $n = 'em1 / int';              // Interface name
                                                                 } else {
-                                                                        $n = 'em'.$i.' / xe-0/0/'.($i - 3);
+                                                                        $n = 'xe-0/0/'.($i - 3);
                                                                 }
                                                                 try {
                                                                         $this -> ethernets[$i] = new Interfc(Array('name' => $n, 'type' => 'ethernet'), $i);
@@ -2192,9 +2192,9 @@ class Node {
                                                                 if ($i == 0) {
                                                                         $n = 'em0 / fxp0';                      // Interface name
                                                                 } else if ($i == 1) {
-                                                                        $n = 'em1 / Internal use';              // Interface name
+                                                                        $n = 'em1 / int';              // Interface name
                                                                 } else if ($i == 2) {
-                                                                        $n = 'em2 / Internal use';              // Interface name
+                                                                        $n = 'em2 / mgmt';              // Interface name
                                                                 } else {
                                                                         $n = 'xe-0/0/'.($i - 3);
                                                                 }
