@@ -111,7 +111,8 @@ function ModalCtrl($scope, $uibModal, $log) {
 		//function if user just close modal
 		//$log.info('Modal dismissed at: ' + new Date());
 		console.log('here')
-		$scope.selectAll();
+		//$scope.selectAll();
+		$scope.allCheckedFlag=false;
 		$scope.fileMngDraw($scope.pathBeforeMove);
 		});
 		break;
