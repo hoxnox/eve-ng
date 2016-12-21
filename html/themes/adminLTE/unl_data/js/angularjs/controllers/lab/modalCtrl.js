@@ -55,7 +55,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
         	// console.log("open modal 11111111111111111");
 			switch(action) {
 				case 'addConn':
-						return {'src': $scope.addConnSrc, 'dst': $scope.addConnDst, 'path': $rootScope.lab, 'allNet':$scope.allNetworks};
+						return {'src': $scope.addConnSrc, 'dst': $scope.addConnDst, 'path': $rootScope.lab, 'allNet':$rootScope.allNetworks};
 						break;
 				case 'addNode':
 						return {'path': $rootScope.lab, 'object':$scope.addNewObject};
@@ -214,6 +214,8 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 					console.log(response)
 					$scope.node = response.data.data;
 					var node=result.data;
+					var total_new_nodes = node.id.length;
+					console.log('Totals nodes:', total_new_nodes);
 					for (k in node.id)
 					{
 						if (k > 0)
@@ -238,7 +240,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 							'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute; z-index:2;"></div>'+
 							'<a href="{{node['+id+'].url}}" ng-click="openNodeConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer">'+
 							'<img ng-src="images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
-							'<figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label">'+node.name+id+'</figcaption>'+
+							'<figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label">'+node.name + ( total_new_nodes>1 ? id : '') +'</figcaption>'+
 							'</div>';
 							$scope.compileNewElement(elDIV, 'nodeID_'+id)
 						}
@@ -434,32 +436,31 @@ function ModalInstanceCtrl($scope, $uibModalInstance) {
   	$scope.closeModal = function () {
 		$uibModalInstance.dismiss('cancel');
 	};
-};
 
+};
 function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q) {
-	
-	$scope.allNet=data.allNet;
-	console.log($scope.allNet)
-	$scope.result={};
-	// $scope.srcfullIfList=[];
+    $scope.allNet=data.allNet;
+
+    console.log($scope.networks)
+    $scope.result={};
+    // $scope.srcfullIfList=[];
 	// $scope.dstfullIfList =[];
 	$scope.result.result=false;
-	$scope.src=data.src;
-	$scope.dst=data.dst;
-	$scope.nodeList={};
-	$scope.src.name=$('div#'+data.src.id+' figcaption').text()
-	$scope.dst.name=$('div#'+data.dst.id+' figcaption').text()
-	$scope.src.icon=$('div#'+data.src.id+' img').attr('src')
-	$scope.dst.icon=$('div#'+data.dst.id+' img').attr('src')
-	$scope.src.iconClass=$('div#'+data.src.id+' img').attr('class');
-	$scope.dst.iconClass=$('div#'+data.dst.id+' img').attr('class');
-	$scope.src.type = (data.src.id.search('node') != -1) ? 'node' : 'network';
-	$scope.dst.type = (data.dst.id.search('node') != -1) ? 'node' : 'network';
-	$scope.src.eveID = ($scope.src.type == 'node') ? data.src.id.replace('nodeID_','') : data.src.id.replace('networkID_','');
-	$scope.dst.eveID = ($scope.dst.type == 'node') ? data.dst.id.replace('nodeID_','') : data.dst.id.replace('networkID_','');
-	$scope.src.if={}
-	$scope.dst.if={}
-
+    $scope.src=data.src;
+    $scope.dst=data.dst;
+    $scope.nodeList={};
+    $scope.src.name=$('div#'+data.src.id+' figcaption').text()
+    $scope.dst.name=$('div#'+data.dst.id+' figcaption').text()
+    $scope.src.icon=$('div#'+data.src.id+' img').attr('src')
+    $scope.dst.icon=$('div#'+data.dst.id+' img').attr('src')
+    $scope.src.iconClass=$('div#'+data.src.id+' img').attr('class');
+    $scope.dst.iconClass=$('div#'+data.dst.id+' img').attr('class');
+    $scope.src.type = (data.src.id.search('node') != -1) ? 'node' : 'network';
+    $scope.dst.type = (data.dst.id.search('node') != -1) ? 'node' : 'network';
+    $scope.src.eveID = ($scope.src.type == 'node') ? data.src.id.replace('nodeID_','') : data.src.id.replace('networkID_','');
+    $scope.dst.eveID = ($scope.dst.type == 'node') ? data.dst.id.replace('nodeID_','') : data.dst.id.replace('networkID_','');
+    $scope.src.if={}
+    $scope.dst.if={}
 	$http.get('/api/labs'+$rootScope.lab+'/nodes')
 	.then(
 		function successCallback(response){
@@ -499,18 +500,24 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 	
 	
 	if ($scope.src.type == 'node'){
+		console.log('+++++++++++++++++++++++++++++++++++----------------------------------------------');
 		$http.get('/api/labs'+$rootScope.lab+'/nodes/'+$scope.src.eveID+'/interfaces').then(
 			function successCallback(response){
-				//console.log(response)
+
 				$scope.srcInfoList = {};
-				
-				$scope.src.if=response.data.data
+
+                $scope.src.if=response.data.data
+
+                console.log('-----------------------------------------------------------------------------');
+				console.log($scope.src.if);
+                console.log('-----------------------------------------------------------------------------');
 				
 				var tmp_data = response.data.data;
 				var tmp_arr = [];
 				tmp_data.ethernet[0].id = "0";
 				tmp_arr.push(tmp_data.ethernet[0]);
 				$scope.srcInfoList[0] = tmp_data.ethernet[0];
+
 				delete tmp_data.ethernet[0];
 				for (x = 0 ; x <= 16; x++)
 				{
@@ -847,6 +854,7 @@ function AddConnModalCtrl($scope, $uibModalInstance, $http, $rootScope, data, $q
 
 function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 	console.log($rootScope.lab)
+    console.log('*******************************');
 	$scope.templateData={};
 	$scope.result={}
 	$scope.tempList = [];
@@ -907,7 +915,7 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 	}
 	
 	$scope.addNode = function () {
-		
+
 		$scope.result.data = { 
 			'name': $scope.templateData.options.name.value,
 			'left': $scope.tempObject.pageX,
@@ -916,6 +924,11 @@ function AddNodeModalCtrl($scope, $uibModalInstance, $http, $rootScope, data) {
 			'template': $scope.selectTemplate
 			
 		}
+
+		
+		console.log($scope.templateData);
+		console.log($scope.result.data);
+        console.log('asdasdasdasdasda');
 		
 		console.log($scope.templateData['type'])
 		if ($scope.templateData.type != undefined) $scope.result.data.type = $scope.templateData.type;
@@ -1448,6 +1461,7 @@ function nodeListModalCtrl($scope, $uibModalInstance, $http, data, $rootScope, $
 		} else toastr["error"]('Unknown error', "Error");
 	}
 	
+
 	$scope.applyChanges = function(id){
 		console.log('applyChanges')
 		// console.log("Node List" + $scope.consoleTempObj[id]);

@@ -107,7 +107,13 @@
 						</div>
 					</div>
 			    </div>-->
-				<img ng-src="/images/icons/{{item.icon}}" width="30" height="auto" ng-show="!item.editmode"/>
+
+
+				<img ng-src="/images/icons/{{iconTempObj[id].selected.brname.search('.png') == -1 ? iconTempObj[id].selected.brname+'.png' : iconTempObj[id].selected.brname}}" width="30" height="auto" ng-show="!item.editmode"/>
+
+
+				<!--<img ng-src="/images/icons/{{item.icon}}" width="30" height="auto" ng-show="!item.editmode"/>-->
+
 				<ui-select ng-init="iconTempObj[id].selected.fullname=item.icon; iconTempObj[id].selected.brname=item.icon.replace('.png','')" ng-model="iconTempObj[id].selected" ng-change="applyChanges(id)" ng-show="item.editmode"> <!--  -->
 					<ui-select-match>
 						<img ng-src="/images/icons/{{iconTempObj[id].selected.fullname}}" width="15" height="auto"/>

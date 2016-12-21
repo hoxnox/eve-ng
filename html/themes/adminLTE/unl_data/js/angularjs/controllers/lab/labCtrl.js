@@ -818,6 +818,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	//////////////////////////////////////////////////////////////////////////////////////
 	$scope.tempElID='';
 	$scope.deleteEl = function(){
+
 		closePopUp();
 		$scope.tempElID=$('#tempElID').val()
         console.log("#tempElID:",$('#tempElID').val())
@@ -833,7 +834,9 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		if($scope.tempElID.search('shape') != -1) {
 			type = 'textobject';
 			element = 'shape';	
-		} 
+		}
+
+		console.log('------------------------------------------------------------------------', type);
 		// if($scope.tempElID.search('image') != -1) type = 'picture' 
 		var id = $scope.tempElID.replace(element ? element + 'ID_' : type + 'ID_','');
 		if (confirm('Are you sure?')){
@@ -896,11 +899,17 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 					url:'/api/labs'+$rootScope.lab+'/'+type+'s/'+id}).then(
 					function successCallback(response){
 						console.log(response)
-						jsPlumb.select({source:type+'ID_'+id}).detach();
-						jsPlumb.select({target:type+'ID_'+id}).detach();
-						var selector = element ? element : type; 
-						console.log($('#'+selector+'ID_'+id))
-						$('#' + selector +'ID_'+id).remove()
+
+                        console.log('+++++++++++++++++++++++++++++++');
+						
+
+						jsPlumb.select({source: type + 'ID_' + id}).detach();
+						jsPlumb.select({target: type + 'ID_' + id}).detach();
+
+						var selector = element ? element : type;
+						console.log($('#' + selector + 'ID_' + id))
+						$('#' + selector + 'ID_' + id).remove()
+
 					}, function errorCallback(response){
 						console.log('Server Error');
 						console.log(response);
@@ -936,21 +945,30 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		var ifs = {};
 		var src = {};
 		var dst = {};
+
+
+		if(!conn || !conn.source){
+			// alert('Please try again');
+            location.reload();
+		}
+
 		// console.log(11111);
 		// console.log(conn, 1234);
 		src.type = (conn.source.id.search('node') != -1) ? 'node' : 'network';
-		// console.log(src.type);
+		// console.log(src.type, '-------------------------------------------------------');
 		dst.type = (conn.target.id.search('node') != -1) ? 'node' : 'network';
-		// console.log(dst.type);
+		// console.log(dst.type, '-------------------------------------------------------');
 		src.id = (src.type == 'node') ? conn.source.id.replace('nodeID_','') : conn.source.id.replace('networkID_','');
 		// console.log(src.id);
 		dst.id = (dst.type == 'node') ? conn.target.id.replace('nodeID_','') : conn.target.id.replace('networkID_','');
 		// console.log(dst.id);
 		var urlCalls = [];
 		ifs = conn.getParameters();
-		// console.log(ifs)
+		// console.log(ifs);
 		if (ifs.type == 'ethernet'){
 		if (src.type == 'node' && dst.type == 'node'){
+
+			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++');
 			$scope.getIntrfInfo(src.id).then(function(something){
 				console.log(something)
 				console.log(conn.getParameters())
@@ -986,6 +1004,8 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 		} else {
 			$scope.getIntrfInfo(src.id).then(function(something){
 				ifs = conn.getParameters()
+				console.log('11111111111111111111111111111111111111111111111111111');
+				console.log(ifs);
 				var finalPrepare = {}
 				var tempObj = {}
 				for (var key in something.ethernet){
