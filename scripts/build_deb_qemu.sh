@@ -14,23 +14,23 @@ cat ${CONTROL} | sed "s/%VERSION%/${VERSION}/" | sed "s/%RELEASE%/${RELEASE}/" >
 # Download src
 wget -O /usr/src/qemu-1.3.1.tar.bz2 -c "http://wiki.qemu-project.org/download/qemu-1.3.1.tar.bz2"
 wget -O /usr/src/qemu-2.0.2.tar.bz2 -c "http://wiki.qemu-project.org/download/qemu-2.0.2.tar.bz2"
-wget -O /usr/src/qemu-2.4.0.tar.bz2 -c "http://wiki.qemu-project.org/download/qemu-2.4.0.tar.bz2"
+wget -O /usr/src/qemu-2.8.0.tar.bz2 -c "http://wiki.qemu-project.org/download/qemu-2.8.0.tar.bz2"
 
 # get needed dev
 # IMPORTANT ADD src in sources.list
 apt-get build-dep qemu-kvm
-apt-get install libtool-bin
+apt-get install libtool-bin libncursesw5-dev
 #clean src
 rm -fr /usr/src/qemu-1.3.1
 rm -fr /usr/src/qemu-2.0.2
-rm -fr /usr/src/qemu-2.4.0
+rm -fr /usr/src/qemu-2.8.0
 
 # Extract
 
 cd /usr/src/
 tar -jxvf qemu-1.3.1.tar.bz2
 tar -jxvf qemu-2.0.2.tar.bz2
-tar -jxvf qemu-2.4.0.tar.bz2
+tar -jxvf qemu-2.8.0.tar.bz2
 
 cd /usr/src/qemu-1.3.1
 patch  < /usr/src/eve-ng-public-dev/patch/qemu-texi.patch
@@ -45,7 +45,7 @@ patch -p0 < /usr/src/eve-ng-public-dev/patch/qemu-2.1.2.patch
 make
 make install
 
-cd /usr/src/qemu-2.4.0
+cd /usr/src/qemu-2.8.0
 ./configure --prefix=/opt/qemu --target-list="i386-softmmu x86_64-softmmu" --enable-sdl --enable-vnc --disable-xen --enable-curses --enable-kvm --enable-uuid --audio-drv-list="alsa oss"
 make
 make install
