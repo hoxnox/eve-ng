@@ -4,11 +4,13 @@ git clone -b v4.4.14 git://git.launchpad.net/~ubuntu-kernel-test/ubuntu/+source/
 wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.4.14-xenial/0001-base-packaging.patch
 wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.4.14-xenial/0002-debian-changelog.patch
 wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.4.14-xenial/0003-configs-based-on-Ubuntu-4.4.0-28.47.patch
+wget http://kerneldedup.org/download/uksm/0.1.2.5/uksm-0.1.2.5-for-v4.4.patch
 
 cd v4.4.14 
 patch -p1 < ../0001-base-packaging.patch
 patch -p1 < ../0002-debian-changelog.patch
 patch -p1 < ../0003-configs-based-on-Ubuntu-4.4.0-28.47.patch
+patch -p1 < ../uksm-0.1.2.5-for-v4.4.patch
 
 
 #patch brctl
