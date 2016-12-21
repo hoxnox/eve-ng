@@ -185,7 +185,7 @@ $app -> get('/api/status', function() use ($app, $db) {
 	$output['message'] = $GLOBALS['messages']['60001'];
 	$output['data'] = Array();
 	$output['data']['version'] = VERSION;
-	$cmd = '/opt/qemu/bin/qemu-system-x86_64 -version | sed \'s/.* \([0-9.]*\), .*/\1/g\'';
+	$cmd = '/opt/qemu/bin/qemu-system-x86_64 -version | sed \'s/.* \([0-9.]*\).*/\1/g\'';
 	exec($cmd, $o, $rc);
 	if ($rc != 0) {
 		error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][60044]);

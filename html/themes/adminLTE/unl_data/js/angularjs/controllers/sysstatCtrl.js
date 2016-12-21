@@ -80,7 +80,7 @@ function sysstatController($scope, $http, $rootScope, $interval, $location) {
 					$scope.valueMem = $scope.serverstatus.mem;
 					$scope.valueSwap = $scope.serverstatus.swap;
 					$scope.valueDisk = $scope.serverstatus.disk;
-					$scope.versiondata="Current UNL version: "+response.data.data.version;
+					$scope.versiondata="Current API version: "+response.data.data.version;
 					$.unblockUI();
 				}, 
 				function errorCallback(response) {
@@ -92,4 +92,20 @@ function sysstatController($scope, $http, $rootScope, $interval, $location) {
 	$interval(function () {
 			if ($location.path() == '/sysstat') $scope.systemstat()
     }, 2000);
+	        // Stop All Nodes //START
+        //$app -> delete('/api/status', function() use ($app, $db) {
+        $scope.stopAll = function() {
+                $http({
+                        method: 'DELETE',
+                        url: '/api/status'})
+                        .then(
+                                function successCallback(response) {
+                                        console.log(response)
+                                },
+                                function errorCallback(response) {
+                                        console.log(response)
+                                }
+                        );
+        }
+        // Stop All Nodes //STOP
 }

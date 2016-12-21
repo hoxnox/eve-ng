@@ -724,6 +724,24 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
 	//	+'px; top: '+y1+'px; left: '+x1+'px;"></div>');
 	//}
 	//Line calculator //END	
+
+
+	// Stop All Nodes //START
+	//$app -> delete('/api/status', function() use ($app, $db) {
+	$scope.stopAll = function() {
+		$http({
+			method: 'DELETE',
+			url: '/api/status'})
+			.then(
+				function successCallback(response) {
+					console.log(response)
+				},
+				function errorCallback(response) {
+					console.log(response)
+				}
+			);
+	}
+	// Stop All Nodes //STOP
 };
 
 function ObjectLength( object ) {
