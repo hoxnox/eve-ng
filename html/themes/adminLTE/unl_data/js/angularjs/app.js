@@ -97,7 +97,7 @@ app_main_unl.controller('unlMainController', ['$scope', '$rootScope', '$http', '
 				$rootScope.tenant=response.data.data.tenant;
 				$scope.userfolder = response.data.folder;
 				console.log($rootScope.lab)
-				if ($rootScope.lab === null) {$location.path(path)} else {$location.path('/lab')};
+				if ($rootScope.lab === null) {$location.path(path)} else {location.href ='/legacy/'};
 				}
 			}, 
 			function errorCallback(response) {
@@ -247,7 +247,7 @@ app_main_unl.config(['$stateProvider', '$urlRouterProvider', function($stateProv
             }
         })
 		//LAB LAYOUT
-	.state('lab', {
+	.state('labnew', {
             url: "/lab",
             templateUrl: "/themes/adminLTE/unl_data/pages/lab/lab.html",
             data: {pageTitle: 'Lab'},

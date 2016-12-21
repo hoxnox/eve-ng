@@ -3120,10 +3120,11 @@ function printListTextobjects(textobjects) {
 
 // Print Authentication Page
 function printPageAuthentication() {
-    var html = new EJS({url: '/themes/default/ejs/login.ejs'}).render()
-    $('#body').html(html);
-    $("#form-login input:eq(0)").focus();
-    bodyAddClass('login');
+    location.href = "/" ; 
+    //var html = new EJS({url: '/themes/default/ejs/login.ejs'}).render()
+    //$('#body').html(html);
+    //$("#form-login input:eq(0)").focus();
+    //bodyAddClass('login');
 }
 
 // Print lab list page
