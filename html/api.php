@@ -193,6 +193,19 @@ $app -> get('/api/status', function() use ($app, $db) {
 	} else {
 		$output['data']['qemu_version'] = $o[0];
 	}
+	$o = "" ;
+	$cmd = 'cat /sys/kernel/mm/uksm/run';
+	exec($cmd, $o, $rc);
+	if ($rc != 0) { 
+		error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][60044]);
+		$output['data']['ukms'] = 'disabled';
+	} else {
+		if ($o[0] == "1") {
+			$output['data']['uksm'] = "enabled";
+		} else {
+			$output['data']['uksm'] = "disabled";
+		}
+	}
 	$output['data']['cpu'] = apiGetCPUUsage();
 	$output['data']['disk'] = apiGetDiskUsage();
 	list($output['data']['cached'], $output['data']['mem']) = apiGetMemUsage();
