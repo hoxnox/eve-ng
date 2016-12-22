@@ -4,6 +4,7 @@ function ModalCtrl($scope, $uibModal, $log) {
   $scope.modalActions = {
 		'addfile': {'path':'/themes/adminLTE/unl_data/pages/modals/addfile.html', 'controller':'AddElModalCtrl'},
 		'editfile': {'path':'/themes/adminLTE/unl_data/pages/modals/editfile.html', 'controller':'EditElModalCtrl'},
+		'editLab': {'path':'/themes/adminLTE/unl_data/pages/modals/editLab.html', 'controller':'EditElModalCtrl'},
 		'adduser': {'path':'/themes/adminLTE/unl_data/pages/modals/adduser.html', 'controller':'AddUserModalCtrl'},
 		'edituser': {'path':'/themes/adminLTE/unl_data/pages/modals/edituser.html', 'controller':'EditUserModalCtrl'},
 		'moveto': {'path':'/themes/adminLTE/unl_data/pages/modals/moveto.html', 'controller':'MoveToModalCtrl'},
@@ -29,6 +30,9 @@ function ModalCtrl($scope, $uibModal, $log) {
 						return {'name': $scope.newElementName, 'path': $scope.path};
 						break;
 				case 'editfile':
+						return {'info': $scope.labInfo, 'path': $scope.path};
+						break;
+				case 'editLab':
 						return {'info': $scope.labInfo, 'path': $scope.path};
 						break;
 				case 'adduser':
@@ -76,6 +80,21 @@ function ModalCtrl($scope, $uibModal, $log) {
 		//$log.info('Modal dismissed at: ' + new Date());
 		});
 		break;
+        case 'editLab':
+                modalInstance.result.then(function (result) {
+                        if (result.result){
+                                $scope.newElementName='';
+                                $scope.newElementToggle=false;
+                                $scope.getLabInfo(result.name)
+                                $scope.fileMngDraw($scope.path);
+                        } else {
+                                toastr["error"]("Server has error", "Error");
+                        }
+                }, function () {
+                //function if user just close modal
+                //$log.info('Modal dismissed at: ' + new Date());
+                });
+                break;
 	case 'adduser':
 		modalInstance.result.then(function (result) {
 			if (result){
@@ -225,7 +244,7 @@ function EditElModalCtrl($scope, $uibModalInstance, data, $http) {
 	$scope.author=data.info.author;
 	$scope.description=data.info.description;
 	$scope.version=data.info.version;
-	//$scope.body=data.info.body;
+	$scope.body=data.info.body;
 	$scope.scripttimeout=data.info.scripttimeout;
 	$scope.labName=data.info.name;
 	$scope.oldName=data.info.name;
@@ -242,7 +261,7 @@ function EditElModalCtrl($scope, $uibModalInstance, data, $http) {
 		$scope.newdata = {
 		'author': $scope.author,
 		'description': $scope.description,
-		//'body': $scope.body,
+		'body': $scope.body,
 		'scripttimeout': $scope.scripttimeout,
 		'version': $scope.version,
 		'name': $scope.labName}
