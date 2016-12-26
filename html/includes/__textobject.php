@@ -64,6 +64,7 @@ class TextObject {
 		$this -> id = (int) $id;
 		$this -> type = $p['type'];
 		if (isset($p['name'])) $this -> name = htmlentities($p['name']);
+		/* New code for new UI
 		if ( $this -> type == "text" ) {
 			$this -> newdata = data_to_textobjattr($this -> data);
 		}
@@ -73,6 +74,7 @@ class TextObject {
 		if ( $this -> type == "square" ) {
 			$this -> newdata = dataToSquareAttr($this -> data);
 		}
+		*/
 	}
 
 	/**
