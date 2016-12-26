@@ -2640,10 +2640,12 @@ function printLabTopology() {
 
                     $newTextObject
                         .draggable({
+			    grid:[10,10],
                             stop: textObjectDragStop
                         })
                         .resizable().resizable("destroy")
                         .resizable({
+			    grid:[10,10],
                             autoHide: true,
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
@@ -2658,10 +2660,12 @@ function printLabTopology() {
 
                     $newTextObject
                         .draggable({
+			    grid:[10,10],
                             stop: textObjectDragStop
                         })
                         .resizable().resizable('destroy')
                         .resizable({
+			    grid:[10,10],
                             autoHide: true,
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
@@ -2840,19 +2844,24 @@ function printLabStatus() {
             if (node['status'] == 0) {
                 // Stopped
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-stop');
+		$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').addClass('grayscale')
 
             } else if (node['status'] == 1) {
                 // Stopped and locked
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-warning-sign');
+		$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').addClass('grayscale')
             } else if (node['status'] == 2) {
                 // Running
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-play');
+		$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').removeClass('grayscale')
             } else if (node['status'] == 3) {
                 // Running and locked
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-time');
+		$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').removeClass('grayscale')
             } else {
                 // Undefined
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-question-sign');
+		$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').addClass('grayscale')
             }
 
             //add status attr
