@@ -2640,12 +2640,12 @@ function printLabTopology() {
 
                     $newTextObject
                         .draggable({
-			    grid:[10,10],
+			    grid:[3,3],
                             stop: textObjectDragStop
                         })
                         .resizable().resizable("destroy")
                         .resizable({
-			    grid:[10,10],
+			    grid:[3,3],
                             autoHide: true,
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
@@ -2660,12 +2660,12 @@ function printLabTopology() {
 
                     $newTextObject
                         .draggable({
-			    grid:[10,10],
+			    grid:[3,3],
                             stop: textObjectDragStop
                         })
                         .resizable().resizable('destroy')
                         .resizable({
-			    grid:[10,10],
+			    grid:[3,3],
                             autoHide: true,
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
@@ -2710,7 +2710,7 @@ function printLabTopology() {
                 // Read privileges and set specific actions/elements
                 if (ROLE == 'admin' || ROLE == 'editor') {
                     // Nodes and networks are draggable within a grid
-                    lab_topology.draggable($('.node_frame, .network_frame'), {grid: [10, 10]});
+                    lab_topology.draggable($('.node_frame, .network_frame'), {grid: [3, 3]});
                 }
 
                 $.each(topology, function (id, link) {
