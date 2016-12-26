@@ -1535,7 +1535,7 @@ function start(node_id) {
         success: function (data) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) started.');
-                $('#node' + node_id + ' img').removeClass('grayscale')
+                //$('#node' + node_id + ' img').removeClass('grayscale')
                 deferred.resolve(data['data']);
             } else {
                 // Application error
@@ -1574,7 +1574,7 @@ function recursive_start(nodes, i) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) started.');
                 addMessage('success', nodes[Object.keys(nodes)[i]]['name'] + ': ' + MESSAGES[76]);
-                $('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').removeClass('grayscale')
+                //$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').removeClass('grayscale')
                 
                 //set start status
             } else {
@@ -1620,7 +1620,7 @@ function stop(node_id) {
         success: function (data) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) stopped.');
-                $('#node' + node_id + ' img').addClass('grayscale')
+                //$('#node' + node_id + ' img').addClass('grayscale')
                 deferred.resolve(data['data']);
 
             } else {
@@ -2844,24 +2844,24 @@ function printLabStatus() {
             if (node['status'] == 0) {
                 // Stopped
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-stop');
-		$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').addClass('grayscale')
+		$('#node' + node['id'] + ' img').addClass('grayscale')
 
             } else if (node['status'] == 1) {
                 // Stopped and locked
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-warning-sign');
-		$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').addClass('grayscale')
+		$('#node' + node['id'] + ' img').addClass('grayscale')
             } else if (node['status'] == 2) {
                 // Running
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-play');
-		$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').removeClass('grayscale')
+		$('#node' + node['id'] + ' img').removeClass('grayscale')
             } else if (node['status'] == 3) {
                 // Running and locked
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-time');
-		$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').removeClass('grayscale')
+		$('#node' + node['id'] + ' img').removeClass('grayscale')
             } else {
                 // Undefined
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-question-sign');
-		$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').addClass('grayscale')
+		$('#node' + node['id'] + ' img').addClass('grayscale')
             }
 
             //add status attr
