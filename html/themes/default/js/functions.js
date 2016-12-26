@@ -2640,12 +2640,12 @@ function printLabTopology() {
 
                     $newTextObject
                         .draggable({
-			    grid:[3,3],
+			    grid:[2,2],
                             stop: textObjectDragStop
                         })
                         .resizable().resizable("destroy")
                         .resizable({
-			    grid:[3,3],
+			    grid:[2,2],
                             autoHide: true,
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
@@ -2660,12 +2660,12 @@ function printLabTopology() {
 
                     $newTextObject
                         .draggable({
-			    grid:[3,3],
+			    grid:[2,2],
                             stop: textObjectDragStop
                         })
                         .resizable().resizable('destroy')
                         .resizable({
-			    grid:[3,3],
+			    grid:[2,2],
                             autoHide: true,
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
