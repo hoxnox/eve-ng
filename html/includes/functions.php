@@ -694,6 +694,9 @@ function listNodeImages($t, $p) {
 				}
 			}
 			break;
+		case 'vpcs':
+			$results[]="";
+			break;
 	}
 	return $results;
 }
