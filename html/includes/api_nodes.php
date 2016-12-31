@@ -536,7 +536,7 @@ function apiGetLabNodeTemplate($p) {
 	);
 
 	// First Mac
-        if ($p['template'] == "bigip" || $p['template'] == "firepower6" || $node -> getTemplate() == "firepower") $output['data']['options']['firstmac'] =  Array(
+        if ($p['template'] == "bigip" || $p['template'] == "firepower6" || $p['template'] == "firepower") $output['data']['options']['firstmac'] =  Array(
                 'name' => $GLOBALS['messages'][70021],
                 'type' => 'input',
                 'value' => ( isset($p['firstmac'])?$p['firstmac']:"") 
