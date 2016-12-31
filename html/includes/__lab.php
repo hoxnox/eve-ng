@@ -210,7 +210,7 @@ class Lab {
 					$config_data = base64_decode($result);
 				}
 				// F5 needs a first mac address
-                                if ( $n['template']  == "bigip" ||  $n['template']  == "firepower" ) {
+                                if ( $n['template']  == "bigip" ||  $n['template']  == "firepower6" ) {
                                         if (isset($node -> attributes() -> firstmac)) {
                                                 $n['firstmac'] = (string) $node -> attributes() -> firstmac;
                                         } else {
@@ -1095,7 +1095,7 @@ class Lab {
 							$d -> addAttribute('ram', $node -> getRam());
 							$d -> addAttribute('ethernet', $node -> getEthernetCount());
 							$d -> addAttribute('uuid', $node -> getUuid());
-							if ( $node -> getTemplate() == "bigip" || $node -> getTemplate() == "firepower" ) $d -> addAttribute('firstmac', $node -> getFirstMac());
+							if ( $node -> getTemplate() == "bigip" || $node -> getTemplate() == "firepower6" ) $d -> addAttribute('firstmac', $node -> getFirstMac());
 							break;
 					}
 

@@ -85,6 +85,7 @@ if (!isset($node_templates)) {
 		'iol'			=>	'Cisco IOL',
 		'titanium'		=>	'Cisco NX-OSv (Titanium)',
 		'firepower'		=>	'Cisco FirePower',
+		'firepower6'		=>	'Cisco FirePower 6',
 		'ucspe'			=>	'Cisco UCS-PE',
 		'vios'			=>	'Cisco vIOS',
 		'viosl2'		=>	'Cisco vIOS L2',

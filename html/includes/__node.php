@@ -336,7 +336,7 @@ class Node {
 			if (isset($p['ethernet'])) $this -> ethernet = (int) $p['ethernet'];
 			if (isset($p['uuid'])) $this -> uuid = $p['uuid'];
 			if (isset($p['ram'])) $this -> ram = (int) $p['ram'];
-			if ( $p['template']  == 'bigip' || $p['template']  == 'firepower' ) {
+			if ( $p['template']  == 'bigip' || $p['template']  == 'firepower6' ) {
 				if (isset($p['firstmac']) && isValidMac($p['firstmac'])) {
 					$this -> firstmac = (string) $p['firstmac'];
 				} else {
