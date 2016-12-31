@@ -336,7 +336,7 @@ class Node {
 			if (isset($p['ethernet'])) $this -> ethernet = (int) $p['ethernet'];
 			if (isset($p['uuid'])) $this -> uuid = $p['uuid'];
 			if (isset($p['ram'])) $this -> ram = (int) $p['ram'];
-			if ( $p['template']  == 'bigip' ) {
+			if ( $p['template']  == 'bigip' || $p['template']  == 'firepower' ) {
 				if (isset($p['firstmac']) && isValidMac($p['firstmac'])) {
 					$this -> firstmac = (string) $p['firstmac'];
 				} else {
@@ -354,7 +354,7 @@ class Node {
 		// Building vpcs node
                 if ($p['type'] == 'vpcs') {
                         if (isset($p['ethernet'])) $this -> ethernet = 1;
-			$this -> image = 'none' ;
+			//$this -> image = 'vpcs' ;
                 }
 
 
@@ -711,6 +711,14 @@ class Node {
 		$bin = '';
 		$flags = '';
 
+                if ($this -> type == 'vpcs') {
+                        error_log(date('M d H:i:s ').'INFO: entering into vpcs getcommand');
+                        $bin .= '/opt/vpcsu/bin/vpcs';
+                        $flags .= ' -i 1 -p '.$this -> port;
+                        $flags .= ' '.$this -> flags_eth ;
+			return Array($bin ,$flags);
+                }
+
 		if ($this -> getImage() === '') {
 			// No image found
 			error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][80014]);
@@ -892,14 +900,6 @@ class Node {
 			$flags .= ' -m '.$this -> getRam();		// Maximum RAM
 			$flags .= ' '.$this -> getImage();		// Docker image
 		}
-
-		if ($this -> type == 'vpcs') {
-			error_log(date('M d H:i:s ').'INFO: entering into vpcs getcommand');
-			$bin .= '/opt/vpcsu/bin/vpcs';
-			$flags .= ' -i 1 -p '.$this -> port;
-			$flags .= ' '.$this -> flags_eth ;
-		}
-			
 
 		return Array($bin, $flags);
 	}
