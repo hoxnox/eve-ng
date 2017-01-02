@@ -78,6 +78,7 @@ if (!isset($node_templates)) {
 		'cda'			=>	'Cisco Context Directory Agent',
 		'csr1000v'		=>	'Cisco CSR 1000V',
 		'cips'			=>	'Cisco IPS',
+		'cucm'			=>	'Cisco CUCM',
 		'ise'			=>	'Cisco ISE',
 		'c1710'			=>	'Cisco IOS 1710 (Dynamips)',
 		'c3725'			=>	'Cisco IOS 3725 (Dynamips)',
