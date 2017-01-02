@@ -16,7 +16,7 @@ wget -O /usr/src/qemu-1.3.1.tar.bz2 -c "http://wiki.qemu-project.org/download/qe
 wget -O /usr/src/qemu-2.0.2.tar.bz2 -c "http://wiki.qemu-project.org/download/qemu-2.0.2.tar.bz2"
 wget -O /usr/src/qemu-2.2.0.tar.bz2 -c "http://wiki.qemu-project.org/download/qemu-2.2.0.tar.bz2"
 wget -O /usr/src/qemu-2.4.0.tar.bz2 -c "http://wiki.qemu-project.org/download/qemu-2.4.0.tar.bz2"
-
+wget -O /usr/src/OVMF.zip -c "http://downloads.sourceforge.net/project/edk2/OVMF/OVMF-X64-r15214.zip?r=https%3A%2F%2Fadosztal.blogspot.be%2F2016%2F12%2Fhow-to-add-nx-osv-8998-to-gns3.html&ts=1483382953&use_mirror=netassist"
 # get needed dev
 # IMPORTANT ADD src in sources.list
 apt-get build-dep qemu-kvm
@@ -30,6 +30,7 @@ rm -fr /usr/src/qemu-2.4.0
 # Extract
 
 cd /usr/src/
+unzip OVMF.zip OVMF.fd
 tar -jxvf qemu-1.3.1.tar.bz2
 tar -jxvf qemu-2.0.2.tar.bz2
 tar -jxvf qemu-2.2.0.tar.bz2
@@ -62,6 +63,7 @@ make install
 # QEMU
 mkdir -p ${DATA_DIR}/opt
 cp -a /opt/qemu ${DATA_DIR}/opt
+cp -a /usr/src/OVMF.fd  /opt/qemu/share/qemu/OVMF.fd
 cp -a /opt/qemu-1.3.1 ${DATA_DIR}/opt
 cp -a /opt/qemu-2.0.2 ${DATA_DIR}/opt
 cp -a /opt/qemu-2.2.0 ${DATA_DIR}/opt
