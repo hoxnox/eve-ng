@@ -62,8 +62,8 @@ make install
 
 # QEMU
 mkdir -p ${DATA_DIR}/opt
-cp -a /opt/qemu ${DATA_DIR}/opt
 cp -a /usr/src/OVMF.fd  /opt/qemu/share/qemu/OVMF.fd
+cp -a /opt/qemu ${DATA_DIR}/opt
 cp -a /opt/qemu-1.3.1 ${DATA_DIR}/opt
 cp -a /opt/qemu-2.0.2 ${DATA_DIR}/opt
 cp -a /opt/qemu-2.2.0 ${DATA_DIR}/opt
