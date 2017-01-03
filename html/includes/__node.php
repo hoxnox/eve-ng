@@ -2039,7 +2039,7 @@ class Node {
 							$this -> flags_eth .= ' -netdev tap,id=net'.$i.',ifname=vunl'.$this -> tenant.'_'.$this -> id.'_'.$i.',script=no';
 						}
 						break;
-					case 'nxos_9k':
+					case 'nxosv9k':
 						for ($i = 0; $i < $this -> ethernet; $i++) {
 							if (isset($old_ethernets[$i])) {
 								// Previous interface found, copy from old one
