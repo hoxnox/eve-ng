@@ -1206,7 +1206,10 @@ class Lab {
 		$dom -> loadXML($xml -> asXML());
 
 		// Write to file
-		$tmp = $this -> path.'/'.$this -> name.'.swp';
+		//$tmp = $this -> path.'/'.$this -> name.'.swp';
+		$tmp = tempnam($this -> path, $this -> name.'.swp');
+		chown ( $tmp , "www-data" );
+		chmod ( $tmp , 0644 );
 		$old = $this -> path.'/'.$this -> filename;
 		$dst = $this -> path.'/'.$this -> name.'.unl';
 		$fp = fopen($tmp, 'w');
