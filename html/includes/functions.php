@@ -694,6 +694,9 @@ function listNodeImages($t, $p) {
 				}
 			}
 			break;
+		case 'vpcs':
+			$results[]="";
+			break;
 	}
 	return $results;
 }
@@ -1116,8 +1119,12 @@ function data_to_textobjattr($data) {
 	if ( preg_match ( "/style/i", $data )) {
 		$dom->loadHTML(htmlspecialchars_decode($data));
 	} else {
+		if ( preg_match ( "/RECT/i", base64_decode($data) ) ) {
+			// OLD RECT STYLE 
+		return -1 ;
+		}
 		$dom->loadHTML(base64_decode($data));
-	}	
+	}
 	$pstyle=style_to_object($dom->documentElement->getElementsByTagName("div")->item(0)->getAttribute("style"));
 	$doc=$dom->documentElement->getElementsByTagName("p")->item(0);
 	$childs=$doc->childNodes;

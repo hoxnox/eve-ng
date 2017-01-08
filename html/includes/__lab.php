@@ -210,7 +210,7 @@ class Lab {
 					$config_data = base64_decode($result);
 				}
 				// F5 needs a first mac address
-                                if ( $n['template']  == "bigip" ) {
+                                if ( $n['template']  == "bigip" ||  $n['template']  == "firepower6" ||  $n['template']  == "firepower" ) {
                                         if (isset($node -> attributes() -> firstmac)) {
                                                 $n['firstmac'] = (string) $node -> attributes() -> firstmac;
                                         } else {
@@ -1095,7 +1095,7 @@ class Lab {
 							$d -> addAttribute('ram', $node -> getRam());
 							$d -> addAttribute('ethernet', $node -> getEthernetCount());
 							$d -> addAttribute('uuid', $node -> getUuid());
-							if ( $node -> getTemplate() == "bigip" ) $d -> addAttribute('firstmac', $node -> getFirstMac());
+							if ( $node -> getTemplate() == "bigip" || $node -> getTemplate() == "firepower6" || $node -> getTemplate() == "firepower" ) $d -> addAttribute('firstmac', $node -> getFirstMac());
 							break;
 					}
 
@@ -1206,7 +1206,10 @@ class Lab {
 		$dom -> loadXML($xml -> asXML());
 
 		// Write to file
-		$tmp = $this -> path.'/'.$this -> name.'.swp';
+		//$tmp = $this -> path.'/'.$this -> name.'.swp';
+		$tmp = tempnam($this -> path, $this -> name.'.swp');
+		chown ( $tmp , "www-data" );
+		chmod ( $tmp , 0644 );
 		$old = $this -> path.'/'.$this -> filename;
 		$dst = $this -> path.'/'.$this -> name.'.unl';
 		$fp = fopen($tmp, 'w');

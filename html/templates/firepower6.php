@@ -1,10 +1,8 @@
 <?php
-# vim: syntax=php tabstop=4 softtabstop=0 noexpandtab laststatus=1 ruler
-
 /**
- * html/templates/csr1000v.php
+ * html/templates/firepower.php
  *
- * csr1000v template for UNetLab.
+ * firepower template for UNetLab.
  *
  * LICENSE:
  *
@@ -17,11 +15,11 @@
  *
  * UNetLab is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with UNetLab.If not, see <http://www.gnu.org/licenses/>.
+ * along with UNetLab. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrea Dainese <andrea.dainese@gmail.com>
  * @copyright 2014-2016 Andrea Dainese
@@ -31,13 +29,12 @@
  */
 
 $p['type'] = 'qemu';
-$p['name'] = 'CSR'; 
-$p['icon'] = 'CSRv1000.png';
-$p['cpu'] = 1;
-$p['ram'] = 3072; 
-$p['ethernet'] = 4; 
-$p['console'] = 'telnet'; 
+$p['name'] = 'FirePower';
+$p['icon'] = 'Server.png';
+$p['cpu'] = 4;
+$p['ram'] = 8192;
+$p['ethernet'] = 4;
+$p['console'] = 'vnc';
 $p['qemu_arch'] = 'x86_64';
-$p['qemu_version'] = '2.2.0';
-$p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc';
+$p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -serial none -nographic -nodefconfig -nodefaults -display none -vga std -rtc base=utc';
 ?>

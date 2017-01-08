@@ -370,6 +370,8 @@ body.login {
 }
 
 #lab-viewport {
+    	background-image: url(/themes/adminLTE/unl_data/img/grid.png);
+    	background-repeat:repeat;
 	bottom: 0px;
 	position: absolute;
 	left: 40px;

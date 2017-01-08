@@ -176,3 +176,4 @@ MESSAGES[161] = 'running Docker nodes';
 MESSAGES[162] = 'running VPCS nodes';
 MESSAGES[163] = 'Boot Image';
 MESSAGES[164] = 'Icon';
+MESSAGES[165] = 'UKSM Status';

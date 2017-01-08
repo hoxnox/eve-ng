@@ -256,7 +256,7 @@ function apiGetLabNode($lab, $id , $html5, $username ) {
 			$output['data']['ethernet'] = $node -> getEthernetCount();
 			$output['data']['ram'] = $node -> getRam();
 			$output['data']['uuid'] = $node -> getUuid();
-			if ( $node -> getTemplate() == "bigip" )  {
+			if ( $node -> getTemplate() == "bigip" || $node -> getTemplate() == "firepower6" || $node -> getTemplate() == "firepower")  {
 				$output['data']['firstmac'] = $node -> getFirstMac();
 			}
 		}
@@ -333,7 +333,7 @@ function apiGetLabNodes($lab,$html5,$username) {
 				$output['data'][$node_id]['ethernet'] = $node -> getEthernetCount();
 				$output['data'][$node_id]['ram'] = $node -> getRam();
 				$output['data'][$node_id]['uuid'] = $node -> getUuid();
-				if ( $node -> getTemplate() == "bigip" ) {
+				if ( $node -> getTemplate() == "bigip" || $node -> getTemplate() == "firepower6" || $node -> getTemplate() == "firepower") {
 					$output['data'][$node_id]['firstmac'] = $node -> getFirstMac();
 				}
 			}
@@ -536,7 +536,7 @@ function apiGetLabNodeTemplate($p) {
 	);
 
 	// First Mac
-        if ($p['template'] == "bigip" ) $output['data']['options']['firstmac'] =  Array(
+        if ($p['template'] == "bigip" || $p['template'] == "firepower6" || $p['template'] == "firepower") $output['data']['options']['firstmac'] =  Array(
                 'name' => $GLOBALS['messages'][70021],
                 'type' => 'input',
                 'value' => ( isset($p['firstmac'])?$p['firstmac']:"") 

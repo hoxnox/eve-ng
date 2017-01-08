@@ -360,6 +360,7 @@ update-alternatives --install /usr/share/plymouth/themes/default.plymouth defaul
 update-initramfs -u -k all &> /dev/null
 update-grub2 &> /dev/null
 fgrep "xml.cisco.com" /etc/hosts &> /dev/null || echo 127.0.0.127 xml.cisco.com >> /etc/hosts 2> /dev/null
+sed -i 's/.*::.*//' /etc/hosts &> /dev/null
 # Fix tunctl
 setcap cap_net_admin+ep /usr/sbin/tunctl &> /dev/null
 setcap cap_net_admin+ep /bin/ip &> /dev/null

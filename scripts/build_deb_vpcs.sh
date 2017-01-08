@@ -8,7 +8,7 @@ BUILD_DIR="/build"
 CONTROL_DIR="$(mktemp -dt)"
 COMP_DIR="$(mktemp -dt)"
 DATA_DIR="$(mktemp -dt)"
-VERSION="0.8c"
+VERSION="1.0"
 RELEASE="eve-ng"
 
 cat ${CONTROL} | sed "s/%VERSION%/${VERSION}/" | sed "s/%RELEASE%/${RELEASE}/" > ${CONTROL_DIR}/control

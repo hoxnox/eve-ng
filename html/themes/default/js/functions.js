@@ -1535,7 +1535,7 @@ function start(node_id) {
         success: function (data) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) started.');
-                $('#node' + node_id + ' img').removeClass('grayscale')
+                //$('#node' + node_id + ' img').removeClass('grayscale')
                 deferred.resolve(data['data']);
             } else {
                 // Application error
@@ -1574,7 +1574,7 @@ function recursive_start(nodes, i) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) started.');
                 addMessage('success', nodes[Object.keys(nodes)[i]]['name'] + ': ' + MESSAGES[76]);
-                $('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').removeClass('grayscale')
+                //$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').removeClass('grayscale')
                 
                 //set start status
             } else {
@@ -1620,7 +1620,7 @@ function stop(node_id) {
         success: function (data) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) stopped.');
-                $('#node' + node_id + ' img').addClass('grayscale')
+                //$('#node' + node_id + ' img').addClass('grayscale')
                 deferred.resolve(data['data']);
 
             } else {
@@ -2640,10 +2640,12 @@ function printLabTopology() {
 
                     $newTextObject
                         .draggable({
+			    grid:[10,10],
                             stop: textObjectDragStop
                         })
                         .resizable().resizable("destroy")
                         .resizable({
+			    grid:[10,10],
                             autoHide: true,
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
@@ -2658,10 +2660,12 @@ function printLabTopology() {
 
                     $newTextObject
                         .draggable({
+			    grid:[10,10],
                             stop: textObjectDragStop
                         })
                         .resizable().resizable('destroy')
                         .resizable({
+			    grid:[10,10],
                             autoHide: true,
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
@@ -2840,19 +2844,24 @@ function printLabStatus() {
             if (node['status'] == 0) {
                 // Stopped
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-stop');
+		$('#node' + node['id'] + ' img').addClass('grayscale')
 
             } else if (node['status'] == 1) {
                 // Stopped and locked
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-warning-sign');
+		$('#node' + node['id'] + ' img').addClass('grayscale')
             } else if (node['status'] == 2) {
                 // Running
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-play');
+		$('#node' + node['id'] + ' img').removeClass('grayscale')
             } else if (node['status'] == 3) {
                 // Running and locked
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-time');
+		$('#node' + node['id'] + ' img').removeClass('grayscale')
             } else {
                 // Undefined
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-question-sign');
+		$('#node' + node['id'] + ' img').addClass('grayscale')
             }
 
             //add status attr
@@ -3120,10 +3129,11 @@ function printListTextobjects(textobjects) {
 
 // Print Authentication Page
 function printPageAuthentication() {
-    var html = new EJS({url: '/themes/default/ejs/login.ejs'}).render()
-    $('#body').html(html);
-    $("#form-login input:eq(0)").focus();
-    bodyAddClass('login');
+    location.href = "/" ; 
+    //var html = new EJS({url: '/themes/default/ejs/login.ejs'}).render()
+    //$('#body').html(html);
+    //$("#form-login input:eq(0)").focus();
+    //bodyAddClass('login');
 }
 
 // Print lab list page
@@ -3383,6 +3393,7 @@ function drawStatusInModal(data) {
     $('#stats-text ul', $statusModalBody).empty();
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[39] + ': <code>' + data['version'] + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[49] + ': <code>' + data['qemu_version'] + '</code></li>');
+    $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[165] + ': <code>' + data['uksm'] + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[29] + ': <code>' + ROLE + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[32] + ': <code>' + ((TENANT == -1) ? 'none' : TENANT) + '</code></li>');
 

@@ -28,9 +28,9 @@
 		                </div>
 		            </div>
 		            <div class="form-group row">
-		                <label class="col-md-2 control-label control-label_custom_pos">Author<sup class="sup-star">*</sup></label>
+		                <label class="col-md-2 control-label control-label_custom_pos">Author</label>
 		                <div class="col-md-10">
-		                    <input class="form-control" name="lab[author]" ng-model="labData.author" type="text" required ng-pattern="/^(\d)+$/">
+		                    <input class="form-control" name="lab[author]" ng-model="labData.author" type="text" ng-pattern="/^(\d)+$/">
 		                    <span ng-show="digits.nums.$error.pattern">Numbers only, please.</span>
 		                </div>
 		            </div>

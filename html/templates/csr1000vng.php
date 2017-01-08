@@ -4,7 +4,7 @@
 /**
  * html/templates/csr1000v.php
  *
- * csr1000v template for UNetLab.
+ * csr1000v denali and everest template for UNetLab.
  *
  * LICENSE:
  *
@@ -39,5 +39,6 @@ $p['ethernet'] = 4;
 $p['console'] = 'telnet'; 
 $p['qemu_arch'] = 'x86_64';
 $p['qemu_version'] = '2.2.0';
+$p['qemu_nic'] = 'virtio-net-pci'; 
 $p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc';
 ?>
