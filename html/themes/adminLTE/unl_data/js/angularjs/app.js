@@ -97,7 +97,9 @@ app_main_unl.controller('unlMainController', ['$scope', '$rootScope', '$http', '
 				$rootScope.tenant=response.data.data.tenant;
 				$scope.userfolder = response.data.folder;
 				console.log($rootScope.lab)
-				if ($rootScope.lab === null) {$location.path(path)} else {location.href ='/legacy/'};
+				// Preview need to get back to legacy UI
+				// if ($rootScope.lab === null) {$location.path(path)} else {location.href ='/legacy/'};
+				if ($rootScope.lab === null) {$location.path(path)} else {$location.path('/lab')};
 				}
 			}, 
 			function errorCallback(response) {
