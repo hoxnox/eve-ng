@@ -240,7 +240,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 							'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute; z-index:2;"></div>'+
 							'<a href="{{node['+id+'].url}}" ng-click="openNodeConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer">'+
 							'<img ng-src="images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
-							'<figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label">'+node.name + ( total_new_nodes>1 ? id : '') +'</figcaption>'+
+							'<figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label">'+node.name + ' id:' + ( total_new_nodes>0 ? id : '') +'</figcaption>'+
 							'</div>';
 							$scope.compileNewElement(elDIV, 'nodeID_'+id)
 						}

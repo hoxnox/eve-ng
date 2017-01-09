@@ -464,7 +464,7 @@ function nodeInit(node){
 		'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute;"></div>'+
 		'<a href="{{node['+id+'].url}}" '+ntarget+' ng-click="openNodeConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer" ng-mouseup="nodeStopTouching('+id+', $event)">'+
 		'<img ng-src="/images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
-		'<a><figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind="node['+id+'].name"></figcaption></a>'+
+		'<a><figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label" ng-bind-template="{{node['+id+'].name}} id:' + id + '" cools></figcaption></a>'+
 		'</div>';
 	console.log(node.url)
 	$scope.compileNewElement(elDIV, 'nodeID_'+node.id);
