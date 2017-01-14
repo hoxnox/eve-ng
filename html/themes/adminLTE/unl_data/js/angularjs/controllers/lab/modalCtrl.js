@@ -230,6 +230,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 						$scope.node[node.id[k]].playstop=false;
 						$scope.node[node.id[k]].playstopView=false;
 						$scope.node[node.id[k]].upstatus=(node.status == 2) ? true : false;
+						var show_iol_id = (node.type == 'iol') && (node.name == "R") ? id : '';
 						var elDIV=
 							'<div id="nodeID_'+id+'" class="w element-menu" style="left: '+node.left+'px; top: '+node.top+'px;" ng-mousemove="node['+id+'].playstopView=true" ng-mouseleave="node['+id+'].playstopView=false">'+
 							'<!--<div class="play-tag" ng-click="startstopNode('+id+');" ng-show="node['+id+'].playstopView && !node['+id+'].upstatus" title="Start node"><i class="fa fa-play play-icon" aria-hidden="true"></i></div>'+
@@ -240,7 +241,7 @@ function ModalCtrl($scope, $uibModal, $log, $rootScope,$http,$window) {
 							'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute; z-index:2;"></div>'+
 							'<a href="{{node['+id+'].url}}" ng-click="openNodeConsole('+id+', $event)" ng-mousedown="nodeTouching('+id+', $event)" ng-mousemove="nodeDragging('+id+', $event)" class="pointer">'+
 							'<img ng-src="images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}"></a>'+
-							'<figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label">'+node.name + ' id:' + ( total_new_nodes>0 ? id : '') +'</figcaption>'+
+							'<a><figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label">'+node.name + show_iol_id +'</figcaption></a>'+
 							'</div>';
 							$scope.compileNewElement(elDIV, 'nodeID_'+id)
 						}
