@@ -6,7 +6,7 @@
 	<form id="form-add-node" name="formAddNode">
 		<div class="newNodeSelect form-group">
 			<label>Select template</label>
-			<ui-select  ng-model="selected.brname" on-select="viewTemplate($item, $model)">
+			<ui-select http://195.122.9.25/#/lab ng-model="selected.brname" on-select="viewTemplate($item, $model)">
 			 <ui-select-match placeholder="Select a template">
 				<span ng-bind="$select.selected.fullname"></span>
 			</ui-select-match>
