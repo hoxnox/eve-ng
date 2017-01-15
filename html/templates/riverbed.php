@@ -31,12 +31,13 @@
  */
 
 $p['type'] = 'qemu';
-$p['name'] = 'riverbed';
+$p['name'] = 'vRiverbed';
 $p['icon'] = 'Network Analyzer.png';
 $p['cpu'] = 1;
 $p['ram'] = 2048;
-$p['ethernet'] = 1;
+$p['ethernet'] = 4;
 $p['console'] = 'vnc';
 $p['qemu_arch'] = 'x86_64';
-$p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -serial none -nographic -nodefconfig -nodefaults -display none -vga std -rtc base=utc';
+$p['qemu_nic'] = 'virtio-net-pci';
+$p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -vga std -usbdevice tablet -boot order=dc'; 
 ?>
