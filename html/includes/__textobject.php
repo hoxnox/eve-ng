@@ -65,14 +65,16 @@ class TextObject {
 		$this -> type = $p['type'];
 		if (isset($p['name'])) $this -> name = htmlentities($p['name']);
 		/* New code for new UI */
-		if ( $this -> type == "text" ) {
-			$this -> newdata = data_to_textobjattr($this -> data);
-		}
-		if ( $this -> type == "circle" ) {
-			$this -> newdata = dataToCircleAttr($this -> data);
-		}
-		if ( $this -> type == "square" ) {
-			$this -> newdata = dataToSquareAttr($this -> data);
+		if ( $GLOBALS['UIlegacy'] == 0 ) {
+			if ( $this -> type == "text" ) {
+				$this -> newdata = data_to_textobjattr($this -> data);
+			}
+			if ( $this -> type == "circle" ) {
+				$this -> newdata = dataToCircleAttr($this -> data);
+			}
+			if ( $this -> type == "square" ) {
+				$this -> newdata = dataToSquareAttr($this -> data);
+			}
 		}
 		/* End of new code */
 	}

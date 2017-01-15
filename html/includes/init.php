@@ -29,6 +29,9 @@ if (file_exists('includes/config.php')) {
 	require_once('includes/config.php');
 }
 
+// Preview Code UIlegacy
+$UIlegacy = 0 ;
+
 if (!defined('DATABASE')) define('DATABASE', '/opt/unetlab/data/database.sdb');
 if (!defined('FORCE_VM')) define('FORCE_VM', 'auto');
 if (!defined('MODE')) define('MODE', 'multi-user');
@@ -130,7 +133,7 @@ if (!isset($node_templates)) {
 }
 
 // Define parameters
-define('VERSION', '2.0.1-66');
+define('VERSION', '2.0.3-0');
 define('BASE_DIR', '/opt/unetlab');
 define('BASE_LAB', BASE_DIR.'/labs');
 define('BASE_TMP', BASE_DIR.'/tmp');

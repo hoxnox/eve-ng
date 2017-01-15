@@ -17,6 +17,7 @@ app_main_unl.run(function($rootScope) {
     $rootScope.csspath = '/themes/adminLTE/unl_data/css/';
     $rootScope.pagespath = '/themes/adminLTE/unl_data/pages/';
     $rootScope.bodyclass = 'sidebar-collapse';
+    $rootScope.UIlegacy = 0 ;
 });
 
 app_main_unl.directive('focusOn', function() {
@@ -98,8 +99,11 @@ app_main_unl.controller('unlMainController', ['$scope', '$rootScope', '$http', '
 				$scope.userfolder = response.data.folder;
 				console.log($rootScope.lab)
 				// Preview need to get back to legacy UI
-				// if ($rootScope.lab === null) {$location.path(path)} else {location.href ='/legacy/'};
-				if ($rootScope.lab === null) {$location.path(path)} else {$location.path('/lab')};
+				if ( $rootScope.UIlegacy == 1) {
+					if ($rootScope.lab === null ) {$location.path(path)} else {location.href ='/legacy/'};
+					} else {
+					if ($rootScope.lab === null ) {$location.path(path)} else {$location.path('/lab')};
+					}
 				}
 			}, 
 			function errorCallback(response) {
