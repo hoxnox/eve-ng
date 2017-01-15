@@ -549,48 +549,41 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 	///////////////////////////////////////////////
 	//// Free select //END
 
-	$scope.nodeClickDown=false;
-	$scope.nodeDraggingFlag=false;
+	$scope.elemWasMoved = false;
 	$scope.nodeTouching = function(node, $event){
 		//$event.preventDefault();
-		$scope.nodeClickDown=true;
-		//console.log($scope.nodeClickDown)
-		$(".element-menu").addClass("nodeClick");
-		// console.log($scope.nodeClickDown)
+		$scope.elemWasMoved = false;
+		// setTimeout(function(){
+		// 	$scope.nodeDraggingFlag = true;
+		// },100)
+		// $(".element-menu").addClass("nodeClick");
 
 	}
 	$scope.nodeStopTouching = function(node, $event){
-		console.log("sto ptouch dragging", $scope.nodeDraggingFlag)
-		if ($scope.nodeDraggingFlag == true)
-		{
-			setTimout(function(){
+		if ($scope.nodeDraggingFlag == true) {
+			// $scope.nodeDraggingFlag = false;
+			setTimeout(function(){
+				// console.log("rem nodeClick")
+				$scope.nodeDraggingFlag = false;
 				$(".element-menu").removeClass("nodeClick");
-				
-			},200)
+			},100)
 		}
-		else
+		else {
 			$(".element-menu").removeClass("nodeClick");
-		$scope.nodeDraggingFlag = false;
-		// console.log($scope.nodeClickDown)
+		}
 	}
 
 	$scope.nodeDragging = function(node, $event){
 		$event.preventDefault();
-		if ($scope.nodeClickDown && !$scope.nodeDraggingFlag)
-		{
-		console.log("drag")
-			$scope.nodeDraggingFlag = true;
-			// console.log("class added");
-		} 
-		// console.log($scope.nodeDraggingFlag);
 	}
 
 	$scope.openNodeConsole = function(node, e){
-		console.log("open console")
-		if (!$scope.node[node].upstatus)
-		{
-			if (!$scope.nodeDraggingFlag)
-			{
+		// console.log("open console1", $scope.nodeDraggingFlag)
+		// console.log("open console2", $scope.node[node].upstatus)
+		// console.log("open console3", $scope.elemWasMoved)
+		if (!$scope.node[node].upstatus) {
+			console.log("here1")
+			if (!$scope.elemWasMoved) {
 				console.log('Node down console locked');
 		        // e.preventDefault();
 		        // e.stopPropagation();
@@ -611,27 +604,26 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 			        $("#menu_title_left").text(title + " (" + elem_id + ")");
 			        $("#context-menu_leftClick").addClass("context-menu_leftClick--active").css("left", pos.x).css("top", pos.y);
 			      	$("#context-menu").removeClass("context-menu--active");
-			        // console.log("open context-meniu_leftClick");
+			        console.log("open context-meniu_leftClick");
 			        $scope.positionMenu(e);	
 			        console.log("positionMenu");
 		        }
 		        
-	    	}
+	    	} 
 	        // setTimeout(function() {
 	        //   menuState_leftClick = 1
 	        // }, 100);
 	        e.preventDefault();
 	        e.stopPropagation();
-	    
+			console.log("here2")
 		}
-		if ($scope.nodeDraggingFlag) 
+		if ($scope.elemWasMoved) 
 		{
 			e.preventDefault(); 
-			// console.log('Node draged console locked')
+			console.log('Node draged console locked')
 		}
-		$scope.nodeClickDown=false;
 		$scope.nodeDraggingFlag=false;
-		console.log($scope.nodeDraggingFlag);
+		console.log("$scope.nodeDraggingFlag",$scope.nodeDraggingFlag);
 		//$(".element-menu").removeClass("nodeClick");
 	}
 
