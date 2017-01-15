@@ -124,7 +124,7 @@ if (!isset($node_templates)) {
 		'ostinato'		=>	'Ostinato',
 		'paloalto'		=>	'Palo Alto VM-100 Firewall',
 		'pfsense'		=>	'pfSense Firewall',
-		//'riverbed'		=>	'Riverbed',
+		'riverbed'		=>	'Riverbed',
 		'sterra'		=>	'S-Terra',
 		'vyos'			=>	'VyOS',
 		'win'			=>	'Windows',
