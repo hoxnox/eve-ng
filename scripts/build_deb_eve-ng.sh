@@ -162,6 +162,12 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+cp -a etc/cpulimit.service ${DATA_DIR}/etc/systemd/system/cpulimit.service &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
 cp -a etc/apache.conf ${DATA_DIR}/etc/apache2/sites-available/unetlab.conf &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
@@ -340,7 +346,9 @@ cat > ${CONTROL_DIR}/postinst << EOF
 #!/bin/bash
 systemctl --system daemon-reload &> /dev/null
 systemctl enable ovfstartup &> /dev/null
+systemctl enable cpulimit &> /dev/null
 systemctl start ovfstartup &> /dev/null
+systemctl start cpulimit.php &> /dev/null
 groupadd -g 32768 -f unl &> /dev/null
 a2enmod rewrite &> /dev/null
 a2enmod proxy_html &> /dev/null
