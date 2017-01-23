@@ -118,7 +118,7 @@ $(document).on('shown.bs.modal', '.modal', function () {
 $(document).on('dragstop', '.node_frame, .network_frame', function (e) {
     var that = this,
         offset = $(this).offset(),
-        left = Math.round(offset.left - 30 + $('#lab-viewport').scrollLeft()),  // 30 is the sidebar
+        left = Math.round(offset.left - 40 + $('#lab-viewport').scrollLeft()),  // 40 is the sidebar
         top = Math.round(offset.top + $('#lab-viewport').scrollTop()),
         id = $(this).attr('data-path');
     if (left >= 0 && top >= 0) {
