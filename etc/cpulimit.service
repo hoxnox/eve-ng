@@ -1,0 +1,11 @@
+[Unit]
+Description=CPU Limit for Qemu
+
+[Service]
+Type=simple
+ExecStart=/opt/unetlab/scripts/cpulimit_daemon.php > /opt/unetlab/data/Logs/cpulimit.log 2>&1
+ExecStop=(/usr/bin/killall -9 cpulimit-daemon.php & /usr/bin/killall -TERM cpulimit )
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

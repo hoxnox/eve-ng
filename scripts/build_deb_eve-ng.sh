@@ -162,6 +162,12 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+cp -a etc/cpulimit.service ${DATA_DIR}/etc/systemd/system/cpulimit.service &>> ${LOG}
+if [ $? -ne 0 ]; then
+	echo -e ${FAILED}
+	exit 1
+fi
+
 cp -a etc/apache.conf ${DATA_DIR}/etc/apache2/sites-available/unetlab.conf &>> ${LOG}
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
@@ -340,7 +346,9 @@ cat > ${CONTROL_DIR}/postinst << EOF
 #!/bin/bash
 systemctl --system daemon-reload &> /dev/null
 systemctl enable ovfstartup &> /dev/null
+systemctl enable cpulimit &> /dev/null
 systemctl start ovfstartup &> /dev/null
+systemctl start cpulimit &> /dev/null
 groupadd -g 32768 -f unl &> /dev/null
 a2enmod rewrite &> /dev/null
 a2enmod proxy_html &> /dev/null
@@ -355,6 +363,7 @@ sed -i 's/.*GRUB_GFXMODE=.*/GRUB_GFXMODE="800x600"/g' /etc/default/grub &> /dev/
 sed -i 's/.*GRUB_HIDDEN_TIMEOUT=.*/GRUB_HIDDEN_TIMEOUT=2/g' /etc/default/grub &> /dev/null
 sed -i 's/.*GRUB_HIDDEN_TIMEOUT_QUIET=.*/GRUB_HIDDEN_TIMEOUT_QUIET=true/g' /etc/default/grub &> /dev/null
 sed -i 's/.*GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/g' /etc/default/grub &> /dev/null
+sed -i 's/.*GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 intel_iommu=on isolcpus=1-99 nohz_full=1-99 rcu_nocbs=1-99 hugepagesz=1GB hugepages=64 default_hugepagesz=1GB"/g' /etc/default/grub &> /dev/null
 sed -i "s/^ServerName.*$/ServerName \$(hostname -f)/g" /etc/apache2/sites-available/unetlab.conf &> /dev/null
 update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/eveng/eveng.plymouth 100 &> /dev/null
 update-initramfs -u -k all &> /dev/null

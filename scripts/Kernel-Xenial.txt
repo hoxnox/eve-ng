@@ -28,7 +28,7 @@ make-kpkg clean
 TMPVER="config-$(uname -r)"
 mv /boot/${TMPVER} /boot/${TMPVER}.ori
 cat debian.master/config/config.common.ubuntu debian.master/config/amd64/config.common.amd64 debian.master/config/amd64/config.flavour.generic | sed -e 's/.*CONFIG_VERSION_SIGNATURE.*/CONFIG_VERSION_SIGNATURE="Ubuntu 4.4.14-040414.201606241434-generic 4.4.14"/' > /boot/${TMPVER}
-fakeroot make-kpkg -j4 --initrd --append-to-version=-eve-ng kernel-image kernel-headers 
+fakeroot make-kpkg -j4 --initrd --append-to-version=-eve-ng-ukms-1.0 kernel-image kernel-headers 
 
 mv /boot/${TMPVER}.ori /boot/${TMPVER}
 
