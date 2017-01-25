@@ -44,6 +44,7 @@ extern int child_eth;
 extern int child_ser;
 extern int tenant_id;
 extern int tsclients_socket[];
+extern int tap_id;
 
 // Print usage
 void usage(const char *bin) {
@@ -159,7 +160,7 @@ int mk_tap(int child_eth, int *iol_tap) {
     // Create all interfaces
     for (i = 0; i < child_eth; i++) {
         for (j = 0; j <= 3; j++) {
-            sprintf(tap_name, "vunl%u_%u_%u", tenant_id, device_id, i + 16 * j);
+            sprintf(tap_name, "vunl%u_%u_%u", tenant_id, tap_id, i + 16 * j);
             if ((rc = tap_listen(tap_name, &tap_fd)) != 0) {
                 rc = 1;
                 UNLLog(LLVERBOSE, "Skipping TAP (%s) interface (%i).\n", tap_name, rc);
