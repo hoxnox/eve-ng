@@ -130,6 +130,36 @@ if (!isset($node_templates)) {
 		'win'			=>	'Windows',
 		'vpcs'			=>	'Virtual PC (VPCS)'
 	);
+	$qemudir = scandir("/opt/unetlab/addons/qemu/");
+	
+	foreach ( $node_templates as $templ => $desc ) {
+		$found = 0 ;
+		if ( $templ == "iol" ) {
+		$found = 1 ;
+		}
+		if ( $templ == "c1710" ) {
+		$found = 1 ;
+		}
+		if ( $templ == "c3725" ) {
+		$found = 1 ;
+		}
+		if ( $templ == "c7200" ) {
+		$found = 1 ;
+		} 
+		if ( $templ == "vpcs" ) {
+		$found = 1 ;
+		}
+		foreach ( $qemudir as $dir ) {
+			if ( preg_match ( "/".$templ."-.*/",$dir )  ==  1 ) {
+				$found = 1 ;
+			}
+		}
+		if ( $found == 0 )  {
+			$node_templates[$templ] = $desc.'.missing'  ;
+		}
+			
+	}
+			
 }
 
 // Define parameters
