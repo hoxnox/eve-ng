@@ -131,21 +131,25 @@ if (!isset($node_templates)) {
 		'vpcs'			=>	'Virtual PC (VPCS)'
 	);
 	$qemudir = scandir("/opt/unetlab/addons/qemu/");
+	$ioldir=scandir("/opt/unetlab/addons/iol/bin/");
+	$dyndir=scandir("/opt/unetlab/addons/dynamips/");
 	
 	foreach ( $node_templates as $templ => $desc ) {
 		$found = 0 ;
 		if ( $templ == "iol" ) {
-		$found = 1 ;
+			foreach ( $ioldir as $dir ) {
+                        	if ( preg_match ( "/\.bin/",$dir )  ==  1 ) {
+                                	$found = 1 ;
+                        	}
+                	}
 		}
-		if ( $templ == "c1710" ) {
-		$found = 1 ;
+		if ( $templ == "c1710" || $templ == "c3725" || $templ == "c7200" ) {
+			foreach ( $dyndir as $dir ) {
+				if ( preg_match ( "/".$templ."/",$dir )  ==  1 ) {
+					$found = 1 ;
+				}
+			}
 		}
-		if ( $templ == "c3725" ) {
-		$found = 1 ;
-		}
-		if ( $templ == "c7200" ) {
-		$found = 1 ;
-		} 
 		if ( $templ == "vpcs" ) {
 		$found = 1 ;
 		}
