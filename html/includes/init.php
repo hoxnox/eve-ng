@@ -30,7 +30,7 @@ if (file_exists('includes/config.php')) {
 }
 
 // Preview Code UIlegacy
-$UIlegacy = 0 ;
+$UIlegacy = 1 ;
 
 if (!defined('DATABASE')) define('DATABASE', '/opt/unetlab/data/database.sdb');
 if (!defined('FORCE_VM')) define('FORCE_VM', 'auto');
