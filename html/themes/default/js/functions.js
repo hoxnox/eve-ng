@@ -693,8 +693,13 @@ function getNetworkTypes() {
         dataType: 'json',
         success: function (data) {
             if (data['status'] == 'success') {
+                var filteredData = {};
+                for(var net in data.data){
+                    if (net == "bridge" || net == "ovs") continue;
+                    filteredData[net] = net;
+                }
                 logger(1, 'DEBUG: got network types.');
-                deferred.resolve(data['data']);
+                deferred.resolve(filteredData);
             } else {
                 // Application error
                 logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
