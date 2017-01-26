@@ -30,7 +30,7 @@ if (file_exists('includes/config.php')) {
 }
 
 // Preview Code UIlegacy
-$UIlegacy = 0 ;
+$UIlegacy = 1 ;
 
 if (!defined('DATABASE')) define('DATABASE', '/opt/unetlab/data/database.sdb');
 if (!defined('FORCE_VM')) define('FORCE_VM', 'auto');
@@ -127,9 +127,45 @@ if (!isset($node_templates)) {
 		'riverbed'		=>	'Riverbed',
 		'sterra'		=>	'S-Terra',
 		'vyos'			=>	'VyOS',
-		'win'			=>	'Windows',
+		'win'			=>	'Windows (Legacy template)',
+		'winstation'			=>	'Windows Workstation',
+		'winserver'			=>	'Windows Server',
 		'vpcs'			=>	'Virtual PC (VPCS)'
 	);
+	$qemudir = scandir("/opt/unetlab/addons/qemu/");
+	$ioldir=scandir("/opt/unetlab/addons/iol/bin/");
+	$dyndir=scandir("/opt/unetlab/addons/dynamips/");
+	
+	foreach ( $node_templates as $templ => $desc ) {
+		$found = 0 ;
+		if ( $templ == "iol" ) {
+			foreach ( $ioldir as $dir ) {
+                        	if ( preg_match ( "/\.bin/",$dir )  ==  1 ) {
+                                	$found = 1 ;
+                        	}
+                	}
+		}
+		if ( $templ == "c1710" || $templ == "c3725" || $templ == "c7200" ) {
+			foreach ( $dyndir as $dir ) {
+				if ( preg_match ( "/".$templ."/",$dir )  ==  1 ) {
+					$found = 1 ;
+				}
+			}
+		}
+		if ( $templ == "vpcs" ) {
+		$found = 1 ;
+		}
+		foreach ( $qemudir as $dir ) {
+			if ( preg_match ( "/".$templ."-.*/",$dir )  ==  1 ) {
+				$found = 1 ;
+			}
+		}
+		if ( $found == 0 )  {
+			$node_templates[$templ] = $desc.'.missing'  ;
+		}
+			
+	}
+			
 }
 
 // Define parameters

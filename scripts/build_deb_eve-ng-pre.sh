@@ -19,8 +19,8 @@ MYSQL_ROOT_PASSWD="eve-ng"
 # Environment
 echo -ne "Building environment... "
 
-VERSION="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f1 2>> ${LOG})"
-RELEASE="$(cat ${SRC_DIR}/VERSION 2>> ${LOG} | cut -d- -f2 2>> ${LOG})"
+VERSION="$(cat ${SRC_DIR}/VERSION.PRE 2>> ${LOG} | cut -d- -f1 2>> ${LOG})"
+RELEASE="$(cat ${SRC_DIR}/VERSION.PRE 2>> ${LOG} | cut -d- -f2 2>> ${LOG})"
 
 mkdir -p ${BUILD_DIR} ${CONTROL_DIR} ${DATA_DIR}/opt/unetlab/addons ${DATA_DIR}/opt/unetlab/data/Logs ${DATA_DIR}/opt/unetlab/labs ${DATA_DIR}/opt/unetlab/tmp ${DATA_DIR}/opt/unetlab/scripts ${DATA_DIR}/opt/unetlab/data/Exports &>> ${LOG} ${DATA_DIR}/opt/unetlab/wrappers ${DATA_DIR}/opt/unetlab/addons/iol/lib ${DATA_DIR}/opt/unetlab/addons/iol/bin ${DATA_DIR}/opt/unetlab/addons/dynamips ${DATA_DIR}/opt/unetlab/addons/qemu ${DATA_DIR}/etc/sudoers.d ${DATA_DIR}/etc/apache2/sites-available ${DATA_DIR}/etc/logrotate.d ${DATA_DIR}/usr/share/plymouth/themes ${DATA_DIR}/etc/initramfs-tools/conf.d ${DATA_DIR}/etc/apt/sources.list.d ${DATA_DIR}/opt/unetlab/html/files ${DATA_DIR}/etc/profile.d ${DATA_DIR}/etc/init /build/apt/pool/${DISTNAME}/e/eve-ng ${DATA_DIR}/etc/systemd/system
 if [ $? -ne 0 ]; then

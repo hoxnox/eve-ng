@@ -17,7 +17,7 @@ app_main_unl.run(function($rootScope) {
     $rootScope.csspath = '/themes/adminLTE/unl_data/css/';
     $rootScope.pagespath = '/themes/adminLTE/unl_data/pages/';
     $rootScope.bodyclass = 'sidebar-collapse';
-    $rootScope.UIlegacy = 0 ;
+    $rootScope.UIlegacy = 1 ;
 });
 
 app_main_unl.directive('focusOn', function() {

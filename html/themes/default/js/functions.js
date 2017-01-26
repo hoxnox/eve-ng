@@ -1926,14 +1926,16 @@ function printFormNode(action, values) {
     var template = (values == null || values['template'] == null) ? null : values['template'];
 
     var title = (action == 'add') ? MESSAGES[85] : MESSAGES[86];
-    var template_disabled = (values == null || values['template'] == null) ? '' : 'disabled ';
+    var template_disabled = (values == null || values['template'] == null ) ? '' : 'disabled ';
 
     $.when(getTemplates(null)).done(function (templates) {
         var html = '';
         html += '<form id="form-node-' + action + '" class="form-horizontal"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[84] + '</label><div class="col-md-5"><select id="form-node-template" class="selectpicker form-control" name="node[template]" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[102] + '</option>';
         $.each(templates, function (key, value) {
+	    var valdisabled  = (/missing/i.test(value)) ? 'disabled="disabled"' : '';
+	    //var valdisabled  = '' ;
             // Adding all templates
-            html += '<option value="' + key + '">' + value + '</option>';
+            html += '<option value="' + key + '" '+ valdisabled +' >' + value.replace('.missing','') + '</option>';
         });
         html += '</select></div></div><div id="form-node-data"></div><div id="form-node-buttons"></div></form>';
 
