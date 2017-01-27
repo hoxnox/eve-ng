@@ -171,6 +171,8 @@ $(document).on('contextmenu', '#lab-viewport', function (e) {
     e.stopPropagation();
     e.preventDefault();
 
+    $("#lab-viewport").data('contextClickXY', {'x': e.pageX, 'y': e.pageY})
+
     logger(1, 'DEBUG: action = opencontextmenu');
 
     if ($(this).hasClass("freeSelectMode")) {
@@ -693,7 +695,7 @@ $(document).on('click', '.action-labclose', function (e) {
     $.when(closeLab()).done(function () {
         localStorage.setItem('action-nodelink',false);
         //postLogin();
-	newUIreturn();
+    newUIreturn();
     }).fail(function (message) {
         addModalError(message);
     });
@@ -822,64 +824,32 @@ $(document).on('click', '.action-nodeplace, .action-networkplace, .action-custom
         , frame = ''
         ;
 
-    $("#lab-viewport").data("prevent-contextmenu", true);
-
-    if (target.hasClass('action-customshapeadd')) {
-        logger(1, 'DEBUG: action = customshapeadd');
-    } else {
-        logger(1, 'DEBUG: action = nodeplace');
-    }
-
     $('#context-menu').remove();
 
     if (target.hasClass('action-nodeplace')) {
         object = 'node';
-        frame = '<div id="mouse_frame" class="context-menu node_frame"><img src="/images/icons/Router.png"/></div>';
-        $("#lab-viewport").addClass('lab-viewport-click-catcher');
     } else if (target.hasClass('action-networkplace')) {
         object = 'network';
-        frame = '<div id="mouse_frame" class="context-menu network_frame"><img src="/images/lan.png"/></div>';
-        $("#lab-viewport").addClass('lab-viewport-click-catcher');
     } else if (target.hasClass('action-customshapeadd')) {
         object = 'shape';
-        frame = '<div id="mouse_frame" class="context-menu network_frame"><img src="/images/icons/CustomShape.png"/></div>';
-        $("#lab-viewport").addClass('lab-viewport-click-catcher');
     } else if (target.hasClass('action-textadd')) {
         object = 'text';
-        frame = '<div id="mouse_frame" class="context-menu network_frame"><img src="/images/icons/CustomShape.png"/></div>';
-        $("#lab-viewport").addClass('lab-viewport-click-catcher');
     } else {
         return false;
     }
 
-    addMessage('info', MESSAGES[100]);
-    if (!$('#mouse_frame').length) {
-        // Add the frame container if not exists
-        $('#lab-viewport').append(frame);
-    } else {
-        $('#mouse_frame').remove();
-        $('#lab-viewport').append(frame);
-    }
-
-    // On mouse move, adjust css
-    $('#lab-viewport').off("mousemove").on("mousemove", function (e1) {
-        $('#mouse_frame').css({
-            'left': e1.pageX - 30,
-            'top': e1.pageY
-        });
-    });
 
     // On click open the form
-    $('.lab-viewport-click-catcher').off("click").on("click", function (e2) {
+    // $('.lab-viewport-click-catcher').off("click").on("click", function (e2) {
         $("#lab-viewport").data("prevent-contextmenu", false);
-
-        if ($(e2.target).is('#lab-viewport, #lab-viewport *')) {
+        console.log("here1",$("#lab-viewport"))
+        // if ($(e.target).is('#lab-viewport, #lab-viewport *')) {
             // Click is within viewport
-            if ($('#mouse_frame').length > 0) {
+            // if ($('#mouse_frame').length > 0) {
                 // ESC not pressed
                 var values = {};
-                values['left'] = e2.pageX - 30;
-                values['top'] = e2.pageY;
+                values['left'] = $("#lab-viewport").data('contextClickXY').x - 30;
+                values['top'] = $("#lab-viewport").data('contextClickXY').y;
                 if (object == 'node') {
                     printFormNode('add', values);
                 } else if (object == 'network') {
@@ -889,16 +859,17 @@ $(document).on('click', '.action-nodeplace, .action-networkplace, .action-custom
                 } else if (object == 'text') {
                     printFormText(values);
                 }
+                console.log("here2")
                 $('#mouse_frame').remove();
-            }
+            // }
             $('#mouse_frame').remove();
             $('.lab-viewport-click-catcher').off();
-        } else {
-            addMessage('warning', MESSAGES[101]);
-            $('#mouse_frame').remove();
-            $('.lab-viewport-click-catcher').off();
-        }
-    });
+        // } else {
+        //     addMessage('warning', MESSAGES[101]);
+        //     $('#mouse_frame').remove();
+        //     $('.lab-viewport-click-catcher').off();
+        // }
+    // });
 });
 
 // Add picture
