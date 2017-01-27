@@ -3600,7 +3600,7 @@ function selected_active(element) {
             Anchor: 'Continuous',
             Connector: ['Straight'],
             Endpoint: 'Blank',
-            PaintStyle: {lineWidth: 2, strokeStyle: '#58585a'},
+            PaintStyle: {lineWidth: 2, strokeStyle: '#C00001'},
             cssClass: 'link'
         });
 

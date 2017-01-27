@@ -110,7 +110,7 @@ switch ($action) {
 		// Exporting node(s) running-config
 		if (isset($node_id)) {
 			// Node ID is set, export a single node
-			$rc = export($node_id, $lab -> getNodes()[$node_id], $lab);
+			$rc = export($node_id, $lab -> getNodes()[$node_id], $lab, $lab -> getTenant());
 			if ($rc == 80061 || $rc == 80084 ) {
 				error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][19]);
 				exit(19);
@@ -123,7 +123,7 @@ switch ($action) {
 		} else {
 			// Node ID is not set, export all nodes
 			foreach ($lab -> getNodes() as $node_id => $node) {
-				export($node_id, $node, $lab);
+				export($node_id, $node, $lab,$lab -> getTenant());
 			}
 		}
 		break;

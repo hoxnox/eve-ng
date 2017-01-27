@@ -6,13 +6,13 @@
 *::-webkit-scrollbar-thumb {
 	border-radius: 10px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	background-color: #317087;
+	background-color: #0066aa;
 }
 
 *::-webkit-scrollbar-track {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 	border-radius: 10px;
-	background-color: #8b8c90;
+	background-color: #0066aa;
 }
 body{
 	background: #fff;
@@ -193,6 +193,9 @@ body.login {
 	aoverflow-x: hidden;
 	aoverflow-y: auto;
 }
+.dropdown-menu>li>a{
+	color: #0066aa;
+}
 
 .dropdown-menu li:hover{
 	background: #ccc;
@@ -307,7 +310,7 @@ body.login {
 }
 
 #context-menu .dropdown-header, .edit-custom-shape-form .edit-custom-shape-label, .edit-custom-text-form .edit-custom-text-label {
-	color: #317087;
+	color: #000000;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 	font-size: 1em;
 }
@@ -395,8 +398,8 @@ body.login {
 }
 
 #lab-viewport .node_interface {
-	background-color: #9fd3db;
-	border: 2px solid #317087;
+	background-color: #e6f5ff;
+	border: 2px solid #346789;
 	border-radius: 8px;
     font-family: helvetica;
     font-size: 0.8em;
@@ -595,14 +598,14 @@ body.login {
 	height:100%;
 }
 #stats-text {
-	background-color: #F3F7F9;
+	background-color: #F3F3F3;
 	margin-left: 0px;
 	margin-right: 0px;
 	overflow: hidden;
 	padding-bottom: 35px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	color:#317087;
+	color:#111111;
 }
 
 #stats-text ul {
@@ -622,7 +625,7 @@ body.login {
 
 #stats-text code {
 	background-color: transparent;
-	color: #317087;
+	color: #444444;
 	font-size: 1em;
 	font-weight: bold;
 	margin: 0px;
@@ -699,7 +702,7 @@ body.login {
 }
 
 .modal-body h1 {
-	color: #317087;
+	color: #0066aa;
 	background-color: transparent;
 	border: 0px;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
@@ -711,7 +714,7 @@ body.login {
 }
 
 .modal-body h2 {
-	color: #317087;
+	color: #0066aa;
 	background-color: transparent;
 	border: 0px;
 	border-bottom: 3px solid #317087;
@@ -724,7 +727,7 @@ body.login {
 }
 
 .modal-body h3 {
-	color: #8b8c90;
+	color: #0066aa;
 	background-color: transparent;
 	border: 0px;
 	border-bottom: 2px solid #8b8c90;
@@ -737,7 +740,7 @@ body.login {
 }
 
 .modal-body h4 {
-	color: #8b8c90;
+	color: #0066aa;
 	background-color: transparent;
 	border: 0px;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
@@ -749,7 +752,7 @@ body.login {
 }
 
 .modal-body h5 {
-	color: #8b8c90;
+	color: #0066aa;
 	background-color: transparent;
 	border: 0px;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
@@ -761,7 +764,7 @@ body.login {
 }
 
 .modal-body h6 {
-	color: #8b8c90;
+	color: #0066aa;
 	background-color: transparent;
 	border: 0px;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
@@ -773,7 +776,7 @@ body.login {
 }
 
 .modal-body p {
-	color: #8b8c90;
+	color: #0066aa;
 	background-color: transparent;
 	border: 0px;
 	font-family: 'Ubuntu Regular', Helvetica, Arial, sans-serif;
@@ -839,8 +842,8 @@ body.login {
 }
 
 .modal-title {
-	border-bottom: 2px solid #317087;
-	color: #317087;
+	border-bottom: 2px solid #000000;
+	color: #000000;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 	font-size: 2.8vmin;
 	text-transform: uppercase;
@@ -1014,6 +1017,18 @@ input[name='login[username]'], input[name='login[password]']{
 	font-size: 2.5vmin;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.49);
 	text-transform: uppercase;
+}
+
+.btn-flat {
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    border-width: 1px;
+}
+.btn-success {
+    background-color: #00a65a;
+    border-color: #008d4c;
 }
 
 .folder, .folder:visited {
@@ -1193,7 +1208,7 @@ map area:visited {
 }
 
 .node_frame.free-selected {
-	box-shadow: 0 0 10px 10px rgba(70, 166, 182, 0.5);
+	box-shadow: 0 0 10px 10px rgba(00, 102, 176, 0.8);
 }
 
 /*******************************************************************************
@@ -1250,7 +1265,7 @@ a:focus{
 }
 
 .link_selected{
-	box-shadow: 0 0 10px 10px rgba(70, 166, 182, 0.5);
+	box-shadow: 0 0 10px 10px rgba(00, 102, 176, 0.8);
 
 }
 .frame_ethernet.new_network{
