@@ -3411,7 +3411,7 @@ function drawStatusInModal(data) {
         value: data['cpu'],
         thickness: 10,
         startAngle: -Math.PI / 2,
-        fill: {gradient: ['#46a6b6']}
+        fill: {gradient: ['#2cc085']}
     }).on('circle-animation-progress', function (event, progress) {
         if (progress > data['cpu']) {
             $(this).find('strong').html(parseInt(100 * data['cpu']) + '%');
