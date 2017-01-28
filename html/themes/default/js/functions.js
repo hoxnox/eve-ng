@@ -1904,10 +1904,19 @@ function printFormNetwork(action, values) {
             html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[92] + '</label><div class="col-md-5"><input class="form-control" disabled name="network[id]" value="' + id + '" type="text"/></div></div>';
         }
         html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[103] + '</label><div class="col-md-5"><input class="form-control autofocus" name="network[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[95] + '</label><div class="col-md-5"><select class="selectpicker show-tick form-control" name="network[type]" data-live-search="true" data-style="selectpicker-button">';
+         $.each(network_types, function (key, value) {
+            // Print all network types
+            if(value.startsWith('pnet')){
+                var type_selected = (key == type) ? 'selected ' : '';
+                html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
+            }
+        });
         $.each(network_types, function (key, value) {
             // Print all network types
-            var type_selected = (key == type) ? 'selected ' : '';
-            html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
+            if(!value.startsWith('pnet')){
+                var type_selected = (key == type) ? 'selected ' : '';
+                html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
+            }
         });
         html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="network[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="network[top]" value="' + top + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form></form>';
 
