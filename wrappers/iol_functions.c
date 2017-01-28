@@ -392,8 +392,8 @@ int packet_udp(int udp_socket, int af_socket) {
     } else {
         dst_tenant_id = ser_frame[0];
         src_tenant_id = ser_frame[1];
-        dst_device_id = (ser_frame[2] << 8) + ser_frame[3];
-        src_device_id = (ser_frame[4] << 8) + ser_frame[5];
+        dst_device_id = ( ( ser_frame[2] << 8 ) & 65535 ) + ( ser_frame[3] & 255 );
+        src_device_id = ( ( ser_frame[4] << 8 ) & 65535 ) + ( ser_frame[5] & 255 );
         dst_device_if = ser_frame[6];
         src_device_if = ser_frame[7];
         if (dst_tenant_id != tenant_id) {
