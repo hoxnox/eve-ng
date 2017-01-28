@@ -177,3 +177,5 @@ MESSAGES[162] = 'running VPCS nodes';
 MESSAGES[163] = 'Boot Image';
 MESSAGES[164] = 'Icon';
 MESSAGES[165] = 'UKSM Status';
+MESSAGES[166] = 'Lock Lab'
+MESSAGES[167] = 'Unlock Lab'

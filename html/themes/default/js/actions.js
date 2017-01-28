@@ -799,6 +799,43 @@ $(document).on('click', '.action-logout', function (e) {
     });
 });
 
+
+// Lock lab
+$(document).on('click', '.action-lock-lab', function (e) {
+    logger(1, 'DEBUG: action = lock lab');
+    var lab_topology = jsPlumb.getInstance();
+    var allNodes = $('.node_frame');
+    var allNetworks = $('.network_frame')
+    for (var i = 0; i < allNodes.length; i++){
+        if(toogleDruggable(lab_topology, allNodes[i])) toogleDruggable(lab_topology, allNodes[i])
+    }
+    for (var i = 0; i < allNetworks.length; i++){
+        if(toogleDruggable(lab_topology, allNetworks[i])) toogleDruggable(lab_topology, allNetworks[i])
+    }
+    // $('.action-unlock-lab i').removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle')
+    $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
+    $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
+
+});
+
+// Unlock lab
+$(document).on('click', '.action-unlock-lab', function (e) {
+    logger(1, 'DEBUG: action = unlock lab');
+    var lab_topology = jsPlumb.getInstance();
+    var allNodes = $('.node_frame');
+    var allNetworks = $('.network_frame')
+    for (var i = 0; i < allNodes.length; i++){
+        if(!toogleDruggable(lab_topology, allNodes[i])) toogleDruggable(lab_topology, allNodes[i])
+    }
+    for (var i = 0; i < allNetworks.length; i++){
+        if(!toogleDruggable(lab_topology, allNetworks[i])) toogleDruggable(lab_topology, allNetworks[i])
+    }
+    // $('.action-lock-lab i').removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle')
+    $('.action-unlock-lab').html('<i class="glyphicon glyphicon-ok-circle"></i>' + MESSAGES[166])
+    $('.action-unlock-lab').removeClass('action-unlock-lab').addClass('action-lock-lab')
+});
+
+
 // Add object in lab_view
 $(document).on('click', '.action-labobjectadd', function (e) {
     logger(1, 'DEBUG: action = labobjectadd');
