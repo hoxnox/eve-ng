@@ -1993,7 +1993,9 @@ function printFormNode(action, values) {
                     // Show the form
                     $('#form-node-data').html(html_data);
                     $('.selectpicker').selectpicker();
-                    $('.autofocus').focus();
+                    setTimeout(function(){
+                        $('.selectpicker').selectpicker().data("selectpicker").$button.focus();
+                    }, 500);
                     validateNode();
                 }).fail(function (message1, message2) {
                     // Cannot get data
