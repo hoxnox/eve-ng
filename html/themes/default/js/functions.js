@@ -693,13 +693,8 @@ function getNetworkTypes() {
         dataType: 'json',
         success: function (data) {
             if (data['status'] == 'success') {
-                var filteredData = {};
-                for(var net in data.data){
-                    if (net == "bridge" || net == "ovs") continue;
-                    filteredData[net] = net;
-                }
                 logger(1, 'DEBUG: got network types.');
-                deferred.resolve(filteredData);
+                deferred.resolve(data['data']);
             } else {
                 // Application error
                 logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
@@ -1468,7 +1463,7 @@ function setNodeData(id){
                 } else {
                     // Application error
                     logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
-                    addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                    addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
                 }
             },
             error: function (data) {
@@ -1476,7 +1471,7 @@ function setNodeData(id){
                 var message = getJsonMessage(data['responseText']);
                 logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
                 logger(1, 'DEBUG: ' + message);
-                addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
             }
         });
         promises.push(request);
@@ -1803,7 +1798,7 @@ function printFormFolder(action, values) {
     if (original == '/' && action == 'rename') {
         addModalError(MESSAGES[51]);
     } else {
-        var html = '<form id="form-folder-' + action + '" class="form-horizontal form-folder-' + action + '"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[20] + '</label><div class="col-md-5"><input class="form-control" name="folder[path]" value="' + path + '" disabled type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control autofocus" name="folder[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><input class="form-control" name="folder[original]" value="' + original + '" type="hidden"/><button type="submit" class="btn btn-aqua">' + submit + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        var html = '<form id="form-folder-' + action + '" class="form-horizontal form-folder-' + action + '"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[20] + '</label><div class="col-md-5"><input class="form-control" name="folder[path]" value="' + path + '" disabled type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control autofocus" name="folder[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><input class="form-control" name="folder[original]" value="' + original + '" type="hidden"/><button type="submit" class="btn btn-success">' + submit + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
         logger(1, 'DEBUG: popping up the folder-' + action + ' form.');
         addModal(title, html, '');
         validateFolder();
@@ -1812,7 +1807,7 @@ function printFormFolder(action, values) {
 
 // Import external labs
 function printFormImport(path) {
-    var html = '<form id="form-import" class="form-horizontal form-import"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[20] + '</label><div class="col-md-5"><input class="form-control" name="import[path]" value="' + path + '" disabled type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[2] + '</label><div class="col-md-5"><input class="form-control" name="import[local]" value="" disabled="" placeholder="' + MESSAGES[25] + '" "type="text"/></div></div><div class="form-group"><div class="col-md-7 col-md-offset-3"><span class="btn btn-default btn-file btn-aqua">' + MESSAGES[23] + ' <input class="form-control" name="import[file]" value="" type="file"></span> <button type="submit" class="btn btn-aqua">' + MESSAGES[24] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+    var html = '<form id="form-import" class="form-horizontal form-import"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[20] + '</label><div class="col-md-5"><input class="form-control" name="import[path]" value="' + path + '" disabled type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[2] + '</label><div class="col-md-5"><input class="form-control" name="import[local]" value="" disabled="" placeholder="' + MESSAGES[25] + '" "type="text"/></div></div><div class="form-group"><div class="col-md-7 col-md-offset-3"><span class="btn btn-default btn-file btn-success">' + MESSAGES[23] + ' <input class="form-control" name="import[file]" value="" type="file"></span> <button type="submit" class="btn btn-flat">' + MESSAGES[24] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     logger(1, 'DEBUG: popping up the import form.');
     addModal(MESSAGES[9], html, '');
     validateImport();
@@ -1874,8 +1869,8 @@ function printFormLab(action, values) {
         '</div>' +
         '<div class="form-group">' +
         '<div class="col-md-5 col-md-offset-3">' +
-        '<button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button>' +
-        '<button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+        '<button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button>' +
+        '<button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
         '</div>' +
         '</div>' +
         '</form>';
@@ -1918,7 +1913,7 @@ function printFormNetwork(action, values) {
                 html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
             }
         });
-        html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="network[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="network[top]" value="' + top + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form></form>';
+        html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="network[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="network[top]" value="' + top + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form></form>';
 
         // Show the form
         addModal(title, html, '', 'second-win');
@@ -1976,6 +1971,8 @@ function printFormNode(action, values) {
                             html_data += '<div class="form-group"><label class="col-md-3 control-label">' + value['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="node[' + key + ']" data-style="selectpicker-button">';
                             $.each(value['list'], function (list_key, list_value) {
                                 var selected = (list_key == value_set) ? 'selected ' : '';
+				iconstyle = '' ;
+				if ( key == "icon" ) { iconstyle = 'style="background-image:url(\/images\/icons\/'+list_value+');"' }; 
                                 html_data += '<option ' + selected + 'value="' + list_key + '">' + list_value + '</option>';
                             });
                             html_data += '</select></div>';
@@ -1988,7 +1985,7 @@ function printFormNode(action, values) {
                     html_data += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="node[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="node[top]" value="' + top + '" type="text"/></div></div>';
 
                     // Show the buttons
-                    $('#form-node-buttons').html('<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div>');
+                    $('#form-node-buttons').html('<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div>');
 
                     // Show the form
                     $('#form-node-data').html(html_data);
@@ -2025,7 +2022,7 @@ function printFormNode(action, values) {
 function printFormNodeConfigs(values, cb) {
     var title = values['name'] + ': ' + MESSAGES[123];
     if (ROLE == 'admin' || ROLE == 'editor') {
-        var html = '<form id="form-node-config" class="form-horizontal"><input name="config[id]" value="' + values['id'] + '" type="hidden"/><div class="form-group"><div class="col-md-12"><textarea class="form-control autofocus" id="nodeconfig" name="config[data]" rows="15"></textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        var html = '<form id="form-node-config" class="form-horizontal"><input name="config[id]" value="' + values['id'] + '" type="hidden"/><div class="form-group"><div class="col-md-12"><textarea class="form-control autofocus" id="nodeconfig" name="config[data]" rows="15"></textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     } else {
         var html = '<div class="col-md-12"><pre>' + values['data'] + '</pre></div>';
     }
@@ -2081,8 +2078,8 @@ function printFormCustomShape(values) {
         '<input type="color" class="form-control shape_background_color">' +
         '</div>' +
         '</div> <br>' +
-        '<button type="submit" class="btn btn-aqua col-md-offset-1">' + MESSAGES[47] + '</button>' +
-        '<button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+        '<button type="submit" class="btn btn-success col-md-offset-1">' + MESSAGES[47] + '</button>' +
+        '<button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
         '</div>' +
         '<input  type="text" class="hide left-coordinate" value="' + left + '">' +
         '<input  type="text" class="hide top-coordinate" value="' + top + '">' +
@@ -2143,8 +2140,8 @@ function printFormText(values) {
         '<input type="color" class="form-control text_background_color">' +
         '</div>' +
         '</div> <br>' +
-         '<button type="submit" class="btn btn-aqua col-md-offset-1">' + MESSAGES[47] + '</button>' +
-        '<button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+         '<button type="submit" class="btn btn-success col-md-offset-1">' + MESSAGES[47] + '</button>' +
+        '<button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
         '</div>' +
         '<input  type="text" class="hide left-coordinate" value="' + left + '">' +
         '<input  type="text" class="hide top-coordinate" value="' + top + '">' +
@@ -2191,7 +2188,7 @@ function saveLab(form) {
             } else {
                 // Application error
                 logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
-                addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
             }
         },
         error: function (data) {
@@ -2199,7 +2196,7 @@ function saveLab(form) {
             var message = getJsonMessage(data['responseText']);
             logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
             logger(1, 'DEBUG: ' + message);
-            addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+            addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
         }
     });
     return false;  // Stop to avoid POST
@@ -2273,7 +2270,7 @@ function printFormNodeInterfaces(values) {
             });
         }
 
-        html += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        html += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
 
         addModal(values['node_name'] + ': ' + MESSAGES[116], html, '', 'second-win');
         $('.selectpicker').selectpicker();
@@ -2305,7 +2302,7 @@ function printPictureInForm(id) {
             '<map name="picture_map">' + picture_map + '</map>' +
             '</div>';
         if (ROLE == 'admin' || ROLE == 'editor') {
-            var footer = '<button type="button" class="btn btn-aqua action-pictureedit" data-path="' + picture_id + '">Edit</button>';
+            var footer = '<button type="button" class="btn btn-flat action-pictureedit" data-path="' + picture_id + '">Edit</button>';
         } else {
             var footer = '';
         }
@@ -2426,9 +2423,9 @@ function printFormPicture(action, values) {
         , html = '';
 
     if (action == 'add') {
-        html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[137] + '</label><div class="col-md-5"><textarea class="form-control" name="picture[map]">' + map + '</textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[137] + '</label><div class="col-md-5"><textarea class="form-control" name="picture[map]">' + map + '</textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     } else {
-        html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '" data-path=' + values['id'] + '><div class="follower-wrapper"><img src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '" width="' + values['width'] + '" height="' + values['height'] + '"/><div id="follower"></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[137] + '</label><div class="col-md-5"><textarea class="form-control" name="picture[map]">' + map + '</textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '" data-path=' + values['id'] + '><div class="follower-wrapper"><img src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '" width="' + values['width'] + '" height="' + values['height'] + '"/><div id="follower"></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[137] + '</label><div class="col-md-5"><textarea class="form-control" name="picture[map]">' + map + '</textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     }
     logger(1, 'DEBUG: popping up the picture form.');
     addModalWide(title, html, '', 'second-win modal-ultra-wide');
@@ -2454,7 +2451,7 @@ function printFormUser(action, values) {
             var role_selected = (role == key) ? 'selected ' : '';
             html += '<option ' + role_selected + 'value="' + key + '">' + value + '</option>';
         });
-        html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[30] + '</label><div class="col-md-5"><input class="form-control expiration" name="user[expiration]" value="' + expiration + '" type="text"/></div></div><h4>' + MESSAGES[46] + '</h4><div class="form-group"><label class="col-md-3 control-label">POD</label><div class="col-md-5"><input class="form-control pod" name="user[pod]" value="' + pod + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[30] + '</label><div class="col-md-5"><input class="form-control expiration pod" name="user[pexpiration]" value="' + pexpiration + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + submit + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[30] + '</label><div class="col-md-5"><input class="form-control expiration" name="user[expiration]" value="' + expiration + '" type="text"/></div></div><h4>' + MESSAGES[46] + '</h4><div class="form-group"><label class="col-md-3 control-label">POD</label><div class="col-md-5"><input class="form-control pod" name="user[pod]" value="' + pod + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[30] + '</label><div class="col-md-5"><input class="form-control expiration pod" name="user[pexpiration]" value="' + pexpiration + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + submit + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
         addModal(title, html, '');
         if (ROLE == "user") {
             $("#form-user-edit input,#form-user-edit select").prop("disabled", true)
@@ -2496,9 +2493,9 @@ function printLabPreview(lab_filename) {
         if (lab['description'] != null) {
             html += '<p>' + lab['description'] + '</p>';
         }
-        html += '<button class="action-labopen btn btn-aqua" type="button" data-path="' + lab_filename + '">' + MESSAGES[22] + '</button> ';
+        html += '<button class="action-labopen btn btn-flat" type="button" data-path="' + lab_filename + '">' + MESSAGES[22] + '</button> ';
         if (ROLE != "user")
-            html += '<button class="action-labedit-inline btn btn-aqua" type="button" data-path="' + lab_filename + '">Edit</button>';
+            html += '<button class="action-labedit-inline btn btn-flat" type="button" data-path="' + lab_filename + '">Edit</button>';
         $('#list-title-info span').html(lab['filename'].replace(/\\/g, '/').replace(/.*\//, ''));
         $('#list-info').html(html);
     }).fail(function (message) {
@@ -2710,7 +2707,7 @@ function printLabTopology() {
                     Anchor: 'Continuous',
                     Connector: ['Straight'],
                     Endpoint: 'Blank',
-                    PaintStyle: {lineWidth: 2, strokeStyle: '#58585a'},
+                    PaintStyle: {lineWidth: 2, strokeStyle: '#0066aa'},
                     cssClass: 'link'
                 });
 
@@ -2721,7 +2718,7 @@ function printLabTopology() {
                     Anchor: 'Continuous',
                     Connector: ['Straight'],
                     Endpoint: 'Blank',
-                    PaintStyle: {lineWidth: 2, strokeStyle: '#58585a'},
+                    PaintStyle: {lineWidth: 2, strokeStyle: '#0066aa'},
                     cssClass: 'link'
                 });
 
@@ -3240,7 +3237,7 @@ function printPageLabList(folder) {
                                     })
                                 }).fail(function (data) {
                                     logger(1, 'DEBUG: failed to move "' + object + '" into "' + path + '".');
-                                    addModal('ERROR', '<p>' + data + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                                    addModal('ERROR', '<p>' + data + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
                                 });
                             } else if (o['draggable'].hasClass('folder')) {
                                 $.when(moveFolder(object, path)).done(function (data) {
@@ -3250,7 +3247,7 @@ function printPageLabList(folder) {
                                     })
                                 }).fail(function (data) {
                                     logger(1, 'DEBUG: failed to move "' + object + '" into "' + path + '".');
-                                    addModal('ERROR', '<p>' + data + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                                    addModal('ERROR', '<p>' + data + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
                                 });
                             } else {
                                 // Should not be here
@@ -3266,7 +3263,7 @@ function printPageLabList(folder) {
             } else {
                 // Application error
                 logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
-                addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
             }
 
             bodyAddClass('folders');
@@ -3279,7 +3276,7 @@ function printPageLabList(folder) {
             var message = getJsonMessage(data['responseText']);
             logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
             logger(1, 'DEBUG: ' + message);
-            addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+            addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
         }
     });
 }
@@ -3426,7 +3423,7 @@ function drawStatusInModal(data) {
         value: data['cpu'],
         thickness: 10,
         startAngle: -Math.PI / 2,
-        fill: {gradient: ['#46a6b6']}
+        fill: {gradient: ['#2cc085']}
     }).on('circle-animation-progress', function (event, progress) {
         if (progress > data['cpu']) {
             $(this).find('strong').html(parseInt(100 * data['cpu']) + '%');
@@ -3442,7 +3439,7 @@ function drawStatusInModal(data) {
         value: data['mem'],
         thickness: 10,
         startAngle: -Math.PI / 2,
-        fill: {gradient: ['#46a6b6']}
+        fill: {gradient: ['#2cc085']}
     }).on('circle-animation-progress', function (event, progress) {
         if (progress > data['mem']) {
             $(this).find('strong').html(parseInt(100 * data['mem']) + '%');
@@ -3458,7 +3455,7 @@ function drawStatusInModal(data) {
         value: data['swap'],
         thickness: 10,
         startAngle: -Math.PI / 2,
-        fill: {gradient: ['#46a6b6']}
+        fill: {gradient: ['#2cc085']}
     }).on('circle-animation-progress', function (event, progress) {
         if (progress > data['swap']) {
             $(this).find('strong').html(parseInt(100 * data['swap']) + '%');
@@ -3474,7 +3471,7 @@ function drawStatusInModal(data) {
         value: data['disk'],
         thickness: 10,
         startAngle: -Math.PI / 2,
-        fill: {gradient: ['#46a6b6']}
+        fill: {gradient: ['#2cc085']}
     }).on('circle-animation-progress', function (event, progress) {
         if (progress > data['disk']) {
             $(this).find('strong').html(parseInt(100 * data['disk']) + '%');
@@ -3934,8 +3931,8 @@ function printFormEditCustomShape(id) {
             '</div>' +
             '</div>' +
             '<div class="row col-md-3 btn-part">' +
-            '<button type="button" class="btn btn-aqua edit-custom-shape-form-save" data-path="' + id + '">' + MESSAGES[47] + '</button>' +
-            '<button type="button" class="btn btn-grey cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
+            '<button type="button" class="btn btn-success edit-custom-shape-form-save" data-path="' + id + '">' + MESSAGES[47] + '</button>' +
+            '<button type="button" class="btn btn-flat cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
             '</div>' +
             '<input type="hidden" class="firstShapeValues-z_index">' +
             '<input type="hidden" class="firstShapeValues-border-color">' +
@@ -4064,8 +4061,8 @@ function printFormEditText(id) {
         '</div>' +
         '</div>' +
         '<div class="row col-md-3 btn-part">' +
-        '<button type="button" class="btn btn-aqua edit-custom-text-form-save" data-path="' + id + '">' + MESSAGES[47] + '</button>' +
-        '<button type="button" class="btn btn-grey cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
+        '<button type="button" class="btn btn-flat edit-custom-text-form-save" data-path="' + id + '">' + MESSAGES[47] + '</button>' +
+        '<button type="button" class="btn btn-flat cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
         '</div>' +
         '<input type="text" class="hide firstTextValues-z_index">' +
         '<input type="text" class="hide firstTextValues-color">' +

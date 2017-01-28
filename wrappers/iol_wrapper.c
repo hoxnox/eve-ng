@@ -175,7 +175,7 @@ int main (int argc, char *argv[]) {
                 }
                 if (udpserver_socket == -1) {
                   // First Serial2UDP definition, must listen()
-                  if ((rc = serial2udp_listen(32768 + 128 * tenant_id + device_id, &udpserver_socket)) != 0) {
+                  if ((rc = serial2udp_listen(32768 + 128 * tenant_id + ((( device_id & 0x3f ) << 4 ) | ( tenant_id & 0xf )), &udpserver_socket)) != 0) {
                     UNLLog( LLERROR, "Failed to open UDP socket (%i).\n", rc);
                     exit(1);
                   }
