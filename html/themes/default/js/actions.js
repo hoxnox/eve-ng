@@ -803,31 +803,28 @@ $(document).on('click', '.action-logout', function (e) {
 // Lock lab
 $(document).on('click', '.action-lock-lab', function (e) {
     logger(1, 'DEBUG: action = lock lab');
-    var lab_topology = jsPlumb.getInstance();
-    var allElements = $('.node_frame, .network_frame, .customShape');
-    for (var i = 0; i < allElements.length; i++){
-        if(toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
-    }
-    $('.customText').resizable('disable')
-    // $('.action-unlock-lab i').removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle')
-    $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
-    $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
+    lockLab();
 
 });
 
 // Unlock lab
 $(document).on('click', '.action-unlock-lab', function (e) {
     logger(1, 'DEBUG: action = unlock lab');
-    var lab_topology = jsPlumb.getInstance();
-    var allElements = $('.node_frame, .network_frame, .customShape');
-    for (var i = 0; i < allElements.length; i++){
-        if(!toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
-    }
-    $('.customText').resizable('enable')
-    // $('.action-lock-lab i').removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle')
-    $('.action-unlock-lab').html('<i class="glyphicon glyphicon-ok-circle"></i>' + MESSAGES[166])
-    $('.action-unlock-lab').removeClass('action-unlock-lab').addClass('action-lock-lab')
+    unlockLab();
 });
+
+// hotkey for lock lab
+$(document).on('keyup', null, 'alt+l', function(){
+    console.log('lock')
+    lockLab();
+})
+
+// hotkey for unlock lab
+$(document).on('keyup', null, 'alt+u', function(){
+    console.log('unlock')
+    unlockLab();
+})
+  
 
 
 // Add object in lab_view
