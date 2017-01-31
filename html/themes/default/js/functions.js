@@ -1946,7 +1946,12 @@ function printFormNode(action, values) {
         // Show the form
         addModal(title, html, '', 'second-win');
         $('.selectpicker').selectpicker();
-
+        $('.selectpicker-button').trigger('click');
+        $('.selectpicker').selectpicker();
+        setTimeout(function(){
+            $('.bs-searchbox input').focus()
+        }, 500);
+        
         $('#form-node-template').change(function (e2) {
             id = (id == '') ? null : id;    // Ugly fix for change template after selection
             template = $(this).find("option:selected").val();
