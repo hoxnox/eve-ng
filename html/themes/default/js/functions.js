@@ -4313,7 +4313,7 @@ function lockLab() {
         dataType: 'json',
         success: function (data) {
             if (data['status'] == 'success') {
-                logger(1, 'DEBUG: network position updated.');
+                logger(1, 'DEBUG: Lab Locked.');
                 deferred.resolve();
             } else {
                 // Application error
@@ -4357,7 +4357,7 @@ function unlockLab(){
         dataType: 'json',
         success: function (data) {
             if (data['status'] == 'success') {
-                logger(1, 'DEBUG: network position updated.');
+                logger(1, 'DEBUG: Lab Unlocked.');
                 deferred.resolve();
             } else {
                 // Application error

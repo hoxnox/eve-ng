@@ -935,7 +935,7 @@ class Lab {
         }
 
 	/**	
-	* Method to get lab scripttimeout
+	* Method to get lab lock status
 	*
 	* @return  int Lab lock status 1=lock O=unlock
 	*/

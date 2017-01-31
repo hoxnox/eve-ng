@@ -4,7 +4,7 @@ Name: Emulated Virtual Environment
 Architecture: amd64
 Maintainer: Andrea Dainese (andrea.dainese@gmail.com)
 Homepage: http://www.unetlab.com/
-Installed-Size: 44764
+Installed-Size: 44776
 Section: devel
 Priority: optional
 Replaces: unetlab
