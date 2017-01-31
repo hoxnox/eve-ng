@@ -746,6 +746,10 @@ $app -> put('/api/labs/(:path+)', function($path = array()) use ($app, $db) {
 		$output = apiEditLabPicture($lab, $p);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl$/', $s)) {
 		$output = apiEditLab($lab, $p);
+	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/Lock$/', $s)) {
+		$output = apiLockLab($lab);
+	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/Unlock$/', $s)) {
+		$output = apiUnlockLab($lab);	
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/move$/', $s)) {
 		$output = apiMoveLab($lab, $p['path']);
 	} else {

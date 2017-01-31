@@ -297,6 +297,7 @@ function apiGetLab($lab) {
 		'name' => $lab -> getName(),
 		'version' => $lab -> getVersion(),
 		'scripttimeout' => $lab -> getScriptTimeout(),
+		'lock' => $lab -> getLock(),
 	);
 	return $output;
 }
@@ -735,4 +736,45 @@ function apiMoveLab($lab, $path) {
 	}
 	return $output;
 }
+
+/*
+ * Function to Lock  a lab 
+ *
+ * @param       Lab                     $lab                    Lab
+ * @return      Array                                           Return code (JSend data)
+ */
+
+function apiLockLab($lab) {
+        $rc = $lab -> lockLab();
+        if ($rc !== 0) {
+                $output['code'] = 400;
+                $output['status'] = 'fail';
+                $output['message'] = $GLOBALS['messages'][$rc];
+        } else {
+                $output['code'] = 200;
+                $output['status'] = 'success';
+                $output['message'] = $GLOBALS['messages'][60023];
+        }
+        return $output;
+}
+
+/*
+ * Function to Unlock  a lab
+ *
+ * @param       Lab                     $lab                    Lab
+ * @return      Array                                           Return code (JSend data)
+ */
+
+function apiUnlockLab($lab) {
+        $rc = $lab -> unlockLab();
+        if ($rc !== 0) {
+                $output['code'] = 400;
+                $output['status'] = 'fail';
+                $output['message'] = $GLOBALS['messages'][$rc];
+        } else {
+                $output['code'] = 200;
+                $output['status'] = 'success';
+                $output['message'] = $GLOBALS['messages'][60023];
+        }
+        return $output;}
 ?>

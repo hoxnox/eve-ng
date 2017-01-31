@@ -2536,8 +2536,9 @@ function printLabTopology() {
         getNetworks(null),
         getNodes(null),
         getTopology(),
-        getTextObjects()
-    ).done(function (networks, nodes, topology, textObjects) {
+        getTextObjects(),
+	getLabInfo(lab_filename)
+    ).done(function (networks, nodes, topology, textObjects, labinfo) {
 
 
         var networkImgs = []
@@ -2604,7 +2605,7 @@ function printLabTopology() {
             }
             $labViewport.append(
                 '<div id="node' + value['id'] + '" ' +
-                'class="context-menu node node' + value['id'] + ' node_frame" ' +
+                'class="context-menu node node' + value['id'] + ' node_frame "' +
                 'style="top: ' + value['top'] + 'px; left: ' + value['left'] + 'px;" ' +
                 'data-path="' + value['id'] + '" ' +
                 'data-status="' + value['status'] + '" ' +
@@ -2723,7 +2724,7 @@ function printLabTopology() {
                 });
 
                 // Read privileges and set specific actions/elements
-                if (ROLE == 'admin' || ROLE == 'editor') {
+                if (ROLE == 'admin' || ROLE == 'editor')  {
                     // Nodes and networks are draggable within a grid
                     lab_topology.draggable($('.node_frame, .network_frame'), {grid: [3, 3]});
                 }
@@ -2790,7 +2791,6 @@ function printLabTopology() {
                         $('.' + destination).removeClass('unused');
                     }
 
-
                 });
 
                 // Remove unused elements
@@ -2800,6 +2800,18 @@ function printLabTopology() {
 
                 // Move elements under the topology node
                 $('._jsPlumb_connector, ._jsPlumb_overlay, ._jsPlumb_endpoint_anchor_').detach().appendTo('#lab-viewport');
+		if ( labinfo['lock'] == 1 ) {
+                             //toggle
+                                var allElements = $('.node_frame, .network_frame, .customShape');
+                                //alert ( JSON.stringify( allElements ));
+                                for (var i = 0; i < allElements.length; i++){
+                                     if (lab_topology.toggleDraggable(allElements[i]) ) lab_topology.toggleDraggable(allElements[i]) ;
+                                }
+                               $('.customText').resizable('disable')
+                               // $('.action-unlock-lab i').removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle')
+                               $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
+                               $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
+                }
                 $labViewport.data('refreshing', false);
                 labNodesResolver.resolve();
             });
@@ -2809,6 +2821,8 @@ function printLabTopology() {
             labNodesResolver.reject();
             labTextObjectsResolver.reject();
         });
+
+	
     }).fail(function (message1, message2, message3) {
         if (message1 != null) {
             addModalError(message1);
@@ -2821,7 +2835,6 @@ function printLabTopology() {
         labNodesResolver.reject();
         labTextObjectsResolver.reject();
     });
-
 
     $.when(labNodesResolver, labTextObjectsResolver).done(function () {
 
@@ -4276,6 +4289,7 @@ function autoheight()
 function lockLab() {
     var lab_topology = jsPlumb.getInstance();
     var allElements = $('.node_frame, .network_frame, .customShape');
+    //alert ( JSON.stringify( allElements ));
     for (var i = 0; i < allElements.length; i++){
         if(toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
     }
@@ -4283,18 +4297,80 @@ function lockLab() {
     // $('.action-unlock-lab i').removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle')
     $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
     $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
+    var deferred = $.Deferred();
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var url = '/api/labs' + lab_filename + '/Lock' ;
+    var type = 'PUT';
+    $.ajax({
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: network position updated.');
+                deferred.resolve();
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
 }
 
 function unlockLab(){
     var lab_topology = jsPlumb.getInstance();
     var allElements = $('.node_frame, .network_frame, .customShape');
+    lab_topology.draggable($('.node_frame, .network_frame'), {grid: [3, 3]});
     for (var i = 0; i < allElements.length; i++){
+        //toogleDruggable(lab_topology, allElements[i])
         if(!toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
     }
     $('.customText').resizable('enable')
     // $('.action-lock-lab i').removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle')
     $('.action-unlock-lab').html('<i class="glyphicon glyphicon-ok-circle"></i>' + MESSAGES[166])
     $('.action-unlock-lab').removeClass('action-unlock-lab').addClass('action-lock-lab')
+    var deferred = $.Deferred();
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var url = '/api/labs' + lab_filename + '/Unlock' ;
+    var type = 'PUT';
+    $.ajax({
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: network position updated.');
+                deferred.resolve();
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
 }
 
 function toogleDruggable(topology, elem){

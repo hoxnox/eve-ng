@@ -40,6 +40,7 @@ class Lab {
 	private $tenant;
 	private $version;
 	private $scripttimeout;
+	private $lock;
 
 	/**
 	 * Constructor which load an existent lab or create an empty one.
@@ -73,6 +74,7 @@ class Lab {
 			$this -> id = genUuid();
 			$modified = True;
 			$this -> scripttimeout = 600;
+			$this -> lock = 0;
 		} else {
 			// Load the existent lab
 			$this -> filename = basename($f);
@@ -284,6 +286,14 @@ class Lab {
                                 error_log(date('M d H:i:s ').'WARNING: '.$f.' '.$GLOBALS['messages'][20045]);
 				$this -> scripttimeout = 300;
                         }
+			// lab lock
+			$result = $xml -> xpath('//lab/@lock');
+			$result = (string) array_pop($result);
+			if (strlen($result) !== 0 && (int) $result < 2 ) {
+				$this -> lock = $result;
+			} else if (strlen($result) == 0) {
+				$this -> lock = 0;
+			}
 
 			// Lab Pictures
 			foreach ($xml -> xpath('//lab/objects/pictures/picture') as $picture) {
@@ -924,6 +934,20 @@ class Lab {
                 }
         }
 
+	/**	
+	* Method to get lab scripttimeout
+	*
+	* @return  int Lab lock status 1=lock O=unlock
+	*/
+	public function getLock() {
+		if (isset($this -> lock)) {
+			return (int) $this -> lock;
+		} else {
+			// By default return 0
+			return 1;
+		}
+	}
+
 	/**
 	 * Method to connect a node to a network or to a remote node.
 	 *
@@ -1027,6 +1051,29 @@ class Lab {
 		return $this -> save();
 	}
 
+
+        /**
+         * Method to Lock  lab 
+         *
+         * @return  int                         0 means ok
+         */
+	public function lockLab() {
+	$this -> lock = 1;
+	$rc = $this -> save ();
+	return $rc;
+	}
+
+        /**
+         * Method to Unlock  lab
+         *
+         * @return  int                         0 means ok
+         */
+        public function unlockLab() {
+	$this -> lock = 0;
+        $rc = $this -> save ();
+	return $rc;
+        }
+
 	/**
 	 * Method to save a lab into a file.
 	 *
@@ -1041,6 +1088,7 @@ class Lab {
 
 		if (isset($this -> version)) $xml -> addAttribute('version', $this -> version);
 		if (isset($this -> scripttimeout)) $xml -> addAttribute('scripttimeout', $this -> scripttimeout);
+		if (isset($this -> lock)) $xml -> addAttribute('lock', $this -> lock);
 		if (isset($this -> author)) $xml -> addAttribute('author', $this -> author);
 		if (isset($this -> description)) $xml -> addChild('description', $this -> description);
 		if (isset($this -> body)) $xml -> addChild('body', $this -> body);
