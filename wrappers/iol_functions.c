@@ -74,7 +74,7 @@ int mk_netmap() {
     int d = 0;
     int iol_id = device_id;
     int rc = 0;
-    int wrapper_id = iol_id + 512;
+    int wrapper_id = tap_id + 512;
     if (access("NETMAP", F_OK) != -1 && remove("NETMAP") != 0) {
         rc = 1;
         UNLLog(LLERROR, "Cannot create NETMAP file (access). ERR: %s (%i)\n", strerror(errno), rc);
@@ -105,7 +105,7 @@ int mk_afsocket(int *wrapper_socket, int *iol_socket) {
     char tmp[100];
     memset(&tmp, 0, sizeof(tmp));
     int iol_id = device_id;
-    int wrapper_id = iol_id + 512;
+    int wrapper_id = tap_id + 512;
     int rc = -1;
 
     // Creating netio directory
@@ -277,7 +277,7 @@ int packet_tap(int tap_socket, int af_socket, int iol_ifid) {
     int iol_id = device_id;
     int length = -1;
     int rc = -1;
-    int wrapper_id = iol_id + 512;
+    int wrapper_id = tap_id + 512;
   
 //    char *eth_frame;
 //    char iol_frame[1522];
@@ -339,7 +339,7 @@ int packet_udp(int udp_socket, int af_socket) {
     int iol_id = device_id;
     int length = -1;
     int rc = -1;
-    int wrapper_id = iol_id + 512;
+    int wrapper_id = tap_id + 512;
   
     char ser_frame[BUFFER];
     memset(ser_frame, 0, sizeof(ser_frame));
