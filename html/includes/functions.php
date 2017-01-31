@@ -814,7 +814,6 @@ function updateDatabase($db) {
 			$statement = $db -> prepare($query);
 			$statement -> execute();
 			$db -> commit();
-@
 			error_log(date('M d H:i:s ').'INFO: '.$GLOBALS['messages'][90004]);
 		}
 	} catch (Exception $e) {
