@@ -1946,7 +1946,12 @@ function printFormNode(action, values) {
         // Show the form
         addModal(title, html, '', 'second-win');
         $('.selectpicker').selectpicker();
-
+        $('.selectpicker-button').trigger('click');
+        $('.selectpicker').selectpicker();
+        setTimeout(function(){
+            $('.bs-searchbox input').focus()
+        }, 500);
+        
         $('#form-node-template').change(function (e2) {
             id = (id == '') ? null : id;    // Ugly fix for change template after selection
             template = $(this).find("option:selected").val();
@@ -4293,7 +4298,7 @@ function lockLab() {
     for (var i = 0; i < allElements.length; i++){
         if(toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
     }
-    $('.customText').resizable('disable')
+    $('.customShape').resizable('disable')
     // $('.action-unlock-lab i').removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle')
     $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
     $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
@@ -4337,7 +4342,7 @@ function unlockLab(){
         //toogleDruggable(lab_topology, allElements[i])
         if(!toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
     }
-    $('.customText').resizable('enable')
+    $('.customShape').resizable('enable')
     // $('.action-lock-lab i').removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle')
     $('.action-unlock-lab').html('<i class="glyphicon glyphicon-ok-circle"></i>' + MESSAGES[166])
     $('.action-unlock-lab').removeClass('action-unlock-lab').addClass('action-lock-lab')
