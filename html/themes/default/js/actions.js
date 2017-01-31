@@ -799,6 +799,34 @@ $(document).on('click', '.action-logout', function (e) {
     });
 });
 
+
+// Lock lab
+$(document).on('click', '.action-lock-lab', function (e) {
+    logger(1, 'DEBUG: action = lock lab');
+    lockLab();
+
+});
+
+// Unlock lab
+$(document).on('click', '.action-unlock-lab', function (e) {
+    logger(1, 'DEBUG: action = unlock lab');
+    unlockLab();
+});
+
+// hotkey for lock lab
+$(document).on('keyup', null, 'alt+l', function(){
+    console.log('lock')
+    lockLab();
+})
+
+// hotkey for unlock lab
+$(document).on('keyup', null, 'alt+u', function(){
+    console.log('unlock')
+    unlockLab();
+})
+  
+
+
 // Add object in lab_view
 $(document).on('click', '.action-labobjectadd', function (e) {
     logger(1, 'DEBUG: action = labobjectadd');

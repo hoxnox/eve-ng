@@ -1899,10 +1899,19 @@ function printFormNetwork(action, values) {
             html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[92] + '</label><div class="col-md-5"><input class="form-control" disabled name="network[id]" value="' + id + '" type="text"/></div></div>';
         }
         html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[103] + '</label><div class="col-md-5"><input class="form-control autofocus" name="network[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[95] + '</label><div class="col-md-5"><select class="selectpicker show-tick form-control" name="network[type]" data-live-search="true" data-style="selectpicker-button">';
+         $.each(network_types, function (key, value) {
+            // Print all network types
+            if(value.startsWith('pnet')){
+                var type_selected = (key == type) ? 'selected ' : '';
+                html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
+            }
+        });
         $.each(network_types, function (key, value) {
             // Print all network types
-            var type_selected = (key == type) ? 'selected ' : '';
-            html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
+            if(!value.startsWith('pnet')){
+                var type_selected = (key == type) ? 'selected ' : '';
+                html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
+            }
         });
         html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="network[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="network[top]" value="' + top + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form></form>';
 
@@ -1981,7 +1990,9 @@ function printFormNode(action, values) {
                     // Show the form
                     $('#form-node-data').html(html_data);
                     $('.selectpicker').selectpicker();
-                    $('.autofocus').focus();
+                    setTimeout(function(){
+                        $('.selectpicker').selectpicker().data("selectpicker").$button.focus();
+                    }, 500);
                     validateNode();
                 }).fail(function (message1, message2) {
                     // Cannot get data
@@ -3296,6 +3307,7 @@ function printPageLabOpen(lab) {
     $('#lab-sidebar ul').append('<li><a class="action-status" href="javascript:void(0)" title="' + MESSAGES[13] + '"><i class="glyphicon glyphicon-info-sign"></i></a></li>');
     $('#lab-sidebar ul').append('<li><a class="action-labbodyget" href="javascript:void(0)" title="' + MESSAGES[64] + '"><i class="glyphicon glyphicon-list-alt"></i></a></li>');
     $('#lab-sidebar ul').append('<div id="action-labclose"><li><a class="action-labclose" href="javascript:void(0)" title="' + MESSAGES[60] + '"><i class="glyphicon glyphicon-off"></i></a></li></div>');
+    $('#lab-sidebar ul').append('<li><a class="action-lock-lab" href="javascript:void(0)" title="' + MESSAGES[166] + '"><i class="glyphicon glyphicon-ok-circle"></i></a></li>');
     $('#lab-sidebar ul').append('<li><a class="action-logout" href="javascript:void(0)" title="' + MESSAGES[14] + '"><i class="glyphicon glyphicon-log-out"></i></a></li>');
     $('#lab-sidebar ul a').each(function () {
         var t = $(this).attr("title");
@@ -4259,4 +4271,32 @@ function autoheight()
             return window.innerHeight - $(this).offset().top;
         });
     }
+}
+
+function lockLab() {
+    var lab_topology = jsPlumb.getInstance();
+    var allElements = $('.node_frame, .network_frame, .customShape');
+    for (var i = 0; i < allElements.length; i++){
+        if(toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
+    }
+    $('.customText').resizable('disable')
+    // $('.action-unlock-lab i').removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle')
+    $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
+    $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
+}
+
+function unlockLab(){
+    var lab_topology = jsPlumb.getInstance();
+    var allElements = $('.node_frame, .network_frame, .customShape');
+    for (var i = 0; i < allElements.length; i++){
+        if(!toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
+    }
+    $('.customText').resizable('enable')
+    // $('.action-lock-lab i').removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle')
+    $('.action-unlock-lab').html('<i class="glyphicon glyphicon-ok-circle"></i>' + MESSAGES[166])
+    $('.action-unlock-lab').removeClass('action-unlock-lab').addClass('action-lock-lab')
+}
+
+function toogleDruggable(topology, elem){
+    return topology.toggleDraggable(elem)
 }
