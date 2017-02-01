@@ -2697,6 +2697,11 @@ function printLabTopology() {
                 else {
                     return void 0;
                 }
+            // If lab locked free all shape
+	    if  ( labinfo ['lock'] == 1 ) {
+                $newTextObject.draggable('disable');
+		$newTextObject.resizable('disable');
+                } 
             }).fail(function () {
                 logger(1, 'DEBUG: Failed to load Text Object' + value['name'] + '!');
             });
@@ -2805,15 +2810,12 @@ function printLabTopology() {
 
                 // Move elements under the topology node
                 $('._jsPlumb_connector, ._jsPlumb_overlay, ._jsPlumb_endpoint_anchor_').detach().appendTo('#lab-viewport');
+                // if lock then freeze node network
 		if ( labinfo['lock'] == 1 ) {
-                             //toggle
-                                var allElements = $('.node_frame, .network_frame, .customShape');
-                                //alert ( JSON.stringify( allElements ));
+                                var allElements = $('.node_frame, .network_frame');
                                 for (var i = 0; i < allElements.length; i++){
                                      if (lab_topology.toggleDraggable(allElements[i]) ) lab_topology.toggleDraggable(allElements[i]) ;
                                 }
-                               $('.customText').resizable('disable')
-                               // $('.action-unlock-lab i').removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle')
                                $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
                                $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
                 }
@@ -2846,7 +2848,6 @@ function printLabTopology() {
         return $.when(deleteSingleNetworks()).done(function(){
             $("#loading-lab").remove();
             $("#lab-sidebar *").show();
-
 
             var active = localStorage.getItem('action-nodelink');
 
@@ -4313,7 +4314,7 @@ function lockLab() {
         dataType: 'json',
         success: function (data) {
             if (data['status'] == 'success') {
-                logger(1, 'DEBUG: Lab Locked.');
+                logger(1, 'DEBUG: network position updated.');
                 deferred.resolve();
             } else {
                 // Application error
@@ -4357,7 +4358,7 @@ function unlockLab(){
         dataType: 'json',
         success: function (data) {
             if (data['status'] == 'success') {
-                logger(1, 'DEBUG: Lab Unlocked.');
+                logger(1, 'DEBUG: network position updated.');
                 deferred.resolve();
             } else {
                 // Application error
