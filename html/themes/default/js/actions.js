@@ -2966,6 +2966,9 @@ $('body').on('click', '.edit-custom-text-form-save', function (e) {
 });
 
 $(document).on('dblclick', '.customText', function (e) {
+    if ( LOCK == 1 ) {
+	return 0;
+    }
     logger(1, 'DEBUG: action = action-edit text');
     var id = $(this).attr('data-path')
         , $selectedCustomText = $("#customText" + id + " p")

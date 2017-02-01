@@ -2812,6 +2812,7 @@ function printLabTopology() {
                 $('._jsPlumb_connector, ._jsPlumb_overlay, ._jsPlumb_endpoint_anchor_').detach().appendTo('#lab-viewport');
                 // if lock then freeze node network
 		if ( labinfo['lock'] == 1 ) {
+                                LOCK = 1 ;
                                 var allElements = $('.node_frame, .network_frame');
                                 for (var i = 0; i < allElements.length; i++){
                                      if (lab_topology.toggleDraggable(allElements[i]) ) lab_topology.toggleDraggable(allElements[i]) ;
@@ -4322,6 +4323,7 @@ function lockLab() {
                 deferred.reject(data['message']);
             }
             addMessage(data['status'], data['message']);
+            LOCK = 1 ;
 
         },
         error: function (data) {
@@ -4366,6 +4368,7 @@ function unlockLab(){
                 deferred.reject(data['message']);
             }
             addMessage(data['status'], data['message']);
+	    LOCK = 0 ;
 
         },
         error: function (data) {
