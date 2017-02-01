@@ -29,7 +29,7 @@ var TENANT;
 var USERNAME;
 var ATTACHMENTS;
 var UPDATEID;
-
+var LOCK = 0 ; 
 
 $(document).ready(function() {
 	if ($.cookie('privacy') != 'true') {

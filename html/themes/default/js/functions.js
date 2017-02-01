@@ -2918,7 +2918,7 @@ function printListNetworks(networks) {
     body += '</tbody></table></div>';
 
     body = $(body);
-    if (ROLE == "user") {
+    if ( ROLE == "user"  ||  LOCK == 1  ) {
         body.find(".action-networkedit,.action-networkdelete").remove();
     }
 
@@ -2939,6 +2939,12 @@ function checkTemplateValue(template_options, field){
 function createNodeListRow(template, id){
     var html_data = "";
     var defer = $.Deferred();
+    var userRight = "readonly";
+    var disabledAttr = 'disabled="true"' ; 
+    if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
+         userRight = "";
+         disabledAttr = ""
+    }
 
     $.when(getTemplates(template), getNodes(id)).done(function (template_values, node_values) {
         var value_set = "";
@@ -2969,16 +2975,16 @@ function createNodeListRow(template, id){
         html_data += '<td><input class="hide-border" style="width: 20px;" value="' + id + '" readonly/></td>';
         
         //node name
-        html_data += '<td><input class="configured-nodes-input" data-path="' + id + '" name="node[name]" value="' + value_name + '" type="text" /></td>';
+        html_data += '<td><input class="configured-nodes-input ' + userRight + '" data-path="' + id + '" name="node[name]" value="' + value_name + '" type="text" /></td>';
         
         //node template
-        html_data += '<td><input class="hide-border" data-path="' + id + '" name="node[template]" value="' + template + '" readonly/></td>';
+        html_data += '<td><input class="hide-border ' + userRight + '" data-path="' + id + '" name="node[template]" value="' + template + '" readonly/></td>';
 
         //node boot image
         if(template == "vpcs"){
             html_data += '<td><input class="configured-nodes-input short-input readonly" data-path="' + id + '" name="node[cpu]" value="n/a" type="text" readonly /></td>';
         } else {
-            html_data += '<td><select class="configured-nods-select form-control" data-path="' + id + '" name="node[image]">'
+            html_data += '<td><select class="configured-nods-select form-control"' + disabledAttr + 'data-path="' + id + '" name="node[image]">'
             value_set = (node_values != null && template_values['options']['image'] && template_values['options']['image']['list']) ? node_values['image'] : "";
             var options_arr = template_values['options']['image'] && template_values['options']['image']['list'] ? template_values['options']['image']['list'] : [];
             $.each(options_arr, function (list_key, list_value) {
@@ -2990,19 +2996,19 @@ function createNodeListRow(template, id){
 
         //node cpu
         readonlyAttr = (value_cpu && value_cpu != "n/a") ? "" : "readonly";
-        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + '" data-path="' + id + '" name="node[cpu]" value="' + value_cpu + '" type="text" ' + readonlyAttr + ' /></td>';
+        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + ' ' + userRight + '" data-path="' + id + '" name="node[cpu]" value="' + value_cpu + '" type="text" ' + readonlyAttr + ' /></td>';
 
         //node idle
         readonlyAttr = (value_idlepc && value_idlepc != "n/a") ? "" : "readonly";
-        html_data += '<td><input class="configured-nodes-input ' + readonlyAttr + '" data-path="' + id + '" name="node[idlepc]" value="' + value_idlepc + '" type="text" ' + readonlyAttr + ' /></td>';
+        html_data += '<td><input class="configured-nodes-input ' + readonlyAttr + ' ' + userRight + '" data-path="' + id + '" name="node[idlepc]" value="' + value_idlepc + '" type="text" ' + readonlyAttr + ' /></td>';
 
         //node nvram
         readonlyAttr = (value_nvram && value_nvram != "n/a") ? "" : "readonly";
-        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + '" data-path="' + id + '" name="node[nvram]" value="' + value_nvram + '" type="text" ' + readonlyAttr + ' /></td>';
+        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + ' ' + userRight + '" data-path="' + id + '" name="node[nvram]" value="' + value_nvram + '" type="text" ' + readonlyAttr + ' /></td>';
 
         //node ram
         readonlyAttr = (value_ram && value_ram != "n/a") ? "" : "readonly";
-        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + '" data-path="' + id + '" name="node[ram]" value="' + value_ram + '" type="text" ' + readonlyAttr + ' /></td>';
+        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + ' ' + userRight + '" data-path="' + id + '" name="node[ram]" value="' + value_ram + '" type="text" ' + readonlyAttr + ' /></td>';
 
         //node ethernet
         if(template == "vpcs"){
@@ -3010,17 +3016,17 @@ function createNodeListRow(template, id){
         } else {
             readonlyAttr = (value_ethernet && value_ethernet != "n/a") ? "" : "readonly";
         }
-        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + '" data-path="' + id + '" name="node[ethernet]" value="' + value_ethernet + '" type="text" ' + readonlyAttr + ' /></td>';
+        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + ' ' + userRight + '" data-path="' + id + '" name="node[ethernet]" value="' + value_ethernet + '" type="text" ' + readonlyAttr + ' /></td>';
 
         //node serial
         readonlyAttr = (value_serial && value_serial != "n/a") ? "" : "readonly";
-        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + '" data-path="' + id + '" name="node[serial]" value="' + value_serial + '" type="text" '  + readonlyAttr + '/></td>';
+        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + ' ' + userRight + '" data-path="' + id + '" name="node[serial]" value="' + value_serial + '" type="text" '  + readonlyAttr + '/></td>';
 
         //node console
         if(template == "iol"){
             html_data += '<td><input class="hide-border"  data-path="' + id + '" value="telnet" readonly/></td>';
         } else if(template_values['options']['console']){
-            html_data += '<td><select class="configured-nods-select form-control" name="node[console]" data-path="' + id + '" >'
+            html_data += '<td><select class="configured-nods-select form-control"' + disabledAttr + ' name="node[console]" data-path="' + id + '" >'
             value_set = (node_values != null && node_values['console'] != null) ? node_values['console'] : value['value'];
             $.each(template_values['options']['console']['list'], function (list_key, list_value) {
                 var selected = (list_key == value_set) ? 'selected ' : '';
@@ -3032,7 +3038,7 @@ function createNodeListRow(template, id){
         }
 
         //node icons
-        html_data += '<td><select class="configured-nods-select form-control" data-path="' + id + '" name="node[icon]" >'
+        html_data += '<td><select class="configured-nods-select form-control"' + disabledAttr + ' data-path="' + id + '" name="node[icon]" >'
         value_set = (node_values != null && node_values['icon'] != null) ? node_values['icon'] : value['value'];
         $.each(template_values['options']['icon']['list'], function (list_key, list_value) {
             var selected = (list_key == value_set) ? 'selected ' : '';
@@ -3041,7 +3047,7 @@ function createNodeListRow(template, id){
         html_data += '</select></td>';
 
         //node startup-configs
-        html_data += '<td><select class="configured-nods-select form-control" data-path="' + id + '" name="node[config]">'
+        html_data += '<td><select class="configured-nods-select form-control"' + disabledAttr + ' data-path="' + id + '" name="node[config]">'
         value_set = (node_values != null && node_values['config'] != null) ? node_values['config'] : value['value'];
         $.each(template_values['options']['config']['list'], function (list_key, list_value) {
             var selected = (list_key == value_set) ? 'selected ' : '';
@@ -3054,7 +3060,7 @@ function createNodeListRow(template, id){
                          '<a class="action-nodestart" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[66] + '"><i class="glyphicon glyphicon-play"></i></a>'+
                          '<a class="action-nodestop" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[67] + '"><i class="glyphicon glyphicon-stop"></i></a>'+
                          '<a class="action-nodewipe" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[68] + '"><i class="glyphicon glyphicon-erase"></i></a>'
-        if (ROLE == 'admin' || ROLE == 'editor') {
+        if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
             html_data += '<a class="action-nodeexport" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[69] + '"><i class="glyphicon glyphicon-save"></i></a> '+
                          '<a class="action-nodeinterfaces" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[72] + '"><i class="glyphicon glyphicon-transfer"></i></a>'+
                          '<a class="action-nodeedit" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[71] + '"><i class="glyphicon glyphicon-edit"></i></a>'+
@@ -3150,7 +3156,7 @@ function printListTextobjects(textobjects) {
             '<td>' + value['type'] + '</td>' +
             '<td>' + text + '</td>' +
             '<td>';
-        if (ROLE != "user") {
+        if (ROLE != "user" && LOCK == 0  ) {
              body += '<a class="action-textobjectdelete" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[65] + '">' +
                 '<i class="glyphicon glyphicon-trash" style="margin-left:20px;"></i>' +
                 '</a>'

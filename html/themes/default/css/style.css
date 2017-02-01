@@ -16,7 +16,7 @@ body.no-height{
 blockquote {
 	background-image: url("/assets/images/diagonal.gif");
 	border: 1px solid #d6d7d7;
-	border-left: 5px solid #317087;
+	border-left: 5px solid #0066aa;
 	font-family: 'Ubuntu Regular', Helvetica, Arial, sans-serif;
 	padding: 10px;
 	margin: 10px 20px 10px 20px;
@@ -28,7 +28,7 @@ code, pre {
 
 p code {
 	background-color: transparent;
-	color: #317087;
+	color: #0066aa;
 	font-size: 1em;
 	font-weight: bold;
 	margin: 0px;
@@ -38,20 +38,20 @@ p code {
 pre {
 	margin: 10px;
 	overflow: auto;
-	border: 1px solid #317087;
-	border-left: 5px solid #317087;
+	border: 1px solid #0066aa;
+	border-left: 5px solid #0066aa;
 	padding: 5px;
 }
 
 h1 {
-	color: #317087;
+	color: #0066aa;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 	font-size: 1.8em;
 	font-weight: bold;
 }
 
 h2 {
-	background-color: #317087;
+	background-color: #0066aa;
 	color: #ffffff;
 	display: inline-block;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
@@ -73,8 +73,8 @@ h3 {
 }
 
 h4 {
-	border-bottom: 1px solid #317087;
-	color: #317087;
+	border-bottom: 1px solid #0066aa;
+	color: #0066aa;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 	font-size: 1.2em;
 	margin: 10px auto 10px auto;
@@ -115,14 +115,14 @@ p {
 }
 
 table {
-	border: 1px solid #317087;
+	border: 1px solid #0066aa;
 	margin: 0px;
 	padding: 0px;
 
 }
 
 thead {
-	background: #317087;
+	background: #0066aa;
 	border: 0px;
 }
 
@@ -147,7 +147,7 @@ tbody {
 }
 
 tbody tr {
-	border: 1px solid #317087;
+	border: 1px solid #0066aa;
 }
 
 tbody td {
@@ -167,7 +167,7 @@ tbody td .glyphicon-trash {
 
 
 #navbar-top #logo-main {
-	background-color: #317087;
+	background-color: #0066aa;
 }
 
 
@@ -212,7 +212,7 @@ tbody td .glyphicon-trash {
 }
 
 #jumbotron-right {
-	background-color: #317087;
+	background-color: #0066aa;
 	height: 450px;
 	margin: 50px 0px 0px 0px;
 	padding: 0px;
@@ -294,8 +294,8 @@ body.folders #main{
 }
 
 #toc a:active, #toc a:hover {
-	color: #317087;
-	border-bottom: 5px solid #317087;
+	color: #0066aa;
+	border-bottom: 5px solid #0066aa;
 	text-decoration: none;
 }
 
@@ -338,12 +338,12 @@ body.folders #main{
 }
 
 .modal-body h4 {
-	color: #317087;
+	color: #0066aa;
 	font-family: 'Ubuntu Regular', Helvetica, Arial, sans-serif;
 }
 
 .modal-body .error {
-	color: #317087;
+	color: #0066aa;
 	font-family: 'Ubuntu Regular', Helvetica, Arial, sans-serif;
 }
 
@@ -352,8 +352,8 @@ body.folders #main{
 }
 
 .modal-title {
-	border-bottom: 2px solid #317087;
-	color: #317087;
+	border-bottom: 2px solid #0066aa;
+	color: #0066aa;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 }
 

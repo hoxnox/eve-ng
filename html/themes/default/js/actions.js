@@ -187,7 +187,7 @@ $(document).on('contextmenu', '#lab-viewport', function (e) {
         return;
     }
 
-    if (ROLE != "user") {
+    if (ROLE != "user" && LOCK == 0 ) {
         var body = '';
         body += '<li><a class="action-nodeplace" href="javascript:void(0)"><i class="glyphicon glyphicon-hdd"></i> ' + MESSAGES[81] + '</a></li>';
         body += '<li><a class="action-networkplace" href="javascript:void(0)"><i class="glyphicon glyphicon-transfer"></i> ' + MESSAGES[82] + '</a></li>';
@@ -202,7 +202,7 @@ $(document).on('contextmenu', '#lab-viewport', function (e) {
 $(document).on('contextmenu', '.context-menu', function (e) {
     e.stopPropagation();
     e.preventDefault();  // Prevent default behaviour
-
+    var body = '' ;
     if ($("#lab-viewport").data("prevent-contextmenu")) {
         // prevent code execution
 
@@ -251,8 +251,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
 
 
         // Read privileges and set specific actions/elements
-        if (ROLE == 'admin' || ROLE == 'editor') {
-
+        if ((ROLE == 'admin' || ROLE == 'editor') &&  LOCK == 0  ) {
 
             body += '<li role="separator" class="divider">' +
                 '</li>' +
@@ -314,7 +313,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                 '<li>' +
                     '<a class="action-nodewipe-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-erase"></i> ' + MESSAGES[155] + '</a>' +
                 '</li>';
-            if (ROLE == 'admin' || ROLE == 'editor') {
+            if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
                 body += '' +
                     '<li role="separator" class="divider"></li>' +
                     '<li>' +
@@ -326,7 +325,6 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                     '<li>' +
                         '<a class="action-nodesbootscratch-group" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-save"></i> ' + MESSAGES[140] + '</a>' +
                     '</li>';
-            }
             body += '' +
                 '<li role="separator" class="divider"></li>' +
                 '<li>' +
@@ -336,7 +334,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                     '<a class="action-nodedelete-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i> ' + MESSAGES[157] + '</a>' +
                 '</li>' +
                 '';
-
+            }
             title = 'Group of ' + window.freeSelectedNodes.map(function (node) {
                     return node.name;
                 }).join(", ").slice(0, 16);
@@ -345,7 +343,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
         }
 
     } else if ($(this).hasClass('network_frame')) {
-        if (ROLE == 'admin' || ROLE == 'editor') {
+        if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
 
 
             logger(1, 'DEBUG: opening network context menu');
@@ -354,7 +352,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
             var body = '<li><a class="context-collapsible  action-networkedit" data-path="' + network_id + '" data-name="' + title + '" href="javascript:void(0)"><i class="glyphicon glyphicon-edit"></i> ' + MESSAGES[71] + '</a></li><li><a class="context-collapsible  action-networkdelete" data-path="' + network_id + '" data-name="' + title + '" href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i> ' + MESSAGES[65] + '</a></li>';
         }
     } else if ($(this).hasClass('customShape')) {
-        if (ROLE == 'admin' || ROLE == 'editor') {
+        if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
             logger(1, 'DEBUG: opening text object context menu');
             var textObject_id = $(this).attr('data-path')
                 , title = 'Edit: ' + $(this).attr('data-path')
@@ -403,7 +401,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
 $(document).off('click', '.context-menu')
     .on('click', '.context-menu', function (e) {
 
-        if (islinkActive() && (ROLE == 'admin' || ROLE == 'editor')) {
+        if (islinkActive() && (ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
             e.preventDefault();
             e.stopPropagation();
 
@@ -770,7 +768,7 @@ $(document).on('click', '.action-moreactions', function (e) {
     body += '<li><a class="action-nodesstart" href="javascript:void(0)"><i class="glyphicon glyphicon-play"></i> ' + MESSAGES[126] + '</a></li>';
     body += '<li><a class="action-nodesstop" href="javascript:void(0)"><i class="glyphicon glyphicon-stop"></i> ' + MESSAGES[127] + '</a></li>';
     body += '<li><a class="action-nodeswipe" href="javascript:void(0)"><i class="glyphicon glyphicon-erase"></i> ' + MESSAGES[128] + '</a></li>';
-    if (ROLE == 'admin' || ROLE == 'editor') {
+    if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
         body += '<li><a class="action-nodesexport" href="javascript:void(0)"><i class="glyphicon glyphicon-save"></i> ' + MESSAGES[129] + '</a></li>';
         body += '<li><a class="action-labedit" href="javascript:void(0)"><i class="glyphicon glyphicon-pencil"></i> ' + MESSAGES[87] + '</a></li>';
         body += '<li><a class="action-nodesbootsaved" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-saved"></i> ' + MESSAGES[139] + '</a></li>';
