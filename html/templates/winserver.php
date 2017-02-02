@@ -31,10 +31,10 @@
  */
 
 $p['type'] = 'qemu';
-$p['name'] = 'Win';
-$p['icon'] = 'Desktop.png';
+$p['name'] = 'Winserver';
+$p['icon'] = 'Server.png';
 $p['cpu'] = 1;
-$p['ram'] = 2048;
+$p['ram'] = 4096;
 $p['ethernet'] = 1;
 $p['console'] = 'vnc';
 $p['qemu_arch'] = 'x86_64';
