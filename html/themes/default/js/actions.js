@@ -313,10 +313,18 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                 '</li>' +
                 '<li>' +
                     '<a class="action-nodewipe-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-erase"></i> ' + MESSAGES[155] + '</a>' +
+                '</li>' +
+                '<li>' +
+                        '<a class="action-openconsole-all context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-console"></i> ' + MESSAGES[168] + '</a>' +
                 '</li>';
             if (ROLE == 'admin' || ROLE == 'editor') {
                 body += '' +
                     '<li role="separator" class="divider"></li>' +
+                    
+                    '<li>' +
+                        '<a class="action-openconsole-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-console"></i> ' + MESSAGES[169] + '</a>' +
+                    '</li>' +
+                    
                     '<li>' +
                         '<a class="action-nodeexport-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-save"></i> ' + MESSAGES[129] + '</a>' +
                     '</li>' +
@@ -776,6 +784,7 @@ $(document).on('click', '.action-moreactions', function (e) {
         body += '<li><a class="action-nodesbootsaved" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-saved"></i> ' + MESSAGES[139] + '</a></li>';
         body += '<li><a class="action-nodesbootscratch" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-save"></i> ' + MESSAGES[140] + '</a></li>';
         body += '<li><a class="action-nodesbootdelete" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-remove"></i> ' + MESSAGES[141] + '</a></li>';
+        body += '<li><a class="action-openconsole-all" href="javascript:void(0)"><i class="glyphicon glyphicon-console"></i> ' + MESSAGES[168] + '</a></li>';
     }
     printContextMenu(MESSAGES[125], body, e.pageX + 3, e.pageY + 3, true);
 });
@@ -899,6 +908,30 @@ $(document).on('click', '.action-nodeplace, .action-networkplace, .action-custom
         // }
     // });
 });
+
+$(document).on('click', '.action-openconsole-all, .action-openconsole-group', function (e) {
+    var target = $(this);
+    var isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode")
+
+    if (target.hasClass('action-openconsole-all')) {
+        $.when(getNodes(null)).done(function (nodes) {
+            console.log('nodes', nodes)
+            for(node in nodes){
+                window.location = $('div[data-path=' + nodes[node].id + '][data-status=2] a').attr('href')
+                // window.open($('div[data-path=' + nodes[node].id + '][data-status=2] a').attr('href'), '_blank')
+                // return false;
+            }
+        })
+    } else {
+        if(isFreeSelectMode){
+            freeSelectedNodes.forEach(function(node){
+                window.location = $('div[data-path=' + node.path + '][data-status=2] a').attr('href')
+            })
+        }
+    }
+    
+});
+
 
 // Add picture
 $(document).on('click', '.action-pictureadd', function (e) {
