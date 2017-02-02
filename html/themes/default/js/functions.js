@@ -1262,7 +1262,6 @@ function postLogin(param) {
 
 
         printPageLabOpen(LAB);
-
         // Update node status
         UPDATEID = setInterval('printLabStatus("' + LAB + '")', STATUSINTERVAL);
 
@@ -2026,7 +2025,7 @@ function printFormNode(action, values) {
 // Node config
 function printFormNodeConfigs(values, cb) {
     var title = values['name'] + ': ' + MESSAGES[123];
-    if (ROLE == 'admin' || ROLE == 'editor') {
+    if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
         var html = '<form id="form-node-config" class="form-horizontal"><input name="config[id]" value="' + values['id'] + '" type="hidden"/><div class="form-group"><div class="col-md-12"><textarea class="form-control autofocus" id="nodeconfig" name="config[data]" rows="15"></textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     } else {
         var html = '<div class="col-md-12"><pre>' + values['data'] + '</pre></div>';
@@ -2510,6 +2509,7 @@ function printLabPreview(lab_filename) {
 
 // Print lab topology
 function printLabTopology() {
+    var defer  = $.Deferred();
     var lab_filename = $('#lab-viewport').attr('data-path')
         , $labViewport = $('#lab-viewport')
         , loadingLabHtml = '' +
@@ -2529,7 +2529,7 @@ function printLabTopology() {
         ;
 
     if ($labViewport.data("refreshing")) {
-        return;
+        return ;
     }
     $labViewport.empty();
     $labViewport.data('refreshing', true);
@@ -2813,6 +2813,7 @@ function printLabTopology() {
                 // if lock then freeze node network
 		if ( labinfo['lock'] == 1 ) {
                                 LOCK = 1 ;
+				defer.resolve();
                                 var allElements = $('.node_frame, .network_frame');
                                 for (var i = 0; i < allElements.length; i++){
                                      if (lab_topology.toggleDraggable(allElements[i]) ) lab_topology.toggleDraggable(allElements[i]) ;
@@ -2820,6 +2821,7 @@ function printLabTopology() {
                                $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
                                $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
                 }
+		defer.resolve(LOCK);
                 $labViewport.data('refreshing', false);
                 labNodesResolver.resolve();
             });
@@ -2846,14 +2848,13 @@ function printLabTopology() {
 
     $.when(labNodesResolver, labTextObjectsResolver).done(function () {
 
-        return $.when(deleteSingleNetworks()).done(function(){
+        $.when(deleteSingleNetworks()).done(function(){
             $("#loading-lab").remove();
             $("#lab-sidebar *").show();
 
             var active = localStorage.getItem('action-nodelink');
 
            $('.action-nodelink').toggleClass('active',(active=='true'));
-
         })
 
     }).fail(function (message1, message2) {
@@ -2866,8 +2867,7 @@ function printLabTopology() {
         $("#lab-sidebar ul").show();
         $("#lab-sidebar ul li:lt(11)").hide();
     });
-
-
+      return defer.promise() ;
 
 }
 
@@ -3312,34 +3312,31 @@ function printPageLabOpen(lab) {
     var html = '<div id="lab-sidebar"><ul></ul></div><div id="lab-viewport" data-path="' + lab + '"></div>';
 
     $('#body').html(html);
-
     // Print topology
-    printLabTopology();
-
-    // Read privileges and set specific actions/elements
-    if (ROLE == 'admin' || ROLE == 'editor') {
-        $('#lab-sidebar ul').append('<li><a class="action-labobjectadd" href="javascript:void(0)" title="' + MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i></a></li>');
-        $('#lab-sidebar ul').append('<li><a class="action-nodelink" href="javascript:void(0)" title="' + MESSAGES[115] + '"><i class="glyphicon glyphicon-link"></i></a></li>');
-    }
-
-    $('#lab-sidebar ul').append('<li><a class="action-nodesget" href="javascript:void(0)" title="' + MESSAGES[62] + '"><i class="glyphicon glyphicon-hdd"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-networksget" href="javascript:void(0)" title="' + MESSAGES[61] + '"><i class="glyphicon glyphicon-transfer"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-configsget" href="javascript:void(0)" title="' + MESSAGES[58] + '"><i class="glyphicon glyphicon-align-left"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-picturesget" href="javascript:void(0)" title="' + MESSAGES[59] + '"><i class="glyphicon glyphicon-picture"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-textobjectsget" href="javascript:void(0)" title="' + MESSAGES[150] + '"><i class="glyphicon glyphicon-text-background"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-moreactions" href="javascript:void(0)" title="' + MESSAGES[125] + '"><i class="glyphicon glyphicon-th"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-labtopologyrefresh" href="javascript:void(0)" title="' + MESSAGES[57] + '"><i class="glyphicon glyphicon-refresh"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-freeselect" href="javascript:void(0)" title="' + MESSAGES[151] + '"><i class="glyphicon glyphicon-check"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-status" href="javascript:void(0)" title="' + MESSAGES[13] + '"><i class="glyphicon glyphicon-info-sign"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-labbodyget" href="javascript:void(0)" title="' + MESSAGES[64] + '"><i class="glyphicon glyphicon-list-alt"></i></a></li>');
-    $('#lab-sidebar ul').append('<div id="action-labclose"><li><a class="action-labclose" href="javascript:void(0)" title="' + MESSAGES[60] + '"><i class="glyphicon glyphicon-off"></i></a></li></div>');
-    $('#lab-sidebar ul').append('<li><a class="action-lock-lab" href="javascript:void(0)" title="' + MESSAGES[166] + '"><i class="glyphicon glyphicon-ok-circle"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-logout" href="javascript:void(0)" title="' + MESSAGES[14] + '"><i class="glyphicon glyphicon-log-out"></i></a></li>');
-    $('#lab-sidebar ul a').each(function () {
-        var t = $(this).attr("title");
-        $(this).append(t);
+    $.when(printLabTopology()).done( function () {
+	 if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
+              $('#lab-sidebar ul').append('<li class="action-labobjectadd-li"><a class="action-labobjectadd" href="javascript:void(0)" title="' + MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i></a></li>');
+              $('#lab-sidebar ul').append('<li class="action-nodelink-li"><a class="action-nodelink" href="javascript:void(0)" title="' + MESSAGES[115] + '"><i class="glyphicon glyphicon-link"></i></a></li>');
+         }
+         $('#lab-sidebar ul').append('<li class="action-nodesget-li"><a class="action-nodesget" href="javascript:void(0)" title="' + MESSAGES[62] + '"><i class="glyphicon glyphicon-hdd"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-networksget" href="javascript:void(0)" title="' + MESSAGES[61] + '"><i class="glyphicon glyphicon-transfer"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-configsget" href="javascript:void(0)" title="' + MESSAGES[58] + '"><i class="glyphicon glyphicon-align-left"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-picturesget" href="javascript:void(0)" title="' + MESSAGES[59] + '"><i class="glyphicon glyphicon-picture"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-textobjectsget" href="javascript:void(0)" title="' + MESSAGES[150] + '"><i class="glyphicon glyphicon-text-background"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-moreactions" href="javascript:void(0)" title="' + MESSAGES[125] + '"><i class="glyphicon glyphicon-th"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-labtopologyrefresh" href="javascript:void(0)" title="' + MESSAGES[57] + '"><i class="glyphicon glyphicon-refresh"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-freeselect" href="javascript:void(0)" title="' + MESSAGES[151] + '"><i class="glyphicon glyphicon-check"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-status" href="javascript:void(0)" title="' + MESSAGES[13] + '"><i class="glyphicon glyphicon-info-sign"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-labbodyget" href="javascript:void(0)" title="' + MESSAGES[64] + '"><i class="glyphicon glyphicon-list-alt"></i></a></li>');
+         $('#lab-sidebar ul').append('<div id="action-labclose"><li><a class="action-labclose" href="javascript:void(0)" title="' + MESSAGES[60] + '"><i class="glyphicon glyphicon-off"></i></a></li></div>');
+         $('#lab-sidebar ul').append('<li><a class="action-lock-lab" href="javascript:void(0)" title="' + MESSAGES[166] + '"><i class="glyphicon glyphicon-ok-circle"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-logout" href="javascript:void(0)" title="' + MESSAGES[14] + '"><i class="glyphicon glyphicon-log-out"></i></a></li>');
+         $('#lab-sidebar ul a').each(function () {
+             var t = $(this).attr("title");
+             $(this).append(t);
 
 
+             })
     })
 }
 
@@ -4340,6 +4337,10 @@ function lockLab() {
             deferred.reject(message);
         }
     });
+    $('.action-labobjectadd-li').hide();
+    $('.action-nodelink-li').hide();
+    //$('#lab-sidebar ul').append('<li><a class="action-labobjectadd" href="javascript:void(0)" title="' + MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i></a></li>');
+    //$('#lab-sidebar ul').append('<li><a class="action-nodelink" href="javascript:void(0)" title="' + MESSAGES[115] + '"><i class="glyphicon glyphicon-link"></i></a></li>');
     return deferred.promise();
 }
 
@@ -4385,6 +4386,15 @@ function unlockLab(){
             deferred.reject(message);
         }
     });
+    if ($('.action-labobjectadd-li').length == 0) {
+         $('.action-nodesget-li').before('<li class="action-nodelink-li"><a class="action-nodelink" href="javascript:void(0)" title="' + 
+         MESSAGES[115] + '"><i class="glyphicon glyphicon-link"></i>' + MESSAGES[115] + '</a></li>');
+         $('.action-nodelink-li').before('<li class="action-labobjectadd-li"><a class="action-labobjectadd" href="javascript:void(0)" title="' +
+         MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i>' + MESSAGES[56] + '</a></li>');
+    } else {
+         $('.action-labobjectadd-li').show();
+         $('.action-nodelink-li').show();
+   }
     return deferred.promise();
 }
 

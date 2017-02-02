@@ -782,7 +782,12 @@ $(document).on('click', '.action-moreactions', function (e) {
 $(document).on('click', '.action-labtopologyrefresh', function (e) {
     logger(1, 'DEBUG: action = labtopologyrefresh');
     detachNodeLink();
-    printLabTopology();
+    $.when(printLabTopology()).done( function () {
+         if ( LOCK == 1 ) {
+		$('.action-labobjectadd-li').remove();
+		$('.action-nodelink-li').remove();
+         }
+    });
 
 });
 
@@ -3798,8 +3803,10 @@ $(document).on('click', '.node.node_frame a', function (e) {
 
                 var network = '<li><a class="action-nodestart menu-manage" data-path="' + node_id +
                     '" data-name="' + node.name + '" href="#"><i class="glyphicon glyphicon-play"></i> Start</a></li>';
-                network += '<li><a style="display: block;" class="action-nodeedit " data-path="' + node_id +
-                    '" data-name="' + node.name + '" href="#"><i class="glyphicon glyphicon-edit"></i> Edit</a></li>';
+                if  ((ROLE == 'admin' || ROLE == 'editor') &&  LOCK == 0  ) {
+                     network += '<li><a style="display: block;" class="action-nodeedit " data-path="' + node_id +
+                     '" data-name="' + node.name + '" href="#"><i class="glyphicon glyphicon-edit"></i> Edit</a></li>';
+                }
 
                 printContextMenu(node.name, network, e.pageX, e.pageY);
             })
