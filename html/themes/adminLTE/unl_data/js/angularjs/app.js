@@ -166,7 +166,8 @@ app_main_unl.config(['$stateProvider', '$urlRouterProvider', function($stateProv
                         name: 'app_main_unl',
                         insertBefore: '#load_files_before',
                         files: [
-                             '/themes/adminLTE/unl_data/js/angularjs/controllers/loginCtrl.js'
+                             '/themes/adminLTE/unl_data/js/angularjs/controllers/loginCtrl.js',
+                             '/themes/adminLTE/unl_data/css/custom_unl.css',
                         ] 
                     });
                 }]

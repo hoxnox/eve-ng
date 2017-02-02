@@ -217,7 +217,7 @@ body.login {
 }
 
 #navbar-main .item-search input {
-	border: 1px solid #317087;
+	border: 1px solid #0066aa;
 	border-bottom-left-radius: 5px;
 	border-top-left-radius: 5px;
 	color: #89888c;
@@ -226,8 +226,8 @@ body.login {
 }
 
 #navbar-main .item-search button {
-	background: #317087;
-	border: 1px solid #317087;
+	background: #0066aa;
+	border: 1px solid #0066aa;
 	color: #ffffff;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 }
@@ -289,7 +289,7 @@ body.login {
 	font-size:16px;
 	font-weight:bold;
 	color:#FFF;
-	background:#317087 ;
+	background:#0066aa ;
 	margin:0 -15px;
 	padding:4px 15px;
 }
@@ -299,7 +299,7 @@ body.login {
 
 #context-menu code {
 	background-color: transparent;
-	color: #317087;
+	color: #0066aa;
 }
 
 #context-menu > ul {
@@ -458,7 +458,7 @@ body.login {
 }
 
 #list-title-labs {
-	background-color: #317087;
+	background-color: #0066aa;
 	color: #ffffff;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -561,7 +561,7 @@ body.login {
 }
 
 #pods thead, #users thead {
-	background: #317087;
+	background: #0066aa;
 }
 
 #pods thead tr, #users thead tr {
@@ -694,7 +694,7 @@ body.login {
 
 .full-height {
 	height: 100%;
-	/*background-color: #317087;*/
+	/*background-color: #0066aa;*/
 }
 
 .menuhide {
@@ -717,7 +717,7 @@ body.login {
 	color: #0066aa;
 	background-color: transparent;
 	border: 0px;
-	border-bottom: 3px solid #317087;
+	border-bottom: 3px solid #0066aa;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 	font-size: 1.5em;
 	font-weight: normal;
@@ -875,7 +875,7 @@ input[name='login[username]'], input[name='login[password]']{
 }
 
 #small {
-	background-color: #317087;
+	background-color: #0066aa;
 	height: 100%;
 	width: 100%;
 }
@@ -886,7 +886,7 @@ input[name='login[username]'], input[name='login[password]']{
 }
 
 #small h1 {
-	color: #317087;
+	color: #0066aa;
 	font-family: 'Ubuntu Bold', Helvetica, Arial, sans-serif;
 	font-size: 8vmin;
 }
@@ -1032,7 +1032,7 @@ input[name='login[username]'], input[name='login[password]']{
 }
 
 .folder, .folder:visited {
-	border-bottom: 1px dotted #317087;
+	border-bottom: 1px dotted #0066aa;
 	color: #58585a;
 	float: left;
 	font-family: 'Ubuntu Regular', Helvetica, Arial, sans-serif;
@@ -1043,8 +1043,8 @@ input[name='login[username]'], input[name='login[password]']{
 }
 
 .folder:active, .folder:hover, .folder.ui-draggable-dragging {
-	border-bottom: 1px solid #317087;
-	color: #317087;
+	border-bottom: 1px solid #0066aa;
+	color: #0066aa;
 	font-family: 'Ubuntu Regular', Helvetica, Arial, sans-serif;
 	font-weight: bold;
 	text-decoration: none;
@@ -1085,7 +1085,7 @@ input[name='login[username]'], input[name='login[password]']{
 
 .selected, .selected:visited, .selected:active, .selected:hover {
 	background: rgba(60, 153, 171, 0.75);
-	background: #317087;
+	background: #0066aa;
 	text-decoration: none;
 }
 
@@ -1152,7 +1152,7 @@ map area:visited {
     bottom: 15px;     /*bottom: 0;  - but  */
     width: 100%;
     z-index: 4000;
-    border-top: 3px solid #317087;
+    border-top: 3px solid #0066aa;
     padding-top: 5px !important;
     background-color: #ffffff;
 }
@@ -1215,7 +1215,7 @@ map area:visited {
 * Loading animation
 * *****************************************************************************/
 .loading-lab {
-    background-color: #317087;
+    background-color: #263339;
     position: absolute;
     top: 0;
     right: 0;
@@ -1235,7 +1235,7 @@ map area:visited {
 }
 
 .loading-lab h3 {
-    background-color: #317087;
+    background-color: #263339;
     font-family: 'Ubuntu Light', Helvetica, Arial, sans-serif;;
 }
 
@@ -1365,7 +1365,7 @@ table.configured-nodes tbody td label {
     bottom: 5%;
     left: 45%;
     padding: 35px;
-    background: #317087;
+    background: #263339;
     color: #fff;
     border-radius: 10px;
     height: 90px;

@@ -826,6 +826,56 @@ Free select
   padding: 3px 14px;
   white-space: nowrap;
 }
+/* navberoverwrite */
+.navbar-static-top {
+  background-color: #263339 !important;
+}
+
+.nav .open > a, .nav .open > a:focus, .nav .open > a:hover {
+    background-color: #000 !important;
+    border-color: #eee !important; 
+    /*border-width: 1px !important;
+    padding: 14px !important;
+    border-style: solid !important;
+    border-color: #aaaaaa !important;*/
+}
+
+.dropdown-menu {
+    background-color: #263339 !important;
+}
+.dropdown-menu > li > a {
+    color: #f6f6f6 !important;
+}
+
+.dropdown-menu > li > a:hover {
+    color: #061319 !important;
+}
+
 .jsplumb-connector { z-index:1000; }
 .jsplumb-endpoint { z-index:1001; }
 .jsplumb-overlay { z-index:1002; }
+
+body {
+   background-color: #263339 !important;
+}
+.login-box-body, .register-box-body {
+    background: #263339 !important;
+    padding: 20px !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-color: #666 !important;
+    color: #f6f6f6 !important;
+}
+
+#btnlogin {
+   color: #aaa !important ;
+   background-color: #263339 !important;
+   border: 1px !important;
+   border-style: solid !important;
+}
+
+
+#btnlogin:hover {
+   color: #000  !important ;
+   background-color: #317087 !important ;
+}
