@@ -2305,7 +2305,7 @@ function printPictureInForm(id) {
             'height="' + picture['height'] + '"/>' +
             '<map name="picture_map">' + picture_map + '</map>' +
             '</div>';
-        if (ROLE == 'admin' || ROLE == 'editor') {
+        if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
             var footer = '<button type="button" class="btn btn-flat action-pictureedit" data-path="' + picture_id + '">Edit</button>';
         } else {
             var footer = '';
@@ -3916,7 +3916,7 @@ function printFormEditCustomShape(id) {
         , colorDigits
         , bgColor
         , html =
-        '<form id="main-modal-edit" class="container col-md-12 col-lg-12 edit-custom-shape-form" data-path="' + id + '">' +
+        '<form id="main-modal-edit" class="container col-md-offset-1 col-md-11 col-lg-11 col-lg-offset-1 edit-custom-shape-form" data-path="' + id + '">' +
             '<div class="row col-md-9 top-part">' +
             '<label class="edit-custom-shape-label">Edit: ' + id + '</label><br>' +
             '<div class="form-group">' +
@@ -4040,7 +4040,7 @@ function printFormEditText(id) {
         , colorDigits
         , bgColor
         , html =
-  '<form id="main-modal-edit" class="container col-md-12 col-lg-12 edit-custom-text-form"  data-path="' + id + '">' +
+  '<form id="main-modal-edit" class="container col-md-offset-1 col-md-11 col-lg-11 col-lg-offset-1 edit-custom-text-form"  data-path="' + id + '">' +
         '<div class="row col-md-9  top-part">' +
         '<label class="edit-custom-text-label">Edit: ' + id + '</label><br>' +
         '<div class="form-group">' +
@@ -4084,7 +4084,7 @@ function printFormEditText(id) {
         '</div>' +
         '</div>' +
         '<div class="row col-md-3 btn-part">' +
-        '<button type="button" class="btn btn-flat edit-custom-text-form-save" data-path="' + id + '">' + MESSAGES[47] + '</button>' +
+        '<button type="button" class="btn btn-success edit-custom-text-form-save" data-path="' + id + '">' + MESSAGES[47] + '</button>' +
         '<button type="button" class="btn btn-flat cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
         '</div>' +
         '<input type="text" class="hide firstTextValues-z_index">' +
