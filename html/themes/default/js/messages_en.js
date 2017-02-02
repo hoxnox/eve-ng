@@ -179,3 +179,5 @@ MESSAGES[164] = 'Icon';
 MESSAGES[165] = 'UKSM Status';
 MESSAGES[166] = 'Lock Lab'
 MESSAGES[167] = 'Unlock Lab'
+MESSAGES[168] = 'Open Console For All Nodes'
+MESSAGES[169] = 'Open Console For selected Nodes'
