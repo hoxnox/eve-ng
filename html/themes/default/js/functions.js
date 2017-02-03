@@ -76,6 +76,7 @@ function addModal(title, body, footer, prop) {
     var html = '<div aria-hidden="false" style="display: block;z-index: 10000;" class="modal ' + ' ' + prop + ' fade in" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">' + title + '</h4></div><div class="modal-body">' + body + '</div><div class="modal-footer">' + footer + '</div></div></div></div>';
     $('body').append(html);
     $('body > .modal').modal('show');
+    $('.modal-dialog').draggable();
 }
 
 // Add Modal
