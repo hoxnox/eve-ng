@@ -314,7 +314,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                     '<a class="action-nodewipe-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-erase"></i> ' + MESSAGES[155] + '</a>' +
                 '</li>' +
                 '<li>' +
-                        '<a class="action-openconsole-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-console"></i> ' + MESSAGES[168] + '</a>' +
+                        '<a class="action-openconsole-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-console"></i> ' + MESSAGES[169] + '</a>' +
                 '</li>';
             if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
                 body += '' +
