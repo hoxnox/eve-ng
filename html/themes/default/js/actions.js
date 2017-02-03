@@ -314,16 +314,11 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                     '<a class="action-nodewipe-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-erase"></i> ' + MESSAGES[155] + '</a>' +
                 '</li>' +
                 '<li>' +
-                        '<a class="action-openconsole-all context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-console"></i> ' + MESSAGES[168] + '</a>' +
+                        '<a class="action-openconsole-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-console"></i> ' + MESSAGES[168] + '</a>' +
                 '</li>';
             if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
                 body += '' +
                     '<li role="separator" class="divider"></li>' +
-                    
-                    '<li>' +
-                        '<a class="action-openconsole-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-console"></i> ' + MESSAGES[169] + '</a>' +
-                    '</li>' +
-                    
                     '<li>' +
                         '<a class="action-nodeexport-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-save"></i> ' + MESSAGES[129] + '</a>' +
                     '</li>' +
@@ -776,13 +771,13 @@ $(document).on('click', '.action-moreactions', function (e) {
     body += '<li><a class="action-nodesstart" href="javascript:void(0)"><i class="glyphicon glyphicon-play"></i> ' + MESSAGES[126] + '</a></li>';
     body += '<li><a class="action-nodesstop" href="javascript:void(0)"><i class="glyphicon glyphicon-stop"></i> ' + MESSAGES[127] + '</a></li>';
     body += '<li><a class="action-nodeswipe" href="javascript:void(0)"><i class="glyphicon glyphicon-erase"></i> ' + MESSAGES[128] + '</a></li>';
+    body += '<li><a class="action-openconsole-all" href="javascript:void(0)"><i class="glyphicon glyphicon-console"></i> ' + MESSAGES[168] + '</a></li>';
     if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
         body += '<li><a class="action-nodesexport" href="javascript:void(0)"><i class="glyphicon glyphicon-save"></i> ' + MESSAGES[129] + '</a></li>';
         body += '<li><a class="action-labedit" href="javascript:void(0)"><i class="glyphicon glyphicon-pencil"></i> ' + MESSAGES[87] + '</a></li>';
         body += '<li><a class="action-nodesbootsaved" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-saved"></i> ' + MESSAGES[139] + '</a></li>';
         body += '<li><a class="action-nodesbootscratch" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-save"></i> ' + MESSAGES[140] + '</a></li>';
         body += '<li><a class="action-nodesbootdelete" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-remove"></i> ' + MESSAGES[141] + '</a></li>';
-        body += '<li><a class="action-openconsole-all" href="javascript:void(0)"><i class="glyphicon glyphicon-console"></i> ' + MESSAGES[168] + '</a></li>';
     }
     printContextMenu(MESSAGES[125], body, e.pageX + 3, e.pageY + 3, true);
 });
@@ -916,23 +911,23 @@ $(document).on('click', '.action-openconsole-all, .action-openconsole-group', fu
     var target = $(this);
     var isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode")
 
-    if (target.hasClass('action-openconsole-all')) {
+    if (!isFreeSelectMode) {
         $.when(getNodes(null)).done(function (nodes) {
-            console.log('nodes', nodes)
-            for(node in nodes){
-                window.location = $('div[data-path=' + nodes[node].id + '][data-status=2] a').attr('href')
-                // window.open($('div[data-path=' + nodes[node].id + '][data-status=2] a').attr('href'), '_blank')
-                // return false;
-            }
+            $.each(nodes, function (node_id, node) {
+		if ( node['status'] == 2 ) {
+		    document.getElementById('node'+node['id']).childNodes[0].click();
+		}
+            })
         })
     } else {
-        if(isFreeSelectMode){
-            freeSelectedNodes.forEach(function(node){
-                window.location = $('div[data-path=' + node.path + '][data-status=2] a').attr('href')
-            })
-        }
-    }
-    
+        freeSelectedNodes.forEach(function(node){
+             $("#lab-viewport").removeClass("freeSelectMode");
+             if ($('#node' + node.path).attr('data-status')){
+                  document.getElementById('node' + node.path).childNodes[0].click();
+             }
+             $("#lab-viewport").addClass("freeSelectMode");
+        })
+   }
 });
 
 
