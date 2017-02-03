@@ -883,8 +883,13 @@ $(document).on('click', '.action-nodeplace, .action-networkplace, .action-custom
             // if ($('#mouse_frame').length > 0) {
                 // ESC not pressed
                 var values = {};
-                values['left'] = $("#lab-viewport").data('contextClickXY').x - 30;
-                values['top'] = $("#lab-viewport").data('contextClickXY').y;
+                if ( $("#lab-viewport").data('contextClickXY') ) {
+                        values['left'] = $("#lab-viewport").data('contextClickXY').x - 30;
+                        values['top'] = $("#lab-viewport").data('contextClickXY').y;
+		} else {
+			values['left'] = 0;
+                        values['top'] = 0;
+                }
                 if (object == 'node') {
                     printFormNode('add', values);
                 } else if (object == 'network') {
@@ -915,7 +920,7 @@ $(document).on('click', '.action-openconsole-all, .action-openconsole-group', fu
         $.when(getNodes(null)).done(function (nodes) {
             $.each(nodes, function (node_id, node) {
 		if ( node['status'] == 2 ) {
-		    document.getElementById('node'+node['id']).childNodes[0].click();
+                    $('#node'+node['id']+' a img').click();
 		}
             })
         })
@@ -923,7 +928,7 @@ $(document).on('click', '.action-openconsole-all, .action-openconsole-group', fu
         freeSelectedNodes.forEach(function(node){
              $("#lab-viewport").removeClass("freeSelectMode");
              if ($('#node' + node.path).attr('data-status') == 2 ){
-                  document.getElementById('node' + node.path).childNodes[0].click();
+                  $('#node' + node.path +' a img').click();
              }
              $("#lab-viewport").addClass("freeSelectMode");
         })
