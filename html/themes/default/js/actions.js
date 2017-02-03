@@ -922,7 +922,7 @@ $(document).on('click', '.action-openconsole-all, .action-openconsole-group', fu
     } else {
         freeSelectedNodes.forEach(function(node){
              $("#lab-viewport").removeClass("freeSelectMode");
-             if ($('#node' + node.path).attr('data-status')){
+             if ($('#node' + node.path).attr('data-status') == 2 ){
                   document.getElementById('node' + node.path).childNodes[0].click();
              }
              $("#lab-viewport").addClass("freeSelectMode");
