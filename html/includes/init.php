@@ -127,9 +127,8 @@ if (!isset($node_templates)) {
 		'riverbed'		=>	'Riverbed',
 		'sterra'		=>	'S-Terra',
 		'vyos'			=>	'VyOS',
-		'win'			=>	'Windows (Legacy template)',
-		'winstation'			=>	'Windows Workstation',
-		'winserver'			=>	'Windows Server',
+		'win'	        =>	'Windows',
+		'winserver'		=>	'Windows Server',
 		'vpcs'			=>	'Virtual PC (VPCS)'
 	);
 	$qemudir = scandir("/opt/unetlab/addons/qemu/");
