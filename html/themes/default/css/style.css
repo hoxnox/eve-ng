@@ -393,3 +393,14 @@ body.folders #main{
 	display: -ms-flexbox;
 	display: flex;
 }
+
+.configured-nodes .node-running,
+.configured-nodes .node-running input {
+	background: #d9edf7;
+}
+
+.configured-nodes .node-editing,
+.configured-nodes .node-editing input {
+	/*background: #333;*/
+	background: #fcf8e3;
+}

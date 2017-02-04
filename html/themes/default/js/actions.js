@@ -271,7 +271,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                 '</a>' +
                 '</li>' +
                 '<li>' +
-                      '<a class="action-nodeedit context-collapsible menu-edit" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                      '<a class="action-nodeedit context-collapsible control menu-edit" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
                 '<i class="glyphicon glyphicon-edit"></i> ' + MESSAGES[71] +
                 '</a>' +
                 '</li>' +
@@ -668,10 +668,11 @@ $(document).on('click', '.action-nodeinterfaces', function (e) {
 
 $(document).on('click', '.action-nodeedit', function (e) {
     logger(1, 'DEBUG: action = action-nodeedit');
+    var fromNodeList  = $(this).hasClass('control')
     var id = $(this).attr('data-path');
     $.when(getNodes(id)).done(function (values) {
         values['id'] = id;
-        printFormNode('edit', values)
+        printFormNode('edit', values, fromNodeList)
     }).fail(function (message) {
         addModalError(message);
     });
@@ -788,8 +789,8 @@ $(document).on('click', '.action-labtopologyrefresh', function (e) {
     detachNodeLink();
     $.when(printLabTopology()).done( function () {
          if ( LOCK == 1 ) {
-		$('.action-labobjectadd-li').remove();
-		$('.action-nodelink-li').remove();
+        $('.action-labobjectadd-li').remove();
+        $('.action-nodelink-li').remove();
          }
     });
 
@@ -886,8 +887,8 @@ $(document).on('click', '.action-nodeplace, .action-networkplace, .action-custom
                 if ( $("#lab-viewport").data('contextClickXY') ) {
                         values['left'] = $("#lab-viewport").data('contextClickXY').x - 30;
                         values['top'] = $("#lab-viewport").data('contextClickXY').y;
-		} else {
-			values['left'] = 0;
+        } else {
+            values['left'] = 0;
                         values['top'] = 0;
                 }
                 if (object == 'node') {
@@ -919,9 +920,9 @@ $(document).on('click', '.action-openconsole-all, .action-openconsole-group', fu
     if (!isFreeSelectMode) {
         $.when(getNodes(null)).done(function (nodes) {
             $.each(nodes, function (node_id, node) {
-		if ( node['status'] == 2 ) {
+        if ( node['status'] == 2 ) {
                     $('#node'+node['id']+' a img').click();
-		}
+        }
             })
         })
     } else {
@@ -1412,6 +1413,12 @@ $(document).on('click', '.action-nodestart, .action-nodesstart, .action-nodestar
             $.when(start(node_id)).done(function () {
                 // Node started -> print a small green message
                 addMessage('success', nodes[node_id]['name'] + ': ' + MESSAGES[76]);
+                if($('input[data-path='+node_id+'][name="node[type]"]') &&
+                   $('input[data-path='+node_id+'][name="node[type]"]').parent()){
+                       $('input[data-path='+node_id+'][name="node[type]"]').parent().addClass('node-running')
+                       $('input[data-path='+node_id+']').prop('disabled', true)
+                       $('select[data-path='+node_id+']').prop('disabled', true)
+                   }
                 printLabStatus();
             }).fail(function (message) {
                 // Cannot start
@@ -1495,6 +1502,14 @@ $(document).on('click', '.action-nodestop, .action-nodesstop, .action-nodestop-g
             $.when(stop(node_id)).done(function () {
                 // Node stopped -> print a small green message
                 addMessage('success', nodes[node_id]['name'] + ': ' + MESSAGES[77])
+                
+                // remove blue background in node-list
+                if($('input[data-path='+node_id+'][name="node[type]"]') &&
+                   $('input[data-path='+node_id+'][name="node[type]"]').parent()){
+                       $('input[data-path='+node_id+'][name="node[type]"]').parent().removeClass('node-running')
+                       $('input[data-path='+node_id+'][disabled]').prop('disabled', false)
+                       $('select[data-path='+node_id+'][disabled]').prop('disabled', false)
+                   }
                 $('#node' + node_id + ' img').addClass('grayscale')
                 printLabStatus();
             }).fail(function (message) {
@@ -2113,11 +2128,20 @@ $(document).on('submit', '#form-node-add, #form-node-edit', function (e) {
 // submit nodeList form by input focusout
 $(document).on('focusout', '.configured-nodes-input', function(e){
     e.preventDefault();  // Prevent default behaviour
+    var id = $(this).attr('data-path')
+    $('input[data-path='+id+'][name="node[type]"]').parent().removeClass('node-editing')
     if(!$(this).attr("readonly")){
-        var id = $(this).attr('data-path')
         setNodeData(id);
     }
 });
+
+
+$(document).on('focusout', '.configured-nods-select', function(e){
+    console.log("here")
+    var id = $(this).attr('data-path')
+    $('input[data-path='+id+'][name="node[type]"]').parent().removeClass('node-editing')
+})
+
 
 // submit nodeList form
 $(document).on('change', '.configured-nods-select', function(e){
@@ -2125,6 +2149,13 @@ $(document).on('change', '.configured-nods-select', function(e){
     var id = $(this).attr('data-path')
     setNodeData(id);
 });
+
+// highlight nodeList form row
+$(document).on('focus', '.configured-nods-select, .configured-nodes-input', function(e){
+    var id = $(this).attr('data-path')
+    $('input[data-path='+id+'][name="node[type]"]').parent().addClass('node-editing')
+})
+
 
 // Submit config form
 $(document).on('submit', '#form-node-config', function (e) {
@@ -3003,7 +3034,7 @@ $('body').on('click', '.edit-custom-text-form-save', function (e) {
 
 $(document).on('dblclick', '.customText', function (e) {
     if ( LOCK == 1 ) {
-	return 0;
+    return 0;
     }
     logger(1, 'DEBUG: action = action-edit text');
     var id = $(this).attr('data-path')
