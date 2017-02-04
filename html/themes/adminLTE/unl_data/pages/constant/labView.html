@@ -4,7 +4,7 @@
 	<div style="padding:15px">
 	<div class="col-xs-12">
 	<h3 style="margin-top:0px">Lab Info <small class="text-muted">{{fullPathToFile}}</small></h3>
-		<div style="height:400px; background-color:#eee; overflow: scroll; position:relative;" id="divPreview">
+		<div style="height:400px; overflow: scroll; position:relative;" id="divPreview">
 				<h4 class="text-center" style="padding-top: 180px;" data-ng-show="zeroNodes">No one node inside lab</h4>
 				<div data-ng-show="!zeroNodes">
 					<div class="scale-menu-helper">
@@ -28,7 +28,7 @@
 					<div data-ng-repeat="x in networksList" class="pv_element" style="top:{{networksObject[x].top/scale*2}}px; left:{{networksObject[x].left/scale*2}}px; position:absolute;" data-toggle="tooltip" title="{{networksObject[x].name}}">
 						<img data-ng-src="/images/icons/{{ (networksObject[x].type == 'bridge') ? 'Switch' : 'Cloud'; }}.png" class="{{ (networksObject[x].type == 'bridge') ? 'Switch_s'+scale : 'Cloud_s'+scale; }}">
 					</div>
-					<div data-ng-repeat="x in lineList" class="line" style="position:absolute; transform: {{linkLinesAttr(x.x1,x.y1,x.x2,x.y2,scale*2)[1]}};width: {{linkLinesAttr(x.x1,x.y1,x.x2,x.y2,scale*2)[0]}}px; top: {{x.y1}}px; left: {{x.x1}}px;"></div>
+					<div data-ng-repeat="x in lineList" class="line" style="position:absolute; transform: {{linkLinesAttr(x.x1,x.y1,x.x2,x.y2,scale*2)[1]}};width: {{linkLinesAttr(x.x1,x.y1,x.x2,x.y2,scale*2)[0]}}px; top: {{x.y1}}px; left: {{((x.x1)-(45/scale))}}px;"></div>
 				</div>
 			</div>
 	</div>

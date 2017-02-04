@@ -125,7 +125,7 @@
                   <tbody>
 				  <!-- make item array - fileManagerItem['Fo_'+x.name] = [ x.name, x.name, visibleEdit, type] -->
                   <tr data-ng-repeat="x in rootDir.folders">
-                    <td width="10%"><input type="checkbox" data-ng-show="x.name != '..'" data-ng-init="checkboxArray['Fo_'+x.name]['name']=x.name; checkboxArray['Fo_'+x.name]['checked']=false; checkboxArray['Fo_'+x.name]['type']='Folder';" data-ng-model="checkboxArray['Fo_'+x.name]['checked']" data-ng-click="falseForSelAll(); hideAllEdit();" class="folder_check"/></td>
+                    <td width="10%"><div class="treecb"><input type="checkbox" data-ng-show="x.name != '..'" data-ng-init="checkboxArray['Fo_'+x.name]['name']=x.name; checkboxArray['Fo_'+x.name]['checked']=false; checkboxArray['Fo_'+x.name]['type']='Folder';" data-ng-model="checkboxArray['Fo_'+x.name]['checked']" data-ng-click="falseForSelAll(); hideAllEdit();" class="folder_check"/></div></td>
                     <td style="word-wrap: break-word;" class="mailbox-star" data-ng-click="selectElbyTD(checkboxArray['Fo_'+x.name])" data-ng-mousemove="visibleArray[x.name]=true" data-ng-mouseleave="visibleArray[x.name]=false">
 						<a class="pointer" data-ng-click="fileMngDraw(x.path, x.name); $event.stopPropagation();" data-ng-init="fileManagerItem['Fo_'+x.name]['visibleEdit']=false; fileManagerItem['Fo_'+x.name]['type']='Folder';" data-ng-show="!fileManagerItem['Fo_'+x.name]['visibleEdit']">
 							<i class="fa fa-folder" style="color:#dfba49"></i>
@@ -157,7 +157,7 @@
 					</td>
                   </tr>
 				   <tr data-ng-repeat="x in rootDir.labs">
-                    <td width="10%"><input type="checkbox" data-ng-click="falseForSelAll(); hideAllEdit();" data-ng-init="checkboxArray['Fi_'+x.file]['name']=x.file; checkboxArray['Fi_'+x.file]['checked']=false; checkboxArray['Fi_'+x.file]['type']='File';" data-ng-model="checkboxArray['Fi_'+x.file]['checked']"></td>
+                    <td width="10%"><div class="treecb"><input type="checkbox" data-ng-click="falseForSelAll(); hideAllEdit();" data-ng-init="checkboxArray['Fi_'+x.file]['name']=x.file; checkboxArray['Fi_'+x.file]['checked']=false; checkboxArray['Fi_'+x.file]['type']='File';" data-ng-model="checkboxArray['Fi_'+x.file]['checked']"></div></td>
                     <td style="word-wrap: break-word" class="mailbox-star" data-ng-click="selectElbyTD(checkboxArray['Fi_'+x.file])" data-ng-mousemove="visibleArray[x.file]=true" data-ng-mouseleave="visibleArray[x.file]=false">
 						<a class="pointer" style="{{ (x.path == fullPathToFile) ? 'color:green' : ''}}" data-ng-click="getLabInfo(x.path, x.file); $event.stopPropagation();" data-ng-init="fileManagerItem['Fi_'+x.file]['visibleEdit']=false; fileManagerItem['Fi_'+x.file]['type']='File';" data-ng-show="!fileManagerItem['Fi_'+x.file]['visibleEdit']">
 							<i class="fa fa-file"></i> 
