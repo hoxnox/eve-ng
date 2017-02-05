@@ -921,7 +921,11 @@ $(document).on('click', '.action-openconsole-all, .action-openconsole-group', fu
         $.when(getNodes(null)).done(function (nodes) {
             $.each(nodes, function (node_id, node) {
         if ( node['status'] == 2 ) {
+               if (window.chrome && window.chrome.webstore) {
+                    openNodeCons( node['url'] );
+               } else {
                     $('#node'+node['id']+' a img').click();
+               }
         }
             })
         })
@@ -929,7 +933,11 @@ $(document).on('click', '.action-openconsole-all, .action-openconsole-group', fu
         freeSelectedNodes.forEach(function(node){
              $("#lab-viewport").removeClass("freeSelectMode");
              if ($('#node' + node.path).attr('data-status') == 2 ){
-                  $('#node' + node.path +' a img').click();
+                  if (window.chrome && window.chrome.webstore) {
+                       openNodeCons( $('#node' + node.path +' a').attr('href') );
+                  } else {
+                       $('#node' + node.path +' a img').click();
+                  }
              }
              $("#lab-viewport").addClass("freeSelectMode");
         })

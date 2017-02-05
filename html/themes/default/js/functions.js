@@ -4417,3 +4417,20 @@ function unlockLab(){
 function toogleDruggable(topology, elem){
     return topology.toggleDraggable(elem)
 }
+
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
+
+function openNodeCons ( url ) {
+        nw = window.open(url);
+        sleep ( 1000 );
+        $(nw).ready(function() { nw.close(); } );
+}
