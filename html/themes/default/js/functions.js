@@ -1741,9 +1741,9 @@ function wipe(node_id) {
  * Print forms and pages
  **************************************************************************/
 // Context menu
-function printContextMenu(title, body, pageX, pageY, addToBody) {
+function printContextMenu(title, body, pageX, pageY, addToBody, role) {
     var menu = '<div id="context-menu" class="collapse clearfix dropdown">';
-    menu += '<ul class="dropdown-menu" role="menu"><li role="presentation" class="dropdown-header">' + title + '</li>' + body + '</ul></div>';
+    menu += '<ul class="dropdown-menu" role="' + role + '"><li role="presentation" class="dropdown-header">' + title + '</li>' + body + '</ul></div>';
 
     if(addToBody){
         $('body').append(menu);
@@ -1934,7 +1934,7 @@ function printFormNode(action, values, fromNodeList) {
 
     $.when(getTemplates(null)).done(function (templates) {
         var html = '';
-        html += '<form id="form-node-' + action + '" class="form-horizontal"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[84] + '</label><div class="col-md-5"><select id="form-node-template" class="selectpicker form-control" name="node[template]" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[102] + '</option>';
+        html += '<form id="form-node-' + action + '" class="form-horizontal"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[84] + '</label><div class="col-md-5"><select id="form-node-template" class="selectpicker form-control" name="node[template]" data-live-search="true" data-size="auto" data-style="selectpicker-button"><option value="">' + MESSAGES[102] + '</option>';
         $.each(templates, function (key, value) {
         var valdisabled  = (/missing/i.test(value)) ? 'disabled="disabled"' : '';
         //var valdisabled  = '' ;
@@ -1976,7 +1976,7 @@ function printFormNode(action, values, fromNodeList) {
                         var value_set = (node_values != null && node_values[key] != null) ? node_values[key] : value['value'];
                         if (value['type'] == 'list') {
                             // Option is a list
-                            html_data += '<div class="form-group"><label class="col-md-3 control-label">' + value['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="node[' + key + ']" data-style="selectpicker-button">';
+                            html_data += '<div class="form-group"><label class="col-md-3 control-label">' + value['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="node[' + key + ']" data-size="5" data-style="selectpicker-button">';
                             $.each(value['list'], function (list_key, list_value) {
                                 var selected = (list_key == value_set) ? 'selected ' : '';
                                     iconselect = '' ;
@@ -3054,7 +3054,7 @@ function createNodeListRow(template, id){
         }
 
         //node icons
-        html_data += '<td><select class="selectpicker configured-nods-select form-control"' + disabledAttr + ' data-path="' + id + '" name="node[icon]">'
+        html_data += '<td><select class="selectpicker configured-nods-select form-control"' + disabledAttr + ' data-path="' + id + '" data-size="5" name="node[icon]">'
         value_set = (node_values != null && node_values['icon'] != null) ? node_values['icon'] : value['value'];
         $.each(template_values['options']['icon']['list'], function (list_key, list_value) {
             var selected = (list_key == value_set) ? 'selected ' : '';

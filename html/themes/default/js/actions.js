@@ -194,7 +194,7 @@ $(document).on('contextmenu', '#lab-viewport', function (e) {
         body += '<li><a class="action-pictureadd" href="javascript:void(0)"><i class="glyphicon glyphicon-picture"></i> ' + MESSAGES[83] + '</a></li>';
         body += '<li><a class="action-customshapeadd" href="javascript:void(0)"><i class="glyphicon glyphicon-unchecked"></i> ' + MESSAGES[145] + '</a></li>';
         body += '<li><a class="action-textadd" href="javascript:void(0)"><i class="glyphicon glyphicon-font"></i> ' + MESSAGES[146] + '</a></li>';
-        printContextMenu(MESSAGES[80], body, e.pageX, e.pageY);
+        printContextMenu(MESSAGES[80], body, e.pageX, e.pageY,false,"menu");
     }
 });
 
@@ -392,7 +392,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
     }
     if (body.length) {
 
-        printContextMenu(title, body, e.pageX, e.pageY);
+        printContextMenu(title, body, e.pageX, e.pageY,false,"menu");
 
     }
 
@@ -780,7 +780,7 @@ $(document).on('click', '.action-moreactions', function (e) {
         body += '<li><a class="action-nodesbootscratch" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-save"></i> ' + MESSAGES[140] + '</a></li>';
         body += '<li><a class="action-nodesbootdelete" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-remove"></i> ' + MESSAGES[141] + '</a></li>';
     }
-    printContextMenu(MESSAGES[125], body, e.pageX + 3, e.pageY + 3, true);
+    printContextMenu(MESSAGES[125], body, e.pageX + 3, e.pageY + 3, true,"sidemenu");
 });
 
 // Redraw topology
@@ -844,7 +844,7 @@ $(document).on('click', '.action-labobjectadd', function (e) {
     body += '<li><a class="action-pictureadd" href="javascript:void(0)"><i class="glyphicon glyphicon-picture"></i> ' + MESSAGES[83] + '</a></li>';
   body += '<li><a class="action-customshapeadd" href="javascript:void(0)"><i class="glyphicon glyphicon-unchecked"></i> ' + MESSAGES[145] + '</a></li>';
   body += '<li><a class="action-textadd" href="javascript:void(0)"><i class="glyphicon glyphicon-font"></i> ' + MESSAGES[146] + '</a></li>';
-    printContextMenu(MESSAGES[80], body, e.pageX, e.pageY, true);
+    printContextMenu(MESSAGES[80], body, e.pageX, e.pageY, true,"sidemenu");
 });
 
 // Add network
@@ -1086,7 +1086,7 @@ $(document).on('click', '.action-picturesget-stop', function (e) {
             $.each(pictures, function (key, picture) {
                 body += '<li><a class="action-pictureget" data-path="' + key + '" href="javascript:void(0)" title="' + picture['name'] + '"><i class="glyphicon glyphicon-picture"></i> ' + picture['name'] + '</a></li>';
             });
-            printContextMenu(MESSAGES[59], body, e.pageX, e.pageY);
+            printContextMenu(MESSAGES[59], body, e.pageX, e.pageY,false,"menu");
         } else {
             addMessage('info', MESSAGES[134]);
         }
@@ -3521,7 +3521,7 @@ function nodeClicked(title, node_id, e) {
                     });
             });
 
-            printContextMenu(title, interfaces, e.pageX, e.pageY);
+            printContextMenu(title, interfaces, e.pageX, e.pageY,false,"menu");
 
         }).fail(function (message) {
             // Error on getting node interfaces
@@ -3880,7 +3880,7 @@ $(document).on('click', '.node.node_frame a', function (e) {
                      '" data-name="' + node.name + '" href="#"><i class="glyphicon glyphicon-edit"></i> Edit</a></li>';
                 }
 
-                printContextMenu(node.name, network, e.pageX, e.pageY);
+                printContextMenu(node.name, network, e.pageX, e.pageY,false,"menu");
             })
             .fail(function (message) {
                 addMessage('danger', message);
