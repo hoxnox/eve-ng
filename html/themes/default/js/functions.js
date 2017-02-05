@@ -1979,9 +1979,9 @@ function printFormNode(action, values, fromNodeList) {
                             html_data += '<div class="form-group"><label class="col-md-3 control-label">' + value['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="node[' + key + ']" data-style="selectpicker-button">';
                             $.each(value['list'], function (list_key, list_value) {
                                 var selected = (list_key == value_set) ? 'selected ' : '';
-                                    iconstyle = '' ;
-                                if ( key == "icon" ) { iconstyle = 'style="background-image:url(\/images\/icons\/'+list_value+');"' }; 
-                                html_data += '<option ' + selected + 'value="' + list_key + '">' + list_value + '</option>';
+                                    iconselect = '' ;
+                                if ( key == "icon" ) { iconselect = 'data-content="<img src=\'/images/icons/'+list_value+'\' height=15 width=15>&nbsp;&nbsp;&nbsp;'+list_value+'"' }; 
+                                html_data += '<option ' + selected + 'value="' + list_key + '" '+ iconselect +'>' + list_value + '</option>';
                             });
                             html_data += '</select></div>';
                             html_data += '</div>';
@@ -3054,11 +3054,12 @@ function createNodeListRow(template, id){
         }
 
         //node icons
-        html_data += '<td><select class="configured-nods-select form-control"' + disabledAttr + ' data-path="' + id + '" name="node[icon]" >'
+        html_data += '<td><select class="selectpicker configured-nods-select form-control"' + disabledAttr + ' data-path="' + id + '" name="node[icon]">'
         value_set = (node_values != null && node_values['icon'] != null) ? node_values['icon'] : value['value'];
         $.each(template_values['options']['icon']['list'], function (list_key, list_value) {
             var selected = (list_key == value_set) ? 'selected ' : '';
-            html_data += '<option ' + selected + 'value="' + list_key + '">' + list_value + '</option>';
+            var iconselect = 'data-content="<img src=\'/images/icons/'+list_value+'\' height=15 width=15>&nbsp;&nbsp;&nbsp;'+list_value+'&nbsp;&nbsp;"';
+            html_data += '<option ' + selected + 'value="' + list_key + '" ' + iconselect + '>' + list_value + '</option>';
         });
         html_data += '</select></td>';
 
