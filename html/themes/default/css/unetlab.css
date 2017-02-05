@@ -1433,3 +1433,8 @@ table.configured-nodes tbody td label {
     height: 5em;
   }
 }
+.modal-header {
+  background-color: #263339 !important;
+}
+.modal-title {
+  color: #a6b3b9 !important ;
