@@ -213,9 +213,10 @@ $(document).on('contextmenu', '.context-menu', function (e) {
 
     if (isFreeSelectMode && !$(this).is(".node_frame.free-selected", ".node_frame.free-selected *")) {
         // prevent 'contextmenu' on non Free Selected Elements
-
         return;
     }
+    
+    var isNodeRunning = $(this).attr('data-status') == 2;
 
     if ($(this).hasClass('node_frame')) {
         logger(1, 'DEBUG: opening node context menu');
@@ -269,18 +270,19 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                       '<a class="action-nodeinterfaces context-collapsible menu-edit" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
                 '<i class="glyphicon glyphicon-transfer"></i> ' + MESSAGES[72] +
                 '</a>' +
-                '</li>' +
-                '<li>' +
+                '</li>';
+                if(!isNodeRunning){
+                    body += '<li>' +
                       '<a class="action-nodeedit context-collapsible control menu-edit" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
-                '<i class="glyphicon glyphicon-edit"></i> ' + MESSAGES[71] +
-                '</a>' +
-                '</li>' +
-                '<li>' +
-                      '<a class="action-nodedelete context-collapsible menu-edit" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
-                '<i class="glyphicon glyphicon-trash"></i> ' + MESSAGES[65] +
-                '</a>' +
-                '</li>'
-            ;
+                    '<i class="glyphicon glyphicon-edit"></i> ' + MESSAGES[71] +
+                    '</a>' +
+                    '</li>' +
+                    '<li>' +
+                        '<a class="action-nodedelete context-collapsible menu-edit" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                    '<i class="glyphicon glyphicon-trash"></i> ' + MESSAGES[65] +
+                    '</a>' +
+                    '</li>';
+                }
         }
         ;
 
@@ -3688,8 +3690,8 @@ function selected_active(element) {
             lab_topology.animate(
                 destination,
                 {
-                    left: e.pageX - $('.selector').width() / 2 - 25,
-                    top: e.pageY - $('.selector').height() / 2
+                    left: e.pageX - $('.selector').width() / 2 - 40,
+                    top: e.pageY - $('.selector').height() / 2 - 5
                 },
                 {duration: 0});
         })
