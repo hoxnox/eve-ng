@@ -580,13 +580,13 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
 	$scope.networksList=[];
 	$scope.linkLinesArray=[];
 	$scope.lineList=[];
-	$scope.scale=3;
+	$scope.scale=5;
 	$scope.previewFun= function(path){
 		$scope.pathToLab=path;
 		$scope.nodelist=[];
 		$scope.networksList=[]
 		$scope.lineList=[]
-		$scope.scale=3;
+		$scope.scale=5;
 		//console.log(path)
 		$scope.zeroNodes=false;
 		///Get all nodes ///START
