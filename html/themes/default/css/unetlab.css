@@ -1454,3 +1454,10 @@ table.configured-nodes tbody td label {
   background-color: #000 !important;
   color: #fff !important ;
 }
+.close {
+   color: #FF0000 !important ;
+   opacity: 0.5 !important;
+}
+.action-changeopacity {
+  color: #a6b3b9 !important ;
+}
