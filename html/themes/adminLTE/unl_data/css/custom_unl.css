@@ -840,15 +840,16 @@ Free select
     border-color: #aaaaaa !important;*/
 }
 
-.dropdown-menu {
+.dropdown-main {
     background-color: #263339 !important;
 }
-.dropdown-menu > li > a {
-    color: #f6f6f6 !important;
+.dropdown-main > li > a {
+    color: #a6b3b9 !important;
 }
 
-.dropdown-menu > li > a:hover {
-    color: #061319 !important;
+.dropdown-main > li > a:hover {
+    background-color: #000 !important;
+    color: #fff !important;
 }
 
 .jsplumb-connector { z-index:1000; }
@@ -881,4 +882,14 @@ body {
 }
 .divPreview  {
  background-color: #eee !important;
+}
+.modal-header {
+  background-color: #263339 !important;
+}
+.modal-title {
+  color: #a6b3b9 !important ;
+}
+.modal-content {
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
 }

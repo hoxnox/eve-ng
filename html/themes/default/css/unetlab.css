@@ -1435,6 +1435,7 @@ table.configured-nodes tbody td label {
 }
 .modal-header {
   background-color: #263339 !important;
+  
 }
 .modal-title {
   color: #a6b3b9 !important ;
@@ -1442,6 +1443,8 @@ table.configured-nodes tbody td label {
 .dropdown-header {
   background-color: #263339 !important;
   color: #b6c3c9 !important ;
+  margin-top: 0px !important ;
+  padding-top: 0px !important ;
 }
 *[role="sidemenu"] {
   background-color: #263339 !important;
@@ -1460,4 +1463,9 @@ table.configured-nodes tbody td label {
 }
 .action-changeopacity {
   color: #a6b3b9 !important ;
+}
+.dropdown-menu {
+  border-top-right-radius: 0px !important;
+  border-top-left-radius: 0px !important;
+  padding-top: 0px !important ;
 }
