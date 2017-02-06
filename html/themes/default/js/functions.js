@@ -76,7 +76,7 @@ function addModal(title, body, footer, prop) {
     var html = '<div aria-hidden="false" style="display: block;z-index: 10000;" class="modal ' + ' ' + prop + ' fade in" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">' + title + '</h4></div><div class="modal-body">' + body + '</div><div class="modal-footer">' + footer + '</div></div></div></div>';
     $('body').append(html);
     $('body > .modal').modal('show');
-    $('.modal-dialog').draggable();
+    $('.modal-dialog').draggable({handle: ".modal-header"});
 }
 
 // Add Modal
@@ -1741,9 +1741,9 @@ function wipe(node_id) {
  * Print forms and pages
  **************************************************************************/
 // Context menu
-function printContextMenu(title, body, pageX, pageY, addToBody) {
+function printContextMenu(title, body, pageX, pageY, addToBody, role) {
     var menu = '<div id="context-menu" class="collapse clearfix dropdown">';
-    menu += '<ul class="dropdown-menu" role="menu"><li role="presentation" class="dropdown-header">' + title + '</li>' + body + '</ul></div>';
+    menu += '<ul class="dropdown-menu" role="' + role + '"><li role="presentation" class="dropdown-header">' + title + '</li>' + body + '</ul></div>';
 
     if(addToBody){
         $('body').append(menu);
@@ -1934,7 +1934,7 @@ function printFormNode(action, values, fromNodeList) {
 
     $.when(getTemplates(null)).done(function (templates) {
         var html = '';
-        html += '<form id="form-node-' + action + '" class="form-horizontal"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[84] + '</label><div class="col-md-5"><select id="form-node-template" class="selectpicker form-control" name="node[template]" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[102] + '</option>';
+        html += '<form id="form-node-' + action + '" class="form-horizontal"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[84] + '</label><div class="col-md-5"><select id="form-node-template" class="selectpicker form-control" name="node[template]" data-live-search="true" data-size="auto" data-style="selectpicker-button"><option value="">' + MESSAGES[102] + '</option>';
         $.each(templates, function (key, value) {
         var valdisabled  = (/missing/i.test(value)) ? 'disabled="disabled"' : '';
         //var valdisabled  = '' ;
@@ -1976,12 +1976,12 @@ function printFormNode(action, values, fromNodeList) {
                         var value_set = (node_values != null && node_values[key] != null) ? node_values[key] : value['value'];
                         if (value['type'] == 'list') {
                             // Option is a list
-                            html_data += '<div class="form-group"><label class="col-md-3 control-label">' + value['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="node[' + key + ']" data-style="selectpicker-button">';
+                            html_data += '<div class="form-group"><label class="col-md-3 control-label">' + value['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="node[' + key + ']" data-size="5" data-style="selectpicker-button">';
                             $.each(value['list'], function (list_key, list_value) {
                                 var selected = (list_key == value_set) ? 'selected ' : '';
-                                    iconstyle = '' ;
-                                if ( key == "icon" ) { iconstyle = 'style="background-image:url(\/images\/icons\/'+list_value+');"' }; 
-                                html_data += '<option ' + selected + 'value="' + list_key + '">' + list_value + '</option>';
+                                    iconselect = '' ;
+                                if ( key == "icon" ) { iconselect = 'data-content="<img src=\'/images/icons/'+list_value+'\' height=15 width=15>&nbsp;&nbsp;&nbsp;'+list_value+'"' }; 
+                                html_data += '<option ' + selected + 'value="' + list_key + '" '+ iconselect +'>' + list_value + '</option>';
                             });
                             html_data += '</select></div>';
                             html_data += '</div>';
@@ -2821,10 +2821,12 @@ function printLabTopology() {
         if ( labinfo['lock'] == 1 ) {
                                 LOCK = 1 ;
                 defer.resolve();
-                                var allElements = $('.node_frame, .network_frame');
-                                for (var i = 0; i < allElements.length; i++){
-                                     if (lab_topology.toggleDraggable(allElements[i]) ) lab_topology.toggleDraggable(allElements[i]) ;
-                                }
+                                if (ROLE == 'admin' || ROLE == 'editor') {
+                                     var allElements = $('.node_frame, .network_frame');
+                                     for (var i = 0; i < allElements.length; i++){
+                                          if (lab_topology.toggleDraggable(allElements[i]) ) lab_topology.toggleDraggable(allElements[i]) ;
+                                     }
+                               }
                                $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
                                $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
                 }
@@ -3054,11 +3056,12 @@ function createNodeListRow(template, id){
         }
 
         //node icons
-        html_data += '<td><select class="configured-nods-select form-control"' + disabledAttr + ' data-path="' + id + '" name="node[icon]" >'
+        html_data += '<td><select class="selectpicker configured-nods-select form-control"' + disabledAttr + ' data-path="' + id + '" data-size="5" name="node[icon]">'
         value_set = (node_values != null && node_values['icon'] != null) ? node_values['icon'] : value['value'];
         $.each(template_values['options']['icon']['list'], function (list_key, list_value) {
             var selected = (list_key == value_set) ? 'selected ' : '';
-            html_data += '<option ' + selected + 'value="' + list_key + '">' + list_value + '</option>';
+            var iconselect = 'data-content="<img src=\'/images/icons/'+list_value+'\' height=15 width=15>&nbsp;&nbsp;&nbsp;'+list_value+'&nbsp;&nbsp;"';
+            html_data += '<option ' + selected + 'value="' + list_key + '" ' + iconselect + '>' + list_value + '</option>';
         });
         html_data += '</select></td>';
 
@@ -4416,4 +4419,21 @@ function unlockLab(){
 
 function toogleDruggable(topology, elem){
     return topology.toggleDraggable(elem)
+}
+
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
+
+function openNodeCons ( url ) {
+        nw = window.open(url);
+        sleep ( 1000 );
+        $(nw).ready(function() { nw.close(); } );
 }

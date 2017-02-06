@@ -3,8 +3,8 @@
 	
 	<div style="padding:15px">
 	<div class="col-xs-12">
-	<h3 style="margin-top:0px">Lab Info <small class="text-muted">{{fullPathToFile}}</small></h3>
-		<div style="height:400px; overflow: scroll; position:relative;" id="divPreview">
+	<h3 style="margin-top:0px">{{labInfo.name}}</h3>
+		<div style="height:400px; overflow: auto; position:relative;" id="divPreview">
 				<h4 class="text-center" style="padding-top: 180px;" data-ng-show="zeroNodes">No one node inside lab</h4>
 				<div data-ng-show="!zeroNodes">
 					<div class="scale-menu-helper">
@@ -33,60 +33,62 @@
 			</div>
 	</div>
 	<p></p>
-	<div class="col-xs-12" style="padding-top:10px">
-		<div class="row">
-			<div class="col-xs-6">
-			<label>Lab Name: </label>
-			{{labInfo.name}}
-			</div>
-			<div class="col-xs-6">
-			<label>Author: </label>
-			{{labInfo.author}}
+	<hr style="color: #000 !important;" >
+	<div class="col-xs-7 col-sm-5 col-lg-5" style="padding-top:10px" >
+		<div class="col-xs-12">
+			<div class="row">
+				<div class="col-xs-12">
+				<label>Lab Path: </label>
+				{{fullPathToFile}}
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="col-xs-12">	
-		<div class="row">
-			<div class="col-xs-6">
-			<label>Version: </label>
-			{{labInfo.version}}
-			</div>
-			<div class="col-xs-6">
-			<label> Config Script timeout: </label>
-			{{labInfo.scripttimeout}}
-			</div>
-		</div>	
-	</div>
-	<div class="col-xs-12">
-		<div class="row">
-			<div class="col-xs-12">
-			<label>UUID: </label>
-			{{labInfo.id}}
-			</div>
-	</div>
+		<div class="col-xs-12">	
+			<div class="row">
+				<div class="col-xs-12">
+				<label>Version: </label>
+				{{labInfo.version}}
+				</div>
+			</div>	
 		</div>
 		<div class="col-xs-12">
-		<div class="row">
-			<div class="col-md-2 col-lg-1">
-			<label>Description:</label>
+			<div class="row">
+				<div class="col-xs-12">
+				<label>UUID: </label>
+				{{labInfo.id}}
+				</div>
 			</div>
-			<div class="col-md-10 col-lg-11">
-			{{labInfo.description}}
-			</div>
-		</div>	
+		</div>
+		<div class="col-xs-12">
+			<div class="row">
+				<div class="col-xs-12">
+				<label>Author:</label>
+				{{labInfo.author}}
+				</div>
+			</div>	
 		</div>	
 		<!--</p>
 		<p class="text-muted"> Full path: {{fullPathToFile}} </p>-->
 		<div class="col-xs-12">
-		<!--<hr style="margin:10px">-->
-		<div class="btn-group" style="margin-bottom:15px">
-            <button ng-if="!UIlegacy" type="button" class="btn btn-primary btn-flat" data-ng-click="legacylabopen(fullPathToFile)">Open Legacy</button>
-            <button ng-if="!UIlegacy" type="button" class="btn btn-primary btn-flat" data-ng-click="labopen(fullPathToFile)">Open</button>
-	    <button ng-if="UIlegacy" type="button" class="btn btn-primary btn-flat" data-ng-click="legacylabopen(fullPathToFile)">Open</button>
-            <button type="button" class="btn btn-primary btn-flat" data-ng-click="openModal('editfile',null,'megalg')">Edit</button>
-            <button type="button" class="btn btn-danger btn-flat" data-ng-click="deleteElement(fullPathToFile, 'File', 'true')">Delete</button>
-        </div>
-        </div>
+			<!--<hr style="margin:10px">-->
+ 			<div class="btn-group" style="margin-bottom:15px; margin-top: 25px;">
+			<button ng-if="!UIlegacy" type="button" class="btn btn-primary btn-flat" data-ng-click="legacylabopen(fullPathToFile)">Open Legacy</button>
+		        <button ng-if="!UIlegacy" type="button" class="btn btn-primary btn-flat" data-ng-click="labopen(fullPathToFile)">Open</button>
+			<button ng-if="UIlegacy" type="button" class="btn btn-primary btn-flat" data-ng-click="legacylabopen(fullPathToFile)">Open</button>
+		        <button type="button" class="btn btn-primary btn-flat" data-ng-click="openModal('editfile',null,'megalg')">Edit</button>
+		        <button type="button" class="btn btn-danger btn-flat" data-ng-click="deleteElement(fullPathToFile, 'File', 'true')">Delete</button>
+			</div>
+        	</div>
+	</div>
+	<div class="col-xs-11 col-sm-7 col-lg-7" >
+		<div class="col-xs-12" >
+                	<div class="row">
+                        	<div class="col-xs-12" style="height: 30vh ; overflow: auto; border: 5px solid rgba(255, 255, 255, .5);" >
+                        	<label>Description: </label>
+                        	<span style="white-space:pre-wrap;"><br> {{labInfo.description}}</span>
+                        </div>
+                </div>
+	</div>
 	</div>
 </div>
 
