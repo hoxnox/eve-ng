@@ -2821,10 +2821,12 @@ function printLabTopology() {
         if ( labinfo['lock'] == 1 ) {
                                 LOCK = 1 ;
                 defer.resolve();
-                                var allElements = $('.node_frame, .network_frame');
-                                for (var i = 0; i < allElements.length; i++){
-                                     if (lab_topology.toggleDraggable(allElements[i]) ) lab_topology.toggleDraggable(allElements[i]) ;
-                                }
+                                if (ROLE == 'admin' || ROLE == 'editor') {
+                                     var allElements = $('.node_frame, .network_frame');
+                                     for (var i = 0; i < allElements.length; i++){
+                                          if (lab_topology.toggleDraggable(allElements[i]) ) lab_topology.toggleDraggable(allElements[i]) ;
+                                     }
+                               }
                                $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
                                $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
                 }
