@@ -439,7 +439,11 @@ $(document).on('click', '.action-configsget', function (e) {
         var body = '<div class="row row-config-list"><div class="config-list col-md-2 col-lg-2"><ul>';
         $.each(configs, function (key, config) {
             var title = (config['config'] == 0) ? MESSAGES[122] : MESSAGES[121];
-            body += '<li><a class="action-configget" data-path="' + key + '" href="javascript:void(0)" title="' + title + '">' + config['name'];
+            body += '<li><a class="action-configget" data-path="' + key + '" href="javascript:void(0)" title="' + title + '"><img src="/images/icons/' + config['icon'] + '" width="15" height="15" '
+	    if (config['len'] == 0 ) {
+                 body += 'class="grayscale"';
+            }
+            body += '>&nbsp;&nbsp;&nbsp;' + config['name'];
             if (config['config'] == 1) {
                 body += ' <i class="glyphicon glyphicon-floppy-saved"></i>';
             }

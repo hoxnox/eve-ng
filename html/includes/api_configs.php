@@ -143,9 +143,12 @@ function apiGetLabConfigs($lab) {
 	$output['data'] = Array();
 	foreach ($nodes as $node_id => $node) {
 		if (isset($GLOBALS['node_config'][$node -> getTemplate()])) {
+			$len = ( $node -> getConfigData() == '' ? 0 : 1 ) ;  
 			$output['data'][$node_id] = Array(
 				'config' => $node -> getConfig(),
-				'name' => $node -> getName()
+				'name' => $node -> getName(),
+                                'icon' => $node -> getIcon(),
+                                'len' => $len
 			);
 		}
 	}

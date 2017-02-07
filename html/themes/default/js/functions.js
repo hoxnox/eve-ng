@@ -2928,7 +2928,6 @@ function printListNetworks(networks) {
     if ( ROLE == "user"  ||  LOCK == 1  ) {
         body.find(".action-networkedit,.action-networkdelete").remove();
     }
-    alert ( body.html() ) ;
     body = '<div class="table-responsive"><table class="table">' + body.html() + '</tbody></table></div>';
     addModalWide(MESSAGES[96], body, '');
 }
