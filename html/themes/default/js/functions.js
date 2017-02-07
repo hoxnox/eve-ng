@@ -2035,7 +2035,7 @@ function printFormNodeConfigs(values, cb) {
     if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
         var html = '<form id="form-node-config" class="form-horizontal"><input name="config[id]" value="' + values['id'] + '" type="hidden"/><div class="form-group"><div class="col-md-12"><textarea class="form-control autofocus" id="nodeconfig" name="config[data]" rows="500"></textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     } else {
-        var html = '<div class="col-md-12"><pre>' + values['data'] + '</pre></div>';
+        var html = '<div class="col-md-12"><pre style="max-height: calc(90vh - 120px)!important;">' + values['data'] + '</pre></div>';
     }
     $('#config-data').html(html);
     $('#nodeconfig').val(values['data']);
