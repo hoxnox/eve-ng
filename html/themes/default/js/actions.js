@@ -436,7 +436,7 @@ $(window).resize(function () {
 $(document).on('click', '.action-configsget', function (e) {
     logger(1, 'DEBUG: action = configsget');
     $.when(getNodeConfigs(null)).done(function (configs) {
-        var body = '<div class="row"><div class="config-list col-md-2 col-lg-2"><ul>';
+        var body = '<div class="row row-config-list"><div class="config-list col-md-2 col-lg-2"><ul>';
         $.each(configs, function (key, config) {
             var title = (config['config'] == 0) ? MESSAGES[122] : MESSAGES[121];
             body += '<li><a class="action-configget" data-path="' + key + '" href="javascript:void(0)" title="' + title + '">' + config['name'];
@@ -466,6 +466,8 @@ $(document).on('click', '.action-changeopacity', function (e) {
 // Get startup-config
 $(document).on('click', '.action-configget', function (e) {
     logger(1, 'DEBUG: action = configget');
+    $(".action-configget").removeClass("selected");
+    $(this).addClass("selected");
     var id = $(this).attr('data-path');
     $.when(getNodeConfigs(id)).done(function (config) {
         printFormNodeConfigs(config);

@@ -2033,7 +2033,7 @@ function printFormNode(action, values, fromNodeList) {
 function printFormNodeConfigs(values, cb) {
     var title = values['name'] + ': ' + MESSAGES[123];
     if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
-        var html = '<form id="form-node-config" class="form-horizontal"><input name="config[id]" value="' + values['id'] + '" type="hidden"/><div class="form-group"><div class="col-md-12"><textarea class="form-control autofocus" id="nodeconfig" name="config[data]" rows="15"></textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        var html = '<form id="form-node-config" class="form-horizontal"><input name="config[id]" value="' + values['id'] + '" type="hidden"/><div class="form-group"><div class="col-md-12"><textarea class="form-control autofocus" id="nodeconfig" name="config[data]" rows="500"></textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     } else {
         var html = '<div class="col-md-12"><pre>' + values['data'] + '</pre></div>';
     }
@@ -2920,18 +2920,17 @@ function printLabStatus() {
 // Display all networks in a table
 function printListNetworks(networks) {
     logger(1, 'DEBUG: printing network list');
-    var body = '<div class="table-responsive"><table class="table"><thead><tr><th>' + MESSAGES[92] + '</th><th>' + MESSAGES[19] + '</th><th>' + MESSAGES[95] + '</th><th>' + MESSAGES[97] + '</th><th>' + MESSAGES[99] + '</th></tr></thead><tbody>';
+    var body = '<table><thead><tr><th>' + MESSAGES[92] + '</th><th>' + MESSAGES[19] + '</th><th>' + MESSAGES[95] + '</th><th>' + MESSAGES[97] + '</th><th>' + MESSAGES[99] + '</th></tr></thead><tbody>';
     $.each(networks, function (key, value) {
         body += '<tr class="network' + value['id'] + '"><td>' + value['id'] + '</td><td>' + value['name'] + '</td><td>' + value['type'] + '</td><td>' + value['count'] + '</td><td><a class="action-networkedit" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[71] + '"><i class="glyphicon glyphicon-edit"></i></a><a class="action-networkdelete" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[65] + '"><i class="glyphicon glyphicon-trash"></i></a></td></tr>';
     });
-    body += '</tbody></table></div>';
-
     body = $(body);
     if ( ROLE == "user"  ||  LOCK == 1  ) {
         body.find(".action-networkedit,.action-networkdelete").remove();
     }
-
-    addModalWide(MESSAGES[96], body.html(), '');
+    alert ( body.html() ) ;
+    body = '<div class="table-responsive"><table class="table">' + body.html() + '</tbody></table></div>';
+    addModalWide(MESSAGES[96], body, '');
 }
 
 // check template's options that field's exists

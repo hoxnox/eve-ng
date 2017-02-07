@@ -814,7 +814,7 @@ body.login {
 }
 
 .modal-body  .config-list, .modal-body  .picture-list  {
-	overflow: hidden;
+	overflow: hidden ;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
@@ -855,6 +855,9 @@ body.login {
 
 .modal.modal-ultra-wide .modal-dialog{
 	width: 99%;
+}
+.modal-content {
+	max-height: 90vh ;
 }
 
 .selectpicker-button {
@@ -1468,4 +1471,24 @@ table.configured-nodes tbody td label {
   border-top-right-radius: 0px !important;
   border-top-left-radius: 0px !important;
   padding-top: 0px !important ;
+}
+.table-responsive  {
+  max-height: calc(90vh - 100px)  !important;
+  overflow: auto ;
+}
+.config-list {
+  max-height: calc(90vh - 100px)  !important;
+  overflow: auto !important ;
+}
+.config-list {
+  max-height: calc(90vh - 100px)  !important;
+  overflow: hidden ;
+}
+#nodeconfig {
+  max-height: calc(90vh - 140px) !important;
+}
+.action-configget.selected {
+ color: #a6b3b9 !important;
+ background-color: #263339 !important;
+ padding: 5px !important;
 }
