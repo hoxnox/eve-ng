@@ -856,9 +856,6 @@ body.login {
 .modal.modal-ultra-wide .modal-dialog{
 	width: 99%;
 }
-.modal-content {
-	max-height: 90vh ;
-}
 
 .selectpicker-button {
 	width: 100%;
@@ -1492,3 +1489,4 @@ table.configured-nodes tbody td label {
  background-color: #263339 !important;
  padding: 5px !important;
 }
+
