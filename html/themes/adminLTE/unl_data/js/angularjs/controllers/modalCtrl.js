@@ -21,6 +21,7 @@ function ModalCtrl($scope, $uibModal, $log) {
       animation: $scope.animationsEnabled,
       templateUrl: $scope.modalActions[pathToModal]['path'],
       controller: $scope.modalActions[pathToModal]['controller'],
+      windowTopClass: "fade in out", 
       size: size,
       backdrop: (size == 'megalg') ? false : true,
       resolve: {

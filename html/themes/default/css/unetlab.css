@@ -1489,4 +1489,7 @@ table.configured-nodes tbody td label {
  background-color: #263339 !important;
  padding: 5px !important;
 }
-
+.chars, .chars-full {
+    color: #a6a6a6;
+    font-size: 12px;
+}

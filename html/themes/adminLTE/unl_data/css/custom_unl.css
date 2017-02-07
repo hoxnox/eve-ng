@@ -893,3 +893,6 @@ body {
   border-bottom-right-radius: 6px;
   border-bottom-left-radius: 6px;
 }
+.modal-dialog {
+  margin-top: 80px !important;
+}
