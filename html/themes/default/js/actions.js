@@ -217,7 +217,8 @@ $(document).on('contextmenu', '.context-menu', function (e) {
     }
     
     var isNodeRunning = $(this).attr('data-status') == 2;
-
+    var status = $(this).attr('data-status')
+    
     if ($(this).hasClass('node_frame')) {
         logger(1, 'DEBUG: opening node context menu');
 
@@ -267,7 +268,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                 '</a>' +
                 '</li>' +
                 '<li>' +
-                      '<a class="action-nodeinterfaces context-collapsible menu-edit" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                      '<a class="action-nodeinterfaces context-collapsible menu-edit" data-path="' + node_id + '" data-name="' + title + '"  data-status="'+ status +'" href="javascript:void(0)">' +
                 '<i class="glyphicon glyphicon-transfer"></i> ' + MESSAGES[72] +
                 '</a>' +
                 '</li>';
@@ -616,6 +617,7 @@ $(document).on('hide.bs.modal', function (e) {
 // Delete lab node
 
 $(document).on('click', '.action-nodedelete, .action-nodedelete-group', function (e) {
+    if($(this).hasClass('disabled')) return;
     if (!confirm('Are you sure ?')) return;
     logger(1, 'DEBUG: action = action-nodedelete');
     var node_id = $(this).attr('data-path')
@@ -661,9 +663,11 @@ $(document).on('click', '.action-nodeinterfaces', function (e) {
     logger(1, 'DEBUG: action = action-nodeinterfaces');
     var id = $(this).attr('data-path');
     var name = $(this).attr('data-name');
+    var status = $(this).attr('data-status');
     $.when(getNodeInterfaces(id)).done(function (values) {
         values['node_id'] = id;
         values['node_name'] = name;
+        values['node_status'] = status;
         printFormNodeInterfaces(values)
     }).fail(function (message) {
         addModalError(message);
@@ -676,6 +680,8 @@ $(document).on('click', '.action-nodeinterfaces', function (e) {
 
 $(document).on('click', '.action-nodeedit', function (e) {
     logger(1, 'DEBUG: action = action-nodeedit');
+    var disabled  = $(this).hasClass('disabled')
+    if(disabled) return;
     var fromNodeList  = $(this).hasClass('control')
     var id = $(this).attr('data-path');
     $.when(getNodes(id)).done(function (values) {
@@ -1434,6 +1440,9 @@ $(document).on('click', '.action-nodestart, .action-nodesstart, .action-nodestar
                        $('input[data-path='+node_id+'][name="node[type]"]').parent().addClass('node-running')
                        $('input[data-path='+node_id+']').prop('disabled', true)
                        $('select[data-path='+node_id+']').prop('disabled', true)
+                       $("a[data-path="+node_id+"].action-nodeedit").addClass('disabled')
+                       $("a[data-path="+node_id+"].action-nodeinterfaces").addClass('disabled')
+                       $("a[data-path="+node_id+"].action-nodedelete").addClass('disabled')
                    }
                 printLabStatus();
             }).fail(function (message) {
@@ -1525,6 +1534,9 @@ $(document).on('click', '.action-nodestop, .action-nodesstop, .action-nodestop-g
                        $('input[data-path='+node_id+'][name="node[type]"]').parent().removeClass('node-running')
                        $('input[data-path='+node_id+'][disabled]').prop('disabled', false)
                        $('select[data-path='+node_id+'][disabled]').prop('disabled', false)
+                       $("a[data-path="+node_id+"].action-nodeedit").removeClass('disabled')
+                       $("a[data-path="+node_id+"].action-nodeinterfaces").removeClass('disabled')
+                       $("a[data-path="+node_id+"].action-nodedelete").removeClass('disabled')
                    }
                 $('#node' + node_id + ' img').addClass('grayscale')
                 printLabStatus();

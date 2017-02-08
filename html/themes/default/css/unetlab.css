@@ -1294,6 +1294,12 @@ a:focus{
 .action-controls a .glyphicon-trash {
     margin-left: 15px;
 }
+.action-controls a .glyphicon{
+	color: #263339;
+}
+.action-controls a.disabled .glyphicon{
+	color: #8b8c90;
+}
 
 .configured-nodes-input{
 	width: 70px;

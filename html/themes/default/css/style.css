@@ -404,3 +404,7 @@ body.folders #main{
 	/*background: #333;*/
 	background: #fcf8e3;
 }
+
+.disabled {
+	cursor:not-allowed !important;
+}

@@ -2229,6 +2229,7 @@ function saveLab(form) {
 
 // Node interfaces
 function printFormNodeInterfaces(values) {
+    var disabled = values['node_status'] == 2 ? ' disabled="disabled" ' : "";
     $.when(getLabLinks()).done(function (links) {
         var html = '<form id="form-node-connect" class="form-horizontal">';
         html += '<input name="node_id" value="' + values['node_id'] + '" type="hidden"/>';
@@ -2239,7 +2240,7 @@ function printFormNodeInterfaces(values) {
             $.each(values['ethernet'], function (interfc_id, interfc) {
                 var x = interfc_id % 16;
                 var y = (interfc_id - x) / 16;
-                iol_interfc[4 * x + y] = '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
+                iol_interfc[4 * x + y] = '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select ' + disabled + ' class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
                 $.each(links['ethernet'], function (link_id, link) {
                     var link_selected = (interfc['network_id'] == link_id) ? 'selected ' : '';
                     iol_interfc[4 * x + y] += '<option ' + link_selected + 'value="' + link_id + '">' + link + '</option>';
@@ -2251,7 +2252,7 @@ function printFormNodeInterfaces(values) {
             });
         } else {
             $.each(values['ethernet'], function (interfc_id, interfc) {
-                html += '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
+                html += '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select ' + disabled + ' class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
                 $.each(links['ethernet'], function (link_id, link) {
                     var link_selected = (interfc['network_id'] == link_id) ? 'selected ' : '';
                     html += '<option ' + link_selected + 'value="' + link_id + '">' + link + '</option>';
@@ -2266,7 +2267,7 @@ function printFormNodeInterfaces(values) {
             $.each(values['serial'], function (interfc_id, interfc) {
                 var x = interfc_id % 16;
                 var y = (interfc_id - x) / 16;
-                iol_interfc[4 * x + y] = '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
+                iol_interfc[4 * x + y] = '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select ' + disabled + ' class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
                 $.each(links['serial'], function (node_id, serial_link) {
                     if (values['node_id'] != node_id) {
                         $.each(serial_link, function (link_id, link) {
@@ -2282,7 +2283,7 @@ function printFormNodeInterfaces(values) {
             });
         } else {
             $.each(values['serial'], function (interfc_id, interfc) {
-                html += '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
+                html += '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select ' + disabled + ' class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
                 $.each(links['serial'], function (node_id, serial_link) {
                     if (values['node_id'] != node_id) {
                         $.each(serial_link, function (link_id, link) {
@@ -2295,7 +2296,7 @@ function printFormNodeInterfaces(values) {
             });
         }
 
-        html += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        html += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button ' + disabled + ' type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
 
         addModal(values['node_name'] + ': ' + MESSAGES[116], html, '', 'second-win');
         $('.selectpicker').selectpicker();
@@ -2989,10 +2990,12 @@ function createNodeListRow(template, id){
 
         var highlightRow = '';
         var disabled = '';
+        var disabledClass = '';
         if(node_values['status'] == 2){
             highlightRow = 'node-running';
             // disabled = 'disabled';
             disabledAttr = 'disabled="true"' ; 
+            disabledClass = ' disabled '
         }
         
         // TODO: this event is called twice
@@ -3093,9 +3096,9 @@ function createNodeListRow(template, id){
                          '<a class="action-nodewipe" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[68] + '"><i class="glyphicon glyphicon-erase"></i></a>'
         if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
             html_data += '<a class="action-nodeexport" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[69] + '"><i class="glyphicon glyphicon-save"></i></a> '+
-                         '<a class="action-nodeinterfaces" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[72] + '"><i class="glyphicon glyphicon-transfer"></i></a>'+
-                         '<a class="action-nodeedit control" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[71] + '"><i class="glyphicon glyphicon-edit"></i></a>'+
-                         '<a class="action-nodedelete" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[65] + '"><i class="glyphicon glyphicon-trash"></i></a>';
+                         '<a class="action-nodeinterfaces" data-status="' + node_values['status'] +'" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[72] + '"><i class="glyphicon glyphicon-transfer"></i></a>'+
+                         '<a class="action-nodeedit control'+ disabledClass +'" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[71] + '"><i class="glyphicon glyphicon-edit"></i></a>'+
+                         '<a class="action-nodedelete'+ disabledClass +'" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[65] + '"><i class="glyphicon glyphicon-trash"></i></a>';
         } 
         html_data += '</div></td></tr>';
         defer.resolve({"html": html_data, "id": id});
