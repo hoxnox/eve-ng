@@ -162,8 +162,8 @@ $(document).on('mousedown', '*', function (e) {
 $(document).on('click', '.menu-collapse, .menu-collapse i', function (e) {
     e.preventDefault();  // Prevent default behaviour
     var item_class = $(this).attr('data-path');
-    $('.context-collapsible').slideUp('slow');
-    $('.' + item_class).slideToggle('slow');
+    // $('.context-collapsible').slideUp('slow');
+    $('.' + item_class).slideToggle('fast');
 });
 
 $(document).on('contextmenu', '#lab-viewport', function (e) {
@@ -224,25 +224,51 @@ $(document).on('contextmenu', '.context-menu', function (e) {
 
         var node_id = $(this).attr('data-path')
             , title = $(this).attr('data-name') + " (" + node_id + ")"
-            , body = '<li>' +
-                        '<a class="menu-collapse" data-path="menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-chevron-down"></i> ' + MESSAGES[75] + '</a>' +
-                '</li>' +
+            , body = 
                 '<li>' +
-                        '<a class="action-nodestart context-collapsible menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                        '<a class="action-nodestart  menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
                 '<i class="glyphicon glyphicon-play"></i> ' + MESSAGES[66] +
                 '</a>' +
                 '</li>' +
                 '<li>' +
-                        '<a class="action-nodestop context-collapsible menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                        '<a class="action-nodestop  menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
                 '<i class="glyphicon glyphicon-stop"></i> ' + MESSAGES[67] +
                 '</a>' +
                 '</li>' +
                 '<li>' +
-                        '<a class="action-nodewipe context-collapsible menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                        '<a class="action-nodewipe menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
                 '<i class="glyphicon glyphicon-erase"></i> ' + MESSAGES[68] +
                 '</a>' +
-                '</li>' +
-                '<li role="separator" class="divider">' +
+                '</li>';
+                // Read privileges and set specific actions/elements
+                if ((ROLE == 'admin' || ROLE == 'editor') &&  LOCK == 0  ) {
+
+                    body += '<li role="separator" class="divider">' +
+                        '</li>' +
+                        '<li>' +
+                            '<a class="action-nodeexport" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                        '<i class="glyphicon glyphicon-save"></i> ' + MESSAGES[69] +
+                        '</a>' +
+                        '</li>' +
+                        '<li>' +
+                            '<a class="action-nodeinterfaces" data-path="' + node_id + '" data-name="' + title + '"  data-status="'+ status +'" href="javascript:void(0)">' +
+                        '<i class="glyphicon glyphicon-transfer"></i> ' + MESSAGES[72] +
+                        '</a>' +
+                        '</li>';
+                        if(!isNodeRunning){
+                            body += '<li>' +
+                            '<a class="action-nodeedit control" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                            '<i class="glyphicon glyphicon-edit"></i> ' + MESSAGES[71] +
+                            '</a>' +
+                            '</li>' +
+                            '<li>' +
+                                '<a class="action-nodedelete" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                            '<i class="glyphicon glyphicon-trash"></i> ' + MESSAGES[65] +
+                            '</a>' +
+                            '</li>';
+                        }
+                };
+                body += '<li role="separator" class="divider">' +
                 '</li>' +
                 '<li id="menu-node-interfaces">' +
                         '<a class="menu-collapse" data-path="menu-interface" href="javascript:void(0)">' +
@@ -250,42 +276,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                 '</a>' +
                 '</li>'
             ;
-
-
-        // Read privileges and set specific actions/elements
-        if ((ROLE == 'admin' || ROLE == 'editor') &&  LOCK == 0  ) {
-
-            body += '<li role="separator" class="divider">' +
-                '</li>' +
-                '<li>' +
-                      '<a class="menu-collapse" data-path="menu-edit" href="javascript:void(0)">' +
-                '<i class="glyphicon glyphicon-chevron-down"></i> ' + MESSAGES[73] +
-                '</a>' +
-                '</li>' +
-                '<li>' +
-                      '<a class="action-nodeexport context-collapsible menu-edit" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
-                '<i class="glyphicon glyphicon-save"></i> ' + MESSAGES[69] +
-                '</a>' +
-                '</li>' +
-                '<li>' +
-                      '<a class="action-nodeinterfaces context-collapsible menu-edit" data-path="' + node_id + '" data-name="' + title + '"  data-status="'+ status +'" href="javascript:void(0)">' +
-                '<i class="glyphicon glyphicon-transfer"></i> ' + MESSAGES[72] +
-                '</a>' +
-                '</li>';
-                if(!isNodeRunning){
-                    body += '<li>' +
-                      '<a class="action-nodeedit context-collapsible control menu-edit" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
-                    '<i class="glyphicon glyphicon-edit"></i> ' + MESSAGES[71] +
-                    '</a>' +
-                    '</li>' +
-                    '<li>' +
-                        '<a class="action-nodedelete context-collapsible menu-edit" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
-                    '<i class="glyphicon glyphicon-trash"></i> ' + MESSAGES[65] +
-                    '</a>' +
-                    '</li>';
-                }
-        }
-        ;
+      
 
         // Adding interfaces
         $.when(getNodeInterfaces(node_id)).done(function (values) {
