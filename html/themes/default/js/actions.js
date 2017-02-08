@@ -445,7 +445,7 @@ $(document).on('click', '.action-configsget', function (e) {
             }
             body += '>&nbsp;&nbsp;&nbsp;' + config['name'];
             if (config['config'] == 1) {
-                body += ' <i class="glyphicon glyphicon-floppy-saved"></i>';
+                body += ' <i class="glyphicon glyphicon-flash"></i>';
             }
             body += '</a></li>';
         });
