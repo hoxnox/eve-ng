@@ -1807,7 +1807,7 @@ function printFormFolder(action, values) {
 
 // Import external labs
 function printFormImport(path) {
-    var html = '<form id="form-import" class="form-horizontal form-import"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[20] + '</label><div class="col-md-5"><input class="form-control" name="import[path]" value="' + path + '" disabled type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[2] + '</label><div class="col-md-5"><input class="form-control" name="import[local]" value="" disabled="" placeholder="' + MESSAGES[25] + '" "type="text"/></div></div><div class="form-group"><div class="col-md-7 col-md-offset-3"><span class="btn btn-default btn-file btn-success">' + MESSAGES[23] + ' <input class="form-control" name="import[file]" value="" type="file"></span> <button type="submit" class="btn btn-flat">' + MESSAGES[24] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+    var html = '<form id="form-import" class="form-horizontal form-import"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[20] + '</label><div class="col-md-5"><input class="form-control" name="import[path]" value="' + path + '" disabled type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[2] + '</label><div class="col-md-5"><input class="form-control" name="import[local]" value="" disabled="" placeholder="' + MESSAGES[25] + '" "type="text"/></div></div><div class="form-group"><div class="col-md-7 col-md-offset-3"><span class="btn btn-default btn-file btn-success">' + MESSAGES[23] + ' <input class="form-control" name="import[file]" value="" type="file"></span> <button type="submit" class="btn">' + MESSAGES[24] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     logger(1, 'DEBUG: popping up the import form.');
     addModal(MESSAGES[9], html, '');
     validateImport();
@@ -1882,7 +1882,7 @@ function printFormLab(action, values) {
               '<div class="form-group">' +
                  '<div class="col-md-2 col-md-offset-10">' +
                     '<button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button>' +
-                    '<button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+                    '<button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
                  '</div>' +
               '</div>' +
            '</div>' +
@@ -1927,7 +1927,7 @@ function printFormNetwork(action, values) {
                 html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
             }
         });
-        html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="network[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="network[top]" value="' + top + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form></form>';
+        html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="network[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="network[top]" value="' + top + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form></form>';
 
         // Show the form
         addModal(title, html, '', 'second-win');
@@ -2007,7 +2007,7 @@ function printFormNode(action, values, fromNodeList) {
                     html_data += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="node[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="node[top]" value="' + top + '" type="text"/></div></div>';
 
                     // Show the buttons
-                    $('#form-node-buttons').html('<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div>');
+                    $('#form-node-buttons').html('<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div>');
 
                     // Show the form
                     $('#form-node-data').html(html_data);
@@ -2047,7 +2047,7 @@ function printFormNode(action, values, fromNodeList) {
 function printFormNodeConfigs(values, cb) {
     var title = values['name'] + ': ' + MESSAGES[123];
     if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
-        var html = '<form id="form-node-config" class="form-horizontal"><input name="config[id]" value="' + values['id'] + '" type="hidden"/><div class="form-group"><div class="col-md-12"><textarea class="form-control autofocus" id="nodeconfig" name="config[data]" rows="500"></textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        var html = '<form id="form-node-config" class="form-horizontal"><input name="config[id]" value="' + values['id'] + '" type="hidden"/><div class="form-group"><div class="col-md-12"><textarea class="form-control autofocus" id="nodeconfig" name="config[data]" rows="500"></textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     } else {
         var html = '<div class="col-md-12"><pre style="max-height: calc(90vh - 120px)!important;">' + values['data'] + '</pre></div>';
     }
@@ -2104,7 +2104,7 @@ function printFormCustomShape(values) {
         '</div>' +
         '</div> <br>' +
         '<button type="submit" class="btn btn-success col-md-offset-1">' + MESSAGES[47] + '</button>' +
-        '<button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+        '<button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
         '</div>' +
         '<input  type="text" class="hide left-coordinate" value="' + left + '">' +
         '<input  type="text" class="hide top-coordinate" value="' + top + '">' +
@@ -2166,7 +2166,7 @@ function printFormText(values) {
         '</div>' +
         '</div> <br>' +
          '<button type="submit" class="btn btn-success col-md-offset-1">' + MESSAGES[47] + '</button>' +
-        '<button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+        '<button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
         '</div>' +
         '<input  type="text" class="hide left-coordinate" value="' + left + '">' +
         '<input  type="text" class="hide top-coordinate" value="' + top + '">' +
@@ -2296,7 +2296,7 @@ function printFormNodeInterfaces(values) {
             });
         }
 
-        html += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button ' + disabled + ' type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        html += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button ' + disabled + ' type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
 
         addModal(values['node_name'] + ': ' + MESSAGES[116], html, '', 'second-win');
         $('.selectpicker').selectpicker();
@@ -2328,7 +2328,7 @@ function printPictureInForm(id) {
             '<map name="picture_map">' + picture_map + '</map>' +
             '</div>';
         if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
-            var footer = '<button type="button" class="btn btn-flat action-pictureedit" data-path="' + picture_id + '">Edit</button>';
+            var footer = '<button type="button" class="btn action-pictureedit" data-path="' + picture_id + '">Edit</button>';
         } else {
             var footer = '';
         }
@@ -2449,9 +2449,9 @@ function printFormPicture(action, values) {
         , html = '';
 
     if (action == 'add') {
-        html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[137] + '</label><div class="col-md-5"><textarea class="form-control" name="picture[map]">' + map + '</textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[137] + '</label><div class="col-md-5"><textarea class="form-control" name="picture[map]">' + map + '</textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     } else {
-        html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '" data-path=' + values['id'] + '><div class="follower-wrapper"><img src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '" width="' + values['width'] + '" height="' + values['height'] + '"/><div id="follower"></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[137] + '</label><div class="col-md-5"><textarea class="form-control" name="picture[map]">' + map + '</textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '" data-path=' + values['id'] + '><div class="follower-wrapper"><img src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '" width="' + values['width'] + '" height="' + values['height'] + '"/><div id="follower"></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[137] + '</label><div class="col-md-5"><textarea class="form-control" name="picture[map]">' + map + '</textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     }
     logger(1, 'DEBUG: popping up the picture form.');
     addModalWide(title, html, '', 'second-win modal-ultra-wide');
@@ -3989,7 +3989,7 @@ function printFormEditCustomShape(id) {
             '</div>' +
             '<div class="row col-md-3 btn-part">' +
             '<button type="button" class="btn btn-success edit-custom-shape-form-save" data-path="' + id + '">' + MESSAGES[47] + '</button>' +
-            '<button type="button" class="btn btn-flat cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
+            '<button type="button" class="btn cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
             '</div>' +
             '<input type="hidden" class="firstShapeValues-z_index">' +
             '<input type="hidden" class="firstShapeValues-border-color">' +
@@ -4119,7 +4119,7 @@ function printFormEditText(id) {
         '</div>' +
         '<div class="row col-md-3 btn-part">' +
         '<button type="button" class="btn btn-success edit-custom-text-form-save" data-path="' + id + '">' + MESSAGES[47] + '</button>' +
-        '<button type="button" class="btn btn-flat cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
+        '<button type="button" class="btn cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
         '</div>' +
         '<input type="text" class="hide firstTextValues-z_index">' +
         '<input type="text" class="hide firstTextValues-color">' +
