@@ -1743,7 +1743,7 @@ function wipe(node_id) {
 // Context menu
 function printContextMenu(title, body, pageX, pageY, addToBody, role) {
     var menu = '<div id="context-menu" class="collapse clearfix dropdown">';
-    menu += '<ul class="dropdown-menu" role="' + role + '"><li role="presentation" class="dropdown-header">' + title + '</li>' + body + '</ul></div>';
+    menu += '<ul class="dropdown-menu" role="' + role + '">' + body + '</ul></div>';
 
     if(addToBody){
         $('body').append(menu);

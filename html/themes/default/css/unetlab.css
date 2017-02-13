@@ -1499,3 +1499,22 @@ table.configured-nodes tbody td label {
     color: #a6a6a6;
     font-size: 12px;
 }
+#capture-menu {
+	position: absolute;
+	display: none;
+    right: -150px;
+    top: 160px;
+	border: 1px solid #bbb;
+    /*height: 150px;*/
+    background: white;
+    width: 150px;
+}
+#capture-menu ul{
+	margin: 0px;
+	padding: 0px;
+	list-style-type: none;
+}
+#capture-menu ul li{
+	padding: 3px 5px;
+	margin: 0;
+}

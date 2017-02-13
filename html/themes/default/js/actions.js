@@ -162,8 +162,27 @@ $(document).on('mousedown', '*', function (e) {
 $(document).on('click', '.menu-collapse, .menu-collapse i', function (e) {
     e.preventDefault();  // Prevent default behaviour
     var item_class = $(this).attr('data-path');
-    // $('.context-collapsible').slideUp('slow');
     $('.' + item_class).slideToggle('fast');
+});
+
+// Open context menu capture block
+$(document).on('click', '.menu-appear, .menu-appear i', function (e) {
+    e.preventDefault();  // Prevent default behaviour
+    $('#capture-menu').toggle('slow')
+    $('#capture-menu li a').toggle('fast')
+    var windowWidth = $(window).width();
+    var contextMenuClickX = $("#lab-viewport").data('contextMenuClickXY').x
+    console.log('X', windowWidth, contextMenuClickX)
+    if(windowWidth - 310 < contextMenuClickX){
+        $('#capture-menu').css('left', -150)
+    } else {
+        $('#capture-menu').css('right', -150)
+    }
+    if($('.menu-appear > i').hasClass('glyphicon-chevron-left')){
+        $('.menu-appear > i').addClass('glyphicon-chevron-right').removeClass('glyphicon-chevron-left')
+    } else {
+        $('.menu-appear > i').addClass('glyphicon-chevron-left').removeClass('glyphicon-chevron-right')
+    }
 });
 
 $(document).on('contextmenu', '#lab-viewport', function (e) {
@@ -215,6 +234,8 @@ $(document).on('contextmenu', '.context-menu', function (e) {
         // prevent 'contextmenu' on non Free Selected Elements
         return;
     }
+
+    $("#lab-viewport").data('contextMenuClickXY', {'x': e.pageX, 'y': e.pageY})
     
     var isNodeRunning = $(this).attr('data-status') == 2;
     var status = $(this).attr('data-status')
@@ -239,17 +260,29 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                         '<a class="action-nodewipe menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
                 '<i class="glyphicon glyphicon-erase"></i> ' + MESSAGES[68] +
                 '</a>' +
+                '</li>' +
+                '</li>' +
+                '<li>' +
+                    '<a class="action-nodeexport" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                '<i class="glyphicon glyphicon-save"></i> ' + MESSAGES[69] +
+                '</a>' +
+                '</li>';
+
+                // capture section
+                body += '<li role="separator" class="divider">' +
+                '</li>' +
+                '<li id="menu-node-interfaces">' +
+                    '<a class="menu-appear" data-path="menu-interface" href="javascript:void(0)">' +
+                        '<i class="glyphicon glyphicon-chevron-right"></i> ' + MESSAGES[70] +
+                    '</a>' +
+                    '<div id="capture-menu">' +
+                        '<ul></ul>' + 
+                    '</div>'+
                 '</li>';
                 // Read privileges and set specific actions/elements
                 if ((ROLE == 'admin' || ROLE == 'editor') &&  LOCK == 0  ) {
 
                     body += '<li role="separator" class="divider">' +
-                        '</li>' +
-                        '<li>' +
-                            '<a class="action-nodeexport" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
-                        '<i class="glyphicon glyphicon-save"></i> ' + MESSAGES[69] +
-                        '</a>' +
-                        '</li>' +
                         '<li>' +
                             '<a class="action-nodeinterfaces" data-path="' + node_id + '" data-name="' + title + '"  data-status="'+ status +'" href="javascript:void(0)">' +
                         '<i class="glyphicon glyphicon-transfer"></i> ' + MESSAGES[72] +
@@ -268,24 +301,27 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                             '</li>';
                         }
                 };
-                body += '<li role="separator" class="divider">' +
-                '</li>' +
-                '<li id="menu-node-interfaces">' +
-                        '<a class="menu-collapse" data-path="menu-interface" href="javascript:void(0)">' +
-                '<i class="glyphicon glyphicon-chevron-down"></i> ' + MESSAGES[70] +
-                '</a>' +
-                '</li>'
-            ;
-      
+                
+     
 
         // Adding interfaces
         $.when(getNodeInterfaces(node_id)).done(function (values) {
             var interfaces = '';
-            $.each(values['ethernet'], function (id, object) {
-                interfaces += '<li><a class="action-nodecapture context-collapsible menu-interface" href="capture://' + window.location.hostname + '/vunl' + TENANT + '_' + node_id + '_' + id + '" style="display: none;"><i class="glyphicon glyphicon-search"></i> ' + object['name'] + '</a></li>';
+            var eth_sortable = []
+            for(var eth in values['ethernet']){
+                values['ethernet'][eth]['id'] = eth
+                eth_sortable.push(values['ethernet'][eth])
+            }
+            eth_sortable.sort(function(a, b){
+                if (a.name > b.name) return 1
+                if (a.name > b.name) return -1
+                return 0
+            })
+            $.each(eth_sortable, function (id, object) {
+                interfaces += '<li><a class="action-nodecapture context-collapsible menu-interface" href="capture://' + window.location.hostname + '/vunl' + TENANT + '_' + node_id + '_' + object.id + '" style="display: none;"><i class="glyphicon glyphicon-search"></i> ' + object['name'] + '</a></li>';
             });
 
-            $(interfaces).insertAfter('#menu-node-interfaces');
+            $(interfaces).appendTo('#capture-menu ul');
 
         }).fail(function (message) {
             // Error on getting node interfaces
