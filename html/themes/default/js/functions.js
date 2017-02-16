@@ -1743,9 +1743,15 @@ function wipe(node_id) {
  * Print forms and pages
  **************************************************************************/
 // Context menu
-function printContextMenu(title, body, pageX, pageY, addToBody, role) {
+function printContextMenu(title, body, pageX, pageY, addToBody, role, hideTitle) {
+    var titleLine = '';
+        
+    if(!hideTitle){
+        titleLine = '<li role="presentation" class="dropdown-header">' + title + '</li>'
+    } 
+    
     var menu = '<div id="context-menu" class="collapse clearfix dropdown">';
-    menu += '<ul class="dropdown-menu" role="' + role + '">' + body + '</ul></div>';
+    menu += '<ul class="dropdown-menu" role="' + role + '">' + titleLine + body + '</ul></div>';
 
     if(addToBody){
         $('body').append(menu);
