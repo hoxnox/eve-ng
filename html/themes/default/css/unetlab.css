@@ -1518,3 +1518,15 @@ table.configured-nodes tbody td label {
 	padding: 3px 5px;
 	margin: 0;
 }
+.make-red .modal-title {
+	color: #d60000 !important;
+}
+.make-small .modal-dialog {
+	width: 450px;
+}
+.make-small button {
+	margin: 10px 2px;
+}
+.question {
+	color: #0066aa;
+}

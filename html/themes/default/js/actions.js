@@ -165,7 +165,7 @@ $(document).on('click', '.menu-collapse, .menu-collapse i', function (e) {
     $('.' + item_class).slideToggle('fast');
 });
 
-// Open context menu capture block
+// Open context menu block
 $(document).on('click', '.menu-appear, .menu-appear i', function (e) {
     e.preventDefault();  // Prevent default behaviour
     $('#capture-menu').toggle('slow')
@@ -234,7 +234,6 @@ $(document).on('contextmenu', '.context-menu', function (e) {
         // prevent 'contextmenu' on non Free Selected Elements
         return;
     }
-
     $("#lab-viewport").data('contextMenuClickXY', {'x': e.pageX, 'y': e.pageY})
     
     var isNodeRunning = $(this).attr('data-status') == 2;
@@ -302,7 +301,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                         }
                 };
                 
-     
+      
 
         // Adding interfaces
         $.when(getNodeInterfaces(node_id)).done(function (values) {
@@ -389,6 +388,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
             logger(1, 'DEBUG: opening text object context menu');
             var textObject_id = $(this).attr('data-path')
                 , title = 'Edit: ' + $(this).attr('data-path')
+                ; textClass = $(this).hasClass('customText') ? ' customText ': ''
                 , body =
                 '<li>' +
                       '<a class="context-collapsible  action-textobjectduplicate" href="javascript:void(0)" data-path="' + textObject_id + '">' +
@@ -406,12 +406,12 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                 '</a>' +
                 '</li>' +
                 '<li>' +
-                      '<a class="context-collapsible  action-textobjectedit" href="javascript:void(0)" data-path="' + textObject_id + '">' +
+                      '<a class="context-collapsible action-textobjectedit" href="javascript:void(0)" data-path="' + textObject_id + '">' +
                 '<i class="glyphicon glyphicon-edit"></i> ' + MESSAGES[71] +
                 '</a>' +
                 '</li>' +
                 '<li>' +
-                      '<a class="context-collapsible  action-textobjectdelete" href="javascript:void(0)" data-path="' + textObject_id + '">' +
+                      '<a class="context-collapsible '+ textClass +' action-textobjectdelete" href="javascript:void(0)" data-path="' + textObject_id + '">' +
                 '<i class="glyphicon glyphicon-trash"></i> ' + MESSAGES[65] +
                 '</a>' +
                 '</li>';
@@ -468,7 +468,7 @@ $(document).on('click', '.action-configsget', function (e) {
         $.each(configs, function (key, config) {
             var title = (config['config'] == 0) ? MESSAGES[122] : MESSAGES[121];
             body += '<li><a class="action-configget" data-path="' + key + '" href="javascript:void(0)" title="' + title + '"><img src="/images/icons/' + config['icon'] + '" width="15" height="15" '
-	    if (config['len'] == 0 ) {
+        if (config['len'] == 0 ) {
                  body += 'class="grayscale"';
             }
             body += '>&nbsp;&nbsp;&nbsp;' + config['name'];
@@ -610,9 +610,22 @@ $(document).on('click', '.action-networksget', function (e) {
 
 // Delete lab network
 $(document).on('click', '.action-networkdelete', function (e) {
+    var id = $(this).attr('data-path');
+    var body = '<div class="form-group">' +
+                    '<div class="question">Are you sure to delete this network?</div>' +
+                '</div>' + 
+                '<div class="form-group">' +
+                    '<div class="col-md-5 col-md-offset-3">' +
+                        '<button id="networkdelete" class="btn btn-success"  data-path="'+id+'" data-dismiss="modal">Yes</button>' +
+                        '<button type="button" class="btn" data-dismiss="modal">Cancel</button>' +
+                    '</div>' +
+                '</div>'
+    var title = "Warning"
+    addModal(title, body, "", "make-red make-small");
+})
+$(document).on('click', '#networkdelete', function (e) {
 
     $('#context-menu').remove();
-    if (!confirm('Are you sure ?')) return;
 
     logger(1, 'DEBUG: action = action-networkdelete');
     var id = $(this).attr('data-path');
@@ -645,26 +658,48 @@ $(document).on('hide.bs.modal', function (e) {
 
 $(document).on('click', '.action-nodedelete, .action-nodedelete-group', function (e) {
     if($(this).hasClass('disabled')) return;
-    if (!confirm('Are you sure ?')) return;
-    logger(1, 'DEBUG: action = action-nodedelete');
-    var node_id = $(this).attr('data-path')
-        , isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode")
-        ;
+    var id = $(this).attr('data-path')
+// <form id="form-picture-delete" data-path="' + picture_id + '" class="form-horizontal form-picture" novalidate="novalidate">
+                
+    var textQuestion = "" 
+    if($(this).hasClass('action-nodedelete')) {
+        textQuestion = 'Are you sure to delete this node'
+    } else {
+        textQuestion = 'Are you sure to delete selected nodes?';
+    }
 
-    if (isFreeSelectMode) {
-        window.freeSelectedNodes = window.freeSelectedNodes.sort(function (a, b) {
-            return a.path < b.path ? -1 : 1
-        });
-        recursionNodeDelete(window.freeSelectedNodes);
-    }
-    else {
-        $.when(deleteNode(node_id)).done(function (values) {
-            $('.node' + node_id).remove();
-        }).fail(function (message) {
-            addModalError(message);
-        });
-    }
+    var body = '<div class="form-group">' +
+                    '<div class="question">'+textQuestion+'</div>' +
+                    '<div class="col-md-5 col-md-offset-3">' +
+                        '<button id="deteleNode" class="btn btn-success" data-path="'+id+'" data-dismiss="modal">Yes</button>' +
+                        '<button type="button" class="btn" data-dismiss="modal">Cancel</button>' +
+                    '</div>' +
+                '</div>'
+    var title = "Warning"
+    addModal(title, body, "", "make-red make-small");
     $('#context-menu').remove();
+
+    $('#deteleNode').on('click', function(){
+        logger(1, 'DEBUG: action = action-nodedelete');
+        var node_id = $(this).attr('data-path')
+            , isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode")
+            ;
+
+        if (isFreeSelectMode) {
+            window.freeSelectedNodes = window.freeSelectedNodes.sort(function (a, b) {
+                return a.path < b.path ? -1 : 1
+            });
+            recursionNodeDelete(window.freeSelectedNodes);
+        }
+        else {
+            $.when(deleteNode(node_id)).done(function (values) {
+                $('.node' + node_id).remove();
+            }).fail(function (message) {
+                addModalError(message);
+            });
+        }
+        
+    })
 });
 
 
@@ -919,7 +954,6 @@ $(document).on('click', '.action-nodeplace, .action-networkplace, .action-custom
     // On click open the form
     // $('.lab-viewport-click-catcher').off("click").on("click", function (e2) {
         $("#lab-viewport").data("prevent-contextmenu", false);
-        console.log("here1",$("#lab-viewport"))
         // if ($(e.target).is('#lab-viewport, #lab-viewport *')) {
             // Click is within viewport
             // if ($('#mouse_frame').length > 0) {
@@ -941,7 +975,6 @@ $(document).on('click', '.action-nodeplace, .action-networkplace, .action-custom
                 } else if (object == 'text') {
                     printFormText(values);
                 }
-                console.log("here2")
                 $('#mouse_frame').remove();
             // }
             $('#mouse_frame').remove();
@@ -1104,7 +1137,7 @@ $(document).on('click', '.action-picturesget', function (e) {
                 var title = picture['name'] || "pic name";
                 body += '<li>';
                 if (ROLE != "user" && LOCK != 1 )
-                    body += '<a class="delete-picture" href="javascript:void(0)" data-path="' + key + '"><i class="glyphicon glyphicon-trash delete-picture" title="Delete"></i> ';
+                    body += '<a class="delete-picture" href="javascript:void(0)" data-path="' + key + '"><i class="glyphicon glyphicon-trash" title="Delete"></i> ';
                 body += '<a class="action-pictureget" data-path="' + key + '" href="javascript:void(0)" title="' + title + '">' + picture['name'].split(' ')[0] + '</a>';
                 body += '</a></li>';
             });
@@ -1137,16 +1170,48 @@ $(document).on('click', '.action-picturesget-stop', function (e) {
 });
 
 //Detele picture
-$(document).on('click', '.delete-picture', function (e) {
-    e.stopPropagation();  // Prevent default behaviour
-    logger(1, 'DEBUG: action = pictureremove');
-    var $self = $(this);
+$(document).on('click', '.delete-picture', function (ev) {
+    ev.stopPropagation();  // Prevent default behaviour
+    ev.preventDefault();  // Prevent default behaviour
+    var id = $(this).attr('data-path');
+    console.log('this', $(this))
+    var body = '<div class="form-group">' +
+                    '<div class="question">Are you sure to delete this picture?</div>' +
+                    '<div class="col-md-5 col-md-offset-3">' +
+                        '<button id="formPictureDelete" class="btn btn-success"  data-path="'+id+'" data-dismiss="modal">Yes</button>' +
+                        '<button type="button" class="btn" data-dismiss="modal">Cancel</button>' +
+                    '</div>' +
+                '</div>'
+    var title = "Warning"
+    addModal(title, body, "", "make-red make-small");
+    $('#formPictureDelete').on('click', function (e) {
+        var lab_filename = $('#lab-viewport').attr('data-path');
+        var picture_id = $(this).attr('data-path');
+        var picture_name = $('li a[data-path="' + picture_id + '"]').attr("title");
+        $.when(deletePicture(lab_filename, picture_id)).done(function () {
+            $('.modal.make-red').modal('hide')
+            addMessage('SUCCESS', 'Picture "' + picture_name + '" deleted.');
+            $('li a[data-path="' + picture_id + '"]').parent().remove();
+            $("#config-data").html("");
+        }).fail(function (message) {
+            $('.modal.make-red').modal('hide')
+            addModalError(message);
+        });
 
-    var picture_id = $self.parent().attr('data-path');
-    var lab_filename = $('#lab-viewport').attr('data-path');
-    var body = '<form id="form-picture-delete" data-path="' + picture_id + '" class="form-horizontal form-picture" novalidate="novalidate"><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">Delete</button><button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button></div></div></form>'
-    var title = "Delete this picture?"
-    addModal(title, body, "", "second-win");
+        // Hide and delete the modal (or will be posted twice)
+        $('body').children('.modal.second-win').modal('hide');
+
+        // Stop or form will follow the action link
+        return false;
+    });
+    // logger(1, 'DEBUG: action = pictureremove');
+    // var $self = $(this);
+
+    // var picture_id = $self.parent().attr('data-path');
+    // var lab_filename = $('#lab-viewport').attr('data-path');
+    // var body = '<form id="form-picture-delete" data-path="' + picture_id + '" class="form-horizontal form-picture" novalidate="novalidate"><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">Delete</button><button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button></div></div></form>'
+    // var title = "Delete this picture?"
+    // addModal(title, body, "", "second-win");
 });
 
 // Clone selected labs
@@ -1169,51 +1234,63 @@ $(document).on('click', '.action-selectedclone', function (e) {
 });
 
 // Delete selected folders and labs
-$(document).on('click', '.action-selecteddelete', function (e) {
-    if ($('.selected').size() > 0) {
-        logger(1, 'DEBUG: action = selecteddelete');
-        if (!confirm('Are you sure ?'))
-            return;
-        $('.selected').each(function (id, object) {
-            var path = $(this).attr('data-path');
-            if ($(this).hasClass('folder')) {
-                $.when(deleteFolder(path)).done(function () {
-                    // Folder deleted
-                    $('.folder[data-path="' + path + '"]').fadeOut(300, function () {
-                        $(this).remove();
+$(document).on('click', '.action-selecteddelete', function (ev) {
+    var id = $(this).attr('data-path');
+    var self = $(this);
+    var body = '<div class="form-group">' +
+                    '<div class="question">Are you sure to delete selected nodes?</div>' +
+                    '<div class="col-md-5 col-md-offset-3">' +
+                        '<button id="selectedDelete" class="btn btn-success"  data-path="'+id+'" data-dismiss="modal">Yes</button>' +
+                        '<button type="button" class="btn" data-dismiss="modal">Cancel</button>' +
+                    '</div>' +
+                '</div>'
+    var title = "Warning"
+    addModal(title, body, "", "make-red make-small");
+    $('#selectedDelete').on('click', function deleteSelected(e) {
+        if ($('.selected').size() > 0) {
+            logger(1, 'DEBUG: action = selecteddelete');
+
+            $('.selected').each(function (id, object) {
+                var path = self.attr('data-path');
+                if (self.hasClass('folder')) {
+                    $.when(deleteFolder(path)).done(function () {
+                        // Folder deleted
+                        $('.folder[data-path="' + path + '"]').fadeOut(300, function () {
+                            self.remove();
+                        });
+                    }).fail(function (message) {
+                        // Cannot delete folder
+                        addModalError(message);
                     });
-                }).fail(function (message) {
-                    // Cannot delete folder
-                    addModalError(message);
-                });
-            } else if ($(this).hasClass('lab')) {
-                $.when(deleteLab(path)).done(function () {
-                    // Lab deleted
-                    $('.lab[data-path="' + path + '"]').fadeOut(300, function () {
-                        $(this).remove();
+                } else if (self.hasClass('lab')) {
+                    $.when(deleteLab(path)).done(function () {
+                        // Lab deleted
+                        $('.lab[data-path="' + path + '"]').fadeOut(300, function () {
+                            self.remove();
+                        });
+                    }).fail(function (message) {
+                        // Cannot delete lab
+                        addModalError(message);
                     });
-                }).fail(function (message) {
-                    // Cannot delete lab
-                    addModalError(message);
-                });
-            } else if ($(this).hasClass('user')) {
-                $.when(deleteUser(path)).done(function () {
-                    // User deleted
-                    $('.user[data-path="' + path + '"]').fadeOut(300, function () {
-                        $(this).remove();
+                } else if (self.hasClass('user')) {
+                    $.when(deleteUser(path)).done(function () {
+                        // User deleted
+                        $('.user[data-path="' + path + '"]').fadeOut(300, function () {
+                            self.remove();
+                        });
+                    }).fail(function (message) {
+                        // Cannot delete user
+                        addModalError(message);
                     });
-                }).fail(function (message) {
-                    // Cannot delete user
-                    addModalError(message);
-                });
-            } else {
-                // Invalid object
-                logger(1, 'DEBUG: cannot delete, invalid object.');
-                return;
-            }
-        });
-    }
-});
+                } else {
+                    // Invalid object
+                    logger(1, 'DEBUG: cannot delete, invalid object.');
+                    return;
+                }
+            });
+        }
+    })
+})
 
 // Export selected folders and labs
 $(document).on('click', '.action-selectedexport', function (e) {
@@ -1237,50 +1314,34 @@ $(document).on('click', '.action-selectedexport', function (e) {
 });
 
 // Delete all startup-config
-$(document).on('click', '.action-nodesbootdelete, .action-nodesbootdelete-group', function (e) {
+$(document).on('click', '.action-nodesbootdelete, .action-nodesbootdelete-group', function (ev) {
     $('#context-menu').remove();
-    var isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode")
-        ;
-    if (isFreeSelectMode) {
-        var nodeLenght = window.freeSelectedNodes.length;
-        var lab_filename = $('#lab-viewport').attr('data-path');
-        $.each(window.freeSelectedNodes, function (i, node) {
-            var form_data = {};
-            form_data['id'] = node.path;
-            form_data['data'] = '';
-            var url = '/api/labs' + lab_filename + '/configs/' + node.path;
-            var type = 'PUT';
-            $.when($.ajax({
-                timeout: TIMEOUT,
-                type: type,
-                url: encodeURI(url),
-                dataType: 'json',
-                data: JSON.stringify(form_data)
-            })).done(function (message) {
-                // Config deleted
-                nodeLenght--;
-                if (nodeLenght < 1) {
-                    addMessage('success', MESSAGES[160])
-                }
-                ;
-            }).fail(function (message) {
-                // Cannot delete config
-                nodeLenght--;
-                if (nodeLenght < 1) {
-                    addMessage('danger', node.name + ': ' + message);
-                }
-                ;
-            });
-        });
-    } else {
-        $.when(getNodes(null)).done(function (nodes) {
-            var nodeLenght = Object.keys(nodes).length;
-            $.each(nodes, function (key, values) {
-                var lab_filename = $('#lab-viewport').attr('data-path');
+    var self = $(this);
+    
+    var textQuestion = 'Are you sure to delete all starup cfgs?';
+    if(self.hasClass('action-nodesbootdelete-group')){
+        textQuestion = 'Are you sure to delete selected starup cfgs?';
+    }
+    var body = '<div class="form-group">' +
+                    '<div class="question">' + textQuestion + '</div>' +
+                    '<div class="col-md-5 col-md-offset-3">' +
+                        '<button id="nodesbootdelete" class="btn btn-success"  data-dismiss="modal">Yes</button>' +
+                        '<button type="button" class="btn" data-dismiss="modal">Cancel</button>' +
+                    '</div>' +
+                '</div>'
+    var title = "Warning"
+    addModal(title, body, "", "make-red make-small");
+    $('#nodesbootdelete').on('click', function (e) {
+        var isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode")
+            ;
+        if (isFreeSelectMode) {
+            var nodeLenght = window.freeSelectedNodes.length;
+            var lab_filename = $('#lab-viewport').attr('data-path');
+            $.each(window.freeSelectedNodes, function (i, node) {
                 var form_data = {};
-                form_data['id'] = key;
+                form_data['id'] = node.path;
                 form_data['data'] = '';
-                var url = '/api/labs' + lab_filename + '/configs/' + key;
+                var url = '/api/labs' + lab_filename + '/configs/' + node.path;
                 var type = 'PUT';
                 $.when($.ajax({
                     timeout: TIMEOUT,
@@ -1292,23 +1353,56 @@ $(document).on('click', '.action-nodesbootdelete, .action-nodesbootdelete-group'
                     // Config deleted
                     nodeLenght--;
                     if (nodeLenght < 1) {
-                        addMessage('success', MESSAGES[142])
+                        addMessage('success', MESSAGES[160])
                     }
                     ;
                 }).fail(function (message) {
                     // Cannot delete config
                     nodeLenght--;
                     if (nodeLenght < 1) {
-                        addMessage('danger', values['name'] + ': ' + message);
+                        addMessage('danger', node.name + ': ' + message);
                     }
                     ;
                 });
             });
-        }).fail(function (message) {
-            addModalError(message);
-        });
-    }
-});
+        } else {
+            $.when(getNodes(null)).done(function (nodes) {
+                var nodeLenght = Object.keys(nodes).length;
+                $.each(nodes, function (key, values) {
+                    var lab_filename = $('#lab-viewport').attr('data-path');
+                    var form_data = {};
+                    form_data['id'] = key;
+                    form_data['data'] = '';
+                    var url = '/api/labs' + lab_filename + '/configs/' + key;
+                    var type = 'PUT';
+                    $.when($.ajax({
+                        timeout: TIMEOUT,
+                        type: type,
+                        url: encodeURI(url),
+                        dataType: 'json',
+                        data: JSON.stringify(form_data)
+                    })).done(function (message) {
+                        // Config deleted
+                        nodeLenght--;
+                        if (nodeLenght < 1) {
+                            addMessage('success', MESSAGES[142])
+                        }
+                        ;
+                    }).fail(function (message) {
+                        // Cannot delete config
+                        nodeLenght--;
+                        if (nodeLenght < 1) {
+                            addMessage('danger', values['name'] + ': ' + message);
+                        }
+                        ;
+                    });
+                });
+            }).fail(function (message) {
+                addModalError(message);
+            });
+        }
+    });
+})
 
 // Configure nodes to boot from scratch
 $(document).on('click', '.action-nodesbootscratch, .action-nodesbootscratch-group', function (e) {
@@ -1602,59 +1696,80 @@ $(document).on('click', '.action-nodestop, .action-nodesstop, .action-nodestop-g
 // Wipe a node
 $(document).on('click', '.action-nodewipe, .action-nodeswipe, .action-nodewipe-group', function (e) {
     $('#context-menu').remove();
-
-    var node_id
-        , isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode")
-        , wipeAll
-        ;
-
-    if ($(this).hasClass('action-nodewipe')) {
-        logger(1, 'DEBUG: action = nodewipe');
-        node_id = $(this).attr('data-path');
+    var self = $(this);
+    var textQuestion = "";
+    if(self.hasClass('action-nodewipe')){
+        textQuestion = 'Are you sure to wipe this node?'
+    } else if(self.hasClass('action-nodeswipe')){
+        textQuestion = 'Are you sure to wipe all nodes?'
     } else {
-        logger(1, 'DEBUG: action = nodeswipe');
-        wipeAll = true;
+        textQuestion = 'Are you sure to wipe selected nodes ?'
     }
 
-    $.when(getNodes(null)).done(function (nodes) {
-        if (isFreeSelectMode) {
-            $.each(window.freeSelectedNodes, function (i, node) {
-                $.when(setTimeout(function () {
-                    wipe(node.path);
-                }, nodes[node.path]['delay'] * 10)).done(function (res) {
-                    // Node wiped -> print a small green message
-                    addMessage('success', node.name + ': ' + MESSAGES[78])
-                }).fail(function (message) {
-                    // Cannot wiped
-                    addMessage('danger', node.name + ': ' + message);
+    var body = '<div class="form-group">' +
+                    '<div class="question">' + textQuestion + '</div>' +
+                    '<div class="col-md-5 col-md-offset-3">' +
+                        '<button id="node_wipe" class="btn btn-success"  data-dismiss="modal">Yes</button>' +
+                        '<button type="button" class="btn" data-dismiss="modal">Cancel</button>' +
+                    '</div>' +
+                '</div>'
+    var title = "Warning"
+    addModal(title, body, "", "make-red make-small");
+    $('#node_wipe').on('click', function(ev){
+
+        var node_id
+            , isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode")
+            , wipeAll
+            ;
+
+        if (self.hasClass('action-nodewipe')) {
+            logger(1, 'DEBUG: action = nodewipe');
+            node_id = self.attr('data-path');
+        } else {
+            logger(1, 'DEBUG: action = nodeswipe');
+            wipeAll = true;
+        }
+
+        $.when(getNodes(null)).done(function (nodes) {
+            if (isFreeSelectMode) {
+                $.each(window.freeSelectedNodes, function (i, node) {
+                    $.when(setTimeout(function () {
+                        wipe(node.path);
+                    }, nodes[node.path]['delay'] * 10)).done(function (res) {
+                        // Node wiped -> print a small green message
+                        addMessage('success', node.name + ': ' + MESSAGES[78])
+                    }).fail(function (message) {
+                        // Cannot wiped
+                        addMessage('danger', node.name + ': ' + message);
+                    });
                 });
-            });
-        }
-        else if (node_id != null) {
-            $.when(wipe(node_id)).done(function () {
-                // Node wiped -> print a small green message
-                addMessage('success', nodes[node_id]['name'] + ': ' + MESSAGES[78])
-            }).fail(function (message) {
-                // Cannot wipe
-                addMessage('danger', nodes[node_id]['name'] + ': ' + message);
-            });
-        }
-        else if (wipeAll) {
-            $.each(nodes, function (key, values) {
-                $.when(setTimeout(function () {
-                    wipe(key);
-                }, values['delay'] * 10)).done(function () {
+            }
+            else if (node_id != null) {
+                $.when(wipe(node_id)).done(function () {
                     // Node wiped -> print a small green message
-                    addMessage('success', values['name'] + ': ' + MESSAGES[78])
+                    addMessage('success', nodes[node_id]['name'] + ': ' + MESSAGES[78])
                 }).fail(function (message) {
-                    // Cannot wiped
-                    addMessage('danger', values['name'] + ': ' + message);
+                    // Cannot wipe
+                    addMessage('danger', nodes[node_id]['name'] + ': ' + message);
                 });
-            });
-        }
-    }).fail(function (message) {
-        addModalError(message);
-    });
+            }
+            else if (wipeAll) {
+                $.each(nodes, function (key, values) {
+                    $.when(setTimeout(function () {
+                        wipe(key);
+                    }, values['delay'] * 10)).done(function () {
+                        // Node wiped -> print a small green message
+                        addMessage('success', values['name'] + ': ' + MESSAGES[78])
+                    }).fail(function (message) {
+                        // Cannot wiped
+                        addMessage('danger', values['name'] + ': ' + message);
+                    });
+                });
+            }
+        }).fail(function (message) {
+            addModalError(message);
+        });
+    })
 });
 
 // Stop all nodes
@@ -2372,25 +2487,9 @@ $('body').on('submit', '#form-picture-edit', function (e) {
 });
 
 // Edit picture form
-$('body').on('submit', '#form-picture-delete', function (e) {
-    e.preventDefault();  // Prevent default behaviour
-    var lab_filename = $('#lab-viewport').attr('data-path');
-    var picture_id = $(this).attr('data-path');
-    var picture_name = $('li a[data-path="' + picture_id + '"]').attr("title");
-    $.when(deletePicture(lab_filename, picture_id)).done(function () {
-        addMessage('SUCCESS', 'Picture "' + picture_name + '" deleted.');
-        $('li a[data-path="' + picture_id + '"]').parent().remove();
-        $("#config-data").html("");
-    }).fail(function (message) {
-        addModalError(message);
-    });
-
-    // Hide and delete the modal (or will be posted twice)
-    $('body').children('.modal.second-win').modal('hide');
-
-    // Stop or form will follow the action link
-    return false;
-});
+$('body').on('submit', '#form-picture-delete', function (ev) {
+    
+})
 
 /*******************************************************************************
  * Custom Shape/Text Functions
@@ -2870,26 +2969,41 @@ $('body').on('click', '.action-textobjectedit', function (e) {
     $('#context-menu').remove();
 });
 
-$('body').on('click', '.action-textobjectdelete', function (e) {
-    logger(1, 'DEBUG: action = action-textobjectdelete');
+$('body').on('click', '.action-textobjectdelete', function (ev) {
+    $('#context-menu').remove();
     var id = $(this).attr('data-path')
-        , $table = $(this).closest('table')
-        , $selected_shape = '';
-    if ($("#customShape" + id).length) {
-        $selected_shape = $("#customShape" + id);
-    } else if ($("#customText" + id).length) {
-        $selected_shape = $("#customText" + id);
-    }
-    deleteTextObject(id).done(function () {
-        if ($(this).parent('tr')) {
-            $('.textObject' + id, $table).remove();
+    var self = $(this);
+    var textQuestion = $(this).hasClass('customText') ? 'Are you sure to delete this text?' 
+                                                      : 'Are you sure to delete this shape?'
+    var body = '<div class="form-group">' +
+                    '<div class="question">'+ textQuestion +'</div>' +
+                    '<div class="col-md-5 col-md-offset-3">' +
+                        '<button id="textobjectdelete" class="btn btn-success"  data-path="'+id+'" data-dismiss="modal">Yes</button>' +
+                        '<button type="button" class="btn" data-dismiss="modal">Cancel</button>' +
+                    '</div>' +
+                '</div>'
+    var title = "Warning"
+    addModal(title, body, "", "make-red make-small");
+    $('#textobjectdelete').on('click', function (e) {
+        logger(1, 'DEBUG: action = action-textobjectdelete');
+        var id = self.attr('data-path')
+            , $table = self.closest('table')
+            , $selected_shape = '';
+        if ($("#customShape" + id).length) {
+            $selected_shape = $("#customShape" + id);
+        } else if ($("#customText" + id).length) {
+            $selected_shape = $("#customText" + id);
         }
-        $('#context-menu').remove();
-        $selected_shape.remove();
-    }).fail(function (message) {
-        addModalError(message);
+        deleteTextObject(id).done(function () {
+            if (self.parent('tr')) {
+                $('.textObject' + id, $table).remove();
+            }
+            $selected_shape.remove();
+        }).fail(function (message) {
+            addModalError(message);
+        });
     });
-});
+})
 
 $('body').on('contextmenu', '.edit-custom-shape-form, .edit-custom-text-form, #context-menu', function (e) {
     e.preventDefault();

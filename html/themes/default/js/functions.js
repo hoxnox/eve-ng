@@ -71,7 +71,9 @@ function addMessage(severity, message, notFromLabviewport) {
     }
 }
 
-// Add Modal
+/* Add Modal
+@param prop - helping classes. E.g prop = "red-text capitalize-title"
+*/
 function addModal(title, body, footer, prop) {
     var html = '<div aria-hidden="false" style="display: block;z-index: 10000;" class="modal ' + ' ' + prop + ' fade in" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">' + title + '</h4></div><div class="modal-body">' + body + '</div><div class="modal-footer">' + footer + '</div></div></div></div>';
     $('body').append(html);
@@ -1807,7 +1809,7 @@ function printFormFolder(action, values) {
 
 // Import external labs
 function printFormImport(path) {
-    var html = '<form id="form-import" class="form-horizontal form-import"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[20] + '</label><div class="col-md-5"><input class="form-control" name="import[path]" value="' + path + '" disabled type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[2] + '</label><div class="col-md-5"><input class="form-control" name="import[local]" value="" disabled="" placeholder="' + MESSAGES[25] + '" "type="text"/></div></div><div class="form-group"><div class="col-md-7 col-md-offset-3"><span class="btn btn-default btn-file btn-success">' + MESSAGES[23] + ' <input class="form-control" name="import[file]" value="" type="file"></span> <button type="submit" class="btn">' + MESSAGES[24] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+    var html = '<form id="form-import" class="form-horizontal form-import"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[20] + '</label><div class="col-md-5"><input class="form-control" name="import[path]" value="' + path + '" disabled type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[2] + '</label><div class="col-md-5"><input class="form-control" name="import[local]" value="" disabled="" placeholder="' + MESSAGES[25] + '" "type="text"/></div></div><div class="form-group"><div class="col-md-7 col-md-offset-3"><span class="btn btn-default btn-file btn-success">' + MESSAGES[23] + ' <input class="form-control" name="import[file]" value="" type="file"></span> <button type="submit" class="btn btn-flat">' + MESSAGES[24] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     logger(1, 'DEBUG: popping up the import form.');
     addModal(MESSAGES[9], html, '');
     validateImport();
@@ -1857,7 +1859,7 @@ function printFormLab(action, values) {
               '<div class="form-group">' +
                  '<label class="col-md-4 control-label">' + MESSAGES[158] + '<sup class="sup-star">*</sup></label>' +
                  '<div class="col-md-3"><input class="form-control" name="lab[scripttimeout]" value="' + scripttimeout + '" type="text"/>' +
-	         '</div>' +
+             '</div>' +
                  '<label class="col-md-3 control-label control-label_custom">Seconds</label>'+
               '</div>' +
               '<div class="row">' +
@@ -1882,7 +1884,7 @@ function printFormLab(action, values) {
               '<div class="form-group">' +
                  '<div class="col-md-2 col-md-offset-10">' +
                     '<button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button>' +
-                    '<button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+                    '<button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
                  '</div>' +
               '</div>' +
            '</div>' +
@@ -2359,7 +2361,7 @@ function displayPictureForm(picture_id) {
         // File (add only)
         form += '<div class="form-group"><label class="col-md-3 control-label">Picture</label><div class="col-md-5"><input type="file" name="picture[file]" value=""/></div></div>';
         // Footer
-        form += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + button + '</button><button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button></div></div></form>';
+        form += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + button + '</button><button type="button" class="btn" data-dismiss="modal">Cancel</button></div></div></form>';
         // Add the form to the HTML page
         // $('#form_frame').html(form);
 
@@ -2396,7 +2398,7 @@ function displayPictureForm(picture_id) {
                     form += '<div class="form-group"><label class="col-md-3 control-label">Map</label><div class="col-md-5"><textarea type="textarea" name="picture[map]">' + picture_map + '</textarea></div></div>';
                     // Footer
                     form += '<input type="hidden" name="picture[id]" value="' + picture_id + '"/>';
-                    form += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + button + '</button> <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button></div></div></form></div></div></div></div>';
+                    form += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + button + '</button> <button type="button" class="btn" data-dismiss="modal">Cancel</button></div></div></form></div></div></div></div>';
                     // Add the form to the HTML page
                     $('#form_frame').html(form);
 
@@ -3177,10 +3179,11 @@ function printListTextobjects(textobjects) {
         ;
 
     $.each(textobjects, function (key, value) {
+        var textClass = '',
+            text = '';
         if (value['type'] == 'text') {
             text = $('#customText' + value['id'] + ' p').html();
-        } else {
-            text = ''
+            textClass ='customText'
         }
 
         body +=
@@ -3191,7 +3194,7 @@ function printListTextobjects(textobjects) {
             '<td>' + text + '</td>' +
             '<td>';
         if (ROLE != "user" && LOCK == 0  ) {
-             body += '<a class="action-textobjectdelete" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[65] + '">' +
+             body += '<a class="action-textobjectdelete '+ textClass +'" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[65] + '">' +
                 '<i class="glyphicon glyphicon-trash" style="margin-left:20px;"></i>' +
                 '</a>'
         }
