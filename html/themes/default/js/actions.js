@@ -733,6 +733,9 @@ $(document).on('click', '.action-nodedelete, .action-nodedelete-group', function
         else {
             $.when(deleteNode(node_id)).done(function (values) {
                 $('.node' + node_id).remove();
+                  if($('input[data-path='+node_id+'][name="node[type]"]')){
+                      $('input[data-path='+node_id+'][name="node[type]"]').parent().remove()
+                  }
             }).fail(function (message) {
                 addModalError(message);
             });
@@ -895,7 +898,7 @@ $(document).on('click', '.action-moreactions', function (e) {
         body += '<li><a class="action-nodesbootscratch" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-save"></i> ' + MESSAGES[140] + '</a></li>';
         body += '<li><a class="action-nodesbootdelete" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-remove"></i> ' + MESSAGES[141] + '</a></li>';
     }
-    printContextMenu(MESSAGES[125], body, e.pageX + 3, e.pageY + 3, true,"sidemenu");
+    printContextMenu(MESSAGES[125], body, e.pageX + 3, e.pageY + 3, true,"sidemenu", true);
 });
 
 // Redraw topology
@@ -959,7 +962,7 @@ $(document).on('click', '.action-labobjectadd', function (e) {
     body += '<li><a class="action-pictureadd" href="javascript:void(0)"><i class="glyphicon glyphicon-picture"></i> ' + MESSAGES[83] + '</a></li>';
   body += '<li><a class="action-customshapeadd" href="javascript:void(0)"><i class="glyphicon glyphicon-unchecked"></i> ' + MESSAGES[145] + '</a></li>';
   body += '<li><a class="action-textadd" href="javascript:void(0)"><i class="glyphicon glyphicon-font"></i> ' + MESSAGES[146] + '</a></li>';
-    printContextMenu(MESSAGES[80], body, e.pageX, e.pageY, true,"sidemenu");
+    printContextMenu(MESSAGES[80], body, e.pageX, e.pageY, true,"sidemenu", true);
 });
 
 // Add network
@@ -1357,9 +1360,9 @@ $(document).on('click', '.action-nodesbootdelete, .action-nodesbootdelete-group'
     $('#context-menu').remove();
     var self = $(this);
     
-    var textQuestion = 'Are you sure to delete all starup cfgs?';
+    var textQuestion = 'Are you sure to delete all startup cfgs?';
     if(self.hasClass('action-nodesbootdelete-group')){
-        textQuestion = 'Are you sure to delete selected starup cfgs?';
+        textQuestion = 'Are you sure to delete selected startup cfgs?';
     }
     var body = '<div class="form-group">' +
                     '<div class="question">' + textQuestion + '</div>' +
@@ -1601,8 +1604,8 @@ $(document).on('click', '.action-nodestart, .action-nodesstart, .action-nodestar
                        $('input[data-path='+node_id+']').prop('disabled', true)
                        $('select[data-path='+node_id+']').prop('disabled', true)
                        $("a[data-path="+node_id+"].action-nodeedit").addClass('disabled')
-                       $("a[data-path="+node_id+"].action-nodeinterfaces").addClass('disabled')
                        $("a[data-path="+node_id+"].action-nodedelete").addClass('disabled')
+                       $("a[data-path="+node_id+"].action-nodeinterfaces").attr('data-status', 2)
                    }
                 printLabStatus();
             }).fail(function (message) {
@@ -1695,8 +1698,8 @@ $(document).on('click', '.action-nodestop, .action-nodesstop, .action-nodestop-g
                        $('input[data-path='+node_id+'][disabled]').prop('disabled', false)
                        $('select[data-path='+node_id+'][disabled]').prop('disabled', false)
                        $("a[data-path="+node_id+"].action-nodeedit").removeClass('disabled')
-                       $("a[data-path="+node_id+"].action-nodeinterfaces").removeClass('disabled')
                        $("a[data-path="+node_id+"].action-nodedelete").removeClass('disabled')
+                       $("a[data-path="+node_id+"].action-nodeinterfaces").attr('data-status', 0)
                    }
                 $('#node' + node_id + ' img').addClass('grayscale')
                 printLabStatus();
