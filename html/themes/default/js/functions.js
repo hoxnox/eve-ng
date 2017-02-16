@@ -83,7 +83,7 @@ function addModal(title, body, footer, prop) {
 
 // Add Modal
 function addModalError(message) {
-    var html = '<div aria-hidden="false" style="display: block;" class="modal fade in" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">' + MESSAGES[15] + '</h4></div><div class="modal-body">' + message + '</div><div class="modal-footer"></div></div></div></div>';
+    var html = '<div aria-hidden="false" style="display: block; z-index: 99999" class="modal fade in" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">' + MESSAGES[15] + '</h4></div><div class="modal-body">' + message + '</div><div class="modal-footer"></div></div></div></div>';
     $('body').append(html);
     $('body > .modal').modal('show');
 }
@@ -2601,11 +2601,14 @@ function printLabTopology() {
 
             $labViewport.append(
                 '<div id="network' + value['id'] + '" ' +
-                'class="context-menu network network' + value['id'] + ' network_frame '+unusedClass+' " ' +
+                'class="context-menu  network network' + value['id'] + ' network_frame '+unusedClass+' " ' +
                 'style="top: ' + value['top'] + 'px; left: ' + value['left'] + 'px" ' +
                 'data-path="' + value['id'] + '" ' +
                 'data-name="' + value['name'] + '">' +
                 '<div class="network_name">' + value['name'] + '</div>' +
+                '<div class="tag  hidden" title="Connect to another node">'+
+                '<i class="fa fa-plug plug-icon dropdown-toggle ep"></i>'+
+                '</div>'+
                 '</div>');
 
             networkImgs.push($.Deferred(function (defer) {
@@ -2645,11 +2648,13 @@ function printLabTopology() {
                 'data-path="' + value['id'] + '" ' +
                 'data-status="' + value['status'] + '" ' +
                 'data-name="' + value['name'] + '">' +
+                '<div class="tag  hidden" title="Connect to another node">'+
+                '<i class="fa fa-plug plug-icon dropdown-toggle ep"></i>'+
+                '</div>'+
                 hrefbuf +
                 '</a>' +
                 '<div class="node_name"><i class="node' + value['id'] + '_status"></i> ' + value['name'] + '</div>' +
                 '</div>');
-
             nodesImgs.push($.Deferred(function (defer) {
                 var img = new Image();
 
@@ -2759,16 +2764,61 @@ function printLabTopology() {
                     Anchor: 'Continuous',
                     Connector: ['Straight'],
                     Endpoint: 'Blank',
-                    PaintStyle: {lineWidth: 2, strokeStyle: '#0066aa'},
+                    PaintStyle: {lineWidth: 2, strokeStyle: '#c00001'},
                     cssClass: 'link'
                 });
 
                 // Read privileges and set specific actions/elements
                 if (ROLE == 'admin' || ROLE == 'editor')  {
                     // Nodes and networks are draggable within a grid
-                    lab_topology.draggable($('.node_frame, .network_frame'), {grid: [3, 3]});
-                }
+                    //$('.node_frame, .network_frame').draggable( { grid: [3, 3] });
+		    
+                    lab_topology.draggable($('.node_frame, .network_frame'), {
+                       grid: [3, 3],
+                       stop: NodePosUpdate 
+                    });
+                     
+                    // Node as source or dest link
+                     $.each(nodes, function (key,value) {
+                           lab_topology.makeSource('node' + value['id'], {
+                                filter: ".ep",
+                                Anchor:"Continuous",
+                                extract:{
+                                    "action":"the-action"
+                                },
+                                maxConnections: 30,
+                                onMaxConnections: function (info, e) {
+                                    alert("Maximum connections (" + info.maxConnections + ") reached");
+                                }
+                           });
+                        
+                          lab_topology.makeTarget( $('#node' + value['id']), {
+                                dropOptions: { hoverClass: "dragHover" },
+                                anchor: "Continuous",
+                                allowLoopback: false
+                          });	
+                    });
+                    $.each(networks, function (key,value) {
+                           lab_topology.makeSource('network' + value['id'], {
+                                filter: ".ep",
+                                Anchor:"Continuous",
+                                connectionType:"basic",
+                                extract:{
+                                    "action":"the-action"
+                                },
+                                maxConnections: 30,
+                                onMaxConnections: function (info, e) {
+                                    alert("Maximum connections (" + info.maxConnections + ") reached");
+                                }
+                           });
 
+                          lab_topology.makeTarget($('#network' + value['id']), {
+                                dropOptions: { hoverClass: "dragHover" },
+                                anchor: "Continuous",
+                                allowLoopback: false
+                          });
+                    });
+                } 
                 $.each(topology, function (id, link) {
                     var type = link['type'],
                         source = link['source'],
@@ -2803,6 +2853,7 @@ function printLabTopology() {
                             source: source,       // Must attach to the IMG's parent or not printed correctly
                             target: destination,  // Must attach to the IMG's parent or not printed correctly
                             cssClass: source + ' ' + destination + ' frame_ethernet',
+                            paintStyle: {lineWidth: 2, strokeStyle: '#0066aa'},
                             overlays: [src_label, dst_label]
                         });
                     } else {
@@ -2833,6 +2884,10 @@ function printLabTopology() {
 
                 });
 
+                // Add call to modal newConn if new conn is made
+                lab_topology.bind("connection", function (info) {
+                                newConnModal(info);
+                });
                 // Remove unused elements
                 $('.unused').remove();
 
@@ -2883,10 +2938,6 @@ function printLabTopology() {
         $.when(deleteSingleNetworks()).done(function(){
             $("#loading-lab").remove();
             $("#lab-sidebar *").show();
-
-            var active = localStorage.getItem('action-nodelink');
-
-           $('.action-nodelink').toggleClass('active',(active=='true'));
         })
 
     }).fail(function (message1, message2) {
@@ -3359,7 +3410,6 @@ function printPageLabOpen(lab) {
     $.when(printLabTopology()).done( function () {
      if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
               $('#lab-sidebar ul').append('<li class="action-labobjectadd-li"><a class="action-labobjectadd" href="javascript:void(0)" title="' + MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i></a></li>');
-              $('#lab-sidebar ul').append('<li class="action-nodelink-li"><a class="action-nodelink" href="javascript:void(0)" title="' + MESSAGES[115] + '"><i class="glyphicon glyphicon-link"></i></a></li>');
          }
          $('#lab-sidebar ul').append('<li class="action-nodesget-li"><a class="action-nodesget" href="javascript:void(0)" title="' + MESSAGES[62] + '"><i class="glyphicon glyphicon-hdd"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-networksget" href="javascript:void(0)" title="' + MESSAGES[61] + '"><i class="glyphicon glyphicon-transfer"></i></a></li>');
@@ -4341,12 +4391,13 @@ function autoheight()
 
 function lockLab() {
     var lab_topology = jsPlumb.getInstance();
-    var allElements = $('.node_frame, .network_frame, .customShape');
+    var allElements = $('.node_frame, .network_frame');
     //alert ( JSON.stringify( allElements ));
     for (var i = 0; i < allElements.length; i++){
         if(toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
     }
-    $('.customShape').resizable('disable')
+    $('.customShape').draggable('disable');
+    $('.customShape').resizable('disable');
     // $('.action-unlock-lab i').removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle')
     $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
     $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
@@ -4381,22 +4432,18 @@ function lockLab() {
         }
     });
     $('.action-labobjectadd-li').hide();
-    $('.action-nodelink-li').hide();
-    //$('#lab-sidebar ul').append('<li><a class="action-labobjectadd" href="javascript:void(0)" title="' + MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i></a></li>');
-    //$('#lab-sidebar ul').append('<li><a class="action-nodelink" href="javascript:void(0)" title="' + MESSAGES[115] + '"><i class="glyphicon glyphicon-link"></i></a></li>');
     return deferred.promise();
 }
 
 function unlockLab(){
     var lab_topology = jsPlumb.getInstance();
-    var allElements = $('.node_frame, .network_frame, .customShape');
+    var allElements = $('.node_frame, .network_frame');
     lab_topology.draggable($('.node_frame, .network_frame'), {grid: [3, 3]});
     for (var i = 0; i < allElements.length; i++){
-        //toogleDruggable(lab_topology, allElements[i])
         if(!toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
     }
-    $('.customShape').resizable('enable')
-    // $('.action-lock-lab i').removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle')
+    $('.customShape').draggable('enable');
+    $('.customShape').resizable('enable');
     $('.action-unlock-lab').html('<i class="glyphicon glyphicon-ok-circle"></i>' + MESSAGES[166])
     $('.action-unlock-lab').removeClass('action-unlock-lab').addClass('action-lock-lab')
     var deferred = $.Deferred();
@@ -4430,13 +4477,10 @@ function unlockLab(){
         }
     });
     if ($('.action-labobjectadd-li').length == 0) {
-         $('.action-nodesget-li').before('<li class="action-nodelink-li"><a class="action-nodelink" href="javascript:void(0)" title="' + 
-         MESSAGES[115] + '"><i class="glyphicon glyphicon-link"></i>' + MESSAGES[115] + '</a></li>');
-         $('.action-nodelink-li').before('<li class="action-labobjectadd-li"><a class="action-labobjectadd" href="javascript:void(0)" title="' +
+         $('.action-nodesget-li').before('<li class="action-labobjectadd-li"><a class="action-labobjectadd" href="javascript:void(0)" title="' +
          MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i>' + MESSAGES[56] + '</a></li>');
     } else {
          $('.action-labobjectadd-li').show();
-         $('.action-nodelink-li').show();
    }
     return deferred.promise();
 }
@@ -4460,4 +4504,242 @@ function openNodeCons ( url ) {
         nw = window.open(url);
         sleep ( 1000 );
         $(nw).ready(function() { nw.close(); } );
+}
+
+function newConnModal(info) {
+        $.when(
+        getNetworks(null),
+        getNodes(null),
+        getTopology()
+        ).done(function (networks, nodes, topology ) {
+            linksourcestyle = '' ;
+            linktargetstyle = '' ;
+	    $('#'+info.source.id).addClass("startNode")
+            if ( info.source.id.search('node')  != -1  ) {
+                  linksourcedata =  nodes[ info.source.id.replace('node','') ] ;
+                  linksourcetype = 'node' ;
+                  linksourcedata['interfaces'] = getNodeInterfaces(linksourcedata['id'])
+                  if ( linksourcedata['status'] == 0 ) linksourcestyle = 'grayscale'
+             } else {
+                  linksourcedata =  networks[ info.source.id.replace('network','') ] ;
+                  linksourcetype = 'net' ;
+                  linksourcedata['icon'] = ( linksourcedata['type'] == "bridge")  ? "../lan.png" : "../cloud.png"
+             }
+             if ( info.target.id.search('node')  != -1  ) {
+                  linktargetdata =  nodes[ info.target.id.replace('node','') ] ;
+                  linktargettype = 'node' ;
+                  linktargetdata['interfaces'] = getNodeInterfaces(linktargetdata['id'])
+                  if ( linktargetdata['status'] == 0 ) linktargetstyle = 'grayscale'
+             } else {
+                  linktargetdata =  networks[ info.target.id.replace('network','') ] ;
+                  linktargettype = 'net' ;
+		  linktargetdata['icon'] = ( linktargetdata['type'] == "bridge")  ? "../lan.png" : "../cloud.png"
+             }
+             title = 'Add connection between ' + linksourcedata['name'] + ' and ' + linktargetdata['name'] ;
+             $.when( linksourcedata['interfaces'] , linktargetdata['interfaces'] ).done( function ( sourceif, targetif) {
+             /* choose first free interface */
+                  if ( linksourcetype == 'node' )  {
+                       logger(1,'DEBUG: looking interfaces... ');
+	               linksourcedata['selectedif'] = '' ;  
+                       var tmp_interfaces = {} ;
+                       for ( var key in sourceif['ethernet'] ) {
+			     logger(1,'DEBUG: interface id ' + key + ' named ' + sourceif['ethernet'][key]['name']  + ' ' + sourceif['ethernet'][key]['network_id'])
+                             tmp_interfaces[key] = sourceif['ethernet'][key]
+                             tmp_interfaces[key]['type'] = 'ethernet'
+			     if ( (sourceif['ethernet'][key]['network_id'] == 0 )  && ( linksourcedata['selectedif'] == '') ) {
+                                    linksourcedata['selectedif'] = key ;
+                             }
+                       }
+                       for ( var key in sourceif['serial'] ) {
+                             logger(1,'DEBUG: interface id ' + key + ' named ' + sourceif['serial'][key]['name']  + ' ' + sourceif['serial'][key]['remote_id'])
+                             tmp_interfaces[key] =  sourceif['serial'][key]
+                             tmp_interfaces[key]['type']  =  'serial' 
+                             if ( (sourceif['serial'][key]['remote_id'] == 0 )  && ( linksourcedata['selectedif'] == '') ) {
+                                    linksourcedata['selectedif'] = key ;
+                             }
+                       }
+                       linksourcedata['interfaces'] = tmp_interfaces
+                  }
+                  if ( linksourcedata['selectedif'] == '') linksourcedata['selectedif'] = 0 ;
+                  if ( linktargettype == 'node' )  {
+                       logger(1,'DEBUG: looking interfaces... ') ;
+                       linktargetdata['selectedif'] = '' ;
+                       var tmp_interfaces = []
+                       for ( var key in targetif['ethernet'] ) {
+                             logger(1,'DEBUG: interface id ' + key + ' named ' + targetif['ethernet'][key]['name']  + ' ' + targetif['ethernet'][key]['network_id'])
+                             tmp_interfaces[key] = targetif['ethernet'][key];
+                             tmp_interfaces[key]['type'] = 'ethernet'
+                             if ( (targetif['ethernet'][key]['network_id'] == 0 )  && ( linktargetdata['selectedif'] == '') ) {
+                                    linktargetdata['selectedif'] = key ;
+                             }
+                       }
+                       for ( var key in targetif['serial'] ) {
+                             logger(1,'DEBUG: interface id ' + key + ' named ' + targetif['serial'][key]['name']  + ' ' + targetif['serial'][key]['remote_id'])
+                             tmp_interfaces[key] = targetif['serial'][key];
+                             tmp_interfaces[key]['type'] = 'serial' ;
+                             if ( (targetif['serial'][key]['remote_id'] == 0 )  && ( linktargetdata['selectedif'] == '') ) {
+                                    linktargetdata['selectedif'] = key ;
+                             }
+                       }
+                       linktargetdata['interfaces'] = tmp_interfaces
+                  }
+                  if ( linktargetdata['selectedif'] == '' ) linktargetdata['selectedif'] = 0 ;
+     	          html = '<form id="addConn" class="addConn-form">' +
+                           '<input type="hidden" name="addConn[srcNodeId]" value="'+linksourcedata['id']+'">' +
+                           '<input type="hidden" name="addConn[dstNodeId]" value="'+linktargetdata['id']+'">' +
+                           '<input type="hidden" name="addConn[srcNodeType]" value="'+linksourcetype+'">' +
+                           '<input type="hidden" name="addConn[dstNodeType]" value="'+linktargettype+'">' +
+                           '<div class="row">' +
+                            '<div class="col-md-4">' +
+                                '<div style="text-align:center;" >'+ linksourcedata['name']  + '</div>' +
+                                '<img src="'+ '/images/icons/' + linksourcedata['icon'] + '" class="'+ linksourcestyle  +' img-responsive" style="margin:0 auto;">' +
+                                '<div style="width:3px;height: ' + ( (linksourcetype == 'net') ? '0' : '10' ) + 'px; margin: 0 auto; background-color:#444"></div>' +
+                                '<div style="margin: 0 auto; width:50%; text-align:center;" class="' + (( linksourcetype == 'net') ? 'hidden' : '')  +  '">' +
+                                    '<text class="aLabel addConnSrc text-center" >'+ (( linksourcetype == 'node') ? linksourcedata['interfaces'][linksourcedata['selectedif']]['name'] : '' )  +'</text>' +
+                                '</div>' +
+                                '<div style="width:3px;height:160px; margin: 0 auto; background-color:#444"></div>' +
+                                '<div style="margin: 0 auto; width:50%; text-align:center;" class="' + ((linktargettype == 'net') ? 'hidden' : '')  + '">' +
+                                    '<text class="aLabel addConnDst text-center" >'+ ((linktargettype == 'node') ?  linktargetdata['interfaces'][linktargetdata['selectedif']]['name'] : '' ) +'</text>' +
+                                '</div>' +
+                                '<div style="width:3px;height: '+ ( ( linktargettype  == 'net') ? '0' : '10')  + 'px; margin: 0 auto; background-color:#444"></div>' +
+                                '<img src="/images/icons/'+linktargetdata['icon']+'" class="'+linktargetstyle+' img-responsive" style="margin:0 auto;">' +
+                                '<div style="text-align:center;" >'+linktargetdata['name']+'</div>' +
+     	                    '</div>' +
+                            '<div class="col-md-8">' +
+                                '<div class="form-group">' +
+                                    '<label>Source ID: '+linksourcedata['id']+'</label>' +
+                                    '<p style="margin:0px;"></p>' +
+                                    '<label>Source Name: '+ linksourcedata['name'] +'</label>' +
+                                    '<p style="">type - '+ ((linksourcetype == 'net') ? 'Network' : 'Node') +'</p>' +
+                                '</div>' +
+                                '<div class="form-group">' +
+                                    '<div class="form-group ' + (( linksourcetype == 'net') ? 'hidden' : '')  +  '">'  +
+                                        '<label>Choose Interface for '+ linksourcedata['name'] +'</label>' +
+                                        '<select name="addConn[srcConn]" class="form-control srcConn">' 
+                                        if ( linksourcetype == 'node' ) {
+                                            // Eth first
+                                            for ( key in linksourcedata['interfaces'] ) {
+                                                if ( linksourcedata['interfaces'][key]['type'] == 'ethernet' ) {
+                                                    html += '<option value="' + key + ',ethernet' +'" '+((linksourcedata['interfaces'][key]['network_id'] != 0) ? 'disabled="true"' : '' ) +'>' + linksourcedata['interfaces'][key]['name'] 
+                                                    if ( linksourcedata['interfaces'][key]['network_id'] != 0) {
+                                                        html += ' connected to '
+                                                        for ( tkey in topology ) {
+                                                            if ( ( topology[tkey]['source'] == ( 'node' + linksourcedata['id'] ))  && ( topology[tkey]['source_label'] == linksourcedata['interfaces'][key]['name'] )) { 
+                                                                if (topology[tkey]['destination_type'] == 'node'  ) html += nodes[topology[tkey]['destination'].replace('node','')]['name']
+                                                                if (topology[tkey]['destination_type'] == 'node' ) html += ' ' + topology[tkey]['destination_label']
+                                                                if (topology[tkey]['destination_type'] == 'network' ) html += ' ' + networks[ linksourcedata['interfaces'][key]['network_id'] ]['name']
+                                                            } 
+                                                            if ( ( topology[tkey]['destination'] == ( 'node' + linksourcedata['id'] ))  && ( topology[tkey]['destination_label'] == linksourcedata['interfaces'][key]['name'] )) {
+                                                                if (topology[tkey]['source_type'] == 'node'  ) html += nodes[topology[tkey]['source'].replace('node','')]['name']
+                                                                if (topology[tkey]['source_type'] == 'node'  ) html += ' ' + topology[tkey]['source_label']
+                                                                if ( topology[tkey]['source_type'] == 'network' ) html += ' ' + networks[ linksourcedata['interfaces'][key]['network_id'] ]['name']
+                                                            }
+                                                        }
+                                                    }   
+                                                }
+                                            }
+                                            // Serial first
+                                            //reorder Serials
+                                            var tmp_name = [];
+                                            var reversetab = [];
+                                            for ( key in linksourcedata['interfaces'] ) {
+                                                 tmp_name.push(linksourcedata['interfaces'][key]['name'])
+                                                 reversetab[linksourcedata['interfaces'][key]['name']] = key
+                                            }
+                                            var ordered_name = tmp_name.sort() ;
+                                            for ( key in ordered_name ) {
+                                                okey = reversetab[ordered_name[key]] ;
+                                                if ( linksourcedata['interfaces'][okey]['type'] == 'serial' ) {
+                                                    html += '<option value="' + okey + ',serial' +'" '+ ((linksourcedata['interfaces'][okey]['remote_id'] != 0) ? 'disabled="true"' : '' )  +'>' + linksourcedata['interfaces'][okey]['name']
+                                                    if ( linksourcedata['interfaces'][okey]['remote_id'] != 0) {
+                                                    html += ' connected to '
+                                                    html += nodes[ linksourcedata['interfaces'][okey]['remote_id'] ]['name']
+                                                    html += ' ' + linksourcedata['interfaces'][okey]['remote_if_name']
+                                                    }
+                                                }
+                                            }
+                                         }
+                                        html += '</option>' 
+                                        html += '</select>' +
+                                        '<div style="width:3px;height:30px;"></div>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div style="width:3px;height:30px;"></div>' +
+                                '<div class="form-group">' +
+                                    '<div class="form-group ' + (( linktargettype == 'net') ? 'hidden' : '')  +  '">'  +
+                                        '<label>Choose Interface for '+ linktargetdata['name'] +'</label>' +
+                                        '<select name="addConn[dstConn]" class="form-control dstConn">'
+                                        if ( linktargettype == 'node' ) {
+                                            // Eth first
+                                            for ( key in linktargetdata['interfaces'] ) {
+                                                if ( linktargetdata['interfaces'][key]['type'] == 'ethernet' ) {
+                                                    html += '<option value="' + key + ',ethernet' +'" '+((linktargetdata['interfaces'][key]['network_id'] != 0) ? 'disabled="true"' : '' ) +'>' + linktargetdata['interfaces'][key]['name']
+                                                    if ( linktargetdata['interfaces'][key]['network_id'] != 0) {
+                                                        html += ' connected to '
+                                                        for ( tkey in topology ) {
+                                                            if ( ( topology[tkey]['source'] == ( 'node' + linktargetdata['id'] ))  && ( topology[tkey]['source_label'] == linktargetdata['interfaces'][key]['name'] )) {
+                                                                if (topology[tkey]['destination_type'] == 'node'  ) html += nodes[topology[tkey]['destination'].replace('node','')]['name']
+                                                                if (topology[tkey]['destination_type'] == 'node' ) html += ' ' + topology[tkey]['destination_label']
+                                                                if (topology[tkey]['destination_type'] == 'network' ) html += ' ' + networks[ linktargetdata['interfaces'][key]['network_id'] ]['name']
+                                                            }
+                                                            if ( ( topology[tkey]['destination'] == ( 'node' + linktargetdata['id'] ))  && ( topology[tkey]['destination_label'] == linktargetdata['interfaces'][key]['name'] )) {
+                                                                if (topology[tkey]['source_type'] == 'node'  ) html += nodes[topology[tkey]['source'].replace('node','')]['name']
+                                                                if (topology[tkey]['source_type'] == 'node'  ) html += ' ' + topology[tkey]['source_label']
+                                                                if ( topology[tkey]['source_type'] == 'network' ) html += ' ' + networks[ linktargetdata['interfaces'][key]['network_id'] ]['name']
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            // Serial first
+                                            //reorder Serials
+                                            var tmp_name = [];
+                                            var reversetab = [];
+                                            for ( key in linktargetdata['interfaces'] ) {
+                                                 tmp_name.push(linktargetdata['interfaces'][key]['name'])
+                                                 reversetab[linktargetdata['interfaces'][key]['name']] = key
+                                            }
+                                            var ordered_name = tmp_name.sort() ;
+                                            for ( key in ordered_name ) {
+                                            okey = reversetab[ordered_name[key]] ;
+                                                if ( linktargetdata['interfaces'][okey]['type'] == 'serial' ) {
+                                                    html += '<option value="' + okey + ',serial' +'" '+ ((linktargetdata['interfaces'][okey]['remote_id'] != 0) ? 'disabled="true"' : '' )  +'>' + linktargetdata['interfaces'][okey]['name']
+                                                    if ( linktargetdata['interfaces'][okey]['remote_id'] != 0) {
+                                                    html += ' connected to '
+                                                    html += nodes[ linktargetdata['interfaces'][okey]['remote_id'] ]['name']
+                                                    html += ' ' + linktargetdata['interfaces'][okey]['remote_if_name']
+                                                    }
+                                                }
+                                            }
+                                         }
+                                        html += '</option>' 
+                                        html += '</select>' +
+                                        '<div style="width:3px;height:30px;"></div>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="form-group">' +
+                                    '<label>Destination ID: ' + linktargetdata['id'] + '</label>' +
+                                    '<p style="margin:0px;"></p>' +
+                                    '<label>Destination Name: ' + linktargetdata['name'] + '</label>' +
+                                    '<p style="text-muted">type - '+ ((linktargettype == 'net') ? 'Network' : 'Node') +'</p>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="col-md-8 btn-part col-md-offset-6">' +
+                            '<button type="submit" class="btn btn-success addConn-form-save">' + MESSAGES[47] + '</button>' +
+                            '<button type="button" class="btn btn-flat cancelForm" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+                            '</div>' +
+     	                   '</div>' +
+                         '</form>' 
+			
+                  addModal(title, html, '');
+             });
+        });
+     $('body').on('change','select.srcConn', function (e) {
+          var iname =  $('select.srcConn option[value="' + $('select.srcConn').val() + '"]').text();
+	  $('.addConnSrc').html(iname) 
+     });
+     $('body').on('change','select.dstConn', function (e) {
+          var iname =  $('select.dstConn option[value="' + $('select.dstConn').val() + '"]').text();
+          $('.addConnDst').html(iname)
+     });
 }
