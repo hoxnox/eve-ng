@@ -43,12 +43,6 @@ $(document).on('keydown', 'body', function (e) {
         $('.lab-viewport-click-catcher').unbind('click');
         $('#mouse_frame').remove();
         $('#lab-viewport').removeClass('lab-viewport-click-catcher').data("prevent-contextmenu", false);
-
-        //remove active link node connection
-
-        if (islinkActive())
-            $('.action-nodelink').trigger('click');
-
         $('#context-menu').remove();
 
     }
@@ -98,6 +92,9 @@ $(document).on('click', 'a.folder, a.lab, tr.user', function (e) {
 
 // Remove modal on close
 $(document).on('hidden.bs.modal', '.modal', function (e) {
+    if ( $(".addConn-form").length > 0 ) {
+        $('.action-labtopologyrefresh').click();
+    }
     $(this).remove();
     if ($('body').children('.modal.fade.in')) {
         $('body').children('.modal.fade.in').focus();
@@ -115,38 +112,30 @@ $(document).on('shown.bs.modal', '.modal', function () {
 });
 
 // After node/network move
-$(document).on('dragstop', '.node_frame, .network_frame', function (e) {
-    var that = this,
-        offset = $(this).offset(),
-        left = Math.round(offset.left - 40 + $('#lab-viewport').scrollLeft()),  // 40 is the sidebar
-        top = Math.round(offset.top + $('#lab-viewport').scrollTop()),
-        id = $(this).attr('data-path');
-    if (left >= 0 && top >= 0) {
-        if ($(this).hasClass('node_frame')) {
-            logger(1, 'DEBUG: setting node' + id + ' position.');
-            $.when(setNodePosition(id, left, top)).done(function () {
-                // Position saved -> redraw topology
-                jsPlumb.repaint(that);
-            }).fail(function (message) {
+function NodePosUpdate (event ,ui) {
+     eLeft = Math.round(event.el.offsetLeft + $('#lab-viewport').scrollLeft())
+     eTop = Math.round(event.el.offsetTop + $('#lab-viewport').scrollTop())
+     id = event.el.id
+     $('#'+id).addClass('dragstopped')
+     //alert ( eLeft + ' ' + eTop + ' ' + id.replace('node','') ) 
+     if ( id.search('node') != -1 ) {
+          logger(1, 'DEBUG: setting' + id + ' position.');
+          $.when(setNodePosition( id.replace('node',''), eLeft, eTop)).done(function () {
+              jsPlumb.repaint();
+          }).fail(function (message) {
                 // Error on save
                 addModalError(message);
-            });
-        } else if ($(this).hasClass('network_frame')) {
-            logger(1, 'DEBUG: setting network' + id + ' position.');
-            $.when(setNetworkPosition(id, left, top)).done(function () {
-                // Position saved -> redraw topology
-                jsPlumb.repaint(that);
-            }).fail(function (message) {
+            });;
+     } else {
+         logger(1, 'DEBUG: setting ' + id + ' position.');
+         $.when(setNetworkPosition(id.replace('network',''), eLeft, eTop)).done(function () {
+              jsPlumb.repaint();
+         }).fail(function (message) {
                 // Error on save
                 addModalError(message);
-            });
-        } else {
-            logger(1, 'DEBUG: unknown object.');
-        }
-    } else {
-        addMessage('warning', MESSAGES[124]);
-    }
-});
+         });;
+     }
+}
 
 // Close all context menu
 $(document).on('mousedown', '*', function (e) {
@@ -467,23 +456,6 @@ $(document).on('contextmenu', '.context-menu', function (e) {
 
 });
 
-/**
- * left click
- */
-$(document).off('click', '.context-menu')
-    .on('click', '.context-menu', function (e) {
-
-        if (islinkActive() && (ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            var title = $(this).attr('data-name');
-            var node_id = $(this).attr('data-path');
-
-            contextMenuInterfaces(title, node_id, e);
-        }
-    })
-
 
 // Window resize
 $(window).resize(function () {
@@ -495,6 +467,18 @@ $(window).resize(function () {
     }
 });
 
+
+// plug show/hide event
+
+$(document).on('mouseover','.node_frame, .network_frame', function (e) {
+	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) { 
+	     $(this).find('.tag').removeClass("hidden");
+        }
+} ) ; 
+
+$(document).on('mouseleave','.node_frame, .network_frame', function (e) {
+        $(this).find('.tag').addClass("hidden");
+} ) ;
 /***************************************************************************
  * Actions links
  **************************************************************************/
@@ -813,8 +797,6 @@ $(document).on('click', '.action-nodesget', function (e) {
 $(document).on('click', '.action-labclose', function (e) {
     logger(1, 'DEBUG: action = labclose');
     $.when(closeLab()).done(function () {
-        localStorage.setItem('action-nodelink',false);
-        //postLogin();
     newUIreturn();
     }).fail(function (message) {
         addModalError(message);
@@ -908,7 +890,6 @@ $(document).on('click', '.action-labtopologyrefresh', function (e) {
     $.when(printLabTopology()).done( function () {
          if ( LOCK == 1 ) {
         $('.action-labobjectadd-li').remove();
-        $('.action-nodelink-li').remove();
          }
     });
 
@@ -918,7 +899,6 @@ $(document).on('click', '.action-labtopologyrefresh', function (e) {
 $(document).on('click', '.action-logout', function (e) {
     logger(1, 'DEBUG: action = logout');
     $.when(logoutUser()).done(function () {
-        localStorage.setItem('action-nodelink',false);
         printPageAuthentication();
     }).fail(function (message) {
         addModalError(message);
@@ -2163,8 +2143,8 @@ $(document).on('submit', '#form-network-add, #form-network-edit', function (e) {
     }
 
     for (var i = 0; i < form_data['count']; i++) {
-        form_data['left'] = parseInt(form_data['left']) + i * 10;
-        form_data['top'] = parseInt(form_data['top']) + i * 10;
+        form_data['left'] = parseInt(form_data['left']) +  30;
+        form_data['top'] = parseInt(form_data['top']) +  30;
         var request = $.ajax({
             timeout: TIMEOUT,
             type: type,
@@ -3548,8 +3528,6 @@ $(document).on("click", ".action-freeselect", function (event) {
     $(self).toggleClass("active", !isFreeSelectMode);
     $("#lab-viewport").toggleClass("freeSelectMode", !isFreeSelectMode);
 
-    //disable node link
-    $('.action-nodelink.active').trigger('click');
 });
 
 $(document).on("click", "#lab-viewport.freeSelectMode .node_frame", function (event) {
@@ -3600,479 +3578,26 @@ $(document).on('click', '.action-logs', function(e) {
  * Node link
  * ****************************************************************************/
 
-/**
- *
- * @returns {*|jQuery|boolean}
- */
-function islinkActive() {
 
-    return $(".action-nodelink").hasClass("active") || false;
-
-}
-
-/**
- * context menu for node link
- * @param node_id
- */
-
-function nodeClicked(title, node_id, e) {
-    return $.when(
-        getNodeInterfaces(node_id),
-        getNetworks(),
-        getNodes())
-        .done(function (nodeInterfaces, networks, nodes) {
-
-            var interfaces = '';
-            var iol_interfc ={};
-            var iol_interfc1 = {};
-
-
-            if (nodeInterfaces['sort'] == 'iol') {
-                // IOL nodes need to reorder interfaces
-                // i = x/y with x = i % 16 and y = (i - x) / 16
-
-                $.each(nodeInterfaces['ethernet'], function (interfc_id, interfc) {
-                    var x = interfc_id % 16;
-                    var y = (interfc_id - x) / 16;
-                    interfc['id']=interfc_id;
-                    iol_interfc[4 * x + y] = interfc;
-                });
-
-                 nodeInterfaces['ethernet']=iol_interfc;
-
-                // IOL nodes need to reorder interfaces
-                // i = x/y with x = i % 16 and y = (i - x) / 16
-
-                $.each(nodeInterfaces['serial'], function (interfc_id, interfc) {
-                    var x = interfc_id % 16;
-                    var y = (interfc_id - x) / 16;
-                    interfc['id']=interfc_id;
-                    iol_interfc1[4 * x + y] = interfc;
-
-                });
-
-                 nodeInterfaces['serial']=iol_interfc1;
-            }
-
-
-
-            $.each(nodeInterfaces, function (key, value) {
-
-                if ($.inArray(key, ['ethernet', 'serial']) > -1)
-                    $.each(value, function (id, object) {
-
-                        var network = '';
-                        var remoteIf = '';
-                        var networkId = 0;
-
-                        if (nodeInterfaces['sort'] != 'iol') {
-                            object.id = id;
-                        }
-
-                        if (networks[object['network_id']]) {
-                            network = ' <i class="glyphicon glyphicon-transfer" title="Connected"></i> ' +
-                                networks[object['network_id']].name;
-
-                            network +=
-                                //edit
-                                '<a class="action-networkedit" data-path="' + object['network_id'] + '" ' +
-                                'data-name="' + object['name'] + '" href="#" title="Edit network">' +
-                                '<i class="glyphicon glyphicon-pencil"></i></a>' +
-                                //deatach
-                                '<a class="action-networkdeatach" data-path="' + object['network_id'] + '" ' +
-                                'data-name="' + object['name'] + '" href="#" title="Detach interface"' +
-                                'node-id="' + node_id + '"' +
-                                'interface-id="' + object.id + '"' +
-                                'network-id="' + networkId + '" >' +
-                                '<i class="glyphicon glyphicon-export"></i></a>';
-
-                            networkId = object['network_id'];
-                        }
-
-
-                        if (object['remote_if']) {
-
-                            remoteIf =
-                                ' <i class="glyphicon glyphicon-transfer" title="Connected"></i> ' +
-                                nodes[object['remote_id']].name + ' ' +
-                                object['remote_if_name'];
-                        }
-
-                        if (key == 'ethernet') {
-
-                            interfaces += '<li class="action-nodelink-li">' +
-                                '<a class="context-collapsible interfaces" ' +
-                                'href="#" interface-name="' + object['name'] + '" ' +
-                                'node-id="' + node_id + '" ' +
-                                'interface-id="' + object.id + '" ' +
-                                'network-id="' + networkId + '" ' +
-                                '>' +
-                                '<i class="glyphicon glyphicon-link"></i>' + object['name'] +
-                                network +
-                                '</a>' +
-                                '</li>';
-                        }
-                        else {
-
-                            interfaces += '<li class="action-nodelink-li">' +
-                                '<a class="action-nodeinterfaces context-collapsible menu-edit" ' +
-                                'href="#"' +
-                                'data-path="' + node_id + '" ' +
-                                'data-name="' + object['name'] + '"' +
-                                '>' +
-                                '<i class="glyphicon glyphicon-link"></i>' + object['name'] +
-                                remoteIf +
-                                ' </a>' +
-                                '</li>';
-                        }
-
-                    });
-            });
-
-            printContextMenu(title, interfaces, e.pageX, e.pageY,false,"menu");
-
-        }).fail(function (message) {
-            // Error on getting node interfaces
-            addModalError(message);
-        });
-}
-
-
-/**
- *
- * @param title
- * @param node_id
- * @param e
- */
-function networkClicked(title, node_id, e) {
-
-    var network = $(e.target).closest('.network_frame');
-    var network_id = network.attr('data-path');
-
-
-    // Network clicked first
-    if (!window.startNode) {
-
-        logger(1, 'Link DEBUG: Network clicked first');
-        window.startNode = {
-            'networkId': network_id,
-            'interfaceId': 0,
-            'nodeId': 0,
-            'created': 0
-        };
-
-        selected_active($('#network' + network_id));
-
-
-    }
-    //Network clicked second
-    else {
-
-        logger(1, 'Link DEBUG: Network clicked second');
-
-        var start_node = window.startNode.nodeId;
-        var interface_id = window.startNode.interfaceId;
-        var start_network_id = window.startNode.networkId;
-
-        //different start and end network
-        if (start_network_id != network_id) {
-
-            $.when(getNodes(null))
-                .then(function (nodes) {
-                    //all nodes
-                    var arr = [];
-                    $.each(nodes, function (id, object) {
-                        arr.push(getNodeInterfaces(object.id));
-                    });
-
-                    return $.when.apply(this, arr)
-                })
-                .then(function (res) {
-
-                    // all node interfaces
-                    var network = [];
-                    var interfaces = arguments;
-
-
-                    //--------------------------------------------------------------------------
-                    $.each(interfaces, function (id, nodeInterface) {
-                        $.each(nodeInterface['ethernet'], function (id, object) {
-
-                            if (object.network_id == start_network_id) {
-                                network.push(setNodeInterface(nodeInterface.id, network_id, id))
-                            }
-                        })
-                    });
-
-
-                    return $.when.apply(this, network)
-                })
-                .then(function () {
-                    return $.when(deleteNetwork(start_network_id))
-                })
-                .done(function (result) {
-
-                    delete window.startNode
-                    // var pos = result.data;
-                    // return $.when(setNetworkPosition(network_id,pos.left,pos.top));
-                   // return $.when(setNodeInterface(start_node, network_id, interface_id))
-
-
-                    window.location.reload();
-                })
-                .fail(function (message) {
-                    // Error on save
-                    addModalError(message);
-                });
-
-        }
-
-
-    }
-
-}
-
-/**
- * context menu
- * @param title
- * @param node_id
- * @param e
- */
-
-function contextMenuInterfaces(title, node_id, e) {
-
-    //test ot start/stop node
-    if (!node_id) {
-        return true;
-    }
-
-    if ($(e.target).closest('.node.node_frame').length) { //node clicked
-        nodeClicked(title, node_id, e);
-    }
-    else {
-        //the network was clicked second
-        if ($(e.target).closest('.network.network_frame').length) {
-            networkClicked(title, node_id, e);
-        }
-    }
-}
-
-/**
- * select/deselect on active link
- * @param element
- */
-
-function selected_active(element) {
-    $(element).toggleClass('link_selected');
-
-    jsPlumb.ready(function () {
-
-
-        var offset = $(element).offset()
-
-        var destination = $("<div/>", {id: "inner"}).draggable().appendTo('#lab-viewport');
-        destination.css({"position": "absolute", 'top': offset.top, 'left': offset.left, 'opacity': 1});
-        destination.html('<img class="selector" src="/images/link_selector.png">')
-
-
-        // Create jsPlumb topology
-        var lab_topology = jsPlumb.getInstance();
-
-        var source = $(element).attr('id');
-
-
-        lab_topology.importDefaults({
-            Anchor: 'Continuous',
-            Connector: ['Straight'],
-            Endpoint: 'Blank',
-            PaintStyle: {lineWidth: 2, strokeStyle: '#C00001'},
-            cssClass: 'link'
-        });
-
-
-        var conn = lab_topology.connect({
-            source: source,       // Must attach to the IMG's parent or not printed correctly
-            target: $(destination).attr('id'),  // Must attach to the IMG's parent or not printed correctly
-            cssClass: source + ' ' + destination + ' frame_ethernet new_network',
-            isSource: true
-        });
-
-        window.conn = conn;
-
-        $(document).on("mousemove", function (e) {
-
-            lab_topology.animate(
-                destination,
-                {
-                    left: e.pageX - $('.selector').width() / 2 - 40,
-                    top: e.pageY - $('.selector').height() / 2 - 5
-                },
-                {duration: 0});
-        })
-
-    })
-}
-
-
-$(document).on("click", ".action-nodelink", function (event) {
-    var self = this;
-    var isNodeSelectMode = $(self).hasClass("active");
-
-    $('.action-freeselect.active').trigger('click');
-
-    if (isNodeSelectMode) {
-        $(".node_frame").removeClass("node-selected");
-        detachNodeLink();
-        localStorage.setItem('action-nodelink',false)
-    }
-    else {
-        localStorage.setItem('action-nodelink',true)
-    }
-
-
-    $(self).toggleClass("active", !isNodeSelectMode);
-    $("#lab-viewport").toggleClass("nodeSelectMode", !isNodeSelectMode);
-});
-
-
-//add interfaces dinamicaly (new)
-$(document).on('click', 'a.interfaces', function (e) {
-    e.preventDefault();
-
-
-    //deactivate on disabled nodelink
-    if (!islinkActive()) return true;
-
-    var network_frame = $('.node_frame, .network_frame');
-    var interface_id = $(this).attr('interface-id')
-    var interface_name = $(this).attr('interface-name')
-    var isStartNode = typeof window.startNode !== 'undefined';
-    var isNetworkId = typeof $(this).attr('network-id') !== 'undefined' ? $(this).attr('network-id') : 0;
-
-
-    //the node is clicked
-    if (isStartNode) {
-        var end_node = $(this).attr('node-id');
-        var network_id = isNetworkId > 0 ? isNetworkId : window.startNode.networkId;
-
-        //step 3
-        if (network_id > 0 && end_node > 0) {
-
-
-            logger(1, 'Link DEBUG: node clicked second ');
-
-            $.when(getNodeInterfaces(end_node))
-                .then(function (nodeInterface) {
-
-                    var hasNetwork = 0;
-
-                    $.each(nodeInterface['ethernet'], function (id, object) {
-                        if (interface_id == id && object.network_id > 0) {
-                            hasNetwork = 1;
-                            return;
-                        }
-                    });
-
-                    //if end note has network attached, and start network is created
-                    if (hasNetwork && window.startNode.created) {
-
-
-                        return setNodeInterface(window.startNode.nodeId, isNetworkId, interface_id)
-                    }
-                    else {
-
-                        //connect to clicked network
-                        return setNodeInterface(end_node, window.startNode.networkId, interface_id)
-                    }
-                })
-                .done(function (response) {
-
-                    delete window.startNode
-                    window.location.reload();
-                })
-                .fail(function (message) {
-                    // Error on save
-                    addModalError(message);
-                });
-        }
-
-    }
-    else {
-
-        logger(1, 'Link DEBUG: node clicked first ');
-        //add new network
-        window.startNode = {};
-        var start_node = $(this).attr('node-id');
-        var node_name = $('.node' + start_node).attr('data-name') + '-' + interface_name
-        var offset = $('#node' + start_node).offset()
-
-        $('.node' + start_node).addClass('startNode');
-
-        if (isNetworkId == 0) {
-
-
-            $.when(setNetwork(node_name, offset.left + 20, offset.top + 40))
-            //step 1
-                .then(function (response) {
-                    var networkId = response.data.id;
-
-                    logger(1, 'Link DEBUG: new network created ' + networkId);
-
-                    window.startNode = {
-                        'networkId': networkId,
-                        'interfaceId': interface_id,
-                        'nodeId': start_node,
-                        'created': 1
-                    };
-
-                    return setNodeInterface(start_node, networkId, interface_id)
-                })
-                //step 2
-                .then(function (response) {
-                    jsPlumb.repaint(network_frame);
-                    selected_active($('.startNode'));
-                })
-                .done()
-                .fail(function (message) {
-                    // Error on save
-                    addModalError(message);
-                });
-        }
-        else {
-
-            logger(1, 'Link DEBUG: only atach');
-            window.startNode = {
-                'networkId': isNetworkId,
-                'interfaceId': interface_id,
-                'nodeId': start_node,
-                'created': 0
-            };
-
-            selected_active($('#node' + start_node));
-
-
-        }
-
-    }
-
-    $('#context-menu').remove();
-})
-
-//disble click on serial
 $(document).on('click', 'a.interfaces.serial', function (e) {
     e.preventDefault();
 })
 
 //show context menu when node is off
 $(document).on('click', '.node.node_frame a', function (e) {
-
     var node = $(this).parent();
     var node_id = node.attr('data-path');
     var status = parseInt(node.attr('data-status'));
     var $labViewport = $("#lab-viewport")
         , isFreeSelectMode = $labViewport.hasClass("freeSelectMode")
 
-    if (islinkActive() || isFreeSelectMode) return true;
+    //if (islinkActive() || isFreeSelectMode ) return true;
+    if (isFreeSelectMode ) return true;
+  
+    if ( node.hasClass('dragstopped') && node.removeClass('dragstopped') ) {
+          e.preventDefault();
+          return true ;
+    } 
 
     if (!status) {
 
@@ -4098,6 +3623,75 @@ $(document).on('click', '.node.node_frame a', function (e) {
     }
 
 })
+
+
+$(document).on('submit', '#addConn', function (e) {
+    e.preventDefault();  // Prevent default behaviour
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var form_data = form2Array('addConn');
+    //alert ( JSON.stringify( form_data) ) 
+    var srcType = ( ( (form_data['srcConn']+'').search("serial")  != -1 ) ? 'serial' : 'ethernet' )
+    var dstType = ( ( (form_data['dstConn']+'').search("serial")  != -1 ) ? 'serial' : 'ethernet' )
+    // Get src dst type information and check compatibility
+    if ( srcType != dstType )  {
+         addModalError("Serial and Ethernet cannot be interconnected !!!!" )
+         return
+    } 
+    if ( form_data['srcNodeType'] == 'network' && form_data['dstNodeType'] == 'network' ) {
+         addModalError("networks cannot be interconnected !!!!" )
+         return
+    }
+    // nonet - nono - netnet 
+    if ( form_data['srcNodeType'] == 'node' && form_data['dstNodeType'] == 'node' ) {
+         if ( srcType == 'serial' ) {
+          /// create link S2S between nodes 
+             //alert ( ' Need to build S2S between Node' + form_data['srcNodeId'] + ' ' + form_data['srcConn'].replace(',serial','') +' and Node' + form_data['dstNodeId'] + ' ' + form_data['dstConn'].replace(',serial','') )
+             var node1 = form_data['srcNodeId']
+             var iface1 = form_data['srcConn'].replace(',serial','')
+             var node2 = form_data['dstNodeId']
+             var iface2 = form_data['dstConn'].replace(',serial','')
+             $.when(setNodeInterface(node1, node2 + ':' + iface2 , iface1)).done( function () {
+                  $(e.target).parents('.modal').attr('skipRedraw', true);
+                  $(e.target).parents('.modal').modal('hide');
+             });
+         } else {
+             var bridgename = $('#node'+form_data['srcNodeId']).attr('data-name') + 'iface_' + form_data['srcConn'].replace(',ethernet','')
+             var offset = $('#node' + form_data['srcNodeId'] ).offset()
+             var node1 = form_data['srcNodeId']
+             var iface1 = form_data['srcConn'].replace(',ethernet','') 
+             var node2 = form_data['dstNodeId']
+             var iface2 = form_data['dstConn'].replace(',ethernet','')
+             $.when(setNetwork(bridgename, offset.left + 20, offset.top + 40)).then( function (response) {
+                  var networkId = response.data.id;
+                  logger(1, 'Link DEBUG: new network created ' + networkId);
+                  $.when(setNodeInterface(node1, networkId, iface1) ).then( function () {
+                     $.when(setNodeInterface(node2, networkId, iface2)).done( function () {
+                       $(e.target).parents('.modal').attr('skipRedraw', true);
+                       $(e.target).parents('.modal').modal('hide');
+                     });
+                  });
+             });
+
+         }
+ 
+    } else {
+        if (  form_data['srcNodeType'] == 'node' ) {
+             var node = form_data['srcNodeId'] 
+             var iface = form_data['srcConn'].replace(',ethernet','') 
+             var bridge = form_data['dstNodeId']
+        } else {
+             var node = form_data['dstNodeId']
+             var iface = form_data['dstConn'].replace(',ethernet','')
+             var bridge = form_data['srcNodeId']
+       }
+       $.when(setNodeInterface(node, bridge, iface)).done( function () {
+                $(e.target).parents('.modal').attr('skipRedraw', true);
+                $(e.target).parents('.modal').modal('hide');
+       });
+   }
+   
+});
+
 
 /**
  *
