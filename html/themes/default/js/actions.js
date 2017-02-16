@@ -2274,9 +2274,14 @@ $(document).on('submit', '#form-node-add, #form-node-edit', function (e) {
         form_data['postfix'] = 0;
     }
 
-    for (var i = 0; i < form_data['count']; i++) {
-        form_data['left'] = parseInt(form_data['left']) + i * 10;
-        form_data['top'] = parseInt(form_data['top']) + i * 10;
+    var inititalLeft = form_data['left']
+    var inititalTop  = form_data['top']
+    for (var i = 0, j = 0; i < form_data['count']; i++) {
+        if(i%5 == 0){
+            j++
+        }
+        form_data['left'] = +inititalLeft + i%5 * 60;
+        form_data['top'] = +inititalTop + j * 80;
         var request = $.ajax({
             timeout: TIMEOUT,
             type: type,
