@@ -1502,10 +1502,7 @@ table.configured-nodes tbody td label {
 #capture-menu {
 	position: absolute;
 	display: none;
-    right: -150px;
-    top: 160px;
 	border: 1px solid #bbb;
-    /*height: 150px;*/
     background: white;
     width: 150px;
 }

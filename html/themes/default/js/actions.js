@@ -168,16 +168,55 @@ $(document).on('click', '.menu-collapse, .menu-collapse i', function (e) {
 // Open context menu block
 $(document).on('click', '.menu-appear, .menu-appear i', function (e) {
     e.preventDefault();  // Prevent default behaviour
-    $('#capture-menu').toggle('slow')
-    $('#capture-menu li a').toggle('fast')
     var windowWidth = $(window).width();
+    var windowHeight = $(window).height();
     var contextMenuClickX = $("#lab-viewport").data('contextMenuClickXY').x
-    console.log('X', windowWidth, contextMenuClickX)
-    if(windowWidth - 310 < contextMenuClickX){
+    var contextMenuClickY = $("#lab-viewport").data('contextMenuClickXY').y
+    if(windowWidth - 320 <= contextMenuClickX){
         $('#capture-menu').css('left', -150)
     } else {
         $('#capture-menu').css('right', -150)
     }
+    $('#capture-menu li a').toggle('fast')
+    $('#capture-menu').toggle({
+        duration: 10,
+        progress: function(){
+                // console.log('arguments',arguments)
+                // console.log("height, fix", $('#capture-menu').height(), windowHeight - contextMenuClickY - 145)
+                if(contextMenuClickY > windowHeight - 300){
+                    if($('#capture-menu').height() > contextMenuClickY + 145){
+                        $('#capture-menu').css({
+                            'height': contextMenuClickY - 145,
+                            'overflow': 'hidden',
+                            'overflow-y': 'scroll'
+                        })
+                    }
+                    $('#capture-menu').css('bottom', '114px')
+                } else {
+                    if($('#capture-menu').height() > (windowHeight - contextMenuClickY - 145)){
+                        $('#capture-menu').css({
+                                'height': windowHeight - contextMenuClickY - 145,
+                                'top': '136px',
+                                'overflow': 'hidden',
+                                'overflow-y': 'scroll'
+                            })
+                    } 
+                }
+        },
+        complete: function(){
+
+            if(!contextMenuClickY > windowHeight - 300 && $('#capture-menu').height() > (windowHeight - contextMenuClickY - 145)){
+                $('#capture-menu').css({
+                            'height': windowHeight - contextMenuClickY - 145,
+                            'top': '136px',
+                            'overflow': 'hidden',
+                            'overflow-y': 'scroll'
+                        })
+                console.log('hei2', windowHeight - contextMenuClickY - 145)
+            } 
+
+        }
+    })
     if($('.menu-appear > i').hasClass('glyphicon-chevron-left')){
         $('.menu-appear > i').addClass('glyphicon-chevron-right').removeClass('glyphicon-chevron-left')
     } else {
