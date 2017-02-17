@@ -236,6 +236,7 @@ $(document).on('contextmenu', '#lab-viewport', function (e) {
 
     if ( window.connContext == 1 ) {
            window.connContext == 0 
+           if (ROLE == "user" || LOCK == 1 ) return;
            body = '';
            body += '<li><a class="action-conndelete" href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i> Delete</a></li>';
            printContextMenu('Connection', body, e.pageX, e.pageY,false,"menu");
@@ -493,7 +494,7 @@ $(document).on('change input', 'input[name="node[count]"]', function(e){
 // plug show/hide event
 
 $(document).on('mouseover','.node_frame, .network_frame', function (e) {
-	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 && $(this).attr('data-status') == 0 ) { 
+	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 && ( $(this).attr('data-status') == 0 || $(this).attr('data-status') == undefined ) ) { 
 	     $(this).find('.tag').removeClass("hidden");
         }
 } ) ; 
@@ -2305,7 +2306,7 @@ $(document).on('submit', '#form-node-add, #form-node-edit', function (e) {
     var inititalLeft = form_data['left']
     var inititalTop  = form_data['top']
     for (var i = 0, j = 0; i < form_data['count']; i++) {
-        if(i%5 == 0){
+        if( i > 0 && i%5 == 0){
             j++
         }
         form_data['left'] = +inititalLeft + i%5 * 60;
@@ -2363,9 +2364,9 @@ $(document).on('submit', '#form-node-add, #form-node-edit', function (e) {
     }
 
     $.when.apply(null, promises).done(function () {
-        if (self.attr('id') == 'form-node-add') {
+        //if (self.attr('id') == 'form-node-add') {
             printLabTopology();
-        }
+        //}
     });
     return false;  // Stop to avoid POST
 });

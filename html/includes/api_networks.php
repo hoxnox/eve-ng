@@ -123,7 +123,8 @@ function apiGetLabNetwork($lab, $id) {
 			'left' => $network -> getLeft(),
 			'name' => $network -> getName(),
 			'top' => $network -> getTop(),
-			'type' => $network -> getNType()
+			'type' => $network -> getNType(),
+                        'visibility' => $network -> getVisibility()
 		);
 	} else {
 		// Network not found
@@ -156,7 +157,8 @@ function apiGetLabNetworks($lab) {
 			'left' => $network -> getLeft(),
 			'name' => $network -> getName(),
 			'top' => $network -> getTop(),
-			'type' => $network -> getNType()
+			'type' => $network -> getNType(),
+                        'visibility' => $network -> getVisibility()
 		);
 	}
 	return $output;

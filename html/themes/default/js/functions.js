@@ -666,7 +666,7 @@ function deleteSingleNetworks() {
             networksArr = networks;
 
             $.each(networksArr, function (key, value) {
-                if (value.count == 1 && value.type == 'bridge'){
+                if (value.count == 1 && value.type == 'bridge' && value.visibility == 0){
                     deleted.push(deleteNetwork(value.id))
                     delete networksArr[key];
                     $('.network' + value.id).remove();
@@ -1918,6 +1918,7 @@ function printFormNetwork(action, values) {
         if (action == 'add') {
             // If action == add -> print the nework count input
             html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[114] + '</label><div class="col-md-5"><input class="form-control" name="network[count]" value="1" type="text"/></div></div>';
+            html += '<input class="form-control" name="network[visibility]" type="hidden" value="1"/>';
         } else {
             // If action == edit -> print the network ID
             html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[92] + '</label><div class="col-md-5"><input class="form-control" disabled name="network[id]" value="' + id + '" type="text"/></div></div>';
@@ -2591,15 +2592,12 @@ function printLabTopology() {
             var icon;
             var unusedClass='';
 
-            if (value['type'] == 'bridge') {
+            if (value['type'] == 'bridge' || value['type'] == 'ovs' ) {
                 icon = 'lan.png';
-                unusedClass = ' unused ';
-            } else if (value['type'] == 'ovs') {
-                icon = 'lan.png';
-
             } else {
                 icon = 'cloud.png';
             }
+            if (value['visibility'] == 0 )  unusedClass=' unused ' 
 
 
             $labViewport.append(

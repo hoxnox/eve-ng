@@ -59,8 +59,8 @@ function apiGetLabTopology($lab) {
 						break;
 					case 2:
 						// P2P Link
-						if ($lab -> getNetworks()[$interface -> getNetworkId()] -> isCloud()) {
-							// Cloud are never printed as P2P link
+						if ($lab -> getNetworks()[$interface -> getNetworkId()] -> isCloud() || $lab -> getNetworks()[$interface -> getNetworkId()] -> getVisibility() == 1) {
+							// Cloud are never printed as P2P link or Visibility is on
 							$output['data'][] = Array(
 								'type' => 'ethernet',
 								'source' => 'node'.$node_id,
