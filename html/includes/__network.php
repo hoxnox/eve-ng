@@ -99,7 +99,12 @@ class Network {
 		}
                 if (!isset($p['visibility'])) {
                         $p['visibility'] = 0;
-                } elseif ( (int) $p['visibility'] != 0 ) {
+                } elseif ( (int) $p['visibility'] != 0  ) {
+                        $p['visibility'] = 1;
+                }
+
+                //pnet need visibility
+                if ( preg_match('/^pnet/',$p['type']) ) {
                         $p['visibility'] = 1;
                 }
 
