@@ -456,6 +456,10 @@ $(document).on('contextmenu', '.context-menu', function (e) {
 
 });
 
+// remove context menu after click on capture interface
+$(document).on('click', '.action-nodecapture', function(){
+    $("#context-menu").remove();
+})
 
 // Window resize
 $(window).resize(function () {
