@@ -358,12 +358,13 @@ a2enmod xml2enc &> /dev/null
 a2dissite 000-default &> /dev/null
 a2ensite unetlab &> /dev/null
 service apache2 restart &> /dev/null
+BAREPARAMS=\$(cat /etc/default/BAREPARAMS 2>/dev/null || true ) &> /dev/null
 sed -i 's/.*GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash vga=788"/g' /etc/default/grub &> /dev/null
 sed -i 's/.*GRUB_GFXMODE=.*/GRUB_GFXMODE="800x600"/g' /etc/default/grub &> /dev/null
 sed -i 's/.*GRUB_HIDDEN_TIMEOUT=.*/GRUB_HIDDEN_TIMEOUT=2/g' /etc/default/grub &> /dev/null
 sed -i 's/.*GRUB_HIDDEN_TIMEOUT_QUIET=.*/GRUB_HIDDEN_TIMEOUT_QUIET=true/g' /etc/default/grub &> /dev/null
 sed -i 's/.*GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/g' /etc/default/grub &> /dev/null
-sed -i 's/.*GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 intel_iommu=on isolcpus=1-99 nohz_full=1-99 rcu_nocbs=1-99"/g' /etc/default/grub &> /dev/null
+sed -i 's/.*GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 '"\$BAREPARAMS"' "/g' /etc/default/grub &> /dev/null
 sed -i "s/^ServerName.*$/ServerName \$(hostname -f)/g" /etc/apache2/sites-available/unetlab.conf &> /dev/null
 update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/eveng/eveng.plymouth 100 &> /dev/null
 update-initramfs -u -k all &> /dev/null
