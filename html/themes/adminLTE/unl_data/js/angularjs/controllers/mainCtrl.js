@@ -440,6 +440,7 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
 		/////////////////////////////////////////////////////
 		//Export lab //START
 		$scope.exportFiles = function(){
+			$(".content-wrapper").append("<div id='progress-loader'><label style='float:left'>Creating archive...</label><div class='loader'></div></div>")
 			
 			var fileExportArray={};
 			var tempPath = ($scope.path === '/') ? $scope.path :  $scope.path+'/';
@@ -466,6 +467,7 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
 				data: fileExportArray})
 					.then(
 					function successCallback(response) {
+						$("#progress-loader").remove()
 						console.log(response.data.data)
 						var a         = document.createElement('a');
 							a.href        = response.data.data;
@@ -475,6 +477,7 @@ function mainController($scope, $http, $location, $window, $uibModal, $log, $roo
 							a.click();
 					}, 
 					function errorCallback(response) {
+						$("#progress-loader").remove()
 						console.log(response)
 						console.log("Unknown Error. Why did API doesn't respond?");
 						//$location.path("/login");
