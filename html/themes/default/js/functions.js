@@ -4752,8 +4752,10 @@ function newConnModal(info , oe ) {
                                 '</div>' +
                             '</div>' +
                             '<div class="col-md-8 btn-part col-md-offset-6">' +
-                            '<button type="submit" class="btn btn-success addConn-form-save">' + MESSAGES[47] + '</button>' +
-                            '<button type="button" class="btn btn-flat cancelForm" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+                                '<div class="form-group">' +
+                                    '<button type="submit" class="btn btn-success addConn-form-save">' + MESSAGES[47] + '</button>' +
+                                    '<button type="button" class="btn cancelForm" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+                                '</div>' + 
                             '</div>' +
      	                   '</div>' +
                          '</form>' 

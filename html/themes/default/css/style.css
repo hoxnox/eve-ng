@@ -408,3 +408,6 @@ body.folders #main{
 .disabled {
 	cursor:not-allowed !important;
 }
+.addConn-form-save {
+	margin-right: 5px;
+}
