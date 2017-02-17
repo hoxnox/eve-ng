@@ -1366,7 +1366,7 @@ table.configured-nodes tbody td label {
 
 }
 
-#nodelist-loader {
+#progress-loader {
 	position: absolute;
     bottom: 5%;
     left: 45%;

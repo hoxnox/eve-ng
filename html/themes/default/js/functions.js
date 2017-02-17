@@ -3235,7 +3235,7 @@ function printListNodes(nodes) {
             body += value.html;
         });
         body += '</tbody></table></form></div>';
-        $("#nodelist-loader").remove();
+        $("#progress-loader").remove();
         addModalWide(MESSAGES[118], body, '');
         $('.selectpicker').selectpicker();
     })
