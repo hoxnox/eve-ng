@@ -1744,6 +1744,8 @@ function wipe(node_id) {
  **************************************************************************/
 // Context menu
 function printContextMenu(title, body, pageX, pageY, addToBody, role, hideTitle) {
+    $("#context-menu").remove()
+    
     var titleLine = '';
         
     if(!hideTitle){
