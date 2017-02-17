@@ -1745,7 +1745,7 @@ function wipe(node_id) {
 // Context menu
 function printContextMenu(title, body, pageX, pageY, addToBody, role, hideTitle) {
     $("#context-menu").remove()
-    
+
     var titleLine = '';
         
     if(!hideTitle){
@@ -1990,7 +1990,7 @@ function printFormNode(action, values, fromNodeList) {
                     var html_data = '<input name="node[type]" value="' + template_values['type'] + '" type="hidden"/>';
                     if (action == 'add') {
                         // If action == add -> print the nework count input
-                        html_data += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[113] + '</label><div class="col-md-5"><input class="form-control" name="node[count]" value="1" type="text"/></div></div>';
+                        html_data += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[113] + '</label><div class="col-md-5"><input class="form-control" name="node[count]" max=50 value="1" type="text"/></div></div>';
                     } else {
                         // If action == edit -> print the network ID
                         html_data += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[92] + '</label><div class="col-md-5"><input class="form-control" disabled name="node[id]" value="' + id + '" type="text"/></div></div>';
