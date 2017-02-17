@@ -234,6 +234,14 @@ $(document).on('contextmenu', '#lab-viewport', function (e) {
         return;
     }
 
+    if ( window.connContext == 1 ) {
+           window.connContext == 0 
+           body = '';
+           body += '<li><a class="action-conndelete" href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i> Delete</a></li>';
+           printContextMenu('Connection', body, e.pageX, e.pageY,false,"menu");
+           return;
+    }
+
     if (ROLE != "user" && LOCK == 0 ) {
         var body = '';
         body += '<li><a class="action-nodeplace" href="javascript:void(0)"><i class="glyphicon glyphicon-hdd"></i> ' + MESSAGES[81] + '</a></li>';
@@ -646,6 +654,30 @@ $(document).on('click', '.action-networkdelete', function (e) {
     var title = "Warning"
     addModal(title, body, "", "make-red make-small");
 })
+
+$(document).on('click', '.action-conndelete', function (e) {
+     var id = window.connToDel.id
+     window.connContext = 0
+     if ( id.search('iface') != -1 ) { // serial or network
+        node=id.replace('iface:node','').replace(/:.*/,'') 
+        iface=id.replace(/.*:/,'')
+        $.when(setNodeInterface(node,'', iface)).done( function () {
+           $('.action-labtopologyrefresh').click();
+        }).fail(function (message) {
+           addModalError(message);
+        });
+     } else { // network P2P
+        network_id = id.replace('network_id:','') 
+        $.when(deleteNetwork(network_id)).done(function (values) {
+           //window.closeModal = true;
+           $('.action-labtopologyrefresh').click();
+        }).fail(function (message) {
+           addModalError(message);
+        });
+     }
+     $('#context-menu').remove();
+});
+
 $(document).on('click', '#networkdelete', function (e) {
 
     $('#context-menu').remove();
@@ -1119,6 +1151,8 @@ $(document).on('click', '.action-pictureedit', function (e) {
 // Get picture
 $(document).on('click', '.action-pictureget', function (e) {
     logger(1, 'DEBUG: action = pictureget');
+    $(".action-pictureget").removeClass("selected");
+    $(this).addClass("selected");
     $('#context-menu').remove();
     var picture_id = $(this).attr('data-path');
     printPictureInForm(picture_id);

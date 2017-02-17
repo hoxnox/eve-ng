@@ -2539,6 +2539,7 @@ function printLabPreview(lab_filename) {
 
 // Print lab topology
 function printLabTopology() {
+    //window.topoLoading = 1;
     var defer  = $.Deferred();
     var lab_filename = $('#lab-viewport').attr('data-path')
         , $labViewport = $('#lab-viewport')
@@ -2767,17 +2768,16 @@ function printLabTopology() {
                     PaintStyle: {lineWidth: 2, strokeStyle: '#c00001'},
                     cssClass: 'link'
                 });
-
                 // Read privileges and set specific actions/elements
                 if (ROLE == 'admin' || ROLE == 'editor')  {
                     // Nodes and networks are draggable within a grid
                     //$('.node_frame, .network_frame').draggable( { grid: [3, 3] });
-		    
+
                     lab_topology.draggable($('.node_frame, .network_frame'), {
                        grid: [3, 3],
-                       stop: NodePosUpdate 
+                       stop: NodePosUpdate
                     });
-                     
+
                     // Node as source or dest link
                      $.each(nodes, function (key,value) {
                            lab_topology.makeSource('node' + value['id'], {
@@ -2791,12 +2791,12 @@ function printLabTopology() {
                                     alert("Maximum connections (" + info.maxConnections + ") reached");
                                 }
                            });
-                        
+
                           lab_topology.makeTarget( $('#node' + value['id']), {
                                 dropOptions: { hoverClass: "dragHover" },
                                 anchor: "Continuous",
                                 allowLoopback: false
-                          });	
+                          });
                     });
                     $.each(networks, function (key,value) {
                            lab_topology.makeSource('network' + value['id'], {
@@ -2818,7 +2818,8 @@ function printLabTopology() {
                                 allowLoopback: false
                           });
                     });
-                } 
+                }
+
                 $.each(topology, function (id, link) {
                     var type = link['type'],
                         source = link['source'],
@@ -2848,14 +2849,25 @@ function printLabTopology() {
                             dst_label.push(Object());
                         }
 
-                     
-                        lab_topology.connect({
+			                     
+                        var tmp_conn = lab_topology.connect({
                             source: source,       // Must attach to the IMG's parent or not printed correctly
                             target: destination,  // Must attach to the IMG's parent or not printed correctly
                             cssClass: source + ' ' + destination + ' frame_ethernet',
                             paintStyle: {lineWidth: 2, strokeStyle: '#0066aa'},
                             overlays: [src_label, dst_label]
                         });
+                        if (destination.substr(0, 7) == 'network') {
+                              $.when( getNodeInterfaces(source.replace('node',''))).done( function ( ifaces ) {
+                                  for ( ikey in ifaces['ethernet'] ) { 
+                                      if ( ifaces['ethernet'][ikey]['name'] == source_label ) {
+                                         tmp_conn.id = 'iface:'+source+":"+ikey
+                                      }
+                                  }
+                              });
+                        } else {
+                              tmp_conn.id = 'network_id:'+link['network_id']
+                        }
                     } else {
                         src_label.push({
                             label: source_label,
@@ -2867,16 +2879,21 @@ function printLabTopology() {
                             location: 0.85,
                             cssClass: 'node_interface ' + source + ' ' + destination
                         });
-
-                        lab_topology.connect({
+                        var tmp_conn = lab_topology.connect({
                             source: source,       // Must attach to the IMG's parent or not printed correctly
                             target: destination,  // Must attach to the IMG's parent or not printed correctly
                             cssClass: source + " " + destination + ' frame_serial',
                             paintStyle: {lineWidth: 2, strokeStyle: "#ffcc00"},
                             overlays: [src_label, dst_label]
                         });
+                        $.when( getNodeInterfaces(source.replace('node',''))).done( function ( ifaces ) {
+                             for ( ikey in ifaces['serial'] ) {
+                                    if ( ifaces['serial'][ikey]['name'] == source_label ) {
+                                        tmp_conn.id = 'iface:'+source+':'+ikey
+                                    }
+                             }
+                        });
                     }
-
                     // If destination is a network, remove the 'unused' class
                     if (destination.substr(0, 7) == 'network') {
                         $('.' + destination).removeClass('unused');
@@ -2884,21 +2901,18 @@ function printLabTopology() {
 
                 });
 
-                // Add call to modal newConn if new conn is made
-                lab_topology.bind("connection", function (info) {
-                                newConnModal(info);
-                });
+		printLabStatus();
+
                 // Remove unused elements
                 $('.unused').remove();
 
-                printLabStatus();
 
                 // Move elements under the topology node
                 $('._jsPlumb_connector, ._jsPlumb_overlay, ._jsPlumb_endpoint_anchor_').detach().appendTo('#lab-viewport');
                 // if lock then freeze node network
-        if ( labinfo['lock'] == 1 ) {
+                if ( labinfo['lock'] == 1 ) {
                                 LOCK = 1 ;
-                defer.resolve();
+                                defer.resolve();
                                 if (ROLE == 'admin' || ROLE == 'editor') {
                                      var allElements = $('.node_frame, .network_frame');
                                      for (var i = 0; i < allElements.length; i++){
@@ -2907,11 +2921,19 @@ function printLabTopology() {
                                }
                                $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
                                $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
+                            
                 }
-        defer.resolve(LOCK);
+                defer.resolve(LOCK);
                 $labViewport.data('refreshing', false);
                 labNodesResolver.resolve();
-            });
+                lab_topology.bind("connection", function (info , oe ) {
+                       newConnModal(info , oe);
+                });
+                // Bind contextmenu to connections
+                lab_topology.bind("contextmenu", function (info) {
+                       connContextMenu (info);
+                });
+           });
         }).fail(function () {
             logger(1, "DEBUG: not all images of networks or nodes loaded");
             $('#lab-viewport').data('refreshing', false);
@@ -4506,8 +4528,9 @@ function openNodeCons ( url ) {
         $(nw).ready(function() { nw.close(); } );
 }
 
-function newConnModal(info) {
-        $.when(
+function newConnModal(info , oe ) {
+        if ( !oe ) return ; 
+	$.when(
         getNetworks(null),
         getNodes(null),
         getTopology()
@@ -4742,4 +4765,9 @@ function newConnModal(info) {
           var iname =  $('select.dstConn option[value="' + $('select.dstConn').val() + '"]').text();
           $('.addConnDst').html(iname)
      });
+}
+
+function connContextMenu ( e, ui ) {
+         window.connContext = 1
+         window.connToDel = e
 }
