@@ -1926,14 +1926,14 @@ function printFormNetwork(action, values) {
         html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[103] + '</label><div class="col-md-5"><input class="form-control autofocus" name="network[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[95] + '</label><div class="col-md-5"><select class="selectpicker show-tick form-control" name="network[type]" data-live-search="true" data-style="selectpicker-button">';
          $.each(network_types, function (key, value) {
             // Print all network types
-            if(value.startsWith('pnet')){
+            if(!value.startsWith('pnet') && !value.startsWith('ovs') ){
                 var type_selected = (key == type) ? 'selected ' : '';
                 html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
             }
         });
         $.each(network_types, function (key, value) {
             // Print all network types
-            if(!value.startsWith('pnet')){
+            if(value.startsWith('pnet')){
                 var type_selected = (key == type) ? 'selected ' : '';
                 html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
             }
