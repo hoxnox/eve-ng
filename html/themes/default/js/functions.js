@@ -1934,6 +1934,7 @@ function printFormNetwork(action, values) {
         $.each(network_types, function (key, value) {
             // Print all network types
             if(value.startsWith('pnet')){
+                value = value.replace('pnet','Cloud')
                 var type_selected = (key == type) ? 'selected ' : '';
                 html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
             }
