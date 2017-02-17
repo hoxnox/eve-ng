@@ -479,7 +479,7 @@ $(window).resize(function () {
 // plug show/hide event
 
 $(document).on('mouseover','.node_frame, .network_frame', function (e) {
-	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) { 
+	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 && $(this).attr('data-status') == 0 ) { 
 	     $(this).find('.tag').removeClass("hidden");
         }
 } ) ; 

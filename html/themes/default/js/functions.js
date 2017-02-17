@@ -4607,6 +4607,8 @@ function newConnModal(info , oe ) {
                        linktargetdata['interfaces'] = tmp_interfaces
                   }
                   if ( linktargetdata['selectedif'] == '' ) linktargetdata['selectedif'] = 0 ;
+                  if ( linksourcedata['status'] == 2 || linktargetdata['status'] == 2 ) { jsPlumb.detach( info.connection ) ; return }
+                  window.tmpconn = info.connection
      	          html = '<form id="addConn" class="addConn-form">' +
                            '<input type="hidden" name="addConn[srcNodeId]" value="'+linksourcedata['id']+'">' +
                            '<input type="hidden" name="addConn[dstNodeId]" value="'+linktargetdata['id']+'">' +
