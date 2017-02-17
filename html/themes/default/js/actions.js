@@ -471,6 +471,16 @@ $(window).resize(function () {
     }
 });
 
+// disable submit button if count addition nodes more than 50
+$(document).on('change input', 'input[name="node[count]"]', function(e){
+    var count = $(this).val()
+    console.log('val', count)
+    if( count > 50){
+        $("#form-node-add button[type='submit']").attr('disabled', true)
+    } else {
+        $("#form-node-add button[type='submit']").attr('disabled', false)
+    }
+})
 
 // plug show/hide event
 
