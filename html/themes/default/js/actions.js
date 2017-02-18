@@ -3730,10 +3730,10 @@ $(document).on('click', 'a.interfaces.serial', function (e) {
 })
 
 $(document).on('click','#lab-viewport', function (e) {
-   if ( !e.metaKey && !e.ctrlKey && $('#lab-viewport').hasClass('freeSelectMode') ) {
+   if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')  && e.target.className.search('action-') == -1  ) {
         $('.free-selected').removeClass('free-selected')
         $('.ui-selected').removeClass('ui-selected')
-        $('#lab-viewport').removeClass('FreeSelectMode')
+        $('#lab-viewport').removeClass('freeSelectMode')
    }
    if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) $('p').focusout()
 });

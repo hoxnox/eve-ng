@@ -2773,8 +2773,6 @@ function printLabTopology() {
                 // Read privileges and set specific actions/elements
                 if (ROLE == 'admin' || ROLE == 'editor')  {
                     // Nodes and networks are draggable within a grid
-                    //$('.node_frame, .network_frame').selectable({stop: function ( event, ui ) { updateFreeSelect ( event, ui ) }});
-                    //$('.node_frame, .network_frame').selectable();
 
                     lab_topology.draggable($('.node_frame, .network_frame'), {
                        grid: [3, 3],
@@ -4784,7 +4782,7 @@ function connContextMenu ( e, ui ) {
 // Jquery-ui freeselect
 
 function updateFreeSelect ( e , ui ) {
-  if ( $('.node_frame.ui-selected' ).length == 0 && !e.metaKey) {
+  if ( $('.node_frame.ui-selected' ).length == 0 && !e.metaKey ) {
     $('#lab-viewport').removeClass('freeSelectMode');
     $('.free-selected').removeClass('free-selected');
     $('.ui-selecting').removeClass('ui-selecting')
