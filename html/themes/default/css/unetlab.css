@@ -390,6 +390,9 @@ body.login {
 	position: absolute;
 }
 
+.node {
+       padding: 2px ;
+}
 #lab-viewport .network, #lab-viewport .node {
 	font-family: 'Ubuntu Regular', Helvetica, Arial, sans-serif;
 	font-size: 0.8em;
@@ -1208,7 +1211,13 @@ map area:visited {
 }
 
 .node_frame.free-selected {
-	box-shadow: 0 0 10px 10px rgba(00, 102, 176, 0.8);
+        display: block;
+        background-color: #d6e3e9 ;
+        border-radius: 5px ;
+        border-color: #0066aa;
+        border-width: 2px;
+        border-style: double;
+        padding: 0px;
 }
 
 /*******************************************************************************

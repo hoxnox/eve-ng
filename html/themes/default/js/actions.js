@@ -37,6 +37,7 @@ $(document).on('keydown', 'body', function (e) {
         , isFreeSelectMode = $labViewport.hasClass("freeSelectMode")
         , isEditCustomShape = $labViewport.has(".edit-custom-shape-form").length > 0
         , isEditText = $labViewport.has(".edit-custom-text-form").length > 0
+        , isEditcustomText = $labViewport.has(".editable").length > 0
         ;
 
     if (KEY_CODES.escape == e.which) {
@@ -48,13 +49,19 @@ $(document).on('keydown', 'body', function (e) {
     }
 
     if (isFreeSelectMode && KEY_CODES.escape == e.which) {
-        $(".action-freeselect").click();    // it will handle all the stuff
+        //$(".action-freeselect").click();    // it will handle all the stuff
+        $('.free-selected').removeClass('free-selected')
+        $('.ui-selected').removeClass('ui-selected')
+        $("#lab-viewport").removeClass('freeSelectMode')
     }
     if (isEditCustomShape && KEY_CODES.escape == e.which) {
         $(".edit-custom-shape-form button.cancelForm").click(); // it will handle all the stuff
     }
     if (isEditText && KEY_CODES.escape == e.which) {
         $(".edit-custom-text-form button.cancelForm").click();  // it will handle all the stuff
+    }
+    if (isEditcustomText && KEY_CODES.escape == e.which) {
+        $("p").focusout()
     }
 });
 
@@ -3369,6 +3376,8 @@ $(document).on('dblclick', '.customText', function (e) {
     return 0;
     }
     logger(1, 'DEBUG: action = action-edit text');
+    // need to disable select mode 
+    $("#lab-viewport").selectable("disable");
     var id = $(this).attr('data-path')
         , $selectedCustomText = $("#customText" + id + " p")
         ;
@@ -3392,6 +3401,7 @@ $(document).on('paste', '[contenteditable="true"]', function (e) {
 });
 
 $(document).on('focusout', '.editable', function (e) {
+    $("#lab-viewport").selectable("enable");
     var new_data
         , id = $(this).parent().attr('data-path')
         , $selected_shape = $("#customText" + id)
@@ -3401,7 +3411,7 @@ $(document).on('focusout', '.editable', function (e) {
 
     $("#customText" + id + " p").removeClass('editable');
     $("#customText" + id + " p").attr('contenteditable', 'false');
-
+    $("#customText" + id + " p").selectable()
     // trim whitespace in the start and end of string
     innerHtml = innerHtml.replace(/^(<br>)+/, "").replace(/(<br>)+$/, "");
 
@@ -3666,7 +3676,7 @@ $(document).on("click", ".action-freeselect", function (event) {
 
 });
 
-$(document).on("click", "#lab-viewport.freeSelectMode .node_frame", function (event) {
+$(document).on("click", "#lab-viewport.freeSelectMode .onode_frame", function (event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -3719,16 +3729,38 @@ $(document).on('click', 'a.interfaces.serial', function (e) {
     e.preventDefault();
 })
 
+$(document).on('click','#lab-viewport', function (e) {
+   if ( !e.metaKey && !e.ctrlKey && $('#lab-viewport').hasClass('freeSelectMode') ) {
+        $('.free-selected').removeClass('free-selected')
+        $('.ui-selected').removeClass('ui-selected')
+        $('#lab-viewport').removeClass('FreeSelectMode')
+   }
+   if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) $('p').focusout()
+});
+
+
 //show context menu when node is off
 $(document).on('click', '.node.node_frame a', function (e) {
+      
     var node = $(this).parent();
     var node_id = node.attr('data-path');
     var status = parseInt(node.attr('data-status'));
     var $labViewport = $("#lab-viewport")
         , isFreeSelectMode = $labViewport.hasClass("freeSelectMode")
 
+
+    if ( e.metaKey || e.ctrlKey  ) { 
+        node.toggleClass('ui-selected')
+        updateFreeSelect(e,node)
+        e.preventDefault();
+        return ;
+    }
+    
     //if (islinkActive() || isFreeSelectMode ) return true;
-    if (isFreeSelectMode ) return true;
+    if (isFreeSelectMode ) {
+       e.preventDefault();
+       return true;
+    }
   
     if ( node.hasClass('dragstopped') && node.removeClass('dragstopped') ) {
           e.preventDefault();
@@ -3759,7 +3791,6 @@ $(document).on('click', '.node.node_frame a', function (e) {
     }
 
 })
-
 
 $(document).on('submit', '#addConn', function (e) {
     e.preventDefault();  // Prevent default behaviour
