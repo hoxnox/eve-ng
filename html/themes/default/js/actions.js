@@ -37,6 +37,7 @@ $(document).on('keydown', 'body', function (e) {
         , isFreeSelectMode = $labViewport.hasClass("freeSelectMode")
         , isEditCustomShape = $labViewport.has(".edit-custom-shape-form").length > 0
         , isEditText = $labViewport.has(".edit-custom-text-form").length > 0
+        , isEditcustomText = $labViewport.has(".editable").length > 0
         ;
 
     if (KEY_CODES.escape == e.which) {
@@ -48,13 +49,21 @@ $(document).on('keydown', 'body', function (e) {
     }
 
     if (isFreeSelectMode && KEY_CODES.escape == e.which) {
-        $(".action-freeselect").click();    // it will handle all the stuff
+        //$(".action-freeselect").click();    // it will handle all the stuff
+        $('.free-selected').removeClass('free-selected')
+        $('.ui-selected').removeClass('ui-selected')
+        $("#lab-viewport").removeClass('freeSelectMode')
+        $('.free-selected').removeClass('jsplumb-drag-selected')
     }
     if (isEditCustomShape && KEY_CODES.escape == e.which) {
         $(".edit-custom-shape-form button.cancelForm").click(); // it will handle all the stuff
     }
     if (isEditText && KEY_CODES.escape == e.which) {
         $(".edit-custom-text-form button.cancelForm").click();  // it will handle all the stuff
+    }
+    if (isEditcustomText && KEY_CODES.escape == e.which) {
+        $("p").blur()
+        $("p").focusout()
     }
 });
 
@@ -236,6 +245,7 @@ $(document).on('contextmenu', '#lab-viewport', function (e) {
 
     if ( window.connContext == 1 ) {
            window.connContext == 0 
+           if (ROLE == "user" || LOCK == 1 ) return;
            body = '';
            body += '<li><a class="action-conndelete" href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i> Delete</a></li>';
            printContextMenu('Connection', body, e.pageX, e.pageY,false,"menu");
@@ -493,7 +503,7 @@ $(document).on('change input', 'input[name="node[count]"]', function(e){
 // plug show/hide event
 
 $(document).on('mouseover','.node_frame, .network_frame', function (e) {
-	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 && $(this).attr('data-status') == 0 ) { 
+	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 && ( $(this).attr('data-status') == 0 || $(this).attr('data-status') == undefined ) ) { 
 	     $(this).find('.tag').removeClass("hidden");
         }
 } ) ; 
@@ -2272,8 +2282,95 @@ $(document).on('submit', '#form-node-connect', function (e) {
     });
 });
 
-// Submit node form
+
+// Submit node form API Side
 $(document).on('submit', '#form-node-add, #form-node-edit', function (e) {
+    e.preventDefault();  // Prevent default behaviour
+    var self = $(this);
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var form_data = form2Array('node');
+    var promises = [];
+    if ($(this).attr('id') == 'form-node-add') {
+        logger(1, 'DEBUG: posting form-node-add form.');
+        var url = '/api/labs' + lab_filename + '/nodes';
+        var type = 'POST';
+    } else {
+        logger(1, 'DEBUG: posting form-node-edit form.');
+        var url = '/api/labs' + lab_filename + '/nodes/' + form_data['id'];
+        var type = 'PUT';
+    }
+
+    if ($(this).attr('id') == 'form-node-add') {
+        // If adding need to manage multiple add
+        if (form_data['count'] > 1) {
+            form_data['postfix'] = 1;
+            form_data['numberNodes'] = form_data['count'] 
+        } else {
+            form_data['postfix'] = 0;
+        }
+    } else {
+        // If editing need to post once
+        form_data['count'] = 1;
+        form_data['postfix'] = 0;
+    }
+       var request = $.ajax({
+            timeout: TIMEOUT,
+            type: type,
+            url: encodeURI(url),
+            dataType: 'json',
+            data: JSON.stringify(form_data),
+            success: function (data) {
+                if (data['status'] == 'success') {
+                    logger(1, 'DEBUG: node "' + form_data['name'] + '" saved.');
+                    // Close the modal
+                    $('body').children('.modal').attr('skipRedraw', true);
+                    $('body').children('.modal.second-win').modal('hide');
+                    $('body').children('.modal.fade.in').focus();
+                    addMessage(data['status'], data['message']);
+                    $(".modal .node" + form_data['id'] + " td:nth-child(2)").text(form_data["name"]);
+                    $(".modal .node" + form_data['id'] + " td:nth-child(3)").text(form_data["template"]);
+                    $(".modal .node" + form_data['id'] + " td:nth-child(4)").text(form_data["image"]);
+                    $(".modal .node" + form_data['id'] + " td:nth-child(5)").text(form_data["cpu"]);
+                    $(".modal .node" + form_data['id'] + " td:nth-child(7)").text(form_data["nvram"]);
+                    $(".modal .node" + form_data['id'] + " td:nth-child(8)").text(form_data["ram"]);
+                    $(".modal .node" + form_data['id'] + " td:nth-child(9)").text(form_data["ethernet"]);
+                    $(".modal .node" + form_data['id'] + " td:nth-child(10)").text(form_data["serial"]);
+                    $(".modal .node" + form_data['id'] + " td:nth-child(11)").text(form_data["console"]);
+
+                    $("#node" + form_data['id'] + " .node_name").html('<i class="node' + form_data['id'] + '_status glyphicon glyphicon-stop"></i>' + form_data['name'])
+                    $("#node" + form_data['id'] + " a img").attr("src", "/images/icons/" + form_data['icon'])
+
+                    $("#form-node-edit-table input[name='node[name]'][data-path='" + form_data['id'] + "']").val(form_data["name"])
+                    $("#form-node-edit-table select[name='node[image]'][data-path='" + form_data['id'] + "']").val(form_data["image"])
+                    $("#form-node-edit-table input[name='node[cpu]'][data-path='" + form_data['id'] + "']").val(form_data["cpu"])
+                    $("#form-node-edit-table input[name='node[nvram]'][data-path='" + form_data['id'] + "']").val(form_data["nvram"])
+                    $("#form-node-edit-table input[name='node[serial]'][data-path='" + form_data['id'] + "']").val(form_data["serial"])
+                    $("#form-node-edit-table input[name='node[ethernet]'][data-path='" + form_data['id'] + "']").val(form_data["ethernet"])
+                    $("#form-node-edit-table select[name='node[console]'][data-path='" + form_data['id'] + "']").val(form_data["console"])
+                    $("#form-node-edit-table select[name='node[icon]'][data-path='" + form_data['id'] + "']").val(form_data["icon"])
+                } else {
+                    // Application error
+                    logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                    addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                }
+            },
+            error: function (data) {
+                // Server error
+                var message = getJsonMessage(data['responseText']);
+                logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+                logger(1, 'DEBUG: ' + message);
+                addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+            }
+        });
+        $.when.apply(request).done(function () {
+            sleep ( form_data['count'] * 50 )
+            printLabTopology();
+        });
+    return false ;
+});
+
+// Submit node form
+$(document).on('submit', '#oldform-node-add, #oldform-node-edit', function (e) {
     e.preventDefault();  // Prevent default behaviour
     var self = $(this);
     var lab_filename = $('#lab-viewport').attr('data-path');
@@ -2305,7 +2402,7 @@ $(document).on('submit', '#form-node-add, #form-node-edit', function (e) {
     var inititalLeft = form_data['left']
     var inititalTop  = form_data['top']
     for (var i = 0, j = 0; i < form_data['count']; i++) {
-        if(i%5 == 0){
+        if( i > 0 && i%5 == 0){
             j++
         }
         form_data['left'] = +inititalLeft + i%5 * 60;
@@ -2363,9 +2460,9 @@ $(document).on('submit', '#form-node-add, #form-node-edit', function (e) {
     }
 
     $.when.apply(null, promises).done(function () {
-        if (self.attr('id') == 'form-node-add') {
+        //if (self.attr('id') == 'form-node-add') {
             printLabTopology();
-        }
+        //}
     });
     return false;  // Stop to avoid POST
 });
@@ -3281,6 +3378,8 @@ $(document).on('dblclick', '.customText', function (e) {
     return 0;
     }
     logger(1, 'DEBUG: action = action-edit text');
+    // need to disable select mode 
+    $("#lab-viewport").selectable("disable");
     var id = $(this).attr('data-path')
         , $selectedCustomText = $("#customText" + id + " p")
         ;
@@ -3304,6 +3403,7 @@ $(document).on('paste', '[contenteditable="true"]', function (e) {
 });
 
 $(document).on('focusout', '.editable', function (e) {
+    $("#lab-viewport").selectable("enable");
     var new_data
         , id = $(this).parent().attr('data-path')
         , $selected_shape = $("#customText" + id)
@@ -3313,7 +3413,7 @@ $(document).on('focusout', '.editable', function (e) {
 
     $("#customText" + id + " p").removeClass('editable');
     $("#customText" + id + " p").attr('contenteditable', 'false');
-
+    //$("#customText" + id + " p").selectable()
     // trim whitespace in the start and end of string
     innerHtml = innerHtml.replace(/^(<br>)+/, "").replace(/(<br>)+$/, "");
 
@@ -3340,6 +3440,7 @@ $(document).on('focusout', '.editable', function (e) {
     new_data = document.getElementById("customText" + id).outerHTML;
     editTextObject(id, {data: new_data}).done(function () {
         addMessage('SUCCESS', 'Lab has been saved (60023).');
+        //printLabTopology()
     }).fail(function (message) {
         addModalError(message);
     });
@@ -3578,7 +3679,7 @@ $(document).on("click", ".action-freeselect", function (event) {
 
 });
 
-$(document).on("click", "#lab-viewport.freeSelectMode .node_frame", function (event) {
+$(document).on("click", "#lab-viewport.freeSelectMode .onode_frame", function (event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -3631,16 +3732,39 @@ $(document).on('click', 'a.interfaces.serial', function (e) {
     e.preventDefault();
 })
 
+$(document).on('click','#lab-viewport', function (e) {
+   if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')  && e.target.className.search('action-') == -1  ) {
+        $('.free-selected').removeClass('free-selected')
+        $('.free-selected').removeClass('jsplumb-drag-selected')
+        $('.ui-selected').removeClass('ui-selected')
+        $('#lab-viewport').removeClass('freeSelectMode')
+   }
+   if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) { $('p').blur() ; $('p').focusout() ;}
+});
+
+
 //show context menu when node is off
 $(document).on('click', '.node.node_frame a', function (e) {
+      
     var node = $(this).parent();
     var node_id = node.attr('data-path');
     var status = parseInt(node.attr('data-status'));
     var $labViewport = $("#lab-viewport")
         , isFreeSelectMode = $labViewport.hasClass("freeSelectMode")
 
+
+    if ( e.metaKey || e.ctrlKey  ) { 
+        node.toggleClass('ui-selected')
+        updateFreeSelect(e,node)
+        e.preventDefault();
+        return ;
+    }
+    
     //if (islinkActive() || isFreeSelectMode ) return true;
-    if (isFreeSelectMode ) return true;
+    if (isFreeSelectMode ) {
+       e.preventDefault();
+       return true;
+    }
   
     if ( node.hasClass('dragstopped') && node.removeClass('dragstopped') ) {
           e.preventDefault();
@@ -3671,7 +3795,6 @@ $(document).on('click', '.node.node_frame a', function (e) {
     }
 
 })
-
 
 $(document).on('submit', '#addConn', function (e) {
     e.preventDefault();  // Prevent default behaviour

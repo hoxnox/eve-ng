@@ -166,6 +166,7 @@ class Lab {
 				if (isset($network -> attributes() -> name)) $w['name'] = (string) $network -> attributes() -> name;
 				if (isset($network -> attributes() -> top)) $w['top'] = (string) $network -> attributes() -> top;
 				if (isset($network -> attributes() -> type)) $w['type'] = (string) $network -> attributes() -> type;
+				if (isset($network -> attributes() -> visibility)) $w['visibility'] = (string) $network -> attributes() -> visibility;
 
 				try {
 					$this -> networks[$w['id']] = new Network($w, $w['id'], $this -> tenant);
@@ -1188,6 +1189,7 @@ class Lab {
 					$n -> addAttribute('name', $network -> getName());
 					$n -> addAttribute('left', $network -> getLeft());
 					$n -> addAttribute('top', $network -> getTop());
+					$n -> addAttribute('visibility', $network -> getVisibility());
 				}
 			}
 

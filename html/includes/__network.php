@@ -28,6 +28,7 @@ class Network {
 	private $tenant;
 	private $top;
 	private $type; 
+        private $visibility;
 
 	/**
 	* Constructor which creates an Ethernet network.
@@ -96,12 +97,23 @@ class Network {
 				error_log(date('M d H:i:s ').'WARNING: '.$GLOBALS['messages'][30004]);
 			}
 		}
+                if (!isset($p['visibility'])) {
+                        $p['visibility'] = 0;
+                } elseif ( (int) $p['visibility'] != 0  ) {
+                        $p['visibility'] = 1;
+                }
+
+                //pnet need visibility
+                if ( preg_match('/^pnet/',$p['type']) ) {
+                        $p['visibility'] = 1;
+                }
 
 		// Now building the network
 		$this -> count = 0;
 		$this -> id = (int) $id;
 		$this -> tenant = (int) $tenant;
 		$this -> type = $p['type'];
+                $this -> visibility = $p['visibility'];
 		if (isset($p['left'])) $this -> left = (int) $p['left'];
 		if (isset($p['name'])) $this -> name = htmlentities($p['name']);
 		if (isset($p['top'])) $this -> top = (int) $p['top'];
@@ -263,5 +275,14 @@ class Network {
 			return 30008;
 		}
 	}
+
+        /**
+         * Method to get visibility
+         *
+         * @return  0/1 visibility   0 means invisible
+         */
+        public function getVisibility() {
+                return $this->visibility ;
+        }
 }
 ?>

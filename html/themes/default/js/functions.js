@@ -666,7 +666,7 @@ function deleteSingleNetworks() {
             networksArr = networks;
 
             $.each(networksArr, function (key, value) {
-                if (value.count == 1 && value.type == 'bridge'){
+                if (value.count == 1 && value.type == 'bridge' && value.visibility == 0){
                     deleted.push(deleteNetwork(value.id))
                     delete networksArr[key];
                     $('.network' + value.id).remove();
@@ -1745,7 +1745,6 @@ function wipe(node_id) {
 // Context menu
 function printContextMenu(title, body, pageX, pageY, addToBody, role, hideTitle) {
     $("#context-menu").remove()
-
     var titleLine = '';
         
     if(!hideTitle){
@@ -1918,6 +1917,7 @@ function printFormNetwork(action, values) {
         if (action == 'add') {
             // If action == add -> print the nework count input
             html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[114] + '</label><div class="col-md-5"><input class="form-control" name="network[count]" value="1" type="text"/></div></div>';
+            html += '<input class="form-control" name="network[visibility]" type="hidden" value="1"/>';
         } else {
             // If action == edit -> print the network ID
             html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[92] + '</label><div class="col-md-5"><input class="form-control" disabled name="network[id]" value="' + id + '" type="text"/></div></div>';
@@ -1925,14 +1925,15 @@ function printFormNetwork(action, values) {
         html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[103] + '</label><div class="col-md-5"><input class="form-control autofocus" name="network[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[95] + '</label><div class="col-md-5"><select class="selectpicker show-tick form-control" name="network[type]" data-live-search="true" data-style="selectpicker-button">';
          $.each(network_types, function (key, value) {
             // Print all network types
-            if(value.startsWith('pnet')){
+            if(!value.startsWith('pnet') && !value.startsWith('ovs') ){
                 var type_selected = (key == type) ? 'selected ' : '';
                 html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
             }
         });
         $.each(network_types, function (key, value) {
             // Print all network types
-            if(!value.startsWith('pnet')){
+            if(value.startsWith('pnet')){
+                value = value.replace('pnet','Cloud')
                 var type_selected = (key == type) ? 'selected ' : '';
                 html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
             }
@@ -2578,6 +2579,8 @@ function printLabPreview(lab_filename) {
 function printLabTopology() {
     //window.topoLoading = 1;
     var defer  = $.Deferred();
+    $('#lab-viewport').selectable({stop: function ( event, ui ) { updateFreeSelect ( event, ui ) }, distance: 1});
+    //$('#lab-viewport').selectable();
     var lab_filename = $('#lab-viewport').attr('data-path')
         , $labViewport = $('#lab-viewport')
         , loadingLabHtml = '' +
@@ -2626,15 +2629,12 @@ function printLabTopology() {
             var icon;
             var unusedClass='';
 
-            if (value['type'] == 'bridge') {
+            if (value['type'] == 'bridge' || value['type'] == 'ovs' ) {
                 icon = 'lan.png';
-                unusedClass = ' unused ';
-            } else if (value['type'] == 'ovs') {
-                icon = 'lan.png';
-
             } else {
                 icon = 'cloud.png';
             }
+            if (value['visibility'] == 0 )  unusedClass=' unused ' 
 
 
             $labViewport.append(
@@ -2808,7 +2808,6 @@ function printLabTopology() {
                 // Read privileges and set specific actions/elements
                 if (ROLE == 'admin' || ROLE == 'editor')  {
                     // Nodes and networks are draggable within a grid
-                    //$('.node_frame, .network_frame').draggable( { grid: [3, 3] });
 
                     lab_topology.draggable($('.node_frame, .network_frame'), {
                        grid: [3, 3],
@@ -3055,7 +3054,9 @@ function printListNetworks(networks) {
     logger(1, 'DEBUG: printing network list');
     var body = '<table><thead><tr><th>' + MESSAGES[92] + '</th><th>' + MESSAGES[19] + '</th><th>' + MESSAGES[95] + '</th><th>' + MESSAGES[97] + '</th><th>' + MESSAGES[99] + '</th></tr></thead><tbody>';
     $.each(networks, function (key, value) {
-        body += '<tr class="network' + value['id'] + '"><td>' + value['id'] + '</td><td>' + value['name'] + '</td><td>' + value['type'] + '</td><td>' + value['count'] + '</td><td><a class="action-networkedit" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[71] + '"><i class="glyphicon glyphicon-edit"></i></a><a class="action-networkdelete" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[65] + '"><i class="glyphicon glyphicon-trash"></i></a></td></tr>';
+        if ( value['visibility'] == 1 )  {
+              body += '<tr class="network' + value['id'] + '"><td>' + value['id'] + '</td><td>' + value['name'] + '</td><td>' + value['type'] + '</td><td>' + value['count'] + '</td><td><a class="action-networkedit" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[71] + '"><i class="glyphicon glyphicon-edit"></i></a><a class="action-networkdelete" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[65] + '"><i class="glyphicon glyphicon-trash"></i></a></td></tr>';
+        }
     });
     body = $(body);
     if ( ROLE == "user"  ||  LOCK == 1  ) {
@@ -3477,7 +3478,7 @@ function printPageLabOpen(lab) {
          $('#lab-sidebar ul').append('<li><a class="action-textobjectsget" href="javascript:void(0)" title="' + MESSAGES[150] + '"><i class="glyphicon glyphicon-text-background"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-moreactions" href="javascript:void(0)" title="' + MESSAGES[125] + '"><i class="glyphicon glyphicon-th"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-labtopologyrefresh" href="javascript:void(0)" title="' + MESSAGES[57] + '"><i class="glyphicon glyphicon-refresh"></i></a></li>');
-         $('#lab-sidebar ul').append('<li><a class="action-freeselect" href="javascript:void(0)" title="' + MESSAGES[151] + '"><i class="glyphicon glyphicon-check"></i></a></li>');
+         //$('#lab-sidebar ul').append('<li><a class="action-freeselect" href="javascript:void(0)" title="' + MESSAGES[151] + '"><i class="glyphicon glyphicon-check"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-status" href="javascript:void(0)" title="' + MESSAGES[13] + '"><i class="glyphicon glyphicon-info-sign"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-labbodyget" href="javascript:void(0)" title="' + MESSAGES[64] + '"><i class="glyphicon glyphicon-list-alt"></i></a></li>');
          $('#lab-sidebar ul').append('<div id="action-labclose"><li><a class="action-labclose" href="javascript:void(0)" title="' + MESSAGES[60] + '"><i class="glyphicon glyphicon-off"></i></a></li></div>');
@@ -4811,4 +4812,25 @@ function newConnModal(info , oe ) {
 function connContextMenu ( e, ui ) {
          window.connContext = 1
          window.connToDel = e
+}
+
+// Jquery-ui freeselect
+
+function updateFreeSelect ( e , ui ) {
+  if ( $('.node_frame.ui-selected' ).length == 0 && !e.metaKey ) {
+    $('#lab-viewport').removeClass('freeSelectMode');
+    $('.free-selected').removeClass('free-selected');
+    $('.ui-selecting').removeClass('ui-selecting')
+    $('.ui-selected').removeClass('ui-selected')
+    return;
+  }
+  $('#lab-viewport').removeClass('freeSelectMode');
+  $('#lab-viewport').addClass('freeSelectMode');
+  $('.node_frame').removeClass('free-selected');
+  $('.node_frame.ui-selected').addClass('free-selected');
+  window.freeSelectedNodes = []
+  $(".free-selected").each(function() {
+     window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path") }); 
+  });
+  
 }

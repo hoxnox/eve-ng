@@ -31,6 +31,8 @@ function apiAddLabNode($lab, $p, $o) {
 	
 	$ids = array();
 	$no_array = false;
+        $initLeft = $p['left'] ;
+        $initTop = $p['top'] ;
 	if (!isset($numberNodes))
 	{
 		$numberNodes = 1;
@@ -40,8 +42,8 @@ function apiAddLabNode($lab, $p, $o) {
 	{
 		if ($i > 1)
 		{
-			$p['left'] = $p['left'] + 20;
-			$p['top'] = $p['top'] + 20;
+			$p['left'] =  $initLeft + ( ( $i -1 ) % 5 )   * 60   ;
+			$p['top'] =  $initTop + ( intval( ( $i -1 ) / 5 )  * 80 ) ;
 		}
 		$id = $lab -> getFreeNodeId();
 		// Adding node_id to node_name if required
