@@ -122,28 +122,38 @@ $(document).on('shown.bs.modal', '.modal', function () {
 
 // After node/network move
 function NodePosUpdate (event ,ui) {
-     eLeft = Math.round(event.el.offsetLeft + $('#lab-viewport').scrollLeft())
-     eTop = Math.round(event.el.offsetTop + $('#lab-viewport').scrollTop())
-     id = event.el.id
-     $('#'+id).addClass('dragstopped')
-     //alert ( eLeft + ' ' + eTop + ' ' + id.replace('node','') ) 
-     if ( id.search('node') != -1 ) {
-          logger(1, 'DEBUG: setting' + id + ' position.');
-          $.when(setNodePosition( id.replace('node',''), eLeft, eTop)).done(function () {
-              jsPlumb.repaint();
-          }).fail(function (message) {
-                // Error on save
-                addModalError(message);
-            });;
+     var groupMove = []
+     if ( $('.free-selected').length == 0 ) {
+          groupMove.push(event.el)
      } else {
-         logger(1, 'DEBUG: setting ' + id + ' position.');
-         $.when(setNetworkPosition(id.replace('network',''), eLeft, eTop)).done(function () {
-              jsPlumb.repaint();
-         }).fail(function (message) {
-                // Error on save
-                addModalError(message);
-         });;
+          $('.free-selected').each( function ( id, node ) {
+                groupMove.push(node) 
+          });
      }
+     $.each( groupMove,  function ( id, node ) {
+          eLeft = Math.round(node.offsetLeft + $('#lab-viewport').scrollLeft())
+          eTop = Math.round(node.offsetTop + $('#lab-viewport').scrollTop())
+          id = node.id
+          $('#'+id).addClass('dragstopped')
+          //alert ( eLeft + ' ' + eTop + ' ' + id.replace('node','') ) 
+          if ( id.search('node') != -1 ) {
+               logger(1, 'DEBUG: setting' + id + ' position.');
+               $.when(setNodePosition( id.replace('node',''), eLeft, eTop)).done(function () {
+                   jsPlumb.repaint();
+               }).fail(function (message) {
+                     // Error on save
+                    addModalError(message);
+                 });;
+          } else {
+              logger(1, 'DEBUG: setting ' + id + ' position.');
+              $.when(setNetworkPosition(id.replace('network',''), eLeft, eTop)).done(function () {
+                  jsPlumb.repaint();
+              }).fail(function (message) {
+                     // Error on save
+                     addModalError(message);
+              });;
+          }
+     });
 }
 
 // Close all context menu

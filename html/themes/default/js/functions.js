@@ -2811,7 +2811,12 @@ function printLabTopology() {
 
                     lab_topology.draggable($('.node_frame, .network_frame'), {
                        grid: [3, 3],
-                       stop: NodePosUpdate
+                       stop: NodePosUpdate,
+                       start: dragGroupInit,
+                       drag:  function ( e, ui ) {
+                           dragGroupUpdate( e, ui ) 
+                           lab_topology.repaintEverything();
+                      }
                     });
 
                     // Node as source or dest link
@@ -4833,4 +4838,28 @@ function updateFreeSelect ( e , ui ) {
      window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path") }); 
   });
   
+}
+
+function dragGroupInit ( e , ui ) {
+     if ( !$('#lab-viewport').hasClass('freeSelectMode') ) {
+          return 
+     }
+     window.dragGroup = []
+     window.dragInitY = e.el.offsetTop;
+     window.dragInitX = e.el.offsetLeft;
+     $(".free-selected").each(function() {
+     window.dragGroup.push({ path: $(this).data("path"), originTop: $(this).position().top, originLeft: $(this).position().left });
+     $(this).addClass('jsplumb-drag')
+     });
+}
+
+function dragGroupUpdate ( e , ui ) {
+    if ( !$('#lab-viewport').hasClass('freeSelectMode') ) {
+          return
+    }
+    var offsetX = dragInitX -  e.el.offsetLeft
+    var offsetY = dragInitY -  e.el.offsetTop
+    dragGroup.forEach(function(node){
+          $('#node'+node.path).css( { top: node.originTop - offsetY , left: node.originLeft - offsetX })
+    });
 }
