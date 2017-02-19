@@ -1994,7 +1994,7 @@ function printFormNode(action, values, fromNodeList) {
                     var html_data = '<input name="node[type]" value="' + template_values['type'] + '" type="hidden"/>';
                     if (action == 'add') {
                         // If action == add -> print the nework count input
-                        html_data += '<div class="form-group col-sm-4"><label class=" control-label">' + MESSAGES[113] + '</label>'+
+                        html_data += '<div class="form-group col-sm-5"><label class=" control-label">' + MESSAGES[113] + '</label>'+
                                         '<input class="form-control" name="node[count]" max=50 value="1" type="text"/>'+
                                      '</div>';
                     } else {
@@ -2014,7 +2014,7 @@ function printFormNode(action, values, fromNodeList) {
                         if (value['type'] == 'list') {
                             // Option is a list
                             var widthClass = ' col-sm-12 '
-                            if(key == 'image' && action == 'add') widthClass = ' col-sm-8'
+                            if(key == 'image' && action == 'add') widthClass = ' col-sm-7'
                             if (key.startsWith('slot')) widthClass = ' col-sm-6 '
                             html_data += '<div class="form-group '+widthClass+'">'+
                                             '<label class=" control-label">' + value['name'] + '</label>'+
