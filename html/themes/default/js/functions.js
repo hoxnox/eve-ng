@@ -1958,14 +1958,18 @@ function printFormNode(action, values, fromNodeList) {
 
     $.when(getTemplates(null)).done(function (templates) {
         var html = '';
-        html += '<form id="form-node-' + action + '" class="form-horizontal"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[84] + '</label><div class="col-md-5"><select id="form-node-template" class="selectpicker form-control" name="node[template]" data-live-search="true" data-size="auto" data-style="selectpicker-button"><option value="">' + MESSAGES[102] + '</option>';
+        html += '<form id="form-node-' + action + '" >'+
+                    '<div class="form-group col-sm-12">'+
+                        '<label class="control-label">' + MESSAGES[84] + '</label>' +
+                            '<select id="form-node-template" class="selectpicker form-control" name="node[template]" data-live-search="true" data-size="auto" data-style="selectpicker-button">'+
+                                '<option value="">' + MESSAGES[102] + '</option>';
         $.each(templates, function (key, value) {
         var valdisabled  = (/missing/i.test(value)) ? 'disabled="disabled"' : '';
         //var valdisabled  = '' ;
             // Adding all templates
             html += '<option value="' + key + '" '+ valdisabled +' >' + value.replace('.missing','') + '</option>';
         });
-        html += '</select></div></div><div id="form-node-data"></div><div id="form-node-buttons"></div></form>';
+        html += '</select></div><div id="form-node-data"></div><div id="form-node-buttons"></div></form>';
 
         // Show the form
         addModal(title, html, '', 'second-win');
@@ -1973,7 +1977,6 @@ function printFormNode(action, values, fromNodeList) {
         if(!fromNodeList){
             $('.selectpicker-button').trigger('click');
             $('.selectpicker').selectpicker();
-            console.log("show1")
             setTimeout(function(){
                 $('.bs-searchbox input').focus()
             }, 500);
@@ -1990,31 +1993,63 @@ function printFormNode(action, values, fromNodeList) {
                     var html_data = '<input name="node[type]" value="' + template_values['type'] + '" type="hidden"/>';
                     if (action == 'add') {
                         // If action == add -> print the nework count input
-                        html_data += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[113] + '</label><div class="col-md-5"><input class="form-control" name="node[count]" max=50 value="1" type="text"/></div></div>';
+                        html_data += '<div class="form-group col-sm-4"><label class=" control-label">' + MESSAGES[113] + '</label>'+
+                                        '<input class="form-control" name="node[count]" max=50 value="1" type="text"/>'+
+                                     '</div>';
                     } else {
                         // If action == edit -> print the network ID
-                        html_data += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[92] + '</label><div class="col-md-5"><input class="form-control" disabled name="node[id]" value="' + id + '" type="text"/></div></div>';
+                        html_data += '<div class="form-group col-sm-12">'+
+                                        '<label class="control-label">' + MESSAGES[92] + '</label>'+
+                                        '<input class="form-control" disabled name="node[id]" value="' + id + '" type="text"/>'+
+                                     '</div>';
                     }
+
+                    var bothRam = template_values['options'].hasOwnProperty('ram') && template_values['options'].hasOwnProperty('nvram')
+                    var bothConnTypes = template_values['options'].hasOwnProperty('ethernet') && template_values['options'].hasOwnProperty('serial')
+
                     $.each(template_values['options'], function (key, value) {
                         // Print all options from template
                         var value_set = (node_values != null && node_values[key] != null) ? node_values[key] : value['value'];
                         if (value['type'] == 'list') {
                             // Option is a list
-                            html_data += '<div class="form-group"><label class="col-md-3 control-label">' + value['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="node[' + key + ']" data-size="5" data-style="selectpicker-button">';
+                            var widthClass = ' col-sm-12 '
+                            if(key == 'image' && action == 'add') widthClass = ' col-sm-8'
+                            if (key.startsWith('slot')) widthClass = ' col-sm-6 '
+                            html_data += '<div class="form-group '+widthClass+'">'+
+                                            '<label class=" control-label">' + value['name'] + '</label>'+
+                                            '<select class="selectpicker form-control" name="node[' + key + ']" data-size="5" data-style="selectpicker-button">';
                             $.each(value['list'], function (list_key, list_value) {
                                 var selected = (list_key == value_set) ? 'selected ' : '';
                                     iconselect = '' ;
                                 if ( key == "icon" ) { iconselect = 'data-content="<img src=\'/images/icons/'+list_value+'\' height=15 width=15>&nbsp;&nbsp;&nbsp;'+list_value+'"' }; 
                                 html_data += '<option ' + selected + 'value="' + list_key + '" '+ iconselect +'>' + list_value + '</option>';
                             });
-                            html_data += '</select></div>';
+                            html_data += '</select>';
                             html_data += '</div>';
                         } else {
                             // Option is standard
-                            html_data += '<div class="form-group"><label class="col-md-3 control-label">' + value['name'] + '</label><div class="col-md-5"><input class="form-control' + ((key == 'name') ? ' autofocus' : '') + '" name="node[' + key + ']" value="' + value_set + '" type="text"/></div></div>';
+                            var widthClass = ' col-sm-12 '
+                            if (!bothRam && template_values['options'].hasOwnProperty('cpu') && 
+                                template_values['options'].hasOwnProperty('ethernet') &&
+                                template_values['options'].hasOwnProperty('ram')){
+                                if (key == 'ram' || key == 'ethernet' || key == 'cpu') widthClass = ' col-sm-4 '
+                            } else if (key == 'ram' || key == 'nvram') widthClass = ' col-sm-6 '
+                            if (bothConnTypes && (key == 'ethernet' || key == 'serial')) widthClass = ' col-sm-6 '
+                            
+                            html_data += '<div class="form-group'+ widthClass +'">'+
+                                            '<label class=" control-label">' + value['name'] + '</label>'+
+                                            '<input class="form-control' + ((key == 'name') ? ' autofocus' : '') + '" name="node[' + key + ']" value="' + value_set + '" type="text"/>'+
+                                         '</div>';
                         }
                     });
-                    html_data += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="node[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="node[top]" value="' + top + '" type="text"/></div></div>';
+                    html_data += '<div class="form-group col-sm-6">'+
+                                    '<label class=" control-label">' + MESSAGES[93] + '</label>'+
+                                    '<input class="form-control" name="node[left]" value="' + left + '" type="text"/>'+
+                                 '</div>'+
+                                 '<div class="form-group col-sm-6">'+
+                                    '<label class=" control-label">' + MESSAGES[94] + '</label>'+
+                                    '<input class="form-control" name="node[top]" value="' + top + '" type="text"/>'+
+                                 '</div>';
 
                     // Show the buttons
                     $('#form-node-buttons').html('<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div>');
