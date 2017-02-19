@@ -62,6 +62,7 @@ $(document).on('keydown', 'body', function (e) {
         $(".edit-custom-text-form button.cancelForm").click();  // it will handle all the stuff
     }
     if (isEditcustomText && KEY_CODES.escape == e.which) {
+        $("p").blur()
         $("p").focusout()
     }
 });
@@ -3412,7 +3413,7 @@ $(document).on('focusout', '.editable', function (e) {
 
     $("#customText" + id + " p").removeClass('editable');
     $("#customText" + id + " p").attr('contenteditable', 'false');
-    $("#customText" + id + " p").selectable()
+    //$("#customText" + id + " p").selectable()
     // trim whitespace in the start and end of string
     innerHtml = innerHtml.replace(/^(<br>)+/, "").replace(/(<br>)+$/, "");
 
@@ -3738,7 +3739,7 @@ $(document).on('click','#lab-viewport', function (e) {
         $('.ui-selected').removeClass('ui-selected')
         $('#lab-viewport').removeClass('freeSelectMode')
    }
-   if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) $('p').blur()
+   if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) { $('p').blur() ; $('p').focusout() ;}
 });
 
 
