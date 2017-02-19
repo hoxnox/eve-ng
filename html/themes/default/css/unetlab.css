@@ -1571,3 +1571,6 @@ table.configured-nodes tbody td label {
   -webkit-transition: 0.25s ease-in-out;
  filter: invert(100%);
 }
+.jsplumb-connector { z-index:1000; }
+.jsplumb-endpoint { z-index:1001; }
+.jsplumb-overlay { z-index:1002; }
