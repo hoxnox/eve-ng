@@ -53,6 +53,7 @@ $(document).on('keydown', 'body', function (e) {
         $('.free-selected').removeClass('free-selected')
         $('.ui-selected').removeClass('ui-selected')
         $("#lab-viewport").removeClass('freeSelectMode')
+        $('.free-selected').removeClass('jsplumb-drag-selected')
     }
     if (isEditCustomShape && KEY_CODES.escape == e.which) {
         $(".edit-custom-shape-form button.cancelForm").click(); // it will handle all the stuff
@@ -3438,7 +3439,7 @@ $(document).on('focusout', '.editable', function (e) {
     new_data = document.getElementById("customText" + id).outerHTML;
     editTextObject(id, {data: new_data}).done(function () {
         addMessage('SUCCESS', 'Lab has been saved (60023).');
-        printLabTopology()
+        //printLabTopology()
     }).fail(function (message) {
         addModalError(message);
     });
@@ -3733,10 +3734,11 @@ $(document).on('click', 'a.interfaces.serial', function (e) {
 $(document).on('click','#lab-viewport', function (e) {
    if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')  && e.target.className.search('action-') == -1  ) {
         $('.free-selected').removeClass('free-selected')
+        $('.free-selected').removeClass('jsplumb-drag-selected')
         $('.ui-selected').removeClass('ui-selected')
         $('#lab-viewport').removeClass('freeSelectMode')
    }
-   if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) $('p').focusout()
+   if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) $('p').blur()
 });
 
 
