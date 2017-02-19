@@ -2016,6 +2016,7 @@ function printFormNode(action, values, fromNodeList) {
                             var widthClass = ' col-sm-12 '
                             if(key == 'image' && action == 'add') widthClass = ' col-sm-7'
                             if (key.startsWith('slot')) widthClass = ' col-sm-6 '
+                            if (key == 'config' || key == 'icon') widthClass = ' col-sm-6 '
                             html_data += '<div class="form-group '+widthClass+'">'+
                                             '<label class=" control-label">' + value['name'] + '</label>'+
                                             '<select class="selectpicker form-control" name="node[' + key + ']" data-size="5" data-style="selectpicker-button">';
@@ -2035,6 +2036,7 @@ function printFormNode(action, values, fromNodeList) {
                                 template_values['options'].hasOwnProperty('ram')){
                                 if (key == 'ram' || key == 'ethernet' || key == 'cpu') widthClass = ' col-sm-4 '
                             } else if (key == 'ram' || key == 'nvram') widthClass = ' col-sm-6 '
+                            if (key == 'delay' || key == 'name') widthClass = ' col-sm-6 '
                             if (bothConnTypes && (key == 'ethernet' || key == 'serial')) widthClass = ' col-sm-6 '
                             
                             html_data += '<div class="form-group'+ widthClass +'">'+
@@ -2043,6 +2045,13 @@ function printFormNode(action, values, fromNodeList) {
                                          '</div>';
                         }
                     });
+                    if(template == 'vpcs') {
+                        html_data += '<div class="form-group col-sm-6">'+
+                                        '<label class=" control-label">Ethernet</label>'+
+                                        '<input class="form-control valid" name="node[ethernet]" value="1" type="text" aria-invalid="false" disabled>' +
+                                     '</div>';
+                    }
+                    
                     html_data += '<div class="form-group col-sm-6">'+
                                     '<label class=" control-label">' + MESSAGES[93] + '</label>'+
                                     '<input class="form-control" name="node[left]" value="' + left + '" type="text"/>'+
