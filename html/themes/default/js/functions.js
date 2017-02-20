@@ -2575,6 +2575,65 @@ function printLabPreview(lab_filename) {
     });
 }
 
+// Drag jsPlumb helpers
+// Jquery-ui freeselect
+
+function updateFreeSelect ( e , ui ) {
+  if ( $('.node_frame.ui-selected, .network_frame.ui-selected, .customShape.ui-selected' ).length < 2 && !e.metaKey ) {
+    $('#lab-viewport').removeClass('freeSelectMode');
+    $('.free-selected').removeClass('free-selected');
+    $('.ui-selecting').removeClass('ui-selecting')
+    $('.ui-selected').removeClass('ui-selected')
+    $('.move-selected').removeClass('move-selected')
+    return;
+  }
+  $('#lab-viewport').removeClass('freeSelectMode');
+  $('#lab-viewport').addClass('freeSelectMode');
+  $('.node_frame, .network_frame').removeClass('free-selected');
+  $('.node_frame.ui-selected').addClass('free-selected');
+  $('.node_frame.ui-selected').addClass('move-selected');
+  $('.network_frame.ui-selected').addClass('move-selected');
+  $('.customShape.ui-selected').addClass('move-selected');
+  window.freeSelectedNodes = []
+  $(".free-selected").each(function() {
+     var $type = $(this).hasClass('node_frame') ? 'node' : 'network' ;
+     if ($type == 'node' ) window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path"), type: $type   });
+  });
+
+}
+
+function dragGroupInit ( e , ui ) {
+     window.dragInitY = e.el.offsetTop;
+     window.dragInitX = e.el.offsetLeft;
+     if ( !$('#lab-viewport').hasClass('freeSelectMode') ) {
+          return
+     }
+     window.dragGroup = []
+     var type = ''
+     $(".move-selected").each(function() {
+     if (  $(this).hasClass('node_frame') ) type = 'node'
+     if (  $(this).hasClass('network_frame') ) type = 'network'
+     if (  $(this).hasClass('customShape') ) type = 'customShape'
+     if (  $(this).hasClass('customText') ) type = 'customText'
+     window.dragGroup.push({ path: $(this).data("path"), originTop: $(this).position().top, originLeft: $(this).position().left , type: type});
+     $(this).addClass('jsplumb-drag')
+     });
+}
+
+function dragGroupUpdate ( e , ui ) {
+    if ( !$('#lab-viewport').hasClass('freeSelectMode') ) {
+          return
+    }
+    var offsetX = dragInitX -  e.el.offsetLeft
+    var offsetY = dragInitY -  e.el.offsetTop
+    dragGroup.forEach(function(node){
+          $('#'+node.type+node.path).css( { top: node.originTop - offsetY , left: node.originLeft - offsetX })
+    });
+}
+
+
+
+
 // Print lab topology
 function printLabTopology() {
     //window.topoLoading = 1;
@@ -2753,6 +2812,7 @@ function printLabTopology() {
                         .resizable({
                 grid:[3,3],
                             autoHide: true,
+                            resizestart: jsPlumb.setDraggable( $('.customShape') , false ),
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
                             },
@@ -2769,7 +2829,6 @@ function printLabTopology() {
         if (Object.keys(textObjects).length === 0) {
             labTextObjectsResolver.resolve();
         }
-
         $.when.apply($, networkImgs.concat(nodesImgs)).done(function () {
             // Drawing topology
             jsPlumb.ready(function () {
@@ -2805,7 +2864,7 @@ function printLabTopology() {
                            lab_topology.repaintEverything();
                       }
                     });
-
+                    //lab_topology.setDraggable($('.customShape'), false ) 
                     // Node as source or dest link
                      $.each(nodes, function (key,value) {
                            lab_topology.makeSource('node' + value['id'], {
@@ -2942,10 +3001,7 @@ function printLabTopology() {
                                 LOCK = 1 ;
                                 defer.resolve();
                                 if (ROLE == 'admin' || ROLE == 'editor') {
-                                     var allElements = $('.node_frame, .network_frame');
-                                     for (var i = 0; i < allElements.length; i++){
-                                          if (lab_topology.toggleDraggable(allElements[i]) ) lab_topology.toggleDraggable(allElements[i]) ;
-                                     }
+                                     jsPlumb.setDraggable('.customShape, .node_frame, .nertwork_frame', true );
                                }
                                $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
                                $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
@@ -4472,7 +4528,7 @@ function lockLab() {
     //}
     lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false);
     //$('.customShape').draggable('disable');
-    //$('.customShape').resizable('disable');
+    $('.customShape').resizable('disable');
     // $('.action-unlock-lab i').removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle')
     $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
     $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
@@ -4524,7 +4580,7 @@ function unlockLab(){
                     });
 
     //$('.customShape').draggable('enable');
-    //$('.customShape').resizable('enable');
+    $('.customShape').resizable('enable');
     $('.action-unlock-lab').html('<i class="glyphicon glyphicon-ok-circle"></i>' + MESSAGES[166])
     $('.action-unlock-lab').removeClass('action-unlock-lab').addClass('action-lock-lab')
     var deferred = $.Deferred();
@@ -4834,57 +4890,3 @@ function connContextMenu ( e, ui ) {
          window.connToDel = e
 }
 
-// Jquery-ui freeselect
-
-function updateFreeSelect ( e , ui ) {
-  if ( $('.node_frame.ui-selected, .network_frame.ui-selected, .customShape.ui-selected' ).length == 0 && !e.metaKey ) {
-    $('#lab-viewport').removeClass('freeSelectMode');
-    $('.free-selected').removeClass('free-selected');
-    $('.ui-selecting').removeClass('ui-selecting')
-    $('.ui-selected').removeClass('ui-selected')
-    $('.move-selected').removeClass('move-selected')
-    return;
-  }
-  $('#lab-viewport').removeClass('freeSelectMode');
-  $('#lab-viewport').addClass('freeSelectMode');
-  $('.node_frame, .network_frame').removeClass('free-selected');
-  $('.node_frame.ui-selected').addClass('free-selected');
-  $('.node_frame.ui-selected').addClass('move-selected');
-  $('.network_frame.ui-selected').addClass('move-selected');
-  $('.customShape.ui-selected').addClass('move-selected');
-  window.freeSelectedNodes = []
-  $(".free-selected").each(function() {
-     var $type = $(this).hasClass('node_frame') ? 'node' : 'network' ;
-     if ($type == 'node' ) window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path"), type: $type   }); 
-  });
-  
-}
-
-function dragGroupInit ( e , ui ) {
-     if ( !$('#lab-viewport').hasClass('freeSelectMode') ) {
-          return 
-     }
-     window.dragGroup = []
-     window.dragInitY = e.el.offsetTop;
-     window.dragInitX = e.el.offsetLeft;
-     var type = ''
-     $(".move-selected").each(function() {
-     if (  $(this).hasClass('node_frame') ) type = 'node'
-     if (  $(this).hasClass('network_frame') ) type = 'network'
-     if (  $(this).hasClass('customShape') ) type = 'customShape'  
-     if (  $(this).hasClass('customText') ) type = 'customText'  
-     window.dragGroup.push({ path: $(this).data("path"), originTop: $(this).position().top, originLeft: $(this).position().left , type: type});
-     $(this).addClass('jsplumb-drag')
-     });
-}
-
-function dragGroupUpdate ( e , ui ) {
-    if ( !$('#lab-viewport').hasClass('freeSelectMode') ) {
-          return
-    }
-    var offsetX = dragInitX -  e.el.offsetLeft
-    var offsetY = dragInitY -  e.el.offsetTop
-    dragGroup.forEach(function(node){
-          $('#'+node.type+node.path).css( { top: node.originTop - offsetY , left: node.originLeft - offsetX })
-    });
-}

@@ -59,9 +59,11 @@ $(document).on('keydown', 'body', function (e) {
                        start: dragGroupInit,
                        drag:  function ( e, ui ) {
                            dragGroupUpdate( e, ui )
+                           jsPlumb.repaintEverything();
                            lab_topology.repaintEverything();
                       }
                     });
+        lab_topology.setDraggable('.node_frame, .network_frame, .customShape ', true );
     }
     if (isEditCustomShape && KEY_CODES.escape == e.which) {
         $(".edit-custom-shape-form button.cancelForm").click(); // it will handle all the stuff
@@ -171,7 +173,7 @@ function ObjectPosUpdate (event ,ui) {
                        start: dragGroupInit,
                        drag:  function ( e, ui ) {
                            dragGroupUpdate( e, ui )
-                           lab_topology.repaintEverything();
+                           .repaintEverything();
                       }
                     });
                   jsPlumb.repaint();
@@ -2707,6 +2709,15 @@ $('body').on('submit', '#form-picture-delete', function (ev) {
 /*******************************************************************************
  * Custom Shape/Text Functions
  * *****************************************************************************/
+
+// Prevent Drag when Resize
+$('body').on('mouseover','.ui-resizable-handle',function (e) {
+       jsPlumb.setDraggable($('.customShape'), false )
+});
+
+$('body').on('mouseleave','.ui-resizable-handle',function (e) {
+       if ( LOCK==0 ) jsPlumb.setDraggable($('.customShape'), true )
+});
 // Add Custom Shape
 $('body').on('submit', '.custom-shape-form', function (e) {
     var shape_options = {}
