@@ -1263,7 +1263,14 @@ class Lab {
 		$old = $this -> path.'/'.$this -> filename;
 		$dst = $this -> path.'/'.$this -> name.'.unl';
 		$fp = fopen($tmp, 'w');
-		if (!fwrite($fp, $dom -> saveXML())) {
+                $trylock = 30;
+                while ( $trylock > 0 )   {
+                        flock($fp,LOCK_EX) && $trylock = 0 ;
+                        $trylock -= 1 ;
+                        usleep ( 100000 )  ;
+                }
+                
+		if ( $trylock == 0 || !fwrite($fp, $dom -> saveXML())) {
 			// Failed to write
 			fclose($fp);
 			unlink($tmp);
@@ -1271,6 +1278,7 @@ class Lab {
 			return 20027;
 		} else {
 			// Write OK
+                        fflush($fp);
 			fclose($fp);
 			if ($old != $dst && is_file($dst)) {
 				// Should rename the lab, but destination file already exists

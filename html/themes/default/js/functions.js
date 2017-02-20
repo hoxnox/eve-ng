@@ -2828,7 +2828,7 @@ function printLabTopology() {
         if (Object.keys(textObjects).length === 0) {
             labTextObjectsResolver.resolve();
         }
-        $.when.apply($, networkImgs.concat(nodesImgs)).done(function () {
+        $.when.apply($, networkImgs.concat(nodesImgs),labTextObjectsResolver).done(function () {
             // Drawing topology
             jsPlumb.ready(function () {
                 // Defaults
