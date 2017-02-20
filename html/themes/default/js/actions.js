@@ -2786,9 +2786,6 @@ $('body').on('submit', '.custom-shape-form', function (e) {
 
         var $added_shape = $("#customShape" + shape_options['id']);
         $added_shape
-            .draggable({
-                stop: textObjectDragStop
-            })
             .resizable({
                 autoHide: true,
                 resize: function (event, ui) {
@@ -2887,9 +2884,6 @@ $('body').on('submit', '.add-text-form', function (e) {
 
         var $added_shape = $("#customText" + text_options['id']);
         $added_shape
-            .draggable({
-                stop: textObjectDragStop
-            })
             .resizable({
                 autoHide: true,
                 resize: function (event, ui) {
@@ -2949,12 +2943,12 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
     if ($("#customShape" + id).length) {
         $selected_shape = $("#customShape" + id);
         $selected_shape.resizable("destroy");
-        $selected_shape.draggable("destroy");
+        //$selected_shape.draggable("destroy");
+        //jsPlumb.setDraggable($selected_shape, false);
         $duplicated_shape = $selected_shape.clone();
 
-        $selected_shape.draggable({
-            stop: textObjectDragStop
-        }).resizable({
+        $selected_shape
+        .resizable({
             autoHide: true,
             resize: function (event, ui) {
                 textObjectResize(event, ui, {"shape_border_width": shape_border_width});
@@ -2988,10 +2982,17 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
 
             createTextObject(form_data).done(function () {
                 $('#lab-viewport').prepend(new_data_html);
-
-                $('#customShape' + new_id).draggable({
-                    stop: textObjectDragStop
-                }).resizable({
+                jsPlumb.draggable($('#customShape' + new_id), {
+                       grid: [3, 3],
+                       stop: ObjectPosUpdate,
+                       start: dragGroupInit,
+                       drag:  function ( e, ui ) {
+                           dragGroupUpdate( e, ui )
+                           lab_topology.repaintEverything();
+                      }
+                    });
+                $('#customShape' + new_id)
+                .resizable({
                     autoHide: true,
                     resize: function (event, ui) {
                         textObjectResize(event, ui, {"shape_border_width": shape_border_width});
@@ -3008,12 +3009,10 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
     } else if ($("#customText" + id).length) {
         $selected_shape = $("#customText" + id);
         $selected_shape.resizable("destroy");
-        $selected_shape.draggable("destroy");
+        //jsPlumb.setDraggable($selected_shape, false);
         $duplicated_shape = $selected_shape.clone();
-
-        $selected_shape.draggable({
-            stop: textObjectDragStop
-        }).resizable({
+        $selected_shape
+        .resizable({
             autoHide: true,
             resize: function (event, ui) {
                 textObjectResize(event, ui, {"shape_border_width": shape_border_width});
@@ -3047,10 +3046,17 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
 
             createTextObject(form_data).done(function () {
                 $('#lab-viewport').prepend(new_data_html);
-
-                $('#customText' + new_id).draggable({
-                    stop: textObjectDragStop
-                }).resizable({
+                jsPlumb.draggable($('#customText' + new_id), {
+                       grid: [3, 3],
+                       stop: ObjectPosUpdate,
+                       start: dragGroupInit,
+                       drag:  function ( e, ui ) {
+                           dragGroupUpdate( e, ui )
+                           lab_topology.repaintEverything();
+                      }
+                    });
+                $('#customText' + new_id)
+                .resizable({
                     autoHide: true,
                     resize: function (event, ui) {
                         textObjectResize(event, ui, {"shape_border_width": shape_border_width});
@@ -3415,7 +3421,8 @@ $(document).on('dblclick', '.customText', function (e) {
 
     // Disable draggable and resizable before sending request
     try {
-        $(this).draggable("destroy").resizable("destroy");
+        sPlumb.setDraggable($(this), false);
+        $(this).resizable("destroy");
     }
     catch (e) {
         console.warn(e);
@@ -3474,9 +3481,17 @@ $(document).on('focusout', '.editable', function (e) {
         addModalError(message);
     });
 
-    $selected_shape.draggable({
-        stop: textObjectDragStop
-    }).resizable({
+    jsPlumb.draggable($selected_shape, {
+                       grid: [3, 3],
+                       stop: ObjectPosUpdate,
+                       start: dragGroupInit,
+                       drag:  function ( e, ui ) {
+                           dragGroupUpdate( e, ui )
+                           lab_topology.repaintEverything();
+                      }
+                    });
+    $selected_shape
+    .resizable({
         autoHide: true,
         resize: function (event, ui) {
             textObjectResize(event, ui, {"shape_border_width": 5});

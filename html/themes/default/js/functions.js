@@ -2762,11 +2762,6 @@ function printLabTopology() {
                 else {
                     return void 0;
                 }
-            // If lab locked free all shape
-        if  ( labinfo ['lock'] == 1 ) {
-                $newTextObject.draggable('disable');
-        $newTextObject.resizable('disable');
-                } 
             }).fail(function () {
                 logger(1, 'DEBUG: Failed to load Text Object' + value['name'] + '!');
             });
