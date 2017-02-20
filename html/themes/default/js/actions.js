@@ -45,17 +45,12 @@ $(document).on('keydown', 'body', function (e) {
         $('#mouse_frame').remove();
         $('#lab-viewport').removeClass('lab-viewport-click-catcher').data("prevent-contextmenu", false);
         $('#context-menu').remove();
-
-    }
-
-//    if (isFreeSelectMode && KEY_CODES.escape == e.which) {
-        //$(".action-freeselect").click();    // it will handle all the stuff
         $('.free-selected').removeClass('free-selected')
         $('.move-selected').removeClass('move-selected')
         $('.ui-selected').removeClass('ui-selected')
         $("#lab-viewport").removeClass('freeSelectMode')
         $('.free-selected').removeClass('jsplumb-drag-selected')
-//    }
+    }
     if (isEditCustomShape && KEY_CODES.escape == e.which) {
         $(".edit-custom-shape-form button.cancelForm").click(); // it will handle all the stuff
     }
@@ -175,7 +170,8 @@ function ObjectPosUpdate (event ,ui) {
           }
           if ( groupMove.length > 1 )  $("#"+id).addClass('move-selected')
      });
-     window.dragstop = 1
+     window.dragstop = 0
+     if ( groupMove.length > 1 ) window.dragstop = 1
 }
 
 // Close all context menu
@@ -3775,6 +3771,16 @@ $(document).on('click','#lab-viewport', function (e) {
    }
    if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) { $('p').blur() ; $('p').focusout() ;}
    window.dragstop = 0
+});
+
+
+$(document).on('click', '.network_frame', function (e) {
+        var node = $(this).parent();
+         if ( e.metaKey || e.ctrlKey  ) {
+        node.toggleClass('move-selected')
+        updateFreeSelect(e,node)
+        e.preventDefault();
+        }
 });
 
 

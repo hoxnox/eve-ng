@@ -4470,13 +4470,13 @@ function autoheight()
 
 function lockLab() {
     var lab_topology = jsPlumb.getInstance();
-    var allElements = $('.node_frame, .network_frame');
+    var allElements = $('.node_frame, .network_frame, .customShape');
     //alert ( JSON.stringify( allElements ));
     for (var i = 0; i < allElements.length; i++){
         if(toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
     }
-    $('.customShape').draggable('disable');
-    $('.customShape').resizable('disable');
+    //$('.customShape').draggable('disable');
+    //$('.customShape').resizable('disable');
     // $('.action-unlock-lab i').removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle')
     $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
     $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
@@ -4516,13 +4516,13 @@ function lockLab() {
 
 function unlockLab(){
     var lab_topology = jsPlumb.getInstance();
-    var allElements = $('.node_frame, .network_frame');
+    var allElements = $('.node_frame, .network_frame, .customShape');
     lab_topology.draggable($('.node_frame, .network_frame'), {grid: [3, 3]});
     for (var i = 0; i < allElements.length; i++){
         if(!toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
     }
-    $('.customShape').draggable('enable');
-    $('.customShape').resizable('enable');
+    //$('.customShape').draggable('enable');
+    //$('.customShape').resizable('enable');
     $('.action-unlock-lab').html('<i class="glyphicon glyphicon-ok-circle"></i>' + MESSAGES[166])
     $('.action-unlock-lab').removeClass('action-unlock-lab').addClass('action-lock-lab')
     var deferred = $.Deferred();
