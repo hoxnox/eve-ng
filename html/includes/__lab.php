@@ -1263,7 +1263,7 @@ class Lab {
 		$old = $this -> path.'/'.$this -> filename;
 		$dst = $this -> path.'/'.$this -> name.'.unl';
 		$fp = fopen($tmp, 'w');
-                $trylock = 30;
+                $trylock = 60;
                 while ( $trylock > 0 )   {
                         flock($fp,LOCK_EX) && $trylock = 0 ;
                         $trylock -= 1 ;
