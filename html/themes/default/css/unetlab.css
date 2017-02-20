@@ -1210,7 +1210,7 @@ map area:visited {
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.49);
 }
 
-.move-selected {
+.node_frame.move-selected, .network_frame.move-selected, .customShape.move-selected {
         display: block;
         background-color: #d6e3e9 ;
         border-radius: 5px ;
@@ -1499,7 +1499,7 @@ table.configured-nodes tbody td label {
 #nodeconfig {
   max-height: calc(90vh - 140px) !important;
 }
-.action-configget.selected {
+.action-configget.selected, .action-pictureget.selected {
  color: #a6b3b9 !important;
  background-color: #263339 !important;
  padding: 5px !important;
