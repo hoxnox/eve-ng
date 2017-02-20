@@ -51,6 +51,18 @@ $(document).on('keydown', 'body', function (e) {
         $("#lab-viewport").removeClass('freeSelectMode')
         $('.free-selected').removeClass('jsplumb-drag-selected')
     }
+    if (KEY_CODES.escape == e.which && LOCK == 0 ) {
+        var lab_topology=jsPlumb.getInstance();
+        lab_topology.draggable($('.node_frame, .network_frame, .customShape '), {
+                       grid: [3, 3],
+                       stop: ObjectPosUpdate,
+                       start: dragGroupInit,
+                       drag:  function ( e, ui ) {
+                           dragGroupUpdate( e, ui )
+                           lab_topology.repaintEverything();
+                      }
+                    });
+    }
     if (isEditCustomShape && KEY_CODES.escape == e.which) {
         $(".edit-custom-shape-form button.cancelForm").click(); // it will handle all the stuff
     }
@@ -153,7 +165,7 @@ function ObjectPosUpdate (event ,ui) {
           } else if ( id.search('custom') != -1 )  {
               logger(1, 'DEBUG: setting ' + id + ' position.');
               $.when(setShapePosition(node)).done(function () {
-                  jsPlumb.draggable($('#'+id), {
+                  jsPlumb.draggable(id, {
                        grid: [3, 3],
                        stop: ObjectPosUpdate,
                        start: dragGroupInit,
@@ -2785,6 +2797,15 @@ $('body').on('submit', '.custom-shape-form', function (e) {
         $('#lab-viewport').prepend(shape_html);
 
         var $added_shape = $("#customShape" + shape_options['id']);
+        jsPlumb.draggable($added_shape, {
+                       grid: [3, 3],
+                       stop: ObjectPosUpdate,
+                       start: dragGroupInit,
+                       drag:  function ( e, ui ) {
+                           dragGroupUpdate( e, ui )
+                           lab_topology.repaintEverything();
+                      }
+                    });
         $added_shape
             .resizable({
                 autoHide: true,
@@ -2793,6 +2814,7 @@ $('body').on('submit', '.custom-shape-form', function (e) {
                 },
                 stop: textObjectDragStop
             });
+        
 
         getTextObjects().done(function (textObjects) {
             $added_shape.attr("id", "customShape" + textObjData.id);
@@ -2883,6 +2905,15 @@ $('body').on('submit', '.add-text-form', function (e) {
         $('#lab-viewport').prepend(text_html);
 
         var $added_shape = $("#customText" + text_options['id']);
+        jsPlumb.draggable($added_shape, {
+                       grid: [3, 3],
+                       stop: ObjectPosUpdate,
+                       start: dragGroupInit,
+                       drag:  function ( e, ui ) {
+                           dragGroupUpdate( e, ui )
+                           lab_topology.repaintEverything();
+                      }
+                    });
         $added_shape
             .resizable({
                 autoHide: true,
@@ -2982,7 +3013,7 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
 
             createTextObject(form_data).done(function () {
                 $('#lab-viewport').prepend(new_data_html);
-                jsPlumb.draggable($('#customShape' + new_id), {
+                jsPlumb.draggable('customShape' + new_id, {
                        grid: [3, 3],
                        stop: ObjectPosUpdate,
                        start: dragGroupInit,
@@ -3046,7 +3077,7 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
 
             createTextObject(form_data).done(function () {
                 $('#lab-viewport').prepend(new_data_html);
-                jsPlumb.draggable($('#customText' + new_id), {
+                jsPlumb.draggable('customText' + new_id, {
                        grid: [3, 3],
                        stop: ObjectPosUpdate,
                        start: dragGroupInit,
@@ -3421,7 +3452,7 @@ $(document).on('dblclick', '.customText', function (e) {
 
     // Disable draggable and resizable before sending request
     try {
-        sPlumb.setDraggable($(this), false);
+        jsPlumb.setDraggable('customText'+id, false);
         $(this).resizable("destroy");
     }
     catch (e) {
@@ -3449,6 +3480,8 @@ $(document).on('focusout', '.editable', function (e) {
 
     $("#customText" + id + " p").removeClass('editable');
     $("#customText" + id + " p").attr('contenteditable', 'false');
+    $("#customText" + id).removeClass('move-selected');
+    $("#customText" + id).removeClass('moving-selected');
     //$("#customText" + id + " p").selectable()
     // trim whitespace in the start and end of string
     innerHtml = innerHtml.replace(/^(<br>)+/, "").replace(/(<br>)+$/, "");
@@ -3472,7 +3505,7 @@ $(document).on('focusout', '.editable', function (e) {
         $selected_shape.css("height", parseFloat($("p", $selected_shape).css("font-size")) * 2 + "px");
     }
     $selected_shape.css("width", "auto");
-
+    
     new_data = document.getElementById("customText" + id).outerHTML;
     editTextObject(id, {data: new_data}).done(function () {
         addMessage('SUCCESS', 'Lab has been saved (60023).');
@@ -3480,16 +3513,8 @@ $(document).on('focusout', '.editable', function (e) {
     }).fail(function (message) {
         addModalError(message);
     });
-
-    jsPlumb.draggable($selected_shape, {
-                       grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           lab_topology.repaintEverything();
-                      }
-                    });
+    jsPlumb.setDraggable('customText'+id, true);
+    logger (1,  ' DEBUG: focusout will apply jsplum drggable to customText'+id ) 
     $selected_shape
     .resizable({
         autoHide: true,

@@ -4465,11 +4465,12 @@ function autoheight()
 
 function lockLab() {
     var lab_topology = jsPlumb.getInstance();
-    var allElements = $('.node_frame, .network_frame, .customShape');
+    //var allElements = $('.node_frame, .network_frame, .customShape');
     //alert ( JSON.stringify( allElements ));
-    for (var i = 0; i < allElements.length; i++){
-        if(toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
-    }
+    //for (var i = 0; i < allElements.length; i++){
+    //    if(toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
+    //}
+    lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false);
     //$('.customShape').draggable('disable');
     //$('.customShape').resizable('disable');
     // $('.action-unlock-lab i').removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle')
@@ -4511,11 +4512,16 @@ function lockLab() {
 
 function unlockLab(){
     var lab_topology = jsPlumb.getInstance();
-    var allElements = $('.node_frame, .network_frame, .customShape');
-    lab_topology.draggable($('.node_frame, .network_frame'), {grid: [3, 3]});
-    for (var i = 0; i < allElements.length; i++){
-        if(!toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
-    }
+    lab_topology.draggable($('.node_frame, .network_frame, .customShape'), {
+                       grid: [3, 3],
+                       stop: ObjectPosUpdate,
+                       start: dragGroupInit,
+                       drag:  function ( e, ui ) {
+                           dragGroupUpdate( e, ui )
+                           lab_topology.repaintEverything();
+                      }
+                    });
+
     //$('.customShape').draggable('enable');
     //$('.customShape').resizable('enable');
     $('.action-unlock-lab').html('<i class="glyphicon glyphicon-ok-circle"></i>' + MESSAGES[166])
