@@ -2828,7 +2828,7 @@ function printLabTopology() {
         if (Object.keys(textObjects).length === 0) {
             labTextObjectsResolver.resolve();
         }
-        $.when.apply($, networkImgs.concat(nodesImgs),labTextObjectsResolver).done(function () {
+        $.when.apply($, networkImgs.concat(nodesImgs)).done(function () {
             // Drawing topology
             jsPlumb.ready(function () {
                 // Defaults
@@ -2851,9 +2851,10 @@ function printLabTopology() {
                     cssClass: 'link'
                 });
                 // Read privileges and set specific actions/elements
+                
                 if (ROLE == 'admin' || ROLE == 'editor')  {
                     // Nodes and networks are draggable within a grid
-
+                    $.when(labTextObjectsResolver).done( function () { 
                     lab_topology.draggable($('.node_frame, .network_frame, .customShape'), {
                        grid: [3, 3],
                        stop: ObjectPosUpdate,
@@ -2862,6 +2863,7 @@ function printLabTopology() {
                            dragGroupUpdate( e, ui ) 
                            lab_topology.repaintEverything();
                       }
+                    });
                     });
                     lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true );
                     // Node as source or dest link
