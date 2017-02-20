@@ -2812,7 +2812,6 @@ function printLabTopology() {
                         .resizable({
                 grid:[3,3],
                             autoHide: true,
-                            resizestart: jsPlumb.setDraggable( $('.customShape') , false ),
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
                             },
@@ -2864,7 +2863,7 @@ function printLabTopology() {
                            lab_topology.repaintEverything();
                       }
                     });
-                    //lab_topology.setDraggable($('.customShape'), false ) 
+                    lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true );
                     // Node as source or dest link
                      $.each(nodes, function (key,value) {
                            lab_topology.makeSource('node' + value['id'], {
