@@ -4512,6 +4512,7 @@ function lockLab() {
 
 function unlockLab(){
     var lab_topology = jsPlumb.getInstance();
+    lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true);
     lab_topology.draggable($('.node_frame, .network_frame, .customShape'), {
                        grid: [3, 3],
                        stop: ObjectPosUpdate,
