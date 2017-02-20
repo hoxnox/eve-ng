@@ -48,14 +48,14 @@ $(document).on('keydown', 'body', function (e) {
 
     }
 
-    if (isFreeSelectMode && KEY_CODES.escape == e.which) {
+//    if (isFreeSelectMode && KEY_CODES.escape == e.which) {
         //$(".action-freeselect").click();    // it will handle all the stuff
         $('.free-selected').removeClass('free-selected')
         $('.move-selected').removeClass('move-selected')
         $('.ui-selected').removeClass('ui-selected')
         $("#lab-viewport").removeClass('freeSelectMode')
         $('.free-selected').removeClass('jsplumb-drag-selected')
-    }
+//    }
     if (isEditCustomShape && KEY_CODES.escape == e.which) {
         $(".edit-custom-shape-form button.cancelForm").click(); // it will handle all the stuff
     }
@@ -173,7 +173,7 @@ function ObjectPosUpdate (event ,ui) {
                      addModalError(message);
               });;
           }
-          $("#"+id).addClass('move-selected')
+          if ( groupMove.length > 1 )  $("#"+id).addClass('move-selected')
      });
      window.dragstop = 1
 }
