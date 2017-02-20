@@ -4701,28 +4701,6 @@ function newConnModal(info , oe ) {
                                         '<select name="addConn[srcConn]" class="form-control srcConn">' 
                                         if ( linksourcetype == 'node' ) {
                                             // Eth first
-                                            for ( key in linksourcedata['interfaces'] ) {
-                                                if ( linksourcedata['interfaces'][key]['type'] == 'ethernet' ) {
-                                                    html += '<option value="' + key + ',ethernet' +'" '+((linksourcedata['interfaces'][key]['network_id'] != 0) ? 'disabled="true"' : '' ) +'>' + linksourcedata['interfaces'][key]['name'] 
-                                                    if ( linksourcedata['interfaces'][key]['network_id'] != 0) {
-                                                        html += ' connected to '
-                                                        for ( tkey in topology ) {
-                                                            if ( ( topology[tkey]['source'] == ( 'node' + linksourcedata['id'] ))  && ( topology[tkey]['source_label'] == linksourcedata['interfaces'][key]['name'] )) { 
-                                                                if (topology[tkey]['destination_type'] == 'node'  ) html += nodes[topology[tkey]['destination'].replace('node','')]['name']
-                                                                if (topology[tkey]['destination_type'] == 'node' ) html += ' ' + topology[tkey]['destination_label']
-                                                                if (topology[tkey]['destination_type'] == 'network' ) html += ' ' + networks[ linksourcedata['interfaces'][key]['network_id'] ]['name']
-                                                            } 
-                                                            if ( ( topology[tkey]['destination'] == ( 'node' + linksourcedata['id'] ))  && ( topology[tkey]['destination_label'] == linksourcedata['interfaces'][key]['name'] )) {
-                                                                if (topology[tkey]['source_type'] == 'node'  ) html += nodes[topology[tkey]['source'].replace('node','')]['name']
-                                                                if (topology[tkey]['source_type'] == 'node'  ) html += ' ' + topology[tkey]['source_label']
-                                                                if ( topology[tkey]['source_type'] == 'network' ) html += ' ' + networks[ linksourcedata['interfaces'][key]['network_id'] ]['name']
-                                                            }
-                                                        }
-                                                    }   
-                                                }
-                                            }
-                                            // Serial first
-                                            //reorder Serials
                                             var tmp_name = [];
                                             var reversetab = [];
                                             for ( key in linksourcedata['interfaces'] ) {
@@ -4730,6 +4708,27 @@ function newConnModal(info , oe ) {
                                                  reversetab[linksourcedata['interfaces'][key]['name']] = key
                                             }
                                             var ordered_name = tmp_name.sort() ;
+                                            for ( key in ordered_name ) {
+                                                okey = reversetab[ordered_name[key]] ;
+                                                if ( linksourcedata['interfaces'][okey]['type'] == 'ethernet' ) {
+                                                    html += '<option value="' + okey + ',ethernet' +'" '+((linksourcedata['interfaces'][okey]['network_id'] != 0) ? 'disabled="true"' : '' ) +'>' + linksourcedata['interfaces'][okey]['name'] 
+                                                    if ( linksourcedata['interfaces'][okey]['network_id'] != 0) {
+                                                        html += ' connected to '
+                                                        for ( tkey in topology ) {
+                                                            if ( ( topology[tkey]['source'] == ( 'node' + linksourcedata['id'] ))  && ( topology[tkey]['source_label'] == linksourcedata['interfaces'][okey]['name'] )) { 
+                                                                if (topology[tkey]['destination_type'] == 'node'  ) html += nodes[topology[tkey]['destination'].replace('node','')]['name']
+                                                                if (topology[tkey]['destination_type'] == 'node' ) html += ' ' + topology[tkey]['destination_label']
+                                                                if (topology[tkey]['destination_type'] == 'network' ) html += ' ' + networks[ linksourcedata['interfaces'][okey]['network_id'] ]['name']
+                                                            } 
+                                                            if ( ( topology[tkey]['destination'] == ( 'node' + linksourcedata['id'] ))  && ( topology[tkey]['destination_label'] == linksourcedata['interfaces'][okey]['name'] )) {
+                                                                if (topology[tkey]['source_type'] == 'node'  ) html += nodes[topology[tkey]['source'].replace('node','')]['name']
+                                                                if (topology[tkey]['source_type'] == 'node'  ) html += ' ' + topology[tkey]['source_label']
+                                                                if ( topology[tkey]['source_type'] == 'network' ) html += ' ' + networks[ linksourcedata['interfaces'][okey]['network_id'] ]['name']
+                                                            }
+                                                        }
+                                                    }   
+                                                }
+                                            }
                                             for ( key in ordered_name ) {
                                                 okey = reversetab[ordered_name[key]] ;
                                                 if ( linksourcedata['interfaces'][okey]['type'] == 'serial' ) {
@@ -4754,28 +4753,6 @@ function newConnModal(info , oe ) {
                                         '<select name="addConn[dstConn]" class="form-control dstConn">'
                                         if ( linktargettype == 'node' ) {
                                             // Eth first
-                                            for ( key in linktargetdata['interfaces'] ) {
-                                                if ( linktargetdata['interfaces'][key]['type'] == 'ethernet' ) {
-                                                    html += '<option value="' + key + ',ethernet' +'" '+((linktargetdata['interfaces'][key]['network_id'] != 0) ? 'disabled="true"' : '' ) +'>' + linktargetdata['interfaces'][key]['name']
-                                                    if ( linktargetdata['interfaces'][key]['network_id'] != 0) {
-                                                        html += ' connected to '
-                                                        for ( tkey in topology ) {
-                                                            if ( ( topology[tkey]['source'] == ( 'node' + linktargetdata['id'] ))  && ( topology[tkey]['source_label'] == linktargetdata['interfaces'][key]['name'] )) {
-                                                                if (topology[tkey]['destination_type'] == 'node'  ) html += nodes[topology[tkey]['destination'].replace('node','')]['name']
-                                                                if (topology[tkey]['destination_type'] == 'node' ) html += ' ' + topology[tkey]['destination_label']
-                                                                if (topology[tkey]['destination_type'] == 'network' ) html += ' ' + networks[ linktargetdata['interfaces'][key]['network_id'] ]['name']
-                                                            }
-                                                            if ( ( topology[tkey]['destination'] == ( 'node' + linktargetdata['id'] ))  && ( topology[tkey]['destination_label'] == linktargetdata['interfaces'][key]['name'] )) {
-                                                                if (topology[tkey]['source_type'] == 'node'  ) html += nodes[topology[tkey]['source'].replace('node','')]['name']
-                                                                if (topology[tkey]['source_type'] == 'node'  ) html += ' ' + topology[tkey]['source_label']
-                                                                if ( topology[tkey]['source_type'] == 'network' ) html += ' ' + networks[ linktargetdata['interfaces'][key]['network_id'] ]['name']
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            // Serial first
-                                            //reorder Serials
                                             var tmp_name = [];
                                             var reversetab = [];
                                             for ( key in linktargetdata['interfaces'] ) {
@@ -4783,6 +4760,28 @@ function newConnModal(info , oe ) {
                                                  reversetab[linktargetdata['interfaces'][key]['name']] = key
                                             }
                                             var ordered_name = tmp_name.sort() ;
+                                            for ( key in ordered_name ) {
+                                            okey = reversetab[ordered_name[key]] ;
+                                                if ( linktargetdata['interfaces'][okey]['type'] == 'ethernet' ) {
+                                                    html += '<option value="' + okey + ',ethernet' +'" '+((linktargetdata['interfaces'][okey]['network_id'] != 0) ? 'disabled="true"' : '' ) +'>' + linktargetdata['interfaces'][okey]['name']
+                                                    if ( linktargetdata['interfaces'][okey]['network_id'] != 0) {
+                                                        html += ' connected to '
+                                                        for ( tkey in topology ) {
+                                                            if ( ( topology[tkey]['source'] == ( 'node' + linktargetdata['id'] ))  && ( topology[tkey]['source_label'] == linktargetdata['interfaces'][okey]['name'] )) {
+                                                                if (topology[tkey]['destination_type'] == 'node'  ) html += nodes[topology[tkey]['destination'].replace('node','')]['name']
+                                                                if (topology[tkey]['destination_type'] == 'node' ) html += ' ' + topology[tkey]['destination_label']
+                                                                if (topology[tkey]['destination_type'] == 'network' ) html += ' ' + networks[ linktargetdata['interfaces'][okey]['network_id'] ]['name']
+                                                            }
+                                                            if ( ( topology[tkey]['destination'] == ( 'node' + linktargetdata['id'] ))  && ( topology[tkey]['destination_label'] == linktargetdata['interfaces'][okey]['name'] )) {
+                                                                if (topology[tkey]['source_type'] == 'node'  ) html += nodes[topology[tkey]['source'].replace('node','')]['name']
+                                                                if (topology[tkey]['source_type'] == 'node'  ) html += ' ' + topology[tkey]['source_label']
+                                                                if ( topology[tkey]['source_type'] == 'network' ) html += ' ' + networks[ linktargetdata['interfaces'][okey]['network_id'] ]['name']
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            // Serial first
                                             for ( key in ordered_name ) {
                                             okey = reversetab[ordered_name[key]] ;
                                                 if ( linktargetdata['interfaces'][okey]['type'] == 'serial' ) {
