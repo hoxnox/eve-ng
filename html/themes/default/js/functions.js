@@ -1352,7 +1352,7 @@ function setNetworkPosition(network_id, left, top) {
                 logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
                 deferred.reject(data['message']);
             }
-            addMessage(data['status'], data['message']);
+            //addMessage(data['status'], data['message']);
 
         },
         error: function (data) {
@@ -1994,7 +1994,7 @@ function printFormNode(action, values, fromNodeList) {
                     var html_data = '<input name="node[type]" value="' + template_values['type'] + '" type="hidden"/>';
                     if (action == 'add') {
                         // If action == add -> print the nework count input
-                        html_data += '<div class="form-group col-sm-5"><label class=" control-label">' + MESSAGES[113] + '</label>'+
+                        html_data += '<div class="form-group col-sm-4"><label class=" control-label">' + MESSAGES[113] + '</label>'+
                                         '<input class="form-control" name="node[count]" max=50 value="1" type="text"/>'+
                                      '</div>';
                     } else {
@@ -2014,9 +2014,8 @@ function printFormNode(action, values, fromNodeList) {
                         if (value['type'] == 'list') {
                             // Option is a list
                             var widthClass = ' col-sm-12 '
-                            if(key == 'image' && action == 'add') widthClass = ' col-sm-7'
+                            if(key == 'image' && action == 'add') widthClass = ' col-sm-8'
                             if (key.startsWith('slot')) widthClass = ' col-sm-6 '
-                            if (key == 'config' || key == 'icon') widthClass = ' col-sm-6 '
                             html_data += '<div class="form-group '+widthClass+'">'+
                                             '<label class=" control-label">' + value['name'] + '</label>'+
                                             '<select class="selectpicker form-control" name="node[' + key + ']" data-size="5" data-style="selectpicker-button">';
@@ -2036,7 +2035,6 @@ function printFormNode(action, values, fromNodeList) {
                                 template_values['options'].hasOwnProperty('ram')){
                                 if (key == 'ram' || key == 'ethernet' || key == 'cpu') widthClass = ' col-sm-4 '
                             } else if (key == 'ram' || key == 'nvram') widthClass = ' col-sm-6 '
-                            if (key == 'delay' || key == 'name') widthClass = ' col-sm-6 '
                             if (bothConnTypes && (key == 'ethernet' || key == 'serial')) widthClass = ' col-sm-6 '
                             
                             html_data += '<div class="form-group'+ widthClass +'">'+
@@ -2045,13 +2043,6 @@ function printFormNode(action, values, fromNodeList) {
                                          '</div>';
                         }
                     });
-                    if(template == 'vpcs') {
-                        html_data += '<div class="form-group col-sm-6">'+
-                                        '<label class=" control-label">Ethernet</label>'+
-                                        '<input class="form-control valid" name="node[ethernet]" value="1" type="text" aria-invalid="false" disabled>' +
-                                     '</div>';
-                    }
-                    
                     html_data += '<div class="form-group col-sm-6">'+
                                     '<label class=" control-label">' + MESSAGES[93] + '</label>'+
                                     '<input class="form-control" name="node[left]" value="' + left + '" type="text"/>'+
@@ -2742,10 +2733,6 @@ function printLabTopology() {
                     $labViewport.prepend($newTextObject);
 
                     $newTextObject
-                        .draggable({
-                grid:[3,3],
-                            stop: textObjectDragStop
-                        })
                         .resizable().resizable("destroy")
                         .resizable({
                 grid:[3,3],
@@ -2762,10 +2749,6 @@ function printLabTopology() {
                     $labViewport.prepend($newTextObject);
 
                     $newTextObject
-                        .draggable({
-                grid:[3,3],
-                            stop: textObjectDragStop
-                        })
                         .resizable().resizable('destroy')
                         .resizable({
                 grid:[3,3],
@@ -2818,9 +2801,9 @@ function printLabTopology() {
                 if (ROLE == 'admin' || ROLE == 'editor')  {
                     // Nodes and networks are draggable within a grid
 
-                    lab_topology.draggable($('.node_frame, .network_frame'), {
+                    lab_topology.draggable($('.node_frame, .network_frame, .customShape'), {
                        grid: [3, 3],
-                       stop: NodePosUpdate,
+                       stop: ObjectPosUpdate,
                        start: dragGroupInit,
                        drag:  function ( e, ui ) {
                            dragGroupUpdate( e, ui ) 
@@ -4025,9 +4008,31 @@ function textObjectDragStop(event, ui) {
         id = event.target.id.slice("customText".length);
         shape_border_width = 5;
     }
-
+    
     objectData = event.target.outerHTML;
+    
 
+    editTextObject(id, {
+        data: objectData
+    });
+}
+
+function setShapePosition( shape )  {
+    var id
+        , objectData
+        , shape_border_width
+        ;
+    if (shape.id.indexOf("customShape") != -1) {
+        id = shape.id.slice("customShape".length);
+        shape_border_width = $("#customShape" + id + " svg").children().attr('stroke-width');
+    }
+    else if (shape.id.indexOf("customText") != -1) {
+        id = shape.id.slice("customText".length);
+        shape_border_width = 5;
+    }
+
+    //objectData = shape.outerHTML;
+    objectData = shape.outerHTML;
     editTextObject(id, {
         data: objectData
     });
@@ -4831,20 +4836,25 @@ function connContextMenu ( e, ui ) {
 // Jquery-ui freeselect
 
 function updateFreeSelect ( e , ui ) {
-  if ( $('.node_frame.ui-selected' ).length == 0 && !e.metaKey ) {
+  if ( $('.node_frame.ui-selected, .network_frame.ui-selected, .customShape.ui-selected' ).length == 0 && !e.metaKey ) {
     $('#lab-viewport').removeClass('freeSelectMode');
     $('.free-selected').removeClass('free-selected');
     $('.ui-selecting').removeClass('ui-selecting')
     $('.ui-selected').removeClass('ui-selected')
+    $('.move-selected').removeClass('move-selected')
     return;
   }
   $('#lab-viewport').removeClass('freeSelectMode');
   $('#lab-viewport').addClass('freeSelectMode');
-  $('.node_frame').removeClass('free-selected');
+  $('.node_frame, .network_frame').removeClass('free-selected');
   $('.node_frame.ui-selected').addClass('free-selected');
+  $('.node_frame.ui-selected').addClass('move-selected');
+  $('.network_frame.ui-selected').addClass('move-selected');
+  $('.customShape.ui-selected').addClass('move-selected');
   window.freeSelectedNodes = []
   $(".free-selected").each(function() {
-     window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path") }); 
+     var $type = $(this).hasClass('node_frame') ? 'node' : 'network' ;
+     if ($type == 'node' ) window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path"), type: $type   }); 
   });
   
 }
@@ -4856,8 +4866,13 @@ function dragGroupInit ( e , ui ) {
      window.dragGroup = []
      window.dragInitY = e.el.offsetTop;
      window.dragInitX = e.el.offsetLeft;
-     $(".free-selected").each(function() {
-     window.dragGroup.push({ path: $(this).data("path"), originTop: $(this).position().top, originLeft: $(this).position().left });
+     var type = ''
+     $(".move-selected").each(function() {
+     if (  $(this).hasClass('node_frame') ) type = 'node'
+     if (  $(this).hasClass('network_frame') ) type = 'network'
+     if (  $(this).hasClass('customShape') ) type = 'customShape'  
+     if (  $(this).hasClass('customText') ) type = 'customText'  
+     window.dragGroup.push({ path: $(this).data("path"), originTop: $(this).position().top, originLeft: $(this).position().left , type: type});
      $(this).addClass('jsplumb-drag')
      });
 }
@@ -4869,6 +4884,6 @@ function dragGroupUpdate ( e , ui ) {
     var offsetX = dragInitX -  e.el.offsetLeft
     var offsetY = dragInitY -  e.el.offsetTop
     dragGroup.forEach(function(node){
-          $('#node'+node.path).css( { top: node.originTop - offsetY , left: node.originLeft - offsetX })
+          $('#'+node.type+node.path).css( { top: node.originTop - offsetY , left: node.originLeft - offsetX })
     });
 }

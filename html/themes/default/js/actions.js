@@ -51,6 +51,7 @@ $(document).on('keydown', 'body', function (e) {
     if (isFreeSelectMode && KEY_CODES.escape == e.which) {
         //$(".action-freeselect").click();    // it will handle all the stuff
         $('.free-selected').removeClass('free-selected')
+        $('.move-selected').removeClass('move-selected')
         $('.ui-selected').removeClass('ui-selected')
         $("#lab-viewport").removeClass('freeSelectMode')
         $('.free-selected').removeClass('jsplumb-drag-selected')
@@ -121,15 +122,17 @@ $(document).on('shown.bs.modal', '.modal', function () {
 });
 
 // After node/network move
-function NodePosUpdate (event ,ui) {
+function ObjectPosUpdate (event ,ui) {
      var groupMove = []
-     if ( $('.free-selected').length == 0 ) {
+     if ( $('.move-selected').length == 0 ) {
           groupMove.push(event.el)
      } else {
-          $('.free-selected').each( function ( id, node ) {
+          $('.move-selected').each( function ( id, node ) {
                 groupMove.push(node) 
           });
      }
+     $('.move-selected').removeClass('move-selected') 
+    //event.target.outerHTML.replace('move-selected','');
      $.each( groupMove,  function ( id, node ) {
           eLeft = Math.round(node.offsetLeft + $('#lab-viewport').scrollLeft())
           eTop = Math.round(node.offsetTop + $('#lab-viewport').scrollTop())
@@ -144,7 +147,7 @@ function NodePosUpdate (event ,ui) {
                      // Error on save
                     addModalError(message);
                  });;
-          } else {
+          } else if  ( id.search('network') != -1 )  {
               logger(1, 'DEBUG: setting ' + id + ' position.');
               $.when(setNetworkPosition(id.replace('network',''), eLeft, eTop)).done(function () {
                   jsPlumb.repaint();
@@ -152,8 +155,27 @@ function NodePosUpdate (event ,ui) {
                      // Error on save
                      addModalError(message);
               });;
+          } else if ( id.search('custom') != -1 )  {
+              logger(1, 'DEBUG: setting ' + id + ' position.');
+              $.when(setShapePosition(node)).done(function () {
+                  jsPlumb.draggable($('#'+id), {
+                       grid: [3, 3],
+                       stop: ObjectPosUpdate,
+                       start: dragGroupInit,
+                       drag:  function ( e, ui ) {
+                           dragGroupUpdate( e, ui )
+                           lab_topology.repaintEverything();
+                      }
+                    });
+                  jsPlumb.repaint();
+                            }).fail(function (message) {
+                     // Error on save
+                     addModalError(message);
+              });;
           }
+          $("#"+id).addClass('move-selected')
      });
+     window.dragstop = 1
 }
 
 // Close all context menu
@@ -424,8 +446,8 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                 '';
             }
             title = 'Group of ' + window.freeSelectedNodes.map(function (node) {
-                    return node.name;
-                }).join(", ").slice(0, 16);
+                   if ( node.type == 'node' ) return node.name;
+                }).join(", ").replace(', ,',', ').replace(/^,/,'').slice(0, 16);
             title += title.length > 24 ? "..." : "";
 
         }
@@ -778,7 +800,7 @@ $(document).on('click', '.action-nodedelete, .action-nodedelete-group', function
             window.freeSelectedNodes = window.freeSelectedNodes.sort(function (a, b) {
                 return a.path < b.path ? -1 : 1
             });
-            recursionNodeDelete(window.freeSelectedNodes);
+            recursionNodeDelete(window.freeSelectedNodes); 
         }
         else {
             $.when(deleteNode(node_id)).done(function (values) {
@@ -803,7 +825,7 @@ function recursionNodeDelete(restOfList) {
     }
 
     console.log("Deleting... ", node.path);
-    $.when(deleteNode(node.path)).done(function (values) {
+    $.when(deleteNode(node.path)).then(function (values) {
         $('.node' + node.path).remove();
         recursionNodeDelete(restOfList);
     }).fail(function (message) {
@@ -2358,6 +2380,7 @@ $(document).on('submit', '#form-node-add, #form-node-edit', function (e) {
                     $("#form-node-edit-table input[name='node[ethernet]'][data-path='" + form_data['id'] + "']").val(form_data["ethernet"])
                     $("#form-node-edit-table select[name='node[console]'][data-path='" + form_data['id'] + "']").val(form_data["console"])
                     $("#form-node-edit-table select[name='node[icon]'][data-path='" + form_data['id'] + "']").val(form_data["icon"])
+                    printLabTopology();
                 } else {
                     // Application error
                     logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
@@ -2373,8 +2396,8 @@ $(document).on('submit', '#form-node-add, #form-node-edit', function (e) {
             }
         });
         $.when.apply(request).done(function () {
-            sleep ( form_data['count'] * 50 )
-            printLabTopology();
+            //usleep ( form_data['count'] * 10000 )
+            //printLabTopology();
         });
     return false ;
 });
@@ -3743,13 +3766,15 @@ $(document).on('click', 'a.interfaces.serial', function (e) {
 })
 
 $(document).on('click','#lab-viewport', function (e) {
-   if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')  && e.target.className.search('action-') == -1  ) {
+   if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')  && e.target.className.search('action-') == -1  && window.dragstop != 1) {
         $('.free-selected').removeClass('free-selected')
+        $('.move-selected').removeClass('move-selected')
         $('.free-selected').removeClass('jsplumb-drag-selected')
         $('.ui-selected').removeClass('ui-selected')
         $('#lab-viewport').removeClass('freeSelectMode')
    }
    if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) { $('p').blur() ; $('p').focusout() ;}
+   window.dragstop = 0
 });
 
 

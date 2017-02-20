@@ -1210,7 +1210,7 @@ map area:visited {
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.49);
 }
 
-.node_frame.free-selected {
+.move-selected {
         display: block;
         background-color: #d6e3e9 ;
         border-radius: 5px ;
