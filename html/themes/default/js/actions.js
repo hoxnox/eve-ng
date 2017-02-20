@@ -2808,15 +2808,6 @@ $('body').on('submit', '.custom-shape-form', function (e) {
         $('#lab-viewport').prepend(shape_html);
 
         var $added_shape = $("#customShape" + shape_options['id']);
-        jsPlumb.draggable($added_shape, {
-                       grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           lab_topology.repaintEverything();
-                      }
-                    });
         $added_shape
             .resizable({
                 autoHide: true,
@@ -2837,7 +2828,7 @@ $('body').on('submit', '.custom-shape-form', function (e) {
             
             editTextObject(textObjData.id, {data: new_data, name: nameObj})
             .done(function(){
-                if ($("customShape" + textObjData.id).length > 1) {
+                if ($("#customShape" + textObjData.id).length > 1) {
                     // reload lab
                     addMessage('warning', MESSAGES[156]);
                     printLabTopology();
@@ -2845,9 +2836,11 @@ $('body').on('submit', '.custom-shape-form', function (e) {
 
                 // Hide and delete the modal (or will be posted twice)
                 $('body').children('.modal').modal('hide');
+                printLabTopology();
             }).fail(function(){
 
             });
+
         }).fail(function (message) {
             addMessage('DANGER', getJsonMessage(message));
         });
@@ -2916,15 +2909,6 @@ $('body').on('submit', '.add-text-form', function (e) {
         $('#lab-viewport').prepend(text_html);
 
         var $added_shape = $("#customText" + text_options['id']);
-        jsPlumb.draggable($added_shape, {
-                       grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           lab_topology.repaintEverything();
-                      }
-                    });
         $added_shape
             .resizable({
                 autoHide: true,
@@ -2939,13 +2923,14 @@ $('body').on('submit', '.add-text-form', function (e) {
             $added_shape.attr("id", "customText" + id);
             $added_shape.attr("data-path", id);
 
-            if ($("customText" + id).length > 1) {
+            if ($("#customText" + id).length > 1) {
                 addMessage('warning', MESSAGES[156]);
                 printLabTopology();
             }
 
             // Hide and delete the modal (or will be posted twice)
             $('body').children('.modal').modal('hide');
+            printLabTopology();
         }).fail(function (message) {
             addMessage('DANGER', getJsonMessage(message));
         });
@@ -3024,23 +3009,7 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
 
             createTextObject(form_data).done(function () {
                 $('#lab-viewport').prepend(new_data_html);
-                jsPlumb.draggable('customShape' + new_id, {
-                       grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           lab_topology.repaintEverything();
-                      }
-                    });
-                $('#customShape' + new_id)
-                .resizable({
-                    autoHide: true,
-                    resize: function (event, ui) {
-                        textObjectResize(event, ui, {"shape_border_width": shape_border_width});
-                    },
-                    stop: textObjectDragStop
-                });
+                printLabTopology()
                 addMessage('SUCCESS', 'Lab has been saved (60023).');
             }).fail(function (message) {
                 addMessage('DANGER', getJsonMessage(message));
