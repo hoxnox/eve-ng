@@ -2579,8 +2579,8 @@ function printLabPreview(lab_filename) {
 // Jquery-ui freeselect
 
 function updateFreeSelect ( e , ui ) {
-  if ( $('.node_frame.ui-selected, .network_frame.ui-selected' ).length < 2 && !e.metaKey ) {
-  //if ( $('.node_frame.ui-selected, .network_frame.ui-selected, .customShape.ui-selected' ).length < 2 && !e.metaKey ) {
+  //if ( $('.node_frame.ui-selected, .network_frame.ui-selected' ).length < 2 && !e.metaKey ) {
+  if ( $('.node_frame.ui-selected, .network_frame.ui-selected, .customShape.ui-selected' ).length < 2 && !e.metaKey ) {
     $('#lab-viewport').removeClass('freeSelectMode');
     $('.free-selected').removeClass('free-selected');
     $('.ui-selecting').removeClass('ui-selecting')
@@ -2594,7 +2594,7 @@ function updateFreeSelect ( e , ui ) {
   $('.node_frame.ui-selected').addClass('free-selected');
   $('.node_frame.ui-selected').addClass('move-selected');
   $('.network_frame.ui-selected').addClass('move-selected');
-  //$('.customShape.ui-selected').addClass('move-selected');
+  $('.customShape.ui-selected').addClass('move-selected');
   window.freeSelectedNodes = []
   $(".free-selected").each(function() {
      var $type = $(this).hasClass('node_frame') ? 'node' : 'network' ;
@@ -2602,6 +2602,16 @@ function updateFreeSelect ( e , ui ) {
   });
 
 }
+
+function rotateObject(obj, angle) {
+        obj.css({ '-webkit-transform': 'rotate(' + angle + 'deg)'});
+        obj.css({ '-moz-transform': 'rotate(' + angle + 'deg)'});
+        obj.css({ '-ms-transform': 'rotate(' + angle + 'deg)'});
+        obj.css({ 'msTransform': 'rotate(' + angle + 'deg)'});
+        obj.css({ '-o-transform': 'rotate(' + angle + 'deg)'});
+        obj.css({ '-sand-transform': 'rotate(' + angle + 'deg)'});
+        obj.css({ 'transform': 'rotate(' + angle + 'deg)'});
+    }
 
 function dragGroupInit ( e , ui ) {
      window.dragInitY = e.el.offsetTop;
@@ -2616,7 +2626,14 @@ function dragGroupInit ( e , ui ) {
      if (  $(this).hasClass('network_frame') ) type = 'network'
      if (  $(this).hasClass('customShape') ) type = 'customShape'
      if (  $(this).hasClass('customText') ) type = 'customText'
-     window.dragGroup.push({ path: $(this).data("path"), originTop: $(this).position().top, originLeft: $(this).position().left , type: type});
+     var tmp = $(this).position();
+     tmp.angle = getElementsAngle('#'+$(this).attr('id') );
+     rotateObject($(this), 0);
+     tmp.left = Math.round($(this).position().left);
+     tmp.top = Math.round($(this).position().top); 
+     rotateObject($(this), tmp.angle);
+     window.dragGroup.push({ path: $(this).data("path"), originTop: tmp.top , originLeft: tmp.left , type: type});
+     logger ( 1, "Object " + $(this).attr('id') + ' top:' + $(this).position().top );
      $(this).addClass('jsplumb-drag')
      });
 }
@@ -2630,7 +2647,10 @@ function dragGroupUpdate ( e , ui ) {
     dragGroup.forEach(function(node){
           var angle = getElementsAngle('#'+node.type+node.path)
           var width = $('#'+node.type+node.path).width()
-          $('#'+node.type+node.path).css( { top: node.originTop - ( offsetY - (Math.sin(angle)*width/4) ) , left: node.originLeft - offsetX })
+          var height = getElementsAngle('#'+node.type+node.path)
+          var newWidth = width + Math.ceil(width * Math.cos(angle))
+          var newHeight =  height + Math.ceil(height * Math.cos(angle))
+          $('#'+node.type+node.path).css( { top: node.originTop -  offsetY , left: node.originLeft - offsetX })
     });
 }
 
@@ -2857,7 +2877,7 @@ function printLabTopology() {
                 
                 if (ROLE == 'admin' || ROLE == 'editor')  {
                     // Nodes and networks are draggable within a grid
-                    $.when(labTextObjectsResolver).done( function () { 
+                    //$.when(labTextObjectsResolver).done( function () { 
                     lab_topology.draggable($('.node_frame, .network_frame, .customShape'), {
                        grid: [3, 3],
                        stop: ObjectPosUpdate,
@@ -2867,8 +2887,8 @@ function printLabTopology() {
                            lab_topology.repaintEverything();
                       }
                     });
-                    });
-                    lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true );
+                    //});
+                    //lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true );
                     // Node as source or dest link
                      $.each(nodes, function (key,value) {
                            lab_topology.makeSource('node' + value['id'], {
@@ -3004,8 +3024,8 @@ function printLabTopology() {
                 if ( labinfo['lock'] == 1 ) {
                                 LOCK = 1 ;
                                 defer.resolve();
-                                if (ROLE == 'admin' || ROLE == 'editor') {
-                                     jsPlumb.setDraggable('.customShape, .node_frame, .nertwork_frame', true );
+                                if (ROLE == 'admin' || ROLE == 'editor' ) {
+                                     jsPlumb.setDraggable($('customShape, .node_frame, .network_frame'), false );
                                }
                                $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
                                $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
