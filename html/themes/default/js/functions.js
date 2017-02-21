@@ -2627,7 +2627,9 @@ function dragGroupUpdate ( e , ui ) {
     var offsetX = dragInitX -  e.el.offsetLeft
     var offsetY = dragInitY -  e.el.offsetTop
     dragGroup.forEach(function(node){
-          $('#'+node.type+node.path).css( { top: node.originTop - offsetY , left: node.originLeft - offsetX })
+          var angle = getElementsAngle('#'+node.type+node.path)
+          var width = $('#'+node.type+node.path).width()
+          $('#'+node.type+node.path).css( { top: node.originTop - ( offsetY - (Math.sin(angle)*width/4) ) , left: node.originLeft - offsetX })
     });
 }
 
