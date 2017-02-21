@@ -2579,7 +2579,8 @@ function printLabPreview(lab_filename) {
 // Jquery-ui freeselect
 
 function updateFreeSelect ( e , ui ) {
-  if ( $('.node_frame.ui-selected, .network_frame.ui-selected, .customShape.ui-selected' ).length < 2 && !e.metaKey ) {
+  if ( $('.node_frame.ui-selected, .network_frame.ui-selected' ).length < 2 && !e.metaKey ) {
+  //if ( $('.node_frame.ui-selected, .network_frame.ui-selected, .customShape.ui-selected' ).length < 2 && !e.metaKey ) {
     $('#lab-viewport').removeClass('freeSelectMode');
     $('.free-selected').removeClass('free-selected');
     $('.ui-selecting').removeClass('ui-selecting')
@@ -2593,7 +2594,7 @@ function updateFreeSelect ( e , ui ) {
   $('.node_frame.ui-selected').addClass('free-selected');
   $('.node_frame.ui-selected').addClass('move-selected');
   $('.network_frame.ui-selected').addClass('move-selected');
-  $('.customShape.ui-selected').addClass('move-selected');
+  //$('.customShape.ui-selected').addClass('move-selected');
   window.freeSelectedNodes = []
   $(".free-selected").each(function() {
      var $type = $(this).hasClass('node_frame') ? 'node' : 'network' ;
