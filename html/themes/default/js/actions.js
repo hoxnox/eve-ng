@@ -141,21 +141,18 @@ function ObjectPosUpdate (event ,ui) {
           });
      }
      $('.move-selected').removeClass('move-selected') 
-    //event.target.outerHTML.replace('move-selected','');
+     var tmp_nodes = [],
+         tmp_shapes = [],
+         tmp_networks = [];
      $.each( groupMove,  function ( id, node ) {
           eLeft = Math.round(node.offsetLeft + $('#lab-viewport').scrollLeft())
           eTop = Math.round(node.offsetTop + $('#lab-viewport').scrollTop())
           id = node.id
           $('#'+id).addClass('dragstopped')
-          //alert ( eLeft + ' ' + eTop + ' ' + id.replace('node','') ) 
           if ( id.search('node') != -1 ) {
                logger(1, 'DEBUG: setting' + id + ' position.');
-               $.when(setNodePosition( id.replace('node',''), eLeft, eTop)).done(function () {
-                   jsPlumb.repaint();
-               }).fail(function (message) {
-                     // Error on save
-                    addModalError(message);
-                 });;
+               tmp_nodes.push( { id : id.replace('node','') , left: eLeft, top: eTop } )
+               logger(1, 'DEBUG: setting' + id + ' position.');
           } else if  ( id.search('network') != -1 )  {
               logger(1, 'DEBUG: setting ' + id + ' position.');
               $.when(setNetworkPosition(id.replace('network',''), eLeft, eTop)).done(function () {
@@ -184,6 +181,66 @@ function ObjectPosUpdate (event ,ui) {
           }
           if ( groupMove.length > 1 )  $("#"+id).addClass('move-selected')
      });
+     // Bull for nodes 
+     if ( tmp_nodes.length > 0 )  {
+         $.when(setNodesPosition(tmp_nodes)).done(function () {
+               jsPlumb.repaint();
+         }).fail(function (message) {
+             // Error on save
+             addModalError(message);
+         });
+     }
+     window.dragstop = 0
+     if ( groupMove.length > 1 ) window.dragstop = 1
+}
+
+function NewObjectPosUpdate (event ,ui) {
+     var groupMove = []
+     if ( $('.move-selected').length == 0 ) {
+          groupMove.push(event.el)
+     } else {
+          $('.move-selected').each( function ( id, node ) {
+                groupMove.push(node)
+          });
+     }
+     $('.move-selected').removeClass('move-selected')
+    //event.target.outerHTML.replace('move-selected','');
+     var tmp_nodes = [],
+         tmp_shapes = [],
+         tmp_networks = [];
+     $.each( groupMove,  function ( id, node ) {
+          eLeft = Math.round(node.offsetLeft + $('#lab-viewport').scrollLeft())
+          eTop = Math.round(node.offsetTop + $('#lab-viewport').scrollTop())
+          id = node.id
+          $('#'+id).addClass('dragstopped')
+          //alert ( eLeft + ' ' + eTop + ' ' + id.replace('node','') )
+          if ( id.search('node') != -1 ) {
+               tmp_nodes.push( { id : id.replace('node','') , left: eLeft, top: eTop } )
+               logger(1, 'DEBUG: setting' + id + ' position.');
+          } else if  ( id.search('network') != -1 )  {
+              logger(1, 'DEBUG: setting ' + id + ' position.');
+          } else if ( id.search('custom') != -1 )  {
+              logger(1, 'DEBUG: setting ' + id + ' position.');
+          /*    $.when(setShapePosition(node)).done(function () {
+                  jsPlumb.draggable(id, {
+                       grid: [3, 3],
+                       stop: ObjectPosUpdate,
+                       start: dragGroupInit,
+                       drag:  function ( e, ui ) {
+                           dragGroupUpdate( e, ui )
+                           .repaintEverything();
+                      }
+                    }); 
+                  jsPlumb.repaint();
+                            }).fail(function (message) {
+                     // Error on save
+                     addModalError(message);
+              });;
+          */
+          }
+          if ( groupMove.length > 1 )  $("#"+id).addClass('move-selected')
+     });
+     setNodesPosition(tmp_nodes)
      window.dragstop = 0
      if ( groupMove.length > 1 ) window.dragstop = 1
 }

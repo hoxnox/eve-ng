@@ -1435,6 +1435,40 @@ function setNodePosition(node_id, left, top) {
     });
     return deferred.promise();
 }
+// Set multiple node position
+function setNodesPosition(nodes) {
+    var deferred = $.Deferred();
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var form_data = [];
+    form_data=nodes;
+    var url = '/api/labs' + lab_filename + '/nodes' ;
+    var type = 'PUT';
+    $.ajax({
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: node position updated.');
+                deferred.resolve();
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
 // Update node data from node list
 function setNodeData(id){
     var lab_filename = $('#lab-viewport').attr('data-path');
@@ -2803,9 +2837,6 @@ function printLabTopology() {
         $.each(textObjects, function (key, value) {
             getTextObject(value['id']).done(function (textObject) {
                 $(".progress-bar").css("width", ++progressbarValue / progressbarMax * 100 + "%");
-                if (--textObjectsCount === 0) {
-                    labTextObjectsResolver.resolve();
-                }
 
                 var $newTextObject = $(textObject['data']);
 
@@ -2844,6 +2875,9 @@ function printLabTopology() {
                 else {
                     return void 0;
                 }
+                if (--textObjectsCount === 0) {
+                    labTextObjectsResolver.resolve();
+                }
             }).fail(function () {
                 logger(1, 'DEBUG: Failed to load Text Object' + value['name'] + '!');
             });
@@ -2878,6 +2912,8 @@ function printLabTopology() {
                 if (ROLE == 'admin' || ROLE == 'editor')  {
                     // Nodes and networks are draggable within a grid
                     //$.when(labTextObjectsResolver).done( function () { 
+                    $.when ( labTextObjectsResolver ).done ( function () {
+                    logger(1,'DEBUG: '+ textObjectsCount+ ' Shape(s) left');
                     lab_topology.draggable($('.node_frame, .network_frame, .customShape'), {
                        grid: [3, 3],
                        stop: ObjectPosUpdate,
@@ -2887,7 +2923,7 @@ function printLabTopology() {
                            lab_topology.repaintEverything();
                       }
                     });
-                    //});
+                    });
                     //lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true );
                     // Node as source or dest link
                      $.each(nodes, function (key,value) {
