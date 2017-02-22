@@ -123,7 +123,30 @@ function apiEditLabNode($lab, $p) {
 	}
 	return $output;
 }
-
+/**
+ * Function to edit multiple lab node.
+ *
+ * @param   Lab     $lab                Lab
+ * @param   Array   $p                  Parameters
+ * @return  Array                       Return code (JSend data)
+ */
+function apiEditLabNodes($lab, $p) {
+        // Edit node
+            //$rc=$lab -> editNode
+        foreach ( $p as $node ) { 
+          $rc = $rc=$lab -> editNode($node);
+        }
+        if ($rc === 0) {
+                $output['code'] = 201;
+                $output['status'] = 'success';
+                $output['message'] = $GLOBALS['messages'][60023];
+        } else {
+                $output['code'] = 400;
+                $output['status'] = 'fail';
+                $output['message'] = $GLOBALS['messages'][$rc];
+        }
+        return $output;
+}
 /**
  * Function to export a single node.
  *

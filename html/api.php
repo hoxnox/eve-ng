@@ -725,6 +725,8 @@ $app -> put('/api/labs/(:path+)', function($path = array()) use ($app, $db) {
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/nodes\/[0-9]+$/', $s)) {
 		$p['id'] = $id;
 		$output = apiEditLabNode($lab, $p);
+        } else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/nodes$/', $s)) {
+                $output = apiEditLabNodes($lab, $p);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/nodes\/[0-9]+\/export$/', $s)) {
 		if ($tenant < 0) {
 			// User does not have an assigned tenant
