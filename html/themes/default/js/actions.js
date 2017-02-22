@@ -47,23 +47,9 @@ $(document).on('keydown', 'body', function (e) {
         $('#context-menu').remove();
         $('.free-selected').removeClass('free-selected')
         $('.move-selected').removeClass('move-selected')
-        $('.ui-selected').removeClass('ui-selected')
+        //$('.ui-selected').removeClass('ui-selected')
         $("#lab-viewport").removeClass('freeSelectMode')
-        $('.free-selected').removeClass('jsplumb-drag-selected')
-    }
-    if (KEY_CODES.escape == e.which && LOCK == 0 ) {
-        var lab_topology=jsPlumb.getInstance();
-        lab_topology.draggable($('.node_frame, .network_frame, .customShape '), {
-                       grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           jsPlumb.repaintEverything();
-                           lab_topology.repaintEverything();
-                      }
-                    });
-        lab_topology.setDraggable('.node_frame, .network_frame, .customShape ', true );
+        //$('.free-selected').removeClass('jsplumb-drag-selected')
     }
     if (isEditCustomShape && KEY_CODES.escape == e.which) {
         $(".edit-custom-shape-form button.cancelForm").click(); // it will handle all the stuff
@@ -140,7 +126,7 @@ function ObjectPosUpdate (event ,ui) {
                 groupMove.push(node) 
           });
      }
-     $('.move-selected').removeClass('move-selected') 
+     //$('.move-selected').removeClass('move-selected') 
      var tmp_nodes = [],
          tmp_shapes = [],
          tmp_networks = [];
@@ -156,7 +142,7 @@ function ObjectPosUpdate (event ,ui) {
           } else if  ( id.search('network') != -1 )  {
               logger(1, 'DEBUG: setting ' + id + ' position.');
               $.when(setNetworkPosition(id.replace('network',''), eLeft, eTop)).done(function () {
-                  jsPlumb.repaint();
+                  //lab_topology.repaintEverything();
               }).fail(function (message) {
                      // Error on save
                      addModalError(message);
@@ -164,83 +150,24 @@ function ObjectPosUpdate (event ,ui) {
           } else if ( id.search('custom') != -1 )  {
               logger(1, 'DEBUG: setting ' + id + ' position.');
               $.when(setShapePosition(node)).done(function () {
-                  jsPlumb.draggable(id, {
-                       grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           .repaintEverything();
-                      }
-                    });
-                  jsPlumb.repaint();
+                  //lab_topology.repaintEverything();
                             }).fail(function (message) {
                      // Error on save
                      addModalError(message);
               });;
           }
-          if ( groupMove.length > 1 )  $("#"+id).addClass('move-selected')
+	  //if ( groupMove.length > 1 )  $("#"+id).addClass('move-selected')
      });
      // Bull for nodes 
      if ( tmp_nodes.length > 0 )  {
+         lab_topology.repaintEverything();
          $.when(setNodesPosition(tmp_nodes)).done(function () {
-               jsPlumb.repaint();
+               logger(1, 'DEBUG: all selected node position saved.');
          }).fail(function (message) {
              // Error on save
              addModalError(message);
          });
      }
-     window.dragstop = 0
-     if ( groupMove.length > 1 ) window.dragstop = 1
-}
-
-function NewObjectPosUpdate (event ,ui) {
-     var groupMove = []
-     if ( $('.move-selected').length == 0 ) {
-          groupMove.push(event.el)
-     } else {
-          $('.move-selected').each( function ( id, node ) {
-                groupMove.push(node)
-          });
-     }
-     $('.move-selected').removeClass('move-selected')
-    //event.target.outerHTML.replace('move-selected','');
-     var tmp_nodes = [],
-         tmp_shapes = [],
-         tmp_networks = [];
-     $.each( groupMove,  function ( id, node ) {
-          eLeft = Math.round(node.offsetLeft + $('#lab-viewport').scrollLeft())
-          eTop = Math.round(node.offsetTop + $('#lab-viewport').scrollTop())
-          id = node.id
-          $('#'+id).addClass('dragstopped')
-          //alert ( eLeft + ' ' + eTop + ' ' + id.replace('node','') )
-          if ( id.search('node') != -1 ) {
-               tmp_nodes.push( { id : id.replace('node','') , left: eLeft, top: eTop } )
-               logger(1, 'DEBUG: setting' + id + ' position.');
-          } else if  ( id.search('network') != -1 )  {
-              logger(1, 'DEBUG: setting ' + id + ' position.');
-          } else if ( id.search('custom') != -1 )  {
-              logger(1, 'DEBUG: setting ' + id + ' position.');
-          /*    $.when(setShapePosition(node)).done(function () {
-                  jsPlumb.draggable(id, {
-                       grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           .repaintEverything();
-                      }
-                    }); 
-                  jsPlumb.repaint();
-                            }).fail(function (message) {
-                     // Error on save
-                     addModalError(message);
-              });;
-          */
-          }
-          if ( groupMove.length > 1 )  $("#"+id).addClass('move-selected')
-     });
-     setNodesPosition(tmp_nodes)
      window.dragstop = 0
      if ( groupMove.length > 1 ) window.dragstop = 1
 }
@@ -375,7 +302,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
 
     var isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode");
 
-    if (isFreeSelectMode && !$(this).is(".node_frame.free-selected", ".node_frame.free-selected *")) {
+    if (isFreeSelectMode && !$(this).is(".network_frame.free-selected, .node_frame.free-selected")) {
         // prevent 'contextmenu' on non Free Selected Elements
         return;
     }
@@ -582,7 +509,7 @@ $(document).on('click', '.action-nodecapture', function(){
 $(window).resize(function () {
     if ($('#lab-viewport').length) {
         // Update topology on window resize
-        jsPlumb.repaintEverything();
+        lab_topology.repaintEverything();
         // Update picture map on window resize
         $('map').imageMapResize();
     }
@@ -602,7 +529,7 @@ $(document).on('change input', 'input[name="node[count]"]', function(e){
 // plug show/hide event
 
 $(document).on('mouseover','.node_frame, .network_frame', function (e) {
-	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 && ( $(this).attr('data-status') == 0 || $(this).attr('data-status') == undefined ) ) { 
+	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 && ( $(this).attr('data-status') == 0 || $(this).attr('data-status') == undefined ) && !$('#lab-viewport').hasClass('freeSelectMode') ) { 
 	     $(this).find('.tag').removeClass("hidden");
         }
 } ) ; 
@@ -2769,11 +2696,11 @@ $('body').on('submit', '#form-picture-delete', function (ev) {
 
 // Prevent Drag when Resize
 $('body').on('mouseover','.ui-resizable-handle',function (e) {
-       jsPlumb.setDraggable($('.customShape'), false )
+       lab_topology.setDraggable($('.customShape'), false )
 });
 
 $('body').on('mouseleave','.ui-resizable-handle',function (e) {
-       if ( LOCK==0 ) jsPlumb.setDraggable($('.customShape'), true )
+       if ( LOCK==0 ) lab_topology.setDraggable($('.customShape'), true )
 });
 // Add Custom Shape
 $('body').on('submit', '.custom-shape-form', function (e) {
@@ -3028,7 +2955,7 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
         $selected_shape = $("#customShape" + id);
         $selected_shape.resizable("destroy");
         //$selected_shape.draggable("destroy");
-        //jsPlumb.setDraggable($selected_shape, false);
+        //lab_topology.setDraggable($selected_shape, false);
         $duplicated_shape = $selected_shape.clone();
 
         $selected_shape
@@ -3077,7 +3004,7 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
     } else if ($("#customText" + id).length) {
         $selected_shape = $("#customText" + id);
         $selected_shape.resizable("destroy");
-        //jsPlumb.setDraggable($selected_shape, false);
+        //lab_topology.setDraggable($selected_shape, false);
         $duplicated_shape = $selected_shape.clone();
         $selected_shape
         .resizable({
@@ -3114,14 +3041,9 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
 
             createTextObject(form_data).done(function () {
                 $('#lab-viewport').prepend(new_data_html);
-                jsPlumb.draggable('customText' + new_id, {
+                lab_topology.draggable('customText' + new_id, {
                        grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           lab_topology.repaintEverything();
-                      }
+                       stop: ObjectPosUpdate
                     });
                 $('#customText' + new_id)
                 .resizable({
@@ -3489,7 +3411,7 @@ $(document).on('dblclick', '.customText', function (e) {
 
     // Disable draggable and resizable before sending request
     try {
-        jsPlumb.setDraggable('customText'+id, false);
+        lab_topology.setDraggable('customText'+id, false);
         $(this).resizable("destroy");
     }
     catch (e) {
@@ -3550,7 +3472,7 @@ $(document).on('focusout', '.editable', function (e) {
     }).fail(function (message) {
         addModalError(message);
     });
-    jsPlumb.setDraggable('customText'+id, true);
+    lab_topology.setDraggable('customText'+id, true);
     logger (1,  ' DEBUG: focusout will apply jsplum drggable to customText'+id ) 
     $selected_shape
     .resizable({
@@ -3839,20 +3761,22 @@ $(document).on('click', 'a.interfaces.serial', function (e) {
 })
 
 $(document).on('click','#lab-viewport', function (e) {
-   if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')  && e.target.className.search('action-') == -1  && window.dragstop != 1) {
+   if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')   && window.dragstop != 1) {
         $('.free-selected').removeClass('free-selected')
         $('.move-selected').removeClass('move-selected')
-        $('.free-selected').removeClass('jsplumb-drag-selected')
         $('.ui-selected').removeClass('ui-selected')
         $('#lab-viewport').removeClass('freeSelectMode')
+        lab_topology.clearDragSelection()
    }
+   if ( $('.move-selected').length < 1 ) $('#lab-viewport').removeClass('freeSelectMode')
+
    if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) { $('p').blur() ; $('p').focusout() ;}
    window.dragstop = 0
 });
 
 
-$(document).on('click', '.network_frame', function (e) {
-        var node = $(this).parent();
+$(document).on('click', '.network_frame, .node_frame, .customShape', function (e) {
+        var node = $(this)
          if ( e.metaKey || e.ctrlKey  ) {
         node.toggleClass('move-selected')
         updateFreeSelect(e,node)
@@ -3993,7 +3917,7 @@ function detachNodeLink() {
                 $('#inner').remove();
                 $('.link_selected').removeClass('link_selected');
                 $('.startNode').removeClass('startNode');
-                jsPlumb.detach(window.conn);
+                lab_topology.detach(window.conn);
                 delete window.startNode;
                 delete window.conn;
             }

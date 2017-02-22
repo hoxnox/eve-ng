@@ -2614,7 +2614,7 @@ function printLabPreview(lab_filename) {
 
 function updateFreeSelect ( e , ui ) {
   //if ( $('.node_frame.ui-selected, .network_frame.ui-selected' ).length < 2 && !e.metaKey ) {
-  if ( $('.node_frame.ui-selected, .network_frame.ui-selected, .customShape.ui-selected' ).length < 2 && !e.metaKey ) {
+  if ( $('.node_frame.ui-selected, .network_frame.ui-selected, .customShape.ui-selected' ).length < 2 && !e.metaKey && !e.ctrlKey  ) {
     $('#lab-viewport').removeClass('freeSelectMode');
     $('.free-selected').removeClass('free-selected');
     $('.ui-selecting').removeClass('ui-selecting')
@@ -2630,73 +2630,21 @@ function updateFreeSelect ( e , ui ) {
   $('.network_frame.ui-selected').addClass('move-selected');
   $('.customShape.ui-selected').addClass('move-selected');
   window.freeSelectedNodes = []
-  $(".free-selected").each(function() {
-     var $type = $(this).hasClass('node_frame') ? 'node' : 'network' ;
-     if ($type == 'node' ) window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path"), type: $type   });
+  lab_topology.clearDragSelection();
+  $(".move-selected").each(function() {
+     lab_topology.addToDragSelection($(this))
+     var $type = $(this).hasClass('node_frame') ? 'node' : 'other' ;
+     if ($type == 'node' ) window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path")  });
+     
   });
 
 }
 
-function rotateObject(obj, angle) {
-        obj.css({ '-webkit-transform': 'rotate(' + angle + 'deg)'});
-        obj.css({ '-moz-transform': 'rotate(' + angle + 'deg)'});
-        obj.css({ '-ms-transform': 'rotate(' + angle + 'deg)'});
-        obj.css({ 'msTransform': 'rotate(' + angle + 'deg)'});
-        obj.css({ '-o-transform': 'rotate(' + angle + 'deg)'});
-        obj.css({ '-sand-transform': 'rotate(' + angle + 'deg)'});
-        obj.css({ 'transform': 'rotate(' + angle + 'deg)'});
-    }
-
-function dragGroupInit ( e , ui ) {
-     window.dragInitY = e.el.offsetTop;
-     window.dragInitX = e.el.offsetLeft;
-     if ( !$('#lab-viewport').hasClass('freeSelectMode') ) {
-          return
-     }
-     window.dragGroup = []
-     var type = ''
-     $(".move-selected").each(function() {
-     if (  $(this).hasClass('node_frame') ) type = 'node'
-     if (  $(this).hasClass('network_frame') ) type = 'network'
-     if (  $(this).hasClass('customShape') ) type = 'customShape'
-     if (  $(this).hasClass('customText') ) type = 'customText'
-     var tmp = $(this).position();
-     tmp.angle = getElementsAngle('#'+$(this).attr('id') );
-     rotateObject($(this), 0);
-     tmp.left = Math.round($(this).position().left);
-     tmp.top = Math.round($(this).position().top); 
-     rotateObject($(this), tmp.angle);
-     window.dragGroup.push({ path: $(this).data("path"), originTop: tmp.top , originLeft: tmp.left , type: type});
-     logger ( 1, "Object " + $(this).attr('id') + ' top:' + $(this).position().top );
-     $(this).addClass('jsplumb-drag')
-     });
-}
-
-function dragGroupUpdate ( e , ui ) {
-    if ( !$('#lab-viewport').hasClass('freeSelectMode') ) {
-          return
-    }
-    var offsetX = dragInitX -  e.el.offsetLeft
-    var offsetY = dragInitY -  e.el.offsetTop
-    dragGroup.forEach(function(node){
-          var angle = getElementsAngle('#'+node.type+node.path)
-          var width = $('#'+node.type+node.path).width()
-          var height = getElementsAngle('#'+node.type+node.path)
-          var newWidth = width + Math.ceil(width * Math.cos(angle))
-          var newHeight =  height + Math.ceil(height * Math.cos(angle))
-          $('#'+node.type+node.path).css( { top: node.originTop -  offsetY , left: node.originLeft - offsetX })
-    });
-}
-
-
-
 
 // Print lab topology
 function printLabTopology() {
-    //window.topoLoading = 1;
     var defer  = $.Deferred();
     $('#lab-viewport').selectable({stop: function ( event, ui ) { updateFreeSelect ( event, ui ) }, distance: 1});
-    //$('#lab-viewport').selectable();
     var lab_filename = $('#lab-viewport').attr('data-path')
         , $labViewport = $('#lab-viewport')
         , loadingLabHtml = '' +
@@ -2875,6 +2823,10 @@ function printLabTopology() {
                 else {
                     return void 0;
                 }
+                // Finally clean old class saved by error or bug
+               $newTextObject.removeClass('ui-selected'); 
+               $newTextObject.removeClass('move-selected'); 
+               $newTextObject.removeClass('dragstopped'); 
                 if (--textObjectsCount === 0) {
                     labTextObjectsResolver.resolve();
                 }
@@ -2888,17 +2840,9 @@ function printLabTopology() {
         $.when.apply($, networkImgs.concat(nodesImgs)).done(function () {
             // Drawing topology
             jsPlumb.ready(function () {
-                // Defaults
-                jsPlumb.importDefaults({
-                    Anchor: 'Continuous',
-                    Connector: ['Straight'],
-                    Endpoint: 'Blank',
-                    PaintStyle: {lineWidth: 2, strokeStyle: '#0066aa'},
-                    cssClass: 'link'
-                });
 
                 // Create jsPlumb topology
-                var lab_topology = jsPlumb.getInstance();
+                window.lab_topology = jsPlumb.getInstance();
                 lab_topology.setContainer($("#lab-viewport"));
                 lab_topology.importDefaults({
                     Anchor: 'Continuous',
@@ -2910,21 +2854,15 @@ function printLabTopology() {
                 // Read privileges and set specific actions/elements
                 
                 if (ROLE == 'admin' || ROLE == 'editor')  {
-                    // Nodes and networks are draggable within a grid
-                    //$.when(labTextObjectsResolver).done( function () { 
                     $.when ( labTextObjectsResolver ).done ( function () {
                     logger(1,'DEBUG: '+ textObjectsCount+ ' Shape(s) left');
                     lab_topology.draggable($('.node_frame, .network_frame, .customShape'), {
                        grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui ) 
-                           lab_topology.repaintEverything();
-                      }
+                       stop: function ( e, ui) {
+                                ObjectPosUpdate(e,ui)
+                       }
                     });
                     });
-                    //lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true );
                     // Node as source or dest link
                      $.each(nodes, function (key,value) {
                            lab_topology.makeSource('node' + value['id'], {
@@ -3061,7 +2999,7 @@ function printLabTopology() {
                                 LOCK = 1 ;
                                 defer.resolve();
                                 if (ROLE == 'admin' || ROLE == 'editor' ) {
-                                     jsPlumb.setDraggable($('customShape, .node_frame, .network_frame'), false );
+                                     lab_topology.setDraggable($('customShape, .node_frame, .network_frame'), false );
                                }
                                $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
                                $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
@@ -4580,7 +4518,7 @@ function autoheight()
 }
 
 function lockLab() {
-    var lab_topology = jsPlumb.getInstance();
+    var lab_topology = window.lab_topology
     //var allElements = $('.node_frame, .network_frame, .customShape');
     //alert ( JSON.stringify( allElements ));
     //for (var i = 0; i < allElements.length; i++){
@@ -4627,16 +4565,11 @@ function lockLab() {
 }
 
 function unlockLab(){
-    var lab_topology = jsPlumb.getInstance();
+    lab_topology = window.lab_topology
     lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true);
     lab_topology.draggable($('.node_frame, .network_frame, .customShape'), {
                        grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           lab_topology.repaintEverything();
-                      }
+                       stop: ObjectPosUpdate
                     });
 
     //$('.customShape').draggable('enable');
@@ -4782,7 +4715,7 @@ function newConnModal(info , oe ) {
                        linktargetdata['interfaces'] = tmp_interfaces
                   }
                   if ( linktargetdata['selectedif'] == '' ) linktargetdata['selectedif'] = 0 ;
-                  if ( linksourcedata['status'] == 2 || linktargetdata['status'] == 2 ) { jsPlumb.detach( info.connection ) ; return }
+                  if ( linksourcedata['status'] == 2 || linktargetdata['status'] == 2 ) { lab_topology.detach( info.connection ) ; return }
                   window.tmpconn = info.connection
      	          html = '<form id="addConn" class="addConn-form">' +
                            '<input type="hidden" name="addConn[srcNodeId]" value="'+linksourcedata['id']+'">' +
@@ -4949,4 +4882,3 @@ function connContextMenu ( e, ui ) {
          window.connContext = 1
          window.connToDel = e
 }
-
