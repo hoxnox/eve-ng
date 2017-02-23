@@ -2630,13 +2630,14 @@ function updateFreeSelect ( e , ui ) {
   $('.network_frame.ui-selected').addClass('move-selected');
   $('.customShape.ui-selected').addClass('move-selected');
   window.freeSelectedNodes = []
-  lab_topology.clearDragSelection();
-  $(".move-selected").each(function() {
-     lab_topology.addToDragSelection($(this))
-     var $type = $(this).hasClass('node_frame') ? 'node' : 'other' ;
-     if ($type == 'node' ) window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path")  });
-     
+  $.when( lab_topology.clearDragSelection() ).done(  function () { 
+     lab_topology.addToDragSelection($('.move-selected'))
   });
+     $(".move-selected").each(function() {
+        //lab_topology.addToDragSelection($(this))
+        var $type = $(this).hasClass('node_frame') ? 'node' : 'other' ;
+        if ($type == 'node' ) window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path")  });
+     });
 
 }
 
@@ -2801,7 +2802,7 @@ function printLabTopology() {
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
                             },
-                            stop: textObjectDragStop
+                            stop: ObjectPosUpdate //textObjectDragStop
                         });
                 }
                 else if ($newTextObject.attr("id").indexOf("customText") !== -1) {
@@ -2817,7 +2818,7 @@ function printLabTopology() {
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
                             },
-                            stop: textObjectDragStop
+                            stop: ObjectPosUpdate // textObjectDragStop
                         });
                 }
                 else {
@@ -2842,7 +2843,7 @@ function printLabTopology() {
             jsPlumb.ready(function () {
 
                 // Create jsPlumb topology
-                window.lab_topology = jsPlumb.getInstance();
+                try { window.lab_topology.reset() } catch (ex) { window.lab_topology = jsPlumb.getInstance() };
                 window.moveCount = 0
                 lab_topology.setContainer($("#lab-viewport"));
                 lab_topology.importDefaults({
@@ -2853,21 +2854,24 @@ function printLabTopology() {
                     cssClass: 'link'
                 });
                 // Read privileges and set specific actions/elements
-                
+               
+                 
                 if (ROLE == 'admin' || ROLE == 'editor')  {
+                    dragDeferred = $.Deferred()
                     $.when ( labTextObjectsResolver ).done ( function () {
-                    logger(1,'DEBUG: '+ textObjectsCount+ ' Shape(s) left');
-                    lab_topology.draggable($('.node_frame, .network_frame, .customShape'), {
-                       grid: [3, 3],
-                       stop: function ( e, ui) {
-                                ObjectPosUpdate(e,ui)
-                                // ask twice bug ????
-                                lab_topology.repaintEverything()
-                                lab_topology.repaintEverything()
-                       }
+                        logger(1,'DEBUG: '+ textObjectsCount+ ' Shape(s) left');
+                        lab_topology.draggable($('.node_frame, .network_frame, .customShape' ), {
+                           grid: [3, 3],
+                           stop: function ( e, ui) {
+                                    ObjectPosUpdate(e,ui)
+                           }
+                        });
+                        dragDeferred.resolve();
                     });
-                    });
+                  
+                    //sleep (10000)
                     // Node as source or dest link
+                     $.when( dragDeferred ).done( function () {
                      $.each(nodes, function (key,value) {
                            lab_topology.makeSource('node' + value['id'], {
                                 filter: ".ep",
@@ -2906,6 +2910,7 @@ function printLabTopology() {
                                 anchor: "Continuous",
                                 allowLoopback: false
                           });
+                    });
                     });
                 }
 
@@ -2997,7 +3002,7 @@ function printLabTopology() {
 
 
                 // Move elements under the topology node
-                $('._jsPlumb_connector, ._jsPlumb_overlay, ._jsPlumb_endpoint_anchor_').detach().appendTo('#lab-viewport');
+                //$('._jsPlumb_connector, ._jsPlumb_overlay, ._jsPlumb_endpoint_anchor_').detach().appendTo('#lab-viewport');
                 // if lock then freeze node network
                 if ( labinfo['lock'] == 1 ) {
                                 LOCK = 1 ;
@@ -3044,6 +3049,8 @@ function printLabTopology() {
     $.when(labNodesResolver, labTextObjectsResolver).done(function () {
 
         $.when(deleteSingleNetworks()).done(function(){
+            //lab_topology.repaintEverything()
+            //lab_topology.repaintEverything()
             $("#loading-lab").remove();
             $("#lab-sidebar *").show();
         })

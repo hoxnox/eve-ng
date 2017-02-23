@@ -161,8 +161,9 @@ function ObjectPosUpdate (event ,ui) {
 	  //if ( groupMove.length > 1 )  $("#"+id).addClass('move-selected')
      });
      // Bulk for nodes 
+        // lab_topology.repaintEverything();
+        // lab_topology.repaintEverything();
      if ( tmp_nodes.length > 0 )  {
-         lab_topology.repaintEverything();
          $.when(setNodesPosition(tmp_nodes)).done(function () {
                logger(1, 'DEBUG: all selected node position saved.');
          }).fail(function (message) {
@@ -536,11 +537,16 @@ $(document).on('mouseover','.node_frame, .network_frame', function (e) {
 	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 && ( $(this).attr('data-status') == 0 || $(this).attr('data-status') == undefined ) && !$('#lab-viewport').hasClass('freeSelectMode') ) { 
 	     $(this).find('.tag').removeClass("hidden");
         }
-} ) ; 
+}) ; 
+
+$(document).on('mouseover','.ep' , function (e) {
+    //lab_topology.setDraggable ( this , false )
+});
 
 $(document).on('mouseleave','.node_frame, .network_frame', function (e) {
         $(this).find('.tag').addClass("hidden");
-} ) ;
+        //lab_topology.setDraggable ( this , true )
+});
 /***************************************************************************
  * Actions links
  **************************************************************************/
@@ -3766,9 +3772,9 @@ $(document).on('click', 'a.interfaces.serial', function (e) {
 
 $(document).on('click','#lab-viewport', function (e) {
    var context = 0 
-   if ( typeof ( e.target.className)  != undefined )  {
-           if ( e.target.className.search('action-') != -1 ) context = 1
-   }
+   {
+        try {    if ( e.target.className.search('action-') != -1 ) context = 1  } catch (ex) {}
+   } 
    if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')   && window.dragstop != 1 && context == 0 ) {
         $('.free-selected').removeClass('free-selected')
         $('.move-selected').removeClass('move-selected')
@@ -3780,7 +3786,7 @@ $(document).on('click','#lab-viewport', function (e) {
 
    if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) { $('p').blur() ; $('p').focusout() ;}
    window.dragstop = 0
-   lab_topology.repaintEverything()
+   //lab_topology.repaintEverything()
 });
 
 
