@@ -2622,6 +2622,7 @@ function updateFreeSelect ( e , ui ) {
     $('.move-selected').removeClass('move-selected')
     return;
   }
+  lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false);
   $('#lab-viewport').removeClass('freeSelectMode');
   $('#lab-viewport').addClass('freeSelectMode');
   $('.node_frame, .network_frame').removeClass('free-selected');
@@ -2631,12 +2632,13 @@ function updateFreeSelect ( e , ui ) {
   $('.customShape.ui-selected').addClass('move-selected');
   window.freeSelectedNodes = []
   $.when( lab_topology.clearDragSelection() ).done(  function () { 
+     lab_topology.setDraggable($('.move-selected'),true)
      lab_topology.addToDragSelection($('.move-selected'))
   });
      $(".move-selected").each(function() {
         //lab_topology.addToDragSelection($(this))
         var $type = $(this).hasClass('node_frame') ? 'node' : 'other' ;
-        if ($type == 'node' ) window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path")  });
+        if ($type == 'node' ) window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path") , type: $type });
      });
 
 }

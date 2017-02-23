@@ -3796,7 +3796,14 @@ $(document).on('click', '.network_frame, .node_frame, .customShape', function (e
         node.toggleClass('move-selected')
         updateFreeSelect(e,node)
         e.preventDefault();
-        }
+        } 
+});
+
+$(document).on('mousedown', '.network_frame, .node_frame, .customShape', function (e) { 
+          if ( e.which == 1 ) {
+          $('.select-move').removeClass('select-move')
+          lab_topology.clearDragSelection()
+          }
 });
 
 
