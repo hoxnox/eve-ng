@@ -3794,6 +3794,7 @@ $(document).on('click', '.network_frame, .node_frame, .customShape', function (e
         var node = $(this)
          if ( e.metaKey || e.ctrlKey  ) {
         node.toggleClass('move-selected')
+        node.addClass('ui-selected').removeClass('ui-selected')
         updateFreeSelect(e,node)
         e.preventDefault();
         } 
