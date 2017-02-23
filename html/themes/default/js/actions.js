@@ -118,6 +118,7 @@ $(document).on('shown.bs.modal', '.modal', function () {
 
 // After node/network move
 function ObjectPosUpdate (event ,ui) {
+     window.moveCount += 1
      var groupMove = []
      if ( $('.move-selected').length == 0 ) {
           groupMove.push(event.el)
@@ -126,6 +127,7 @@ function ObjectPosUpdate (event ,ui) {
                 groupMove.push(node) 
           });
      }
+     if ( window.moveCount != groupMove.length ) return  
      //$('.move-selected').removeClass('move-selected') 
      var tmp_nodes = [],
          tmp_shapes = [],
@@ -158,7 +160,7 @@ function ObjectPosUpdate (event ,ui) {
           }
 	  //if ( groupMove.length > 1 )  $("#"+id).addClass('move-selected')
      });
-     // Bull for nodes 
+     // Bulk for nodes 
      if ( tmp_nodes.length > 0 )  {
          lab_topology.repaintEverything();
          $.when(setNodesPosition(tmp_nodes)).done(function () {
@@ -169,6 +171,7 @@ function ObjectPosUpdate (event ,ui) {
          });
      }
      window.dragstop = 0
+     window.moveCount = 0
      if ( groupMove.length > 1 ) window.dragstop = 1
 }
 
@@ -401,6 +404,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
 
 
         if (isFreeSelectMode) {
+            window.contextclick = 1 
             body = '' +
                 '<li>' +
                     '<a class="menu-collapse" data-path="menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-chevron-down"></i> ' + MESSAGES[75] + '</a>' +
@@ -3761,7 +3765,11 @@ $(document).on('click', 'a.interfaces.serial', function (e) {
 })
 
 $(document).on('click','#lab-viewport', function (e) {
-   if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')   && window.dragstop != 1) {
+   var context = 0 
+   if ( typeof ( e.target.className)  != undefined )  {
+           if ( e.target.className.search('action-') != -1 ) context = 1
+   }
+   if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')   && window.dragstop != 1 && context == 0 ) {
         $('.free-selected').removeClass('free-selected')
         $('.move-selected').removeClass('move-selected')
         $('.ui-selected').removeClass('ui-selected')
@@ -3772,6 +3780,7 @@ $(document).on('click','#lab-viewport', function (e) {
 
    if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) { $('p').blur() ; $('p').focusout() ;}
    window.dragstop = 0
+   lab_topology.repaintEverything()
 });
 
 

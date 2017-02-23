@@ -2843,6 +2843,7 @@ function printLabTopology() {
 
                 // Create jsPlumb topology
                 window.lab_topology = jsPlumb.getInstance();
+                window.moveCount = 0
                 lab_topology.setContainer($("#lab-viewport"));
                 lab_topology.importDefaults({
                     Anchor: 'Continuous',
@@ -2860,6 +2861,9 @@ function printLabTopology() {
                        grid: [3, 3],
                        stop: function ( e, ui) {
                                 ObjectPosUpdate(e,ui)
+                                // ask twice bug ????
+                                lab_topology.repaintEverything()
+                                lab_topology.repaintEverything()
                        }
                     });
                     });
