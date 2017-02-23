@@ -2802,7 +2802,7 @@ function printLabTopology() {
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
                             },
-                            stop: ObjectPosUpdate //textObjectDragStop
+                            stop: textObjectDragStop
                         });
                 }
                 else if ($newTextObject.attr("id").indexOf("customText") !== -1) {
@@ -2818,7 +2818,7 @@ function printLabTopology() {
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
                             },
-                            stop: ObjectPosUpdate // textObjectDragStop
+                            stop: textObjectDragStop
                         });
                 }
                 else {
@@ -2861,6 +2861,7 @@ function printLabTopology() {
                     $.when ( labTextObjectsResolver ).done ( function () {
                         logger(1,'DEBUG: '+ textObjectsCount+ ' Shape(s) left');
                         lab_topology.draggable($('.node_frame, .network_frame, .customShape' ), {
+                           containment: true,
                            grid: [3, 3],
                            stop: function ( e, ui) {
                                     ObjectPosUpdate(e,ui)
