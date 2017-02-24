@@ -2772,7 +2772,8 @@ function printLabTopology() {
 
             $(".progress-bar").css("width", ++progressbarValue / progressbarMax * 100 + "%");
         });
-
+        // In bad situation resolving textobject will save our soul ;-)
+        setTimeout( checkDeferred =  ( labTextObjectsResolver.state() == 'pending' ? true :  labTextObjectsResolver.resolve()  ) , 10000 )
         //add shapes from server to viewport
         $.each(textObjects, function (key, value) {
             getTextObject(value['id']).done(function (textObject) {
@@ -3036,6 +3037,11 @@ function printLabTopology() {
         $('#lab-viewport').data('refreshing', false);
         labNodesResolver.reject();
         labTextObjectsResolver.reject();
+        $.when(closeLab()).done(function () {
+          newUIreturn();
+        }).fail(function (message) {
+          addModalError(message);
+        });
     });
 
     $.when(labNodesResolver, labTextObjectsResolver).done(function () {
@@ -3913,7 +3919,11 @@ function getTextObject(id) {
                 logger(1, 'DEBUG: got shape ' + id + 'from lab "' + lab_filename + '".');
 
                 try {
-                    data['data'].data = new TextDecoderLite('utf-8').decode(toByteArray(data['data'].data));
+                    if ( data['data'].data.indexOf('div') != -1  ) {
+                                   // nothing to do ?
+                    } else {
+                                   data['data'].data =  new TextDecoderLite('utf-8').decode(toByteArray(data['data'].data));
+                    }
                 }
                 catch (e) {
                     console.warn("Compatibility issue", e);

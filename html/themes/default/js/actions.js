@@ -3052,7 +3052,7 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
 
             createTextObject(form_data).done(function () {
                 $('#lab-viewport').prepend(new_data_html);
-                lab_topology.draggable('customText' + new_id, {
+/*                lab_topology.draggable('customText' + new_id, {
                        grid: [3, 3],
                        stop: ObjectPosUpdate
                     });
@@ -3064,6 +3064,8 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
                     },
                     stop: textObjectDragStop
                 });
+*/
+                printLabTopology()
                 addMessage('SUCCESS', 'Lab has been saved (60023).');
             }).fail(function (message) {
                 addMessage('DANGER', getJsonMessage(message));
