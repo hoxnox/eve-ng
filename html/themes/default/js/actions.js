@@ -46,24 +46,11 @@ $(document).on('keydown', 'body', function (e) {
         $('#lab-viewport').removeClass('lab-viewport-click-catcher').data("prevent-contextmenu", false);
         $('#context-menu').remove();
         $('.free-selected').removeClass('free-selected')
-        $('.move-selected').removeClass('move-selected')
         $('.ui-selected').removeClass('ui-selected')
+        $('.ui-selecting').removeClass('ui-selecting')
         $("#lab-viewport").removeClass('freeSelectMode')
-        $('.free-selected').removeClass('jsplumb-drag-selected')
-    }
-    if (KEY_CODES.escape == e.which && LOCK == 0 ) {
-        var lab_topology=jsPlumb.getInstance();
-        lab_topology.draggable($('.node_frame, .network_frame, .customShape '), {
-                       grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           jsPlumb.repaintEverything();
-                           lab_topology.repaintEverything();
-                      }
-                    });
-        lab_topology.setDraggable('.node_frame, .network_frame, .customShape ', true );
+        lab_topology.clearDragSelection();
+        lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true)
     }
     if (isEditCustomShape && KEY_CODES.escape == e.which) {
         $(".edit-custom-shape-form button.cancelForm").click(); // it will handle all the stuff
@@ -133,14 +120,18 @@ $(document).on('shown.bs.modal', '.modal', function () {
 // After node/network move
 function ObjectPosUpdate (event ,ui) {
      var groupMove = []
-     if ( $('.move-selected').length == 0 ) {
+     if ( $('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting').length == 0 ) {
           groupMove.push(event.el)
      } else {
-          $('.move-selected').each( function ( id, node ) {
+          $('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting').each( function ( id, node ) {
                 groupMove.push(node) 
           });
      }
-     $('.move-selected').removeClass('move-selected') 
+     window.dragstop = 0
+     if ( groupMove.length > 1 ) window.dragstop = 1 
+     if ( event.metaKey || event.e.metaKey || event.ctrlKey || event.e.ctrlKey  ) return
+     window.moveCount += 1
+     if ( window.moveCount != groupMove.length ) return  
      var tmp_nodes = [],
          tmp_shapes = [],
          tmp_networks = [];
@@ -156,7 +147,7 @@ function ObjectPosUpdate (event ,ui) {
           } else if  ( id.search('network') != -1 )  {
               logger(1, 'DEBUG: setting ' + id + ' position.');
               $.when(setNetworkPosition(id.replace('network',''), eLeft, eTop)).done(function () {
-                  jsPlumb.repaint();
+                  //lab_topology.repaintEverything();
               }).fail(function (message) {
                      // Error on save
                      addModalError(message);
@@ -164,85 +155,25 @@ function ObjectPosUpdate (event ,ui) {
           } else if ( id.search('custom') != -1 )  {
               logger(1, 'DEBUG: setting ' + id + ' position.');
               $.when(setShapePosition(node)).done(function () {
-                  jsPlumb.draggable(id, {
-                       grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           .repaintEverything();
-                      }
-                    });
-                  jsPlumb.repaint();
+                  //lab_topology.repaintEverything();
                             }).fail(function (message) {
                      // Error on save
                      addModalError(message);
               });;
           }
-          if ( groupMove.length > 1 )  $("#"+id).addClass('move-selected')
      });
-     // Bull for nodes 
+     // Bulk for nodes 
+        // lab_topology.repaintEverything();
+        // lab_topology.repaintEverything();
      if ( tmp_nodes.length > 0 )  {
          $.when(setNodesPosition(tmp_nodes)).done(function () {
-               jsPlumb.repaint();
+               logger(1, 'DEBUG: all selected node position saved.');
          }).fail(function (message) {
              // Error on save
              addModalError(message);
          });
      }
-     window.dragstop = 0
-     if ( groupMove.length > 1 ) window.dragstop = 1
-}
-
-function NewObjectPosUpdate (event ,ui) {
-     var groupMove = []
-     if ( $('.move-selected').length == 0 ) {
-          groupMove.push(event.el)
-     } else {
-          $('.move-selected').each( function ( id, node ) {
-                groupMove.push(node)
-          });
-     }
-     $('.move-selected').removeClass('move-selected')
-    //event.target.outerHTML.replace('move-selected','');
-     var tmp_nodes = [],
-         tmp_shapes = [],
-         tmp_networks = [];
-     $.each( groupMove,  function ( id, node ) {
-          eLeft = Math.round(node.offsetLeft + $('#lab-viewport').scrollLeft())
-          eTop = Math.round(node.offsetTop + $('#lab-viewport').scrollTop())
-          id = node.id
-          $('#'+id).addClass('dragstopped')
-          //alert ( eLeft + ' ' + eTop + ' ' + id.replace('node','') )
-          if ( id.search('node') != -1 ) {
-               tmp_nodes.push( { id : id.replace('node','') , left: eLeft, top: eTop } )
-               logger(1, 'DEBUG: setting' + id + ' position.');
-          } else if  ( id.search('network') != -1 )  {
-              logger(1, 'DEBUG: setting ' + id + ' position.');
-          } else if ( id.search('custom') != -1 )  {
-              logger(1, 'DEBUG: setting ' + id + ' position.');
-          /*    $.when(setShapePosition(node)).done(function () {
-                  jsPlumb.draggable(id, {
-                       grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           .repaintEverything();
-                      }
-                    }); 
-                  jsPlumb.repaint();
-                            }).fail(function (message) {
-                     // Error on save
-                     addModalError(message);
-              });;
-          */
-          }
-          if ( groupMove.length > 1 )  $("#"+id).addClass('move-selected')
-     });
-     setNodesPosition(tmp_nodes)
-     window.dragstop = 0
-     if ( groupMove.length > 1 ) window.dragstop = 1
+     window.moveCount = 0
 }
 
 // Close all context menu
@@ -375,13 +306,13 @@ $(document).on('contextmenu', '.context-menu', function (e) {
 
     var isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode");
 
-    if (isFreeSelectMode && !$(this).is(".node_frame.free-selected", ".node_frame.free-selected *")) {
+    if (isFreeSelectMode && !$(this).is(".network_frame.free-selected, .node_frame.free-selected")) {
         // prevent 'contextmenu' on non Free Selected Elements
         return;
     }
     $("#lab-viewport").data('contextMenuClickXY', {'x': e.pageX, 'y': e.pageY})
     
-    var isNodeRunning = $(this).attr('data-status') == 2;
+    var isNodeRunning = $(this).attr('data-status') > 1;
     var status = $(this).attr('data-status')
     
     if ($(this).hasClass('node_frame')) {
@@ -405,13 +336,14 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                 '<i class="glyphicon glyphicon-erase"></i> ' + MESSAGES[68] +
                 '</a>' +
                 '</li>' +
-                '</li>' +
-                '<li>' +
-                    '<a class="action-nodeexport" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
-                '<i class="glyphicon glyphicon-save"></i> ' + MESSAGES[69] +
-                '</a>' +
-                '</li>';
-
+                '</li>'; 
+        if ((ROLE == 'admin' || ROLE == 'editor') &&  LOCK == 0  ) {
+                 body +=   '<li>' +
+                           '<a class="action-nodeexport" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                           '<i class="glyphicon glyphicon-save"></i> ' + MESSAGES[69] +
+                           '</a>' +
+                           '</li>';
+        }
                 // capture section
                 body += '<li role="separator" class="divider">' +
                 '</li>' +
@@ -474,6 +406,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
 
 
         if (isFreeSelectMode) {
+            window.contextclick = 1 
             body = '' +
                 '<li>' +
                     '<a class="action-nodestart-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-play"></i> ' + MESSAGES[153] + '</a>' +
@@ -579,7 +512,7 @@ $(document).on('click', '.action-nodecapture', function(){
 $(window).resize(function () {
     if ($('#lab-viewport').length) {
         // Update topology on window resize
-        jsPlumb.repaintEverything();
+        lab_topology.repaintEverything();
         // Update picture map on window resize
         $('map').imageMapResize();
     }
@@ -599,14 +532,19 @@ $(document).on('change input', 'input[name="node[count]"]', function(e){
 // plug show/hide event
 
 $(document).on('mouseover','.node_frame, .network_frame', function (e) {
-	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 && ( $(this).attr('data-status') == 0 || $(this).attr('data-status') == undefined ) ) { 
+	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 && ( $(this).attr('data-status') == 0 || $(this).attr('data-status') == undefined ) && !$('#lab-viewport').hasClass('freeSelectMode') ) { 
 	     $(this).find('.tag').removeClass("hidden");
         }
-} ) ; 
+}) ; 
+
+$(document).on('mouseover','.ep' , function (e) {
+    //lab_topology.setDraggable ( this , false )
+});
 
 $(document).on('mouseleave','.node_frame, .network_frame', function (e) {
         $(this).find('.tag').addClass("hidden");
-} ) ;
+        //lab_topology.setDraggable ( this , true )
+});
 /***************************************************************************
  * Actions links
  **************************************************************************/
@@ -1168,7 +1106,7 @@ $(document).on('click', '.action-openconsole-all, .action-openconsole-group', fu
     if (!isFreeSelectMode) {
         $.when(getNodes(null)).done(function (nodes) {
             $.each(nodes, function (node_id, node) {
-        if ( node['status'] == 2 ) {
+        if ( node['status'] > 1 ) {
                if (window.chrome && window.chrome.webstore) {
                     openNodeCons( node['url'] );
                } else {
@@ -1180,7 +1118,7 @@ $(document).on('click', '.action-openconsole-all, .action-openconsole-group', fu
     } else {
         freeSelectedNodes.forEach(function(node){
              $("#lab-viewport").removeClass("freeSelectMode");
-             if ($('#node' + node.path).attr('data-status') == 2 ){
+             if ($('#node' + node.path).attr('data-status') > 1 ){
                   if (window.chrome && window.chrome.webstore) {
                        openNodeCons( $('#node' + node.path +' a').attr('href') );
                   } else {
@@ -2766,11 +2704,11 @@ $('body').on('submit', '#form-picture-delete', function (ev) {
 
 // Prevent Drag when Resize
 $('body').on('mouseover','.ui-resizable-handle',function (e) {
-       jsPlumb.setDraggable($('.customShape'), false )
+       lab_topology.setDraggable($('.customShape'), false )
 });
 
 $('body').on('mouseleave','.ui-resizable-handle',function (e) {
-       if ( LOCK==0 ) jsPlumb.setDraggable($('.customShape'), true )
+       if ( LOCK==0 ) lab_topology.setDraggable($('.customShape'), true )
 });
 // Add Custom Shape
 $('body').on('submit', '.custom-shape-form', function (e) {
@@ -3025,7 +2963,7 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
         $selected_shape = $("#customShape" + id);
         $selected_shape.resizable("destroy");
         //$selected_shape.draggable("destroy");
-        //jsPlumb.setDraggable($selected_shape, false);
+        //lab_topology.setDraggable($selected_shape, false);
         $duplicated_shape = $selected_shape.clone();
 
         $selected_shape
@@ -3074,7 +3012,7 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
     } else if ($("#customText" + id).length) {
         $selected_shape = $("#customText" + id);
         $selected_shape.resizable("destroy");
-        //jsPlumb.setDraggable($selected_shape, false);
+        //lab_topology.setDraggable($selected_shape, false);
         $duplicated_shape = $selected_shape.clone();
         $selected_shape
         .resizable({
@@ -3111,14 +3049,9 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
 
             createTextObject(form_data).done(function () {
                 $('#lab-viewport').prepend(new_data_html);
-                jsPlumb.draggable('customText' + new_id, {
+/*                lab_topology.draggable('customText' + new_id, {
                        grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           lab_topology.repaintEverything();
-                      }
+                       stop: ObjectPosUpdate
                     });
                 $('#customText' + new_id)
                 .resizable({
@@ -3128,6 +3061,8 @@ $('body').on('click', '.action-textobjectduplicate', function (e) {
                     },
                     stop: textObjectDragStop
                 });
+*/
+                printLabTopology()
                 addMessage('SUCCESS', 'Lab has been saved (60023).');
             }).fail(function (message) {
                 addMessage('DANGER', getJsonMessage(message));
@@ -3486,7 +3421,7 @@ $(document).on('dblclick', '.customText', function (e) {
 
     // Disable draggable and resizable before sending request
     try {
-        jsPlumb.setDraggable('customText'+id, false);
+        lab_topology.setDraggable('customText'+id, false);
         $(this).resizable("destroy");
     }
     catch (e) {
@@ -3514,10 +3449,6 @@ $(document).on('focusout', '.editable', function (e) {
 
     $("#customText" + id + " p").removeClass('editable');
     $("#customText" + id + " p").attr('contenteditable', 'false');
-    $("#customText" + id).removeClass('move-selected');
-    $("#customText" + id).removeClass('moving-selected');
-    //$("#customText" + id + " p").selectable()
-    // trim whitespace in the start and end of string
     innerHtml = innerHtml.replace(/^(<br>)+/, "").replace(/(<br>)+$/, "");
 
     // replace all HTML tags except <br>, replace closing DIV </div> with br
@@ -3547,7 +3478,7 @@ $(document).on('focusout', '.editable', function (e) {
     }).fail(function (message) {
         addModalError(message);
     });
-    jsPlumb.setDraggable('customText'+id, true);
+    lab_topology.setDraggable('customText'+id, true);
     logger (1,  ' DEBUG: focusout will apply jsplum drggable to customText'+id ) 
     $selected_shape
     .resizable({
@@ -3836,25 +3767,39 @@ $(document).on('click', 'a.interfaces.serial', function (e) {
 })
 
 $(document).on('click','#lab-viewport', function (e) {
-   if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')  && e.target.className.search('action-') == -1  && window.dragstop != 1) {
+   var context = 0 
+   {
+        try {    if ( e.target.className.search('action-') != -1 ) context = 1  } catch (ex) {}
+   } 
+   if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')   && window.dragstop != 1 && context == 0 ) {
         $('.free-selected').removeClass('free-selected')
-        $('.move-selected').removeClass('move-selected')
-        $('.free-selected').removeClass('jsplumb-drag-selected')
         $('.ui-selected').removeClass('ui-selected')
+        $('.ui-selecting').removeClass('ui-selecting')
         $('#lab-viewport').removeClass('freeSelectMode')
+        lab_topology.clearDragSelection()
    }
+   if ( $('.ui-selected').length < 1 ) $('#lab-viewport').removeClass('freeSelectMode')
+
    if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) { $('p').blur() ; $('p').focusout() ;}
    window.dragstop = 0
+   //lab_topology.repaintEverything()
 });
 
 
-$(document).on('click', '.network_frame', function (e) {
-        var node = $(this).parent();
+$(document).on('click', '.customShape', function (e) {
+        var node = $(this)
          if ( e.metaKey || e.ctrlKey  ) {
-        node.toggleClass('move-selected')
+        node.toggleClass('ui-selected')
         updateFreeSelect(e,node)
         e.preventDefault();
-        }
+        } 
+});
+
+$(document).on('mousedown', '.network_frame, .node_frame, .customShape', function (e) { 
+          if ( e.which == 1 ) {
+          $('.select-move').removeClass('select-move')
+          lab_topology.clearDragSelection()
+          }
 });
 
 
@@ -3990,7 +3935,7 @@ function detachNodeLink() {
                 $('#inner').remove();
                 $('.link_selected').removeClass('link_selected');
                 $('.startNode').removeClass('startNode');
-                jsPlumb.detach(window.conn);
+                lab_topology.detach(window.conn);
                 delete window.startNode;
                 delete window.conn;
             }

@@ -2612,91 +2612,36 @@ function printLabPreview(lab_filename) {
 // Drag jsPlumb helpers
 // Jquery-ui freeselect
 
+
 function updateFreeSelect ( e , ui ) {
-  //if ( $('.node_frame.ui-selected, .network_frame.ui-selected' ).length < 2 && !e.metaKey ) {
-  if ( $('.node_frame.ui-selected, .network_frame.ui-selected, .customShape.ui-selected' ).length < 2 && !e.metaKey ) {
-    $('#lab-viewport').removeClass('freeSelectMode');
-    $('.free-selected').removeClass('free-selected');
-    $('.ui-selecting').removeClass('ui-selecting')
-    $('.ui-selected').removeClass('ui-selected')
-    $('.move-selected').removeClass('move-selected')
-    return;
-  }
-  $('#lab-viewport').removeClass('freeSelectMode');
-  $('#lab-viewport').addClass('freeSelectMode');
-  $('.node_frame, .network_frame').removeClass('free-selected');
-  $('.node_frame.ui-selected').addClass('free-selected');
-  $('.node_frame.ui-selected').addClass('move-selected');
-  $('.network_frame.ui-selected').addClass('move-selected');
-  $('.customShape.ui-selected').addClass('move-selected');
-  window.freeSelectedNodes = []
-  $(".free-selected").each(function() {
-     var $type = $(this).hasClass('node_frame') ? 'node' : 'network' ;
-     if ($type == 'node' ) window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path"), type: $type   });
-  });
-
-}
-
-function rotateObject(obj, angle) {
-        obj.css({ '-webkit-transform': 'rotate(' + angle + 'deg)'});
-        obj.css({ '-moz-transform': 'rotate(' + angle + 'deg)'});
-        obj.css({ '-ms-transform': 'rotate(' + angle + 'deg)'});
-        obj.css({ 'msTransform': 'rotate(' + angle + 'deg)'});
-        obj.css({ '-o-transform': 'rotate(' + angle + 'deg)'});
-        obj.css({ '-sand-transform': 'rotate(' + angle + 'deg)'});
-        obj.css({ 'transform': 'rotate(' + angle + 'deg)'});
+    if ( $('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting').length > 0 ) {
+        $('#lab-viewport').addClass('freeSelectMode')
     }
-
-function dragGroupInit ( e , ui ) {
-     window.dragInitY = e.el.offsetTop;
-     window.dragInitX = e.el.offsetLeft;
-     if ( !$('#lab-viewport').hasClass('freeSelectMode') ) {
-          return
-     }
-     window.dragGroup = []
-     var type = ''
-     $(".move-selected").each(function() {
-     if (  $(this).hasClass('node_frame') ) type = 'node'
-     if (  $(this).hasClass('network_frame') ) type = 'network'
-     if (  $(this).hasClass('customShape') ) type = 'customShape'
-     if (  $(this).hasClass('customText') ) type = 'customText'
-     var tmp = $(this).position();
-     tmp.angle = getElementsAngle('#'+$(this).attr('id') );
-     rotateObject($(this), 0);
-     tmp.left = Math.round($(this).position().left);
-     tmp.top = Math.round($(this).position().top); 
-     rotateObject($(this), tmp.angle);
-     window.dragGroup.push({ path: $(this).data("path"), originTop: tmp.top , originLeft: tmp.left , type: type});
-     logger ( 1, "Object " + $(this).attr('id') + ' top:' + $(this).position().top );
-     $(this).addClass('jsplumb-drag')
-     });
-}
-
-function dragGroupUpdate ( e , ui ) {
-    if ( !$('#lab-viewport').hasClass('freeSelectMode') ) {
-          return
-    }
-    var offsetX = dragInitX -  e.el.offsetLeft
-    var offsetY = dragInitY -  e.el.offsetTop
-    dragGroup.forEach(function(node){
-          var angle = getElementsAngle('#'+node.type+node.path)
-          var width = $('#'+node.type+node.path).width()
-          var height = getElementsAngle('#'+node.type+node.path)
-          var newWidth = width + Math.ceil(width * Math.cos(angle))
-          var newHeight =  height + Math.ceil(height * Math.cos(angle))
-          $('#'+node.type+node.path).css( { top: node.originTop -  offsetY , left: node.originLeft - offsetX })
+    window.freeSelectedNodes = []
+         if ( LOCK == 0 && ( ROLE == 'admin' || ROLE == 'editor' )) {  
+            $.when ( lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false) ).done ( function () {
+               $.when( lab_topology.clearDragSelection() ).done(  function () {
+                    lab_topology.setDraggable($('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting'),true)
+                    lab_topology.addToDragSelection($('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting'))
+              });
+        
+            });
+         } else {
+            $('.customShape.ui-selected, .customShape.ui-selecting').removeClass('ui-selecting').removeClass('ui-selected')
+         }
+    $('.free-selected').removeClass('free-selected')
+    $('.node_frame.ui-selected, node_frame.ui-selecting').addClass('free-selected')
+    $('.node_frame.ui-selected, .node_frame.ui-selecting').each(function() {
+         window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path") , type: 'node'  });
+         
     });
 }
 
 
-
-
 // Print lab topology
 function printLabTopology() {
-    //window.topoLoading = 1;
     var defer  = $.Deferred();
     $('#lab-viewport').selectable({stop: function ( event, ui ) { updateFreeSelect ( event, ui ) }, distance: 1});
-    //$('#lab-viewport').selectable();
     var lab_filename = $('#lab-viewport').attr('data-path')
         , $labViewport = $('#lab-viewport')
         , loadingLabHtml = '' +
@@ -2832,7 +2777,8 @@ function printLabTopology() {
 
             $(".progress-bar").css("width", ++progressbarValue / progressbarMax * 100 + "%");
         });
-
+        // In bad situation resolving textobject will save our soul ;-)
+        setTimeout( checkDeferred =  ( labTextObjectsResolver.state() == 'pending' ? true :  labTextObjectsResolver.resolve()  ) , 10000 )
         //add shapes from server to viewport
         $.each(textObjects, function (key, value) {
             getTextObject(value['id']).done(function (textObject) {
@@ -2875,6 +2821,10 @@ function printLabTopology() {
                 else {
                     return void 0;
                 }
+                // Finally clean old class saved by error or bug
+               $newTextObject.removeClass('ui-selected'); 
+               $newTextObject.removeClass('move-selected'); 
+               $newTextObject.removeClass('dragstopped'); 
                 if (--textObjectsCount === 0) {
                     labTextObjectsResolver.resolve();
                 }
@@ -2888,17 +2838,10 @@ function printLabTopology() {
         $.when.apply($, networkImgs.concat(nodesImgs)).done(function () {
             // Drawing topology
             jsPlumb.ready(function () {
-                // Defaults
-                jsPlumb.importDefaults({
-                    Anchor: 'Continuous',
-                    Connector: ['Straight'],
-                    Endpoint: 'Blank',
-                    PaintStyle: {lineWidth: 2, strokeStyle: '#0066aa'},
-                    cssClass: 'link'
-                });
 
                 // Create jsPlumb topology
-                var lab_topology = jsPlumb.getInstance();
+                try { window.lab_topology.reset() } catch (ex) { window.lab_topology = jsPlumb.getInstance() };
+                window.moveCount = 0
                 lab_topology.setContainer($("#lab-viewport"));
                 lab_topology.importDefaults({
                     Anchor: 'Continuous',
@@ -2908,24 +2851,25 @@ function printLabTopology() {
                     cssClass: 'link'
                 });
                 // Read privileges and set specific actions/elements
-                
+               
+                 
                 if (ROLE == 'admin' || ROLE == 'editor')  {
-                    // Nodes and networks are draggable within a grid
-                    //$.when(labTextObjectsResolver).done( function () { 
+                    dragDeferred = $.Deferred()
                     $.when ( labTextObjectsResolver ).done ( function () {
-                    logger(1,'DEBUG: '+ textObjectsCount+ ' Shape(s) left');
-                    lab_topology.draggable($('.node_frame, .network_frame, .customShape'), {
-                       grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui ) 
-                           lab_topology.repaintEverything();
-                      }
+                        logger(1,'DEBUG: '+ textObjectsCount+ ' Shape(s) left');
+                        lab_topology.draggable($('.node_frame, .network_frame, .customShape' ), {
+                           containment: true,
+                           grid: [3, 3],
+                           stop: function ( e, ui) {
+                                    ObjectPosUpdate(e,ui)
+                           }
+                        });
+                        dragDeferred.resolve();
                     });
-                    });
-                    //lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true );
+                  
+                    //sleep (10000)
                     // Node as source or dest link
+                     $.when( dragDeferred ).done( function () {
                      $.each(nodes, function (key,value) {
                            lab_topology.makeSource('node' + value['id'], {
                                 filter: ".ep",
@@ -2964,6 +2908,7 @@ function printLabTopology() {
                                 anchor: "Continuous",
                                 allowLoopback: false
                           });
+                    });
                     });
                 }
 
@@ -3055,13 +3000,13 @@ function printLabTopology() {
 
 
                 // Move elements under the topology node
-                $('._jsPlumb_connector, ._jsPlumb_overlay, ._jsPlumb_endpoint_anchor_').detach().appendTo('#lab-viewport');
+                //$('._jsPlumb_connector, ._jsPlumb_overlay, ._jsPlumb_endpoint_anchor_').detach().appendTo('#lab-viewport');
                 // if lock then freeze node network
                 if ( labinfo['lock'] == 1 ) {
                                 LOCK = 1 ;
                                 defer.resolve();
                                 if (ROLE == 'admin' || ROLE == 'editor' ) {
-                                     jsPlumb.setDraggable($('customShape, .node_frame, .network_frame'), false );
+                                     lab_topology.setDraggable($('customShape, .node_frame, .network_frame'), false );
                                }
                                $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
                                $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
@@ -3097,11 +3042,18 @@ function printLabTopology() {
         $('#lab-viewport').data('refreshing', false);
         labNodesResolver.reject();
         labTextObjectsResolver.reject();
+        $.when(closeLab()).done(function () {
+          newUIreturn();
+        }).fail(function (message) {
+          addModalError(message);
+        });
     });
 
     $.when(labNodesResolver, labTextObjectsResolver).done(function () {
 
         $.when(deleteSingleNetworks()).done(function(){
+            //lab_topology.repaintEverything()
+            //lab_topology.repaintEverything()
             $("#loading-lab").remove();
             $("#lab-sidebar *").show();
         })
@@ -3972,7 +3924,11 @@ function getTextObject(id) {
                 logger(1, 'DEBUG: got shape ' + id + 'from lab "' + lab_filename + '".');
 
                 try {
-                    data['data'].data = new TextDecoderLite('utf-8').decode(toByteArray(data['data'].data));
+                    if ( data['data'].data.indexOf('div') != -1  ) {
+                                   // nothing to do ?
+                    } else {
+                                   data['data'].data =  new TextDecoderLite('utf-8').decode(toByteArray(data['data'].data));
+                    }
                 }
                 catch (e) {
                     console.warn("Compatibility issue", e);
@@ -4580,7 +4536,7 @@ function autoheight()
 }
 
 function lockLab() {
-    var lab_topology = jsPlumb.getInstance();
+    var lab_topology = window.lab_topology
     //var allElements = $('.node_frame, .network_frame, .customShape');
     //alert ( JSON.stringify( allElements ));
     //for (var i = 0; i < allElements.length; i++){
@@ -4627,16 +4583,11 @@ function lockLab() {
 }
 
 function unlockLab(){
-    var lab_topology = jsPlumb.getInstance();
+    lab_topology = window.lab_topology
     lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true);
     lab_topology.draggable($('.node_frame, .network_frame, .customShape'), {
                        grid: [3, 3],
-                       stop: ObjectPosUpdate,
-                       start: dragGroupInit,
-                       drag:  function ( e, ui ) {
-                           dragGroupUpdate( e, ui )
-                           lab_topology.repaintEverything();
-                      }
+                       stop: ObjectPosUpdate
                     });
 
     //$('.customShape').draggable('enable');
@@ -4702,6 +4653,32 @@ function openNodeCons ( url ) {
         sleep ( 1000 );
         $(nw).ready(function() { nw.close(); } );
 }
+
+function natSort(as, bs){
+    var a, b, a1, b1, i= 0, L, rx=  /(\d+)|(\D+)/g, rd=  /\d/;
+    if(isFinite(as) && isFinite(bs)) return as - bs;
+    a= String(as).toLowerCase();
+    b= String(bs).toLowerCase();
+    if(a=== b) return 0;
+    if(!(rd.test(a) && rd.test(b))) return a> b? 1: -1;
+    a= a.match(rx);
+    b= b.match(rx);
+    L= a.length> b.length? b.length: a.length;
+    while(i < L){
+        a1= a[i];
+        b1= b[i++];
+        if(a1!== b1){
+            if(isFinite(a1) && isFinite(b1)){
+                if(a1.charAt(0)=== "0") a1= "." + a1;
+                if(b1.charAt(0)=== "0") b1= "." + b1;
+                return a1 - b1;
+            }
+            else return a1> b1? 1: -1;
+        }
+    }
+    return a.length - b.length;
+}
+
 
 function newConnModal(info , oe ) {
         if ( !oe ) return ; 
@@ -4782,7 +4759,7 @@ function newConnModal(info , oe ) {
                        linktargetdata['interfaces'] = tmp_interfaces
                   }
                   if ( linktargetdata['selectedif'] == '' ) linktargetdata['selectedif'] = 0 ;
-                  if ( linksourcedata['status'] == 2 || linktargetdata['status'] == 2 ) { jsPlumb.detach( info.connection ) ; return }
+                  if ( linksourcedata['status'] == 2 || linktargetdata['status'] == 2 ) { lab_topology.detach( info.connection ) ; return }
                   window.tmpconn = info.connection
      	          html = '<form id="addConn" class="addConn-form">' +
                            '<input type="hidden" name="addConn[srcNodeId]" value="'+linksourcedata['id']+'">' +
@@ -4824,7 +4801,7 @@ function newConnModal(info , oe ) {
                                                  tmp_name.push(linksourcedata['interfaces'][key]['name'])
                                                  reversetab[linksourcedata['interfaces'][key]['name']] = key
                                             }
-                                            var ordered_name = tmp_name.sort() ;
+                                            var ordered_name = tmp_name.sort(natSort)
                                             for ( key in ordered_name ) {
                                                 okey = reversetab[ordered_name[key]] ;
                                                 if ( linksourcedata['interfaces'][okey]['type'] == 'ethernet' ) {
@@ -4876,7 +4853,7 @@ function newConnModal(info , oe ) {
                                                  tmp_name.push(linktargetdata['interfaces'][key]['name'])
                                                  reversetab[linktargetdata['interfaces'][key]['name']] = key
                                             }
-                                            var ordered_name = tmp_name.sort() ;
+                                            var ordered_name = tmp_name.sort(natSort) ;
                                             for ( key in ordered_name ) {
                                             okey = reversetab[ordered_name[key]] ;
                                                 if ( linktargetdata['interfaces'][okey]['type'] == 'ethernet' ) {
@@ -4949,4 +4926,3 @@ function connContextMenu ( e, ui ) {
          window.connContext = 1
          window.connToDel = e
 }
-
