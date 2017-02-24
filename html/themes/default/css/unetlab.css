@@ -1210,7 +1210,9 @@ map area:visited {
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.49);
 }
 
-.node_frame.move-selected, .network_frame.move-selected, .customShape.move-selected {
+.node_frame.ui-selected,.node_frame.ui-selecting, 
+.network_frame.ui-selected, .network_frame.ui-selecting,
+.customShape.ui-selected,.customShape.ui-selecting {
         display: block;
         background-color: #d6e3e9 ;
         border-radius: 5px ;
