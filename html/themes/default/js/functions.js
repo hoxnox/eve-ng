@@ -2618,12 +2618,17 @@ function updateFreeSelect ( e , ui ) {
         $('#lab-viewport').addClass('freeSelectMode')
     }
     window.freeSelectedNodes = []
-    $.when ( lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false) ).done ( function () {
-          $.when( lab_topology.clearDragSelection() ).done(  function () {
-               lab_topology.setDraggable($('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting'),true)
-               lab_topology.addToDragSelection($('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting'))
-          });
-    });
+         if ( LOCK == 0 && ( ROLE == 'admin' || ROLE == 'editor' )) {  
+            $.when ( lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false) ).done ( function () {
+               $.when( lab_topology.clearDragSelection() ).done(  function () {
+                    lab_topology.setDraggable($('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting'),true)
+                    lab_topology.addToDragSelection($('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting'))
+              });
+        
+            });
+         } else {
+            $('.customShape.ui-selected, .customShape.ui-selecting').removeClass('ui-selecting').removeClass('ui-selected')
+         }
     $('.free-selected').removeClass('free-selected')
     $('.node_frame.ui-selected, node_frame.ui-selecting').addClass('free-selected')
     $('.node_frame.ui-selected, .node_frame.ui-selecting').each(function() {
