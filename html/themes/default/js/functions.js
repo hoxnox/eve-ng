@@ -111,6 +111,7 @@ function cfg_export(node_id) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id + '/export';
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT * 10,  // Takes a lot of time
         type: type,
         url: encodeURI(url),
@@ -150,6 +151,7 @@ function recursive_cfg_export(nodes, i) {
     logger(1, 'DEBUG: ' + url);
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT * 10 * i,  // Takes a lot of time
         type: type,
         url: encodeURI(url),
@@ -191,6 +193,7 @@ function cloneLab(form_data) {
     var type = 'POST';
     var url = '/api/labs';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -232,6 +235,7 @@ function closeLab() {
             var url = '/api/labs/close';
             var type = 'DELETE';
             $.ajax({
+                cache: false,
                 timeout: TIMEOUT,
                 type: type,
                 url: encodeURI(url),
@@ -263,6 +267,7 @@ function closeLab() {
         var url = '/api/labs/close';
         var type = 'DELETE';
         $.ajax({
+            cache: false,
             timeout: TIMEOUT,
             type: type,
             url: encodeURI(url),
@@ -296,6 +301,7 @@ function deleteFolder(path) {
     var type = 'DELETE';
     var url = '/api/folders' + path;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -327,6 +333,7 @@ function deleteLab(path) {
     var type = 'DELETE';
     var url = '/api/labs' + path;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -359,6 +366,7 @@ function deleteNetwork(id) {
     var lab_filename = $('#lab-viewport').attr('data-path');
     var url = '/api/labs' + lab_filename + '/networks/' + id;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -391,6 +399,7 @@ function deleteNode(id) {
     var lab_filename = $('#lab-viewport').attr('data-path');
     var url = '/api/labs' + lab_filename + '/nodes/' + id;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -422,6 +431,7 @@ function deleteUser(path) {
     var type = 'DELETE';
     var url = '/api/users/' + path;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -453,6 +463,7 @@ function exportObjects(form_data) {
     var type = 'POST';
     var url = '/api/export';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -528,6 +539,7 @@ function getLabInfo(lab_filename) {
     var url = '/api/labs' + lab_filename;
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -560,6 +572,7 @@ function getLabBody() {
     var url = '/api/labs' + lab_filename + '/html';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -592,6 +605,7 @@ function getLabLinks() {
     var url = '/api/labs' + lab_filename + '/links';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -629,6 +643,7 @@ function getNetworks(network_id) {
     }
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -690,6 +705,7 @@ function getNetworkTypes() {
     var url = '/api/list/networks';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -726,6 +742,7 @@ function getNodes(node_id) {
     }
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -762,6 +779,7 @@ function getNodeConfigs(node_id) {
     }
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -794,6 +812,7 @@ function getNodeInterfaces(node_id) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id + '/interfaces';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -830,6 +849,7 @@ function getPictures(picture_id) {
     }
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -866,6 +886,7 @@ function getPicturesMapped(picture_id) {
         }
         var type = 'GET';
         $.ajax({
+                cache: false,
                 timeout: TIMEOUT,
                 type: type,
                 url: encodeURI(url),
@@ -899,6 +920,7 @@ function getTopology() {
     var url = '/api/labs' + lab_filename + '/topology';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -931,6 +953,7 @@ function getRoles() {
     var url = '/api/list/roles';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -963,6 +986,7 @@ function getSystemStats() {
     var url = '/api/status';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -999,6 +1023,7 @@ function getTemplates(template) {
     var url = (template == null) ? '/api/list/templates/' : '/api/list/templates/' + template;
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1030,6 +1055,7 @@ function getUserInfo() {
     var url = '/api/auth';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1078,6 +1104,7 @@ function getUsers(user) {
     }
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1116,6 +1143,7 @@ function logoutUser() {
     var url = '/api/auth/logout';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1153,6 +1181,7 @@ function moveFolder(folder, path) {
     var form_data = {};
     form_data['path'] = (path == '/') ? '/' + basename(folder) : path + '/' + basename(folder);
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1187,6 +1216,7 @@ function moveLab(lab, path) {
     var form_data = {};
     form_data['path'] = path;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1221,6 +1251,7 @@ function deletePicture(lab_file, picture_id, cb) {
     // Delete network
     var url = '/api/labs' + lab_file + '/pictures/' + picture_id;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: 'DELETE',
         url: encodeURI(url),
@@ -1300,6 +1331,7 @@ function setNetwork(nodeName,left, top) {
     var url = '/api/labs' + lab_filename + '/networks';
     var type = 'POST';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1338,6 +1370,7 @@ function setNetworkPosition(network_id, left, top) {
     var url = '/api/labs' + lab_filename + '/networks/' + network_id;
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1375,6 +1408,7 @@ function setNodeBoot(node_id, config) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id;
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1410,6 +1444,7 @@ function setNodePosition(node_id, left, top) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id;
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1444,6 +1479,7 @@ function setNodesPosition(nodes) {
     var url = '/api/labs' + lab_filename + '/nodes' ;
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1484,6 +1520,7 @@ function setNodeData(id){
         form_data['left'] = parseInt(form_data['left']) + i * 10;
         form_data['top'] = parseInt(form_data['top']) + i * 10;
         var request = $.ajax({
+        cache: false,
             timeout: TIMEOUT,
             type: type,
             url: encodeURI(url),
@@ -1530,6 +1567,7 @@ function setNodeInterface(node_id,network_id,interface_id){
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id +'/interfaces';
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1564,6 +1602,7 @@ function start(node_id) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id + '/start';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1602,6 +1641,7 @@ function recursive_start(nodes, i) {
     }
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1649,6 +1689,7 @@ function stop(node_id) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id + '/stop';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1682,6 +1723,7 @@ function stopAll() {
     var type = 'DELETE';
     var url = '/api/status';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1714,6 +1756,7 @@ function update(path) {
     var type = 'GET';
     var url = '/api/update';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT * 10,
         type: type,
         url: encodeURI(url),
@@ -1748,6 +1791,7 @@ function wipe(node_id) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id + '/wipe';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -2191,7 +2235,6 @@ function printFormCustomShape(values) {
         '</form>';
 
     addModal("ADD CUSTOM SHAPE", html, '');
-
     $('.custom-shape-form .shape_background_color').val('#ffffff');
 
     for (var i = 0; i < shapeTypes.length; i++) {
@@ -2201,6 +2244,10 @@ function printFormCustomShape(values) {
     for (var j = 0; j < borderTypes.length; j++) {
         $('.border-type-select').append($('<option></option>').val(borderTypes[j]).html(borderTypes[j]));
     }
+    $('input[type="color"]').colorpicker({
+        color: "#000",
+        defaultPalette: 'web'
+    })
 
 };
 
@@ -2259,6 +2306,10 @@ function printFormText(values) {
     for (var i = 0; i < fontStyles.length; i++) {
         $('.text-font-style-select').append($('<option></option>').val(fontStyles[i]).html(fontStyles[i]));
     }
+    $('input[type="color"]').colorpicker({
+        color: "#000",
+        defaultPalette: 'web'
+    })
 };
 
 // Map picture
@@ -2276,6 +2327,7 @@ function saveLab(form) {
     var url = '/api/labs' + lab_filename + '/configs/' + form_data['id'];
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -2941,7 +2993,7 @@ function printLabTopology() {
                             dst_label.push(Object());
                         }
 
-			                     
+                                 
                         var tmp_conn = lab_topology.connect({
                             source: source,       // Must attach to the IMG's parent or not printed correctly
                             target: destination,  // Must attach to the IMG's parent or not printed correctly
@@ -2993,7 +3045,7 @@ function printLabTopology() {
 
                 });
 
-		printLabStatus();
+        printLabStatus();
 
                 // Remove unused elements
                 $('.unused').remove();
@@ -3398,6 +3450,7 @@ function printPageLabList(folder) {
     var type = 'GET';
     FOLDER = folder;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -3883,6 +3936,7 @@ function getTextObjects() {
     var url = '/api/labs' + lab_filename + '/textobjects';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -3915,6 +3969,7 @@ function getTextObject(id) {
     var url = '/api/labs' + lab_filename + '/textobjects/' + id;
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -3964,6 +4019,7 @@ function createTextObject(newData) {
     }
 
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -4003,6 +4059,7 @@ function editTextObject(id, newData) {
     }
 
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -4036,6 +4093,7 @@ function deleteTextObject(id) {
     var lab_filename = $('#lab-viewport').attr('data-path');
     var url = '/api/labs' + lab_filename + '/textobjects/' + id;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -4205,7 +4263,10 @@ function printFormEditCustomShape(id) {
             '</form>';
 
         $('#lab-viewport').append(html);
-
+        $('input[type="color"]').colorpicker({
+            color: "#000",
+            defaultPalette: 'web'
+        })
         for (var i = 0; i < borderTypes.length; i++) {
             $('.edit-custom-shape-form .border-type-select').append($('<option></option>').val(borderTypes[i]).html(borderTypes[i]));
         }
@@ -4459,6 +4520,7 @@ function getLogs(file, per_page, search) {
     var url = '/api/logs/' + file + "/" + per_page + "/" + search;
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -4553,6 +4615,7 @@ function lockLab() {
     var url = '/api/labs' + lab_filename + '/Lock' ;
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -4599,6 +4662,7 @@ function unlockLab(){
     var url = '/api/labs' + lab_filename + '/Unlock' ;
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -4682,14 +4746,14 @@ function natSort(as, bs){
 
 function newConnModal(info , oe ) {
         if ( !oe ) return ; 
-	$.when(
+    $.when(
         getNetworks(null),
         getNodes(null),
         getTopology()
         ).done(function (networks, nodes, topology ) {
             linksourcestyle = '' ;
             linktargetstyle = '' ;
-	    $('#'+info.source.id).addClass("startNode")
+        $('#'+info.source.id).addClass("startNode")
             if ( info.source.id.search('node')  != -1  ) {
                   linksourcedata =  nodes[ info.source.id.replace('node','') ] ;
                   linksourcetype = 'node' ;
@@ -4708,20 +4772,20 @@ function newConnModal(info , oe ) {
              } else {
                   linktargetdata =  networks[ info.target.id.replace('network','') ] ;
                   linktargettype = 'net' ;
-		  linktargetdata['icon'] = ( linktargetdata['type'] == "bridge")  ? "../lan.png" : "../cloud.png"
+          linktargetdata['icon'] = ( linktargetdata['type'] == "bridge")  ? "../lan.png" : "../cloud.png"
              }
              title = 'Add connection between ' + linksourcedata['name'] + ' and ' + linktargetdata['name'] ;
              $.when( linksourcedata['interfaces'] , linktargetdata['interfaces'] ).done( function ( sourceif, targetif) {
              /* choose first free interface */
                   if ( linksourcetype == 'node' )  {
                        logger(1,'DEBUG: looking interfaces... ');
-	               linksourcedata['selectedif'] = '' ;  
+                   linksourcedata['selectedif'] = '' ;  
                        var tmp_interfaces = {} ;
                        for ( var key in sourceif['ethernet'] ) {
-			     logger(1,'DEBUG: interface id ' + key + ' named ' + sourceif['ethernet'][key]['name']  + ' ' + sourceif['ethernet'][key]['network_id'])
+                 logger(1,'DEBUG: interface id ' + key + ' named ' + sourceif['ethernet'][key]['name']  + ' ' + sourceif['ethernet'][key]['network_id'])
                              tmp_interfaces[key] = sourceif['ethernet'][key]
                              tmp_interfaces[key]['type'] = 'ethernet'
-			     if ( (sourceif['ethernet'][key]['network_id'] == 0 )  && ( linksourcedata['selectedif'] == '') ) {
+                 if ( (sourceif['ethernet'][key]['network_id'] == 0 )  && ( linksourcedata['selectedif'] == '') ) {
                                     linksourcedata['selectedif'] = key ;
                              }
                        }
@@ -4761,7 +4825,7 @@ function newConnModal(info , oe ) {
                   if ( linktargetdata['selectedif'] == '' ) linktargetdata['selectedif'] = 0 ;
                   if ( linksourcedata['status'] == 2 || linktargetdata['status'] == 2 ) { lab_topology.detach( info.connection ) ; return }
                   window.tmpconn = info.connection
-     	          html = '<form id="addConn" class="addConn-form">' +
+                  html = '<form id="addConn" class="addConn-form">' +
                            '<input type="hidden" name="addConn[srcNodeId]" value="'+linksourcedata['id']+'">' +
                            '<input type="hidden" name="addConn[dstNodeId]" value="'+linktargetdata['id']+'">' +
                            '<input type="hidden" name="addConn[srcNodeType]" value="'+linksourcetype+'">' +
@@ -4781,7 +4845,7 @@ function newConnModal(info , oe ) {
                                 '<div style="width:3px;height: '+ ( ( linktargettype  == 'net') ? '0' : '10')  + 'px; margin: 0 auto; background-color:#444"></div>' +
                                 '<img src="/images/icons/'+linktargetdata['icon']+'" class="'+linktargetstyle+' img-responsive" style="margin:0 auto;">' +
                                 '<div style="text-align:center;" >'+linktargetdata['name']+'</div>' +
-     	                    '</div>' +
+                            '</div>' +
                             '<div class="col-md-8">' +
                                 '<div class="form-group">' +
                                     '<label>Source ID: '+linksourcedata['id']+'</label>' +
@@ -4906,15 +4970,15 @@ function newConnModal(info , oe ) {
                                     '<button type="button" class="btn cancelForm" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
                                 '</div>' + 
                             '</div>' +
-     	                   '</div>' +
+                           '</div>' +
                          '</form>' 
-			
+            
                   addModal(title, html, '');
              });
         });
      $('body').on('change','select.srcConn', function (e) {
           var iname =  $('select.srcConn option[value="' + $('select.srcConn').val() + '"]').text();
-	  $('.addConnSrc').html(iname) 
+      $('.addConnSrc').html(iname) 
      });
      $('body').on('change','select.dstConn', function (e) {
           var iname =  $('select.dstConn option[value="' + $('select.dstConn').val() + '"]').text();

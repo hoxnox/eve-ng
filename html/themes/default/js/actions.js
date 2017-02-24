@@ -532,8 +532,8 @@ $(document).on('change input', 'input[name="node[count]"]', function(e){
 // plug show/hide event
 
 $(document).on('mouseover','.node_frame, .network_frame', function (e) {
-	if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 && ( $(this).attr('data-status') == 0 || $(this).attr('data-status') == undefined ) && !$('#lab-viewport').hasClass('freeSelectMode') ) { 
-	     $(this).find('.tag').removeClass("hidden");
+    if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 && ( $(this).attr('data-status') == 0 || $(this).attr('data-status') == undefined ) && !$('#lab-viewport').hasClass('freeSelectMode') ) { 
+         $(this).find('.tag').removeClass("hidden");
         }
 }) ; 
 
@@ -1164,6 +1164,7 @@ $('body').on('submit', '#form-picture-add', function (e) {
     // Get action URL
     var url = '/api/labs' + lab_file + '/pictures';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: 'POST',
         url: encodeURI(url),
@@ -1458,6 +1459,7 @@ $(document).on('click', '.action-nodesbootdelete, .action-nodesbootdelete-group'
                 var url = '/api/labs' + lab_filename + '/configs/' + node.path;
                 var type = 'PUT';
                 $.when($.ajax({
+                    cache: false,
                     timeout: TIMEOUT,
                     type: type,
                     url: encodeURI(url),
@@ -1490,6 +1492,7 @@ $(document).on('click', '.action-nodesbootdelete, .action-nodesbootdelete-group'
                     var url = '/api/labs' + lab_filename + '/configs/' + key;
                     var type = 'PUT';
                     $.when($.ajax({
+                        cache: false,
                         timeout: TIMEOUT,
                         type: type,
                         url: encodeURI(url),
@@ -2046,6 +2049,7 @@ $(document).on('submit', '#form-folder-add, #form-folder-rename', function (e) {
         var type = 'PUT';
     }
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -2093,6 +2097,7 @@ $(document).on('submit', '#form-import', function (e) {
         form_data.append(key, value);
     });
     $.ajax({
+        cache: false,
         timeout: LONGTIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -2154,6 +2159,7 @@ $(document).on('submit', '#form-lab-add, #form-lab-edit', function (e) {
     }
 
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -2238,6 +2244,7 @@ $(document).on('submit', '#form-network-add, #form-network-edit', function (e) {
         form_data['left'] = parseInt(form_data['left']) +  30;
         form_data['top'] = parseInt(form_data['top']) +  30;
         var request = $.ajax({
+            cache: false,
             timeout: TIMEOUT,
             type: type,
             url: encodeURI(url),
@@ -2286,6 +2293,7 @@ $(document).on('submit', '#form-node-connect', function (e) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id + '/interfaces';
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -2348,6 +2356,7 @@ $(document).on('submit', '#form-node-add, #form-node-edit', function (e) {
         form_data['postfix'] = 0;
     }
        var request = $.ajax({
+            cache: false,
             timeout: TIMEOUT,
             type: type,
             url: encodeURI(url),
@@ -2443,6 +2452,7 @@ $(document).on('submit', '#oldform-node-add, #oldform-node-edit', function (e) {
         form_data['left'] = +inititalLeft + i%5 * 60;
         form_data['top'] = +inititalTop + j * 80;
         var request = $.ajax({
+            cache: false,
             timeout: TIMEOUT,
             type: type,
             url: encodeURI(url),
@@ -2547,6 +2557,7 @@ $(document).on('submit', '#form-login', function (e) {
     var url = '/api/auth/login';
     var type = 'POST';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -2614,6 +2625,7 @@ $(document).on('submit', '#form-user-add, #form-user-edit', function (e) {
         var type = 'PUT';
     }
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -2661,6 +2673,7 @@ $('body').on('submit', '#form-picture-edit', function (e) {
     // Get action URL
     var url = '/api/labs' + lab_file + '/pictures/' + picture_id;//form_data['id'];
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: 'PUT',
         url: encodeURI(url),
