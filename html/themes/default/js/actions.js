@@ -476,9 +476,6 @@ $(document).on('contextmenu', '.context-menu', function (e) {
         if (isFreeSelectMode) {
             body = '' +
                 '<li>' +
-                    '<a class="menu-collapse" data-path="menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-chevron-down"></i> ' + MESSAGES[75] + '</a>' +
-                '</li>' +
-                '<li>' +
                     '<a class="action-nodestart-group context-collapsible menu-manage" href="javascript:void(0)"><i class="glyphicon glyphicon-play"></i> ' + MESSAGES[153] + '</a>' +
                 '</li>' +
                 '<li>' +
