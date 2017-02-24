@@ -129,7 +129,7 @@ function ObjectPosUpdate (event ,ui) {
      }
      window.dragstop = 0
      if ( groupMove.length > 1 ) window.dragstop = 1 
-     if ( event.metaKey || event.e.metaKey ) return
+     if ( event.metaKey || event.e.metaKey || event.ctrlKey || event.e.ctrlKey  ) return
      window.moveCount += 1
      if ( window.moveCount != groupMove.length ) return  
      var tmp_nodes = [],
