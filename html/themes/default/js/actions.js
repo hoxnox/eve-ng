@@ -46,10 +46,11 @@ $(document).on('keydown', 'body', function (e) {
         $('#lab-viewport').removeClass('lab-viewport-click-catcher').data("prevent-contextmenu", false);
         $('#context-menu').remove();
         $('.free-selected').removeClass('free-selected')
-        $('.move-selected').removeClass('move-selected')
-        //$('.ui-selected').removeClass('ui-selected')
+        $('.ui-selected').removeClass('ui-selected')
+        $('.ui-selecting').removeClass('ui-selecting')
         $("#lab-viewport").removeClass('freeSelectMode')
-        //$('.free-selected').removeClass('jsplumb-drag-selected')
+        lab_topology.clearDragSelection();
+        lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true)
     }
     if (isEditCustomShape && KEY_CODES.escape == e.which) {
         $(".edit-custom-shape-form button.cancelForm").click(); // it will handle all the stuff
@@ -118,17 +119,19 @@ $(document).on('shown.bs.modal', '.modal', function () {
 
 // After node/network move
 function ObjectPosUpdate (event ,ui) {
-     window.moveCount += 1
      var groupMove = []
-     if ( $('.move-selected').length == 0 ) {
+     if ( $('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting').length == 0 ) {
           groupMove.push(event.el)
      } else {
-          $('.move-selected').each( function ( id, node ) {
+          $('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting').each( function ( id, node ) {
                 groupMove.push(node) 
           });
      }
+     window.dragstop = 0
+     if ( groupMove.length > 1 ) window.dragstop = 1 
+     if ( event.metaKey || event.e.metaKey ) return
+     window.moveCount += 1
      if ( window.moveCount != groupMove.length ) return  
-     //$('.move-selected').removeClass('move-selected') 
      var tmp_nodes = [],
          tmp_shapes = [],
          tmp_networks = [];
@@ -158,7 +161,6 @@ function ObjectPosUpdate (event ,ui) {
                      addModalError(message);
               });;
           }
-	  //if ( groupMove.length > 1 )  $("#"+id).addClass('move-selected')
      });
      // Bulk for nodes 
         // lab_topology.repaintEverything();
@@ -171,9 +173,7 @@ function ObjectPosUpdate (event ,ui) {
              addModalError(message);
          });
      }
-     window.dragstop = 0
      window.moveCount = 0
-     if ( groupMove.length > 1 ) window.dragstop = 1
 }
 
 // Close all context menu
@@ -312,7 +312,7 @@ $(document).on('contextmenu', '.context-menu', function (e) {
     }
     $("#lab-viewport").data('contextMenuClickXY', {'x': e.pageX, 'y': e.pageY})
     
-    var isNodeRunning = $(this).attr('data-status') == 2;
+    var isNodeRunning = $(this).attr('data-status') > 1;
     var status = $(this).attr('data-status')
     
     if ($(this).hasClass('node_frame')) {
@@ -1108,7 +1108,7 @@ $(document).on('click', '.action-openconsole-all, .action-openconsole-group', fu
     if (!isFreeSelectMode) {
         $.when(getNodes(null)).done(function (nodes) {
             $.each(nodes, function (node_id, node) {
-        if ( node['status'] == 2 ) {
+        if ( node['status'] > 1 ) {
                if (window.chrome && window.chrome.webstore) {
                     openNodeCons( node['url'] );
                } else {
@@ -3449,10 +3449,6 @@ $(document).on('focusout', '.editable', function (e) {
 
     $("#customText" + id + " p").removeClass('editable');
     $("#customText" + id + " p").attr('contenteditable', 'false');
-    $("#customText" + id).removeClass('move-selected');
-    $("#customText" + id).removeClass('moving-selected');
-    //$("#customText" + id + " p").selectable()
-    // trim whitespace in the start and end of string
     innerHtml = innerHtml.replace(/^(<br>)+/, "").replace(/(<br>)+$/, "");
 
     // replace all HTML tags except <br>, replace closing DIV </div> with br
@@ -3777,12 +3773,12 @@ $(document).on('click','#lab-viewport', function (e) {
    } 
    if ( !e.metaKey && !e.ctrlKey && $(this).hasClass('freeSelectMode')   && window.dragstop != 1 && context == 0 ) {
         $('.free-selected').removeClass('free-selected')
-        $('.move-selected').removeClass('move-selected')
         $('.ui-selected').removeClass('ui-selected')
+        $('.ui-selecting').removeClass('ui-selecting')
         $('#lab-viewport').removeClass('freeSelectMode')
         lab_topology.clearDragSelection()
    }
-   if ( $('.move-selected').length < 1 ) $('#lab-viewport').removeClass('freeSelectMode')
+   if ( $('.ui-selected').length < 1 ) $('#lab-viewport').removeClass('freeSelectMode')
 
    if ( !$(this).parent().hasClass('customText') && !$(this).hasClass('customText')) { $('p').blur() ; $('p').focusout() ;}
    window.dragstop = 0
@@ -3790,11 +3786,10 @@ $(document).on('click','#lab-viewport', function (e) {
 });
 
 
-$(document).on('click', '.network_frame, .node_frame, .customShape', function (e) {
+$(document).on('click', '.customShape', function (e) {
         var node = $(this)
          if ( e.metaKey || e.ctrlKey  ) {
-        node.toggleClass('move-selected')
-        node.addClass('ui-selected').removeClass('ui-selected')
+        node.toggleClass('ui-selected')
         updateFreeSelect(e,node)
         e.preventDefault();
         } 

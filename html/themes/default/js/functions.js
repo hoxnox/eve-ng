@@ -2612,35 +2612,24 @@ function printLabPreview(lab_filename) {
 // Drag jsPlumb helpers
 // Jquery-ui freeselect
 
-function updateFreeSelect ( e , ui ) {
-  //if ( $('.node_frame.ui-selected, .network_frame.ui-selected' ).length < 2 && !e.metaKey ) {
-  if ( $('.node_frame.ui-selected, .network_frame.ui-selected, .customShape.ui-selected' ).length < 2 && !e.metaKey && !e.ctrlKey  ) {
-    $('#lab-viewport').removeClass('freeSelectMode');
-    $('.free-selected').removeClass('free-selected');
-    $('.ui-selecting').removeClass('ui-selecting')
-    $('.ui-selected').removeClass('ui-selected')
-    $('.move-selected').removeClass('move-selected')
-    return;
-  }
-  lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false);
-  $('#lab-viewport').removeClass('freeSelectMode');
-  $('#lab-viewport').addClass('freeSelectMode');
-  $('.node_frame, .network_frame').removeClass('free-selected');
-  $('.node_frame.ui-selected').addClass('free-selected');
-  $('.node_frame.ui-selected').addClass('move-selected');
-  $('.network_frame.ui-selected').addClass('move-selected');
-  $('.customShape.ui-selected').addClass('move-selected');
-  window.freeSelectedNodes = []
-  $.when( lab_topology.clearDragSelection() ).done(  function () { 
-     lab_topology.setDraggable($('.move-selected'),true)
-     lab_topology.addToDragSelection($('.move-selected'))
-  });
-     $(".move-selected").each(function() {
-        //lab_topology.addToDragSelection($(this))
-        var $type = $(this).hasClass('node_frame') ? 'node' : 'other' ;
-        if ($type == 'node' ) window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path") , type: $type });
-     });
 
+function updateFreeSelect ( e , ui ) {
+    if ( $('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting').length > 0 ) {
+        $('#lab-viewport').addClass('freeSelectMode')
+    }
+    window.freeSelectedNodes = []
+    $.when ( lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false) ).done ( function () {
+          $.when( lab_topology.clearDragSelection() ).done(  function () {
+               lab_topology.setDraggable($('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting'),true)
+               lab_topology.addToDragSelection($('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting'))
+          });
+    });
+    $('.free-selected').removeClass('free-selected')
+    $('.node_frame.ui-selected, node_frame.ui-selecting').addClass('free-selected')
+    $('.node_frame.ui-selected, .node_frame.ui-selecting').each(function() {
+         window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path") , type: 'node'  });
+         
+    });
 }
 
 
@@ -4650,6 +4639,32 @@ function openNodeCons ( url ) {
         $(nw).ready(function() { nw.close(); } );
 }
 
+function natSort(as, bs){
+    var a, b, a1, b1, i= 0, L, rx=  /(\d+)|(\D+)/g, rd=  /\d/;
+    if(isFinite(as) && isFinite(bs)) return as - bs;
+    a= String(as).toLowerCase();
+    b= String(bs).toLowerCase();
+    if(a=== b) return 0;
+    if(!(rd.test(a) && rd.test(b))) return a> b? 1: -1;
+    a= a.match(rx);
+    b= b.match(rx);
+    L= a.length> b.length? b.length: a.length;
+    while(i < L){
+        a1= a[i];
+        b1= b[i++];
+        if(a1!== b1){
+            if(isFinite(a1) && isFinite(b1)){
+                if(a1.charAt(0)=== "0") a1= "." + a1;
+                if(b1.charAt(0)=== "0") b1= "." + b1;
+                return a1 - b1;
+            }
+            else return a1> b1? 1: -1;
+        }
+    }
+    return a.length - b.length;
+}
+
+
 function newConnModal(info , oe ) {
         if ( !oe ) return ; 
 	$.when(
@@ -4771,7 +4786,7 @@ function newConnModal(info , oe ) {
                                                  tmp_name.push(linksourcedata['interfaces'][key]['name'])
                                                  reversetab[linksourcedata['interfaces'][key]['name']] = key
                                             }
-                                            var ordered_name = tmp_name.sort() ;
+                                            var ordered_name = tmp_name.sort(natSort)
                                             for ( key in ordered_name ) {
                                                 okey = reversetab[ordered_name[key]] ;
                                                 if ( linksourcedata['interfaces'][okey]['type'] == 'ethernet' ) {
@@ -4823,7 +4838,7 @@ function newConnModal(info , oe ) {
                                                  tmp_name.push(linktargetdata['interfaces'][key]['name'])
                                                  reversetab[linktargetdata['interfaces'][key]['name']] = key
                                             }
-                                            var ordered_name = tmp_name.sort() ;
+                                            var ordered_name = tmp_name.sort(natSort) ;
                                             for ( key in ordered_name ) {
                                             okey = reversetab[ordered_name[key]] ;
                                                 if ( linktargetdata['interfaces'][okey]['type'] == 'ethernet' ) {
