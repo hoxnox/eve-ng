@@ -1121,7 +1121,7 @@ $(document).on('click', '.action-openconsole-all, .action-openconsole-group', fu
     } else {
         freeSelectedNodes.forEach(function(node){
              $("#lab-viewport").removeClass("freeSelectMode");
-             if ($('#node' + node.path).attr('data-status') > 2 ){
+             if ($('#node' + node.path).attr('data-status') > 1 ){
                   if (window.chrome && window.chrome.webstore) {
                        openNodeCons( $('#node' + node.path +' a').attr('href') );
                   } else {
