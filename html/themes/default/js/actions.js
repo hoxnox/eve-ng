@@ -336,13 +336,14 @@ $(document).on('contextmenu', '.context-menu', function (e) {
                 '<i class="glyphicon glyphicon-erase"></i> ' + MESSAGES[68] +
                 '</a>' +
                 '</li>' +
-                '</li>' +
-                '<li>' +
-                    '<a class="action-nodeexport" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
-                '<i class="glyphicon glyphicon-save"></i> ' + MESSAGES[69] +
-                '</a>' +
-                '</li>';
-
+                '</li>'; 
+        if ((ROLE == 'admin' || ROLE == 'editor') &&  LOCK == 0  ) {
+                 body +=   '<li>' +
+                           '<a class="action-nodeexport" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                           '<i class="glyphicon glyphicon-save"></i> ' + MESSAGES[69] +
+                           '</a>' +
+                           '</li>';
+        }
                 // capture section
                 body += '<li role="separator" class="divider">' +
                 '</li>' +
