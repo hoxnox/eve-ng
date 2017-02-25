@@ -2247,9 +2247,12 @@ function printFormCustomShape(values) {
 
     if(isIE){
         $('input[type="color"]').hide()
-        $('input[type="color"]').colorpicker({
-            color: "#000",
-            displayIndicator: false,
+        $('input.shape_border_color').colorpicker({
+            color: "#000000",
+            defaultPalette: 'web'
+        })
+        $('input.shape_background_color').colorpicker({
+            color: "#ffffff",
             defaultPalette: 'web'
         })
     }
@@ -2313,8 +2316,12 @@ function printFormText(values) {
     }
     if(isIE){
         $('input[type="color"]').hide()
-        $('input[type="color"]').colorpicker({
-            color: "#000",
+        $('input.shape_border_color').colorpicker({
+            color: "#000000",
+            defaultPalette: 'web'
+        })
+        $('input.shape_background_color').colorpicker({
+            color: "#ffffff",
             defaultPalette: 'web'
         })
     }
@@ -4274,8 +4281,12 @@ function printFormEditCustomShape(id) {
 
         if(isIE){
             $('input[type="color"]').hide()
-            $('input[type="color"]').colorpicker({
-                color: "#000",
+            $('input.shape_border_color').colorpicker({
+                color: "#000000",
+                defaultPalette: 'web'
+            })
+            $('input.shape_background_color').colorpicker({
+                color: "#ffffff",
                 defaultPalette: 'web'
             })
         }
@@ -4412,8 +4423,12 @@ function printFormEditText(id) {
 
     if(isIE){
         $('input[type="color"]').hide()
-        $('input[type="color"]').colorpicker({
-            color: "#000",
+        $('input.shape_border_color').colorpicker({
+            color: "#000000",
+            defaultPalette: 'web'
+        })
+        $('input.shape_background_color').colorpicker({
+            color: "#ffffff",
             defaultPalette: 'web'
         })
     }
