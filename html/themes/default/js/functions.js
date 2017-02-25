@@ -2244,12 +2244,15 @@ function printFormCustomShape(values) {
     for (var j = 0; j < borderTypes.length; j++) {
         $('.border-type-select').append($('<option></option>').val(borderTypes[j]).html(borderTypes[j]));
     }
-    $('input[type="color"]').hide()
-    $('input[type="color"]').colorpicker({
-        color: "#000",
-        displayIndicator: false,
-        defaultPalette: 'web'
-    })
+
+    if(isIE){
+        $('input[type="color"]').hide()
+        $('input[type="color"]').colorpicker({
+            color: "#000",
+            displayIndicator: false,
+            defaultPalette: 'web'
+        })
+    }
 
 };
 
@@ -2308,11 +2311,13 @@ function printFormText(values) {
     for (var i = 0; i < fontStyles.length; i++) {
         $('.text-font-style-select').append($('<option></option>').val(fontStyles[i]).html(fontStyles[i]));
     }
-    $('input[type="color"]').hide()
-    $('input[type="color"]').colorpicker({
-        color: "#000",
-        defaultPalette: 'web'
-    })
+    if(isIE){
+        $('input[type="color"]').hide()
+        $('input[type="color"]').colorpicker({
+            color: "#000",
+            defaultPalette: 'web'
+        })
+    }
 };
 
 // Map picture
@@ -4266,11 +4271,14 @@ function printFormEditCustomShape(id) {
             '</form>';
 
         $('#lab-viewport').append(html);
-        $('input[type="color"]').hide()
-        $('input[type="color"]').colorpicker({
-            color: "#000",
-            defaultPalette: 'web'
-        })
+
+        if(isIE){
+            $('input[type="color"]').hide()
+            $('input[type="color"]').colorpicker({
+                color: "#000",
+                defaultPalette: 'web'
+            })
+        }
         for (var i = 0; i < borderTypes.length; i++) {
             $('.edit-custom-shape-form .border-type-select').append($('<option></option>').val(borderTypes[i]).html(borderTypes[i]));
         }
@@ -4402,11 +4410,13 @@ function printFormEditText(id) {
 
     $('#lab-viewport').append(html);
 
-    $('input[type="color"]').hide()
-    $('input[type="color"]').colorpicker({
-        color: "#000",
-        defaultPalette: 'web'
-    })
+    if(isIE){
+        $('input[type="color"]').hide()
+        $('input[type="color"]').colorpicker({
+            color: "#000",
+            defaultPalette: 'web'
+        })
+    }
     bgColor = $("#customText" + id + " p").css('background-color');
     colorDigits = /(.*?)rgba{0,1}\((\d+), (\d+), (\d+)\)/.exec(bgColor);
     if (colorDigits === null) {
