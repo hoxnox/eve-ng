@@ -22,7 +22,7 @@
 							</div>
 						</div>
 					</div>
-					<div data-ng-repeat="(x,y) in nodelist" class="pv_element" style="top:{{y.top/scale*2}}px; left:{{y.left/scale*2}}px; position:absolute;" data-toggle="tooltip" title="{{y.name}}">
+					<div data-ng-repeat="(x,y) in nodelist" class="pv_element" ng-attr-style="top:{{y.top/scale*2}}px; left:{{y.left/scale*2}}px; position:absolute;" data-toggle="tooltip" title="{{y.name}}">
 						<img data-ng-src="/images/icons/{{y.icon}}" class="{{y.icon.replace('.png','').replace(' ','')+'_s'+scale}}">
 					</div>
 					<div data-ng-repeat="x in networksList" class="pv_element" style="top:{{networksObject[x].top/scale*2}}px; left:{{networksObject[x].left/scale*2}}px; position:absolute;" data-toggle="tooltip" title="{{networksObject[x].name}}">
