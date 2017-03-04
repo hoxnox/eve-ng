@@ -2672,7 +2672,7 @@ $('body').on('submit', '#form-picture-edit', function (e) {
         if(missed_id.length > 0) {
             var body = '<div class="form-group">'
             if(missed_id.length > 1){
-                body += '<div class="question">Some ID does not exist: '+ missed_id.join(', ') +'</div>' +
+                body += '<div class="question">Nodes IDs does not exist: '+ missed_id.join(', ') +'</div>' +
                         '<div class="question">Please change it to the correct value</div>' 
             } else {
                 body += '<div class="question">Node ID does not exist: '+ missed_id[0] + '</div>' +
