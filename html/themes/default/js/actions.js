@@ -66,10 +66,16 @@ $(document).on('keydown', 'body', function (e) {
 
 //Add picture MAP
 $('body').on('click', '.follower-wrapper', function (e) {
+    var img_width_original  = +$(".follower-wrapper img").attr('width-val')
+    var img_height_original = +$(".follower-wrapper img").attr('height-val')
     var data_x = $("#follower").data("data_x");
     var data_y = $("#follower").data("data_y");
-    var y = parseInt((data_y).toFixed(0));
-    var x = parseInt((data_x).toFixed(0));
+    var img_width_resized = $(".follower-wrapper img").width()
+    var img_height_resized = $(".follower-wrapper img").height()
+    var k = img_width_original / img_width_resized;
+    console.log('')
+    var y = (parseInt((data_y).toFixed(0)) * k).toFixed(0);
+    var x = (parseInt((data_x).toFixed(0)) * k).toFixed(0);
     $('form textarea').val($('form textarea').val() + "<area shape='circle' alt='img' coords='" + x + "," + y + ",30' href='telnet://{{IP}}:{{NODE1}}'>\n");
 });
 

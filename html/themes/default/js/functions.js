@@ -2621,7 +2621,7 @@ function printFormPicture(action, values) {
         } else {
             html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '" data-path=' + values['id'] + '>'+
                 '<div class="follower-wrapper">'+
-                    '<img src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '"/>'+
+                    '<img src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '" width-val="'+values['width'] + '" height-val="' + values['height'] +'"/>'+
                     '<div id="follower">'+
                     '</div>'+
                 '</div>'+
