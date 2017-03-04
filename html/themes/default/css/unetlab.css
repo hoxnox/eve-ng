@@ -1115,7 +1115,10 @@ input[name='login[username]'], input[name='login[password]']{
 .follower-wrapper{
     position:relative;
 }
-
+.follower-wrapper img{
+	max-width: 100%;
+	max-height: calc(90vh - 140px) !important
+}
 .follower-wrapper:hover #follower {
     display:block;
 }
@@ -1576,3 +1579,8 @@ table.configured-nodes tbody td label {
 .jsplumb-connector { z-index:1000; }
 .jsplumb-endpoint { z-index:1001; }
 .jsplumb-overlay { z-index:1002; }
+
+#lab_picture img {
+	max-width: 100%;
+	max-height: calc(90vh - 140px) !important;
+}
