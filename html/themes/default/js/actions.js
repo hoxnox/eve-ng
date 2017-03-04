@@ -2241,6 +2241,8 @@ $(document).on('submit', '#form-network-add, #form-network-edit', function (e) {
     }
 
     for (var i = 0; i < form_data['count']; i++) {
+        // form_data['left'] = parseInt(form_data['left']) +  30;
+        // form_data['top'] = parseInt(form_data['top']) +  30;
         var request = $.ajax({
             cache: false,
             timeout: TIMEOUT,
@@ -2657,17 +2659,49 @@ $(document).on('submit', '#form-user-add, #form-user-edit', function (e) {
 // Edit picture form
 $('body').on('submit', '#form-picture-edit', function (e) {
     e.preventDefault();  // Prevent default behaviour
+    var picture_id = $(this).attr('data-path');
+    var missed_id = []
+    var regex = /{{(NODE([0-9]*))}}/g;
+    var temp;
+    var str = $('form :input[name="picture[map]"]').val()
+    $.when(getNodes(null)).then(function (nodes) {
+        while (temp = regex.exec(str)) {
+            if(temp[2] && !nodes.hasOwnProperty(temp[2])) missed_id.push(temp[2])
+        }
+        
+        if(missed_id.length > 0) {
+            var body = '<div class="form-group">'
+            if(missed_id.length > 1){
+                body += '<div class="question">Some ID does not exist: '+ missed_id.join(', ') +'</div>' +
+                        '<div class="question">Please change it to the correct value</div>' 
+            } else {
+                body += '<div class="question">Node ID does not exist: '+ missed_id[0] + '</div>' +
+                        '<div class="question">Please change it to the correct value</div>' 
+            }
+                body += '<div class="col-md-5 col-md-offset-3">' +
+                    '<button class="btn" data-dismiss="modal">Cotinue edit picture</button>' +
+                    // '<button type="button" class="btn" data-dismiss="modal">Cancel</button>' +
+                '</div>' +
+            '</div>'
+            var title = "Warning"
+            addModal(title, body, "", "make-red make-small");
+        } else {
+            submitPictureEdit(picture_id)
+        }
+    })
+    // return false;
+    // Setting options
+});
+
+function submitPictureEdit(picture_id){
     var lab_file = $('#lab-viewport').attr('data-path');
     var form_data = {};
-    var picture_id = $(this).attr('data-path');
 
-    // Setting options
     $('form :input[name^="picture["]').each(function (id, object) {
         // Standard options
         var field_name = $(this).attr('name').replace(/^picture\[([a-z]+)\]$/, '$1');
         form_data[field_name] = $(this).val();
     });
-
     // Get action URL
     var url = '/api/labs' + lab_file + '/pictures/' + picture_id;//form_data['id'];
     $.ajax({
@@ -2702,7 +2736,7 @@ $('body').on('submit', '#form-picture-edit', function (e) {
 
     // Stop or form will follow the action link
     return false;
-});
+}
 
 // Edit picture form
 $('body').on('submit', '#form-picture-delete', function (ev) {

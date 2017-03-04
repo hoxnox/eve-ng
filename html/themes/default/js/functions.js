@@ -2470,8 +2470,9 @@ function printPictureInForm(id) {
             'src="' + picture_url + '" ' +
             'alt="' + picture['name'] + '" ' +
             'title="' + picture['name'] + '" ' +
-            'width="' + picture['width'] + '" ' +
-            'height="' + picture['height'] + '"/>' +
+            // 'width="' + picture['width'] + '" ' +
+            // 'height="' + picture['height'] + 
+            '/>' +
             '<map name="picture_map">' + picture_map + '</map>' +
             '</div>';
         if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
@@ -2595,14 +2596,70 @@ function printFormPicture(action, values) {
         , title = (action == 'add') ? MESSAGES[135] : MESSAGES[137]
         , html = '';
 
-    if (action == 'add') {
-        html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[137] + '</label><div class="col-md-5"><textarea class="form-control" name="picture[map]">' + map + '</textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
-    } else {
-        html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '" data-path=' + values['id'] + '><div class="follower-wrapper"><img src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '" width="' + values['width'] + '" height="' + values['height'] + '"/><div id="follower"></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[137] + '</label><div class="col-md-5"><textarea class="form-control" name="picture[map]">' + map + '</textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
-    }
-    logger(1, 'DEBUG: popping up the picture form.');
-    addModalWide(title, html, '', 'second-win modal-ultra-wide');
-    validateLabInfo();
+    $.when(getNodes(null)).done(function (nodes) {
+        if (action == 'add') {
+            html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '">'+
+                '<div class="form-group">'+
+                    '<label class="col-md-3 control-label">' + MESSAGES[19] + '</label>'+
+                    '<div class="col-md-5">'+
+                        '<input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/>'+
+                    '</div>'+
+                    '</div>'+
+                '<div class="form-group">'+
+                    '<label class="col-md-3 control-label">' + MESSAGES[137] + '</label>'+
+                    '<div class="col-md-5">'+
+                    '<textarea class="form-control" name="picture[map]">' + map + '</textarea></div>'+
+                '</div>'+
+                '</div>' +
+                '<div class="form-group">'+
+                    '<div class="col-md-5 col-md-offset-3">'+
+                    '<button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button>'+
+                    '<button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button>'+
+                '</div>'+
+            '</div>'+
+        '</form>';
+        } else {
+            html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '" data-path=' + values['id'] + '>'+
+                '<div class="follower-wrapper">'+
+                    '<img src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '"/>'+
+                    '<div id="follower">'+
+                    '</div>'+
+                '</div>'+
+                '<div class="form-group">'+
+                    '<label class="col-md-3 control-label">' + MESSAGES[19] + '</label>'+
+                    '<div class="col-md-5">'+
+                        '<input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/>'+
+                    '</div>'+
+                '</div>'+
+                '<div class="form-group">'+
+                    '<label class="col-md-3 control-label">' + MESSAGES[62] + '</label>'+
+                    '<div class="col-md-5">'+
+                        '<select class="form-control">';
+                        $.each(nodes, function (key, value) {
+                            html += '<option> id:' +key + ', name: ' + value.name +  '</option>';
+                        });
+                    html += '</select>' +
+                    '</div>'+
+                '</div>'+
+                '<div class="form-group">'+
+                    '<label class="col-md-3 control-label">'+ MESSAGES[137] + '</label>'+
+                    '<div class="col-md-5">'+
+                        '<textarea class="form-control" name="picture[map]">'+ map + '</textarea>'+
+                    '</div>'+
+                '</div>'+
+                '<div class="form-group">'+
+                    '<div class="col-md-5 col-md-offset-3">'+
+                        '<button type="submit" class="btn btn-success">'+ MESSAGES[47] + '</button>'+
+                        '<button type="button" class="btn" data-dismiss="modal">'+ MESSAGES[18] + '</button>'+
+                    '</div>'+
+                '</div>'+
+            '</form>';
+
+        }
+        logger(1, 'DEBUG: popping up the picture form.');
+        addModalWide(title, html, '', 'second-win modal-ultra-wide');
+        validateLabInfo();
+    }) 
 }
 
 // User form
