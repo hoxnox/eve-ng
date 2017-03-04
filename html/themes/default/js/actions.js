@@ -2241,8 +2241,6 @@ $(document).on('submit', '#form-network-add, #form-network-edit', function (e) {
     }
 
     for (var i = 0; i < form_data['count']; i++) {
-        form_data['left'] = parseInt(form_data['left']) +  30;
-        form_data['top'] = parseInt(form_data['top']) +  30;
         var request = $.ajax({
             cache: false,
             timeout: TIMEOUT,
