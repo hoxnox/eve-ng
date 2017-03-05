@@ -72,12 +72,41 @@ $('body').on('click', '.follower-wrapper', function (e) {
     var data_y = $("#follower").data("data_y");
     var img_width_resized = $(".follower-wrapper img").width()
     var img_height_resized = $(".follower-wrapper img").height()
-    var k = img_width_original / img_width_resized;
-    console.log('')
+    
+    var k = 1;
+    if($('.follower-wrapper img').hasClass('picture-img-autosozed')){
+        k = img_width_original / img_width_resized;
+    }
+
     var y = (parseInt((data_y).toFixed(0)) * k).toFixed(0);
     var x = (parseInt((data_x).toFixed(0)) * k).toFixed(0);
     $('form textarea').val($('form textarea').val() + "<area shape='circle' alt='img' coords='" + x + "," + y + ",30' href='telnet://{{IP}}:{{NODE1}}'>\n");
 });
+
+// context menu on picture edit
+$(document).on('contextmenu', '.follower-wrapper', function(e){
+    // Prevent default context menu on viewport
+    e.stopPropagation();
+    e.preventDefault();
+    var body = '';
+        body += '<li><a class="action-showfull-picture" href="javascript:void(0)">Set original size</a></li>';
+        body += '<li><a class="action-autosize" href="javascript:void(0)">Set autosize</a></li>';
+        printContextMenu('Picture size', body, e.pageX, e.pageY,true,"menu");
+})
+
+$(document).on('click', '.action-showfull-picture', function(){
+    $('#context-menu').remove();
+    FOLLOW_WRAPPER_IMG_STATE = 'full'
+    $('.follower-wrapper img').removeClass('picture-img-autosozed')
+    $('#lab_picture img').removeClass('picture-img-autosozed')
+})
+
+$(document).on('click', '.action-autosize', function(){
+    $('#context-menu').remove();
+    FOLLOW_WRAPPER_IMG_STATE = 'resized'
+    $('.follower-wrapper img').addClass('picture-img-autosozed')
+    $('#lab_picture img').addClass('picture-img-autosozed')
+})
 
 // Accept privacy
 $(document).on('click', '#privacy', function () {
@@ -1253,16 +1282,17 @@ $(document).on('click', '.action-picturesget', function (e) {
     logger(1, 'DEBUG: action = picturesget');
     $.when(getPictures()).done(function (pictures) {
         if (!$.isEmptyObject(pictures)) {
-            var body = '<div class="row"><div class="picture-list col-md-1 col-lg-1"><ul class="map">';
+            var body = '<div class="row"><div class="picture-list col-md-2 col-lg-1"><ul class="map">';
             $.each(pictures, function (key, picture) {
                 var title = picture['name'] || "pic name";
                 body += '<li>';
                 if (ROLE != "user" && LOCK != 1 )
-                    body += '<a class="delete-picture" href="javascript:void(0)" data-path="' + key + '"><i class="glyphicon glyphicon-trash" title="Delete"></i> ';
+                    body += '<a class="delete-picture" style="margin-right: 5px;" href="javascript:void(0)" data-path="' + key + '"><i class="glyphicon glyphicon-trash" title="Delete"></i> ';
+                    body += '<a class="action-pictureedit" href="javascript:void(0)" data-path="' + key + '"><i class="glyphicon glyphicon-edit" title="Edit"></i> ';
                 body += '<a class="action-pictureget" data-path="' + key + '" href="javascript:void(0)" title="' + title + '">' + picture['name'].split(' ')[0] + '</a>';
                 body += '</a></li>';
             });
-            body += '</ul></div><div id="config-data" class="col-md-11 col-lg-11"></div></div>';
+            body += '</ul></div><div id="config-data" class="col-md-10 col-lg-11"></div></div>';
             addModalWide(MESSAGES[59], body, '', "modal-ultra-wide");
         } else {
             addMessage('info', MESSAGES[134]);

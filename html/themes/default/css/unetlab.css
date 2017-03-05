@@ -826,6 +826,7 @@ body.login {
 	line-height: 3em;
 	list-style-type: none;
 	margin-left: 0px;
+	padding-left: 30px;
 }
 
 .modal-body  .config-list li, .modal-body  .picture-list li {
@@ -1114,8 +1115,14 @@ input[name='login[username]'], input[name='login[password]']{
 
 .follower-wrapper{
     position:relative;
+	overflow-x: auto;
+    overflow-y: hidden;
 }
-.follower-wrapper img{
+#lab_picture {
+	overflow-x: auto;
+    overflow-y: hidden;
+}
+.picture-img-autosozed{
 	max-width: 100%;
 	max-height: calc(90vh - 140px) !important
 }
@@ -1579,8 +1586,3 @@ table.configured-nodes tbody td label {
 .jsplumb-connector { z-index:1000; }
 .jsplumb-endpoint { z-index:1001; }
 .jsplumb-overlay { z-index:1002; }
-
-#lab_picture img {
-	max-width: 100%;
-	max-height: calc(90vh - 140px) !important;
-}

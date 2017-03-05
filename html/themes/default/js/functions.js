@@ -2465,8 +2465,9 @@ function printPictureInForm(id) {
             return parseInt(group2) + 32768 + 128 * TENANT;
         });
         // Read privileges and set specific actions/elements
+        var sizeClass = FOLLOW_WRAPPER_IMG_STATE == 'resized' ? 'picture-img-autosozed' : ''
         var body = '<div id="lab_picture">' +
-            '<img usemap="#picture_map" ' +
+            '<img class="' + sizeClass + '" usemap="#picture_map" ' +
             'src="' + picture_url + '" ' +
             'alt="' + picture['name'] + '" ' +
             'title="' + picture['name'] + '" ' +
@@ -2475,11 +2476,9 @@ function printPictureInForm(id) {
             '/>' +
             '<map name="picture_map">' + picture_map + '</map>' +
             '</div>';
-        if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
-            var footer = '<button type="button" class="btn action-pictureedit" data-path="' + picture_id + '">Edit</button>';
-        } else {
-            var footer = '';
-        }
+        
+        var footer = '';
+        
         printNodesMap({name: picture['name'], body: body, footer: footer}, function () {
             setTimeout(function () {
                 $('map').imageMapResize();
@@ -2618,10 +2617,11 @@ function printFormPicture(action, values) {
                 '</div>'+
             '</div>'+
         '</form>';
-        } else {
+    } else {
+            var sizeClass = FOLLOW_WRAPPER_IMG_STATE == 'resized' ? 'picture-img-autosozed' : ''
             html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '" data-path=' + values['id'] + '>'+
                 '<div class="follower-wrapper">'+
-                    '<img src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '" width-val="'+values['width'] + '" height-val="' + values['height'] +'"/>'+
+                    '<img class="' + sizeClass + '" src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '" width-val="'+values['width'] + '" height-val="' + values['height'] +'"/>'+
                     '<div id="follower">'+
                     '</div>'+
                 '</div>'+

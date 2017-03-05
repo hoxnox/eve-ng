@@ -31,6 +31,7 @@ var ATTACHMENTS;
 var UPDATEID;
 var LOCK = 0 ; 
 var isIE = getInternetExplorerVersion() > -1;
+var FOLLOW_WRAPPER_IMG_STATE = 'resized'
 
 $(document).ready(function() {
 	if ($.cookie('privacy') != 'true') {
