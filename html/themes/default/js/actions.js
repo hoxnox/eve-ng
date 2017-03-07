@@ -1016,7 +1016,9 @@ $(document).on('click', '.action-labtopologyrefresh', function (e) {
     detachNodeLink();
     $.when(printLabTopology()).done( function () {
          if ( LOCK == 1 ) {
-        $('.action-labobjectadd-li').remove();
+            $('.action-labobjectadd-li').remove();
+            lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false);
+            $('.customShape').resizable('disable');
          }
     });
 

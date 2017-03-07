@@ -3686,6 +3686,10 @@ function printPageLabOpen(lab) {
 
 
              })
+        if ( LOCK == 1 ) {
+            lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false);
+            $('.customShape').resizable('disable');
+        }
     })
 }
 
