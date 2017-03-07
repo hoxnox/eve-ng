@@ -3672,6 +3672,8 @@ function printPageLabOpen(lab) {
          $('#lab-sidebar ul').append('<li><a class="action-textobjectsget" href="javascript:void(0)" title="' + MESSAGES[150] + '"><i class="glyphicon glyphicon-text-background"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-moreactions" href="javascript:void(0)" title="' + MESSAGES[125] + '"><i class="glyphicon glyphicon-th"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-labtopologyrefresh" href="javascript:void(0)" title="' + MESSAGES[57] + '"><i class="glyphicon glyphicon-refresh"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><div class="col-md-2 glyphicon glyphicon-zoom-in"></div><div id="zoomslide" class="col-md-5"></div><div class="col-md-5"></div><br></li>');
+         $('#zoomslide').slider({value:100,min:10,max:200,step:10,slide:zommlab});
          //$('#lab-sidebar ul').append('<li><a class="action-freeselect" href="javascript:void(0)" title="' + MESSAGES[151] + '"><i class="glyphicon glyphicon-check"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-status" href="javascript:void(0)" title="' + MESSAGES[13] + '"><i class="glyphicon glyphicon-info-sign"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-labbodyget" href="javascript:void(0)" title="' + MESSAGES[64] + '"><i class="glyphicon glyphicon-list-alt"></i></a></li>');
@@ -5090,3 +5092,32 @@ function connContextMenu ( e, ui ) {
          window.connContext = 1
          window.connToDel = e
 }
+
+function zommlab ( event, ui ) {
+    var zoom=ui.value/100
+    setZoom(zoom,lab_topology,[0,0])
+    $('#lab-viewport').width($(window).width()/zoom-40)
+    $('#lab-viewport').height($(window).height()/zoom);
+    $('#lab-viewport').css({top: 0,left: 40,position: 'absolute'});
+    $('#zoomslide').slider({value:ui.value})
+}
+
+// Function from jsPlumb Doc
+window.setZoom = function(zoom, instance, transformOrigin, el) {
+  transformOrigin = transformOrigin || [ 0.5, 0.5 ];
+  instance = instance || jsPlumb;
+  el = el || instance.getContainer();
+  var p = [ "webkit", "moz", "ms", "o" ],
+      s = "scale(" + zoom + ")",
+      oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+
+  for (var i = 0; i < p.length; i++) {
+    el.style[p[i] + "Transform"] = s;
+    el.style[p[i] + "TransformOrigin"] = oString;
+  }
+
+  el.style["transform"] = s;
+  el.style["transformOrigin"] = oString;
+
+  instance.setZoom(zoom);
+};

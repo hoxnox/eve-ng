@@ -349,6 +349,12 @@ body.login {
 #lab-sidebar ul li i{
 	margin-right:7px;
 }
+#lab-sidebar ul li div{
+        margin-right:7px;
+        padding:  0px !important;
+        font-size: 1.2em;
+        color: #b8c7ce;
+}
 #lab-sidebar:hover ul {
 	width:200px;
 }
@@ -1586,3 +1592,4 @@ table.configured-nodes tbody td label {
 .jsplumb-connector { z-index:1000; }
 .jsplumb-endpoint { z-index:1001; }
 .jsplumb-overlay { z-index:1002; }
+
