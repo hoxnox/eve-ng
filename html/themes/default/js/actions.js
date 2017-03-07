@@ -50,7 +50,9 @@ $(document).on('keydown', 'body', function (e) {
         $('.ui-selecting').removeClass('ui-selecting')
         $("#lab-viewport").removeClass('freeSelectMode')
         lab_topology.clearDragSelection();
-        lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true)
+        if ((ROLE == 'admin' || ROLE == 'editor') &&  LOCK == 0  ) {
+              lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true)
+        }
     }
     if (isEditCustomShape && KEY_CODES.escape == e.which) {
         $(".edit-custom-shape-form button.cancelForm").click(); // it will handle all the stuff
