@@ -1822,6 +1822,10 @@ function wipe(node_id) {
  **************************************************************************/
 // Context menu
 function printContextMenu(title, body, pageX, pageY, addToBody, role, hideTitle) {
+    var zoomvalue = 100
+    if ( role == "menu" ) zoomvalue=$('#zoomslide').slider("value")
+    pageX=pageX*100/zoomvalue
+    pageY=pageY*100/zoomvalue
     $("#context-menu").remove()
     var titleLine = '';
         
@@ -1831,36 +1835,45 @@ function printContextMenu(title, body, pageX, pageY, addToBody, role, hideTitle)
     
     var menu = '<div id="context-menu" class="collapse clearfix dropdown">';
     menu += '<ul class="dropdown-menu" role="' + role + '">' + titleLine + body + '</ul></div>';
+    var hiddenYpix = 0
+    var hiddenXpix = 0
+    
+    
 
     if(addToBody){
         $('body').append(menu);
     } else {
         $('#lab-viewport').append(menu);
+        hiddenYpix=$('#lab-viewport').scrollTop();
+        hiddenXpix=$('#lab-viewport').scrollLeft();
     }
 
     // Set initial status
     $('.menu-interface, .menu-edit').slideToggle();
     $('.menu-interface, .menu-edit').hide();
+    setZoom(100/zoomvalue,lab_topology,[0,0],$('#context-menu')[0])
 
     // Calculating position
-    if (pageX + $('#context-menu').width() > $(window).width()) {
+    if (pageX + $('#context-menu').width() + 30 > $(window).width()) {
         // Dropright
-        var left = pageX - $('#context-menu').width();
+        logger(1,'Drop right');
+        var left = pageX - $('#context-menu').width() + hiddenXpix;
     } else {
         // Dropleft
-        var left = pageX;
+        var left = pageX+hiddenXpix;
     }
     if ($('#context-menu').height() > $(window).height()) {
         // Page is too short, drop down by default
         var top = 0;
         var max_height = $(window).height();
-    } else if ($(window).height() - pageY >= $('#context-menu').height()) {
+    } else if ($(window).height()/zoomvalue*100 - pageY >= $('#context-menu').height()) {
         // Dropdown if enough space
-        var top = pageY;
+        var top = pageY+hiddenYpix;
         var max_height = $('#context-menu').height();
     } else {
         // Dropup
-        var top = $(window).height() - $('#context-menu').height();
+        var top = ( $(window).height() - $('#context-menu').height() ) /zoomvalue * 100 + hiddenYpix;
+        //var top = $(window).height() - $('#context-menu').height() + hiddenpix;
         var max_height = $('#context-menu').height();
     }
 
@@ -1873,6 +1886,7 @@ function printContextMenu(title, body, pageX, pageY, addToBody, role, hideTitle)
     $('#context-menu > ul').css({
         maxHeight: max_height - 5
     });
+    
 }
 
 // Folder form
@@ -2466,13 +2480,14 @@ function printPictureInForm(id) {
         });
         // Read privileges and set specific actions/elements
         var sizeClass = FOLLOW_WRAPPER_IMG_STATE == 'resized' ? 'picture-img-autosozed' : ''
+        //var sizeClass = ""
         var body = '<div id="lab_picture">' +
             '<img class="' + sizeClass + '" usemap="#picture_map" ' +
             'src="' + picture_url + '" ' +
             'alt="' + picture['name'] + '" ' +
             'title="' + picture['name'] + '" ' +
-            // 'width="' + picture['width'] + '" ' +
-            // 'height="' + picture['height'] + 
+             //'width="' + picture['width'] + '" ' +
+             //'height="' + picture['height'] + 
             '/>' +
             '<map name="picture_map">' + picture_map + '</map>' +
             '</div>';
@@ -2481,9 +2496,11 @@ function printPictureInForm(id) {
         
         printNodesMap({name: picture['name'], body: body, footer: footer}, function () {
             setTimeout(function () {
-                $('map').imageMapResize();
+               $('map').imageMapResize();
             }, 500);
         });
+        window.lab_picture = jsPlumb.getInstance()
+        lab_picture.setContainer($('#lab_picture'))
     }).fail(function (message) {
         addModalError(message);
     });
@@ -2634,9 +2651,9 @@ function printFormPicture(action, values) {
                 '<div class="form-group">'+
                     '<label class="col-md-3 control-label">' + MESSAGES[62] + '</label>'+
                     '<div class="col-md-5">'+
-                        '<select class="form-control">';
+                        '<select class="form-control" id="map_nodeid">';
                         $.each(nodes, function (key, value) {
-                            html += '<option> id:' +key + ', name: ' + value.name +  '</option>';
+                            html += '<option value="'+key+'"> id:' +key + ', name: ' + value.name +  '</option>';
                         });
                     html += '</select>' +
                     '</div>'+
@@ -2954,6 +2971,7 @@ function printLabTopology() {
                $newTextObject.removeClass('ui-selected'); 
                $newTextObject.removeClass('move-selected'); 
                $newTextObject.removeClass('dragstopped'); 
+               if ( labinfo['lock'] == 1 ) $newTextObject.resizable("disable")
                 if (--textObjectsCount === 0) {
                     labTextObjectsResolver.resolve();
                 }
@@ -2981,8 +2999,7 @@ function printLabTopology() {
                 });
                 // Read privileges and set specific actions/elements
                
-                 
-                if (ROLE == 'admin' || ROLE == 'editor')  {
+                if ((ROLE == 'admin' || ROLE == 'editor') && labinfo['lock'] == 0 )  {
                     dragDeferred = $.Deferred()
                     $.when ( labTextObjectsResolver ).done ( function () {
                         logger(1,'DEBUG: '+ textObjectsCount+ ' Shape(s) left');
@@ -3019,7 +3036,7 @@ function printLabTopology() {
                           });
                     });
                     $.each(networks, function (key,value) {
-                           lab_topology.makeSource('network' + value['id'], {
+                           if ( value['visibility'] == 1 ) lab_topology.makeSource('network' + value['id'], {
                                 filter: ".ep",
                                 Anchor:"Continuous",
                                 connectionType:"basic",
@@ -3032,7 +3049,7 @@ function printLabTopology() {
                                 }
                            });
 
-                          lab_topology.makeTarget($('#network' + value['id']), {
+                          if ( value['visibility'] == 1 ) lab_topology.makeTarget($('#network' + value['id']), {
                                 dropOptions: { hoverClass: "dragHover" },
                                 anchor: "Continuous",
                                 allowLoopback: false
@@ -3132,11 +3149,12 @@ function printLabTopology() {
                 //$('._jsPlumb_connector, ._jsPlumb_overlay, ._jsPlumb_endpoint_anchor_').detach().appendTo('#lab-viewport');
                 // if lock then freeze node network
                 if ( labinfo['lock'] == 1 ) {
-                                LOCK = 1 ;
+                                window.LOCK = 1 ;
+                                //alert("lock it ")
                                 defer.resolve();
-                                if (ROLE == 'admin' || ROLE == 'editor' ) {
-                                     lab_topology.setDraggable($('customShape, .node_frame, .network_frame'), false );
-                               }
+                               // if (ROLE == 'admin' || ROLE == 'editor' ) {
+                               //      lab_topology.setDraggable($('customShape, .node_frame, .network_frame'), false );
+                               //}
                                $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
                                $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
                             
@@ -3673,7 +3691,7 @@ function printPageLabOpen(lab) {
          $('#lab-sidebar ul').append('<li><a class="action-moreactions" href="javascript:void(0)" title="' + MESSAGES[125] + '"><i class="glyphicon glyphicon-th"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-labtopologyrefresh" href="javascript:void(0)" title="' + MESSAGES[57] + '"><i class="glyphicon glyphicon-refresh"></i></a></li>');
          $('#lab-sidebar ul').append('<li><div class="col-md-2 glyphicon glyphicon-zoom-in"></div><div id="zoomslide" class="col-md-5"></div><div class="col-md-5"></div><br></li>');
-         $('#zoomslide').slider({value:100,min:10,max:200,step:10,slide:zommlab});
+         $('#zoomslide').slider({value:100,min:10,max:200,step:10,slide:zoomlab});
          //$('#lab-sidebar ul').append('<li><a class="action-freeselect" href="javascript:void(0)" title="' + MESSAGES[151] + '"><i class="glyphicon glyphicon-check"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-status" href="javascript:void(0)" title="' + MESSAGES[13] + '"><i class="glyphicon glyphicon-info-sign"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-labbodyget" href="javascript:void(0)" title="' + MESSAGES[64] + '"><i class="glyphicon glyphicon-list-alt"></i></a></li>');
@@ -5097,13 +5115,19 @@ function connContextMenu ( e, ui ) {
          window.connToDel = e
 }
 
-function zommlab ( event, ui ) {
+function zoomlab ( event, ui ) {
     var zoom=ui.value/100
     setZoom(zoom,lab_topology,[0,0])
     $('#lab-viewport').width($(window).width()/zoom-40)
     $('#lab-viewport').height($(window).height()/zoom);
     $('#lab-viewport').css({top: 0,left: 40,position: 'absolute'});
     $('#zoomslide').slider({value:ui.value})
+}
+
+function zoompic ( event, ui ) {
+    var zoom=ui.value/100
+    setZoom(zoom,lab_picture,[0,0])
+    $('#picslider').slider({value:ui.value})
 }
 
 // Function from jsPlumb Doc

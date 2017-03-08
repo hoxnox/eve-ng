@@ -82,6 +82,7 @@ $('body').on('click', '.follower-wrapper', function (e) {
 
     var y = (parseInt((data_y).toFixed(0)) * k).toFixed(0);
     var x = (parseInt((data_x).toFixed(0)) * k).toFixed(0);
+    var current_href=""
     $('form textarea').val($('form textarea').val() + "<area shape='circle' alt='img' coords='" + x + "," + y + ",30' href='telnet://{{IP}}:{{NODE1}}'>\n");
 });
 
@@ -1015,7 +1016,7 @@ $(document).on('click', '.action-labtopologyrefresh', function (e) {
     logger(1, 'DEBUG: action = labtopologyrefresh');
     detachNodeLink();
     $.when(printLabTopology()).done( function () {
-         if ( LOCK == 1 ) {
+         if ( window.LOCK == 1 ) {
             $('.action-labobjectadd-li').remove();
             lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false);
             $('.customShape').resizable('disable');
@@ -1139,6 +1140,7 @@ $(document).on('click', '.action-nodeplace, .action-networkplace, .action-custom
 });
 
 $(document).on('click', '.action-openconsole-all, .action-openconsole-group', function (e) {
+    $('#context-menu').remove();
     var target = $(this);
     var isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode")
 
@@ -1286,7 +1288,7 @@ $(document).on('click', '.action-picturesget', function (e) {
     logger(1, 'DEBUG: action = picturesget');
     $.when(getPictures()).done(function (pictures) {
         if (!$.isEmptyObject(pictures)) {
-            var body = '<div class="row"><div class="picture-list col-md-2 col-lg-1"><ul class="map">';
+            var body = '<div class="col-md-1 col-md-offset-10" id="picslider"></div><div class="col-md-1 col-md-offset-11"></div><div class="row"><div class="picture-list col-md-2 col-lg-1"><ul class="map">';
             $.each(pictures, function (key, picture) {
                 var title = picture['name'] || "pic name";
                 body += '<li>';
@@ -1299,6 +1301,7 @@ $(document).on('click', '.action-picturesget', function (e) {
             });
             body += '</ul></div><div id="config-data" class="col-md-10 col-lg-11"></div></div>';
             addModalWide(MESSAGES[59], body, '', "modal-ultra-wide");
+            $('#picslider').slider({value:100,min:10,max:200,step:10,slide:zoompic})
         } else {
             addMessage('info', MESSAGES[134]);
         }

@@ -1124,6 +1124,9 @@ input[name='login[username]'], input[name='login[password]']{
 	overflow-x: auto;
     overflow-y: hidden;
 }
+#config-data {
+       overflow: auto;
+}
 #lab_picture {
 	overflow-x: auto;
     overflow-y: hidden;
@@ -1593,3 +1596,7 @@ table.configured-nodes tbody td label {
 .jsplumb-endpoint { z-index:1001; }
 .jsplumb-overlay { z-index:1002; }
 
+.ui-slider-handle.ui-state-active {
+    background-color: #263339 ;
+    border-color: #263339 ;
+}
