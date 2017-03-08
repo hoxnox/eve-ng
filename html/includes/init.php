@@ -85,6 +85,7 @@ if (!isset($node_templates)) {
 		'cips'			=>	'Cisco IPS',
 		'cucm'			=>	'Cisco CUCM',
 		'ise'			=>	'Cisco ISE',
+		'jspace'        =>  'Junos Space',
 		'c1710'			=>	'Cisco IOS 1710 (Dynamips)',
 		'c3725'			=>	'Cisco IOS 3725 (Dynamips)',
 		'c7200'			=>	'Cisco IOS 7206VXR (Dynamips)',
@@ -151,7 +152,7 @@ if (!isset($node_templates)) {
 				}
 			}
 		}
-		if ( $templ == "vpcs" ) {
+		if ( $templ == "vpcs" || $templ == "docker"  ) {
 		$found = 1 ;
 		}
 		foreach ( $qemudir as $dir ) {
