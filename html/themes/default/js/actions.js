@@ -1290,9 +1290,10 @@ $(document).on('click', '.action-picturesget', function (e) {
             $.each(pictures, function (key, picture) {
                 var title = picture['name'] || "pic name";
                 body += '<li>';
-                if (ROLE != "user" && LOCK != 1 )
+                if (ROLE != "user" && LOCK != 1 ) {
                     body += '<a class="delete-picture" style="margin-right: 5px;" href="javascript:void(0)" data-path="' + key + '"><i class="glyphicon glyphicon-trash" title="Delete"></i> ';
                     body += '<a class="action-pictureedit" href="javascript:void(0)" data-path="' + key + '"><i class="glyphicon glyphicon-edit" title="Edit"></i> ';
+                }
                 body += '<a class="action-pictureget" data-path="' + key + '" href="javascript:void(0)" title="' + title + '">' + picture['name'].split(' ')[0] + '</a>';
                 body += '</a></li>';
             });
