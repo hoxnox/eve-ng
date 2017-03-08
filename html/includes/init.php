@@ -152,7 +152,7 @@ if (!isset($node_templates)) {
 				}
 			}
 		}
-		if ( $templ == "vpcs" ) {
+		if ( $templ == "vpcs" || $templ == "docker"  ) {
 		$found = 1 ;
 		}
 		foreach ( $qemudir as $dir ) {
