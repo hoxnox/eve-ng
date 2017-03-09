@@ -2612,6 +2612,7 @@ function printFormPicture(action, values) {
         , height = (values['height'] != null) ? values['height'] : ''
         , title = (action == 'add') ? MESSAGES[135] : MESSAGES[137]
         , html = '';
+        $("#lab_picture").empty()
         $.when(getPicturesMapped(values['id'])).done(function (picture) {
         var picture_map = values['map'];
         picture_map = picture_map.replace(/{{IP}}/g, location.hostname);
