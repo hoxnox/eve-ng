@@ -2090,12 +2090,12 @@ class Node {
 						}
 						break;
 					case 'mikrotik':
-						for ($i = 1; $i < $this -> ethernet; $i++) {
+						for ($i = 0; $i < $this -> ethernet; $i++) {
 							if (isset($old_ethernets[$i])) {
 								// Previous interface found, copy from old one
 								$this -> ethernets[$i] = $old_ethernets[$i];
 							} else {
-								$n = 'eth'.$i;      // Interface name
+								$n = 'eth'.($i+1);      // Interface name
 								try {
 									$this -> ethernets[$i] = new Interfc(Array('name' => $n, 'type' => 'ethernet'), $i);
 								} catch (Exception $e) {
