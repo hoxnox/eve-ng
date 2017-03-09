@@ -2501,6 +2501,7 @@ function printPictureInForm(id) {
         });
         window.lab_picture = jsPlumb.getInstance()
         lab_picture.setContainer($('#lab_picture'))
+        $('#picslider').slider("value",100)
     }).fail(function (message) {
         addModalError(message);
     });
@@ -2611,7 +2612,9 @@ function printFormPicture(action, values) {
         , height = (values['height'] != null) ? values['height'] : ''
         , title = (action == 'add') ? MESSAGES[135] : MESSAGES[137]
         , html = '';
-
+        $.when(getPicturesMapped(values['id'])).done(function (picture) {
+        var picture_map = values['map'];
+        picture_map = picture_map.replace(/{{IP}}/g, location.hostname);
     $.when(getNodes(null)).done(function (nodes) {
         if (action == 'add') {
             html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '">'+
@@ -2635,11 +2638,13 @@ function printFormPicture(action, values) {
             '</div>'+
         '</form>';
     } else {
-            var sizeClass = FOLLOW_WRAPPER_IMG_STATE == 'resized' ? 'picture-img-autosozed' : ''
+            //var sizeClass = FOLLOW_WRAPPER_IMG_STATE == 'resized' ? 'picture-img-autosozed' : ''
+            var sizeClass = 'resized' 
             html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '" data-path=' + values['id'] + '>'+
                 '<div class="follower-wrapper">'+
                     '<img class="' + sizeClass + '" src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '" width-val="'+values['width'] + '" height-val="' + values['height'] +'"/>'+
                     '<div id="follower">'+
+                    '<map name="picture_map">' + picture_map + '</map>' +
                     '</div>'+
                 '</div>'+
                 '<div class="form-group">'+
@@ -2675,8 +2680,19 @@ function printFormPicture(action, values) {
         }
         logger(1, 'DEBUG: popping up the picture form.');
         addModalWide(title, html, '', 'second-win modal-ultra-wide');
+        var htmlsvg = "" ;
+        $.each( $('area') , function ( key, area ) {
+        //alert ( area.coords )
+        var cX = area.coords.split(",")[0] - 30
+        var cY = area.coords.split(",")[1] - 30
+        //alert(cX + " " + cY )
+        htmlsvg = '<div style="position:absolute;top:'+cY+'px;left:'+cX+'px;width:60px;height:60px;"><svg width="60" height="60"><g><ellipse cx="30" cy="30" rx="28" ry="28" stroke="#000000" stroke-width="2" fill="#ffffff"></ellipse><text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" stroke="#000000" stroke-width="0px" dy=".2em" font-size="12" >'+area.href.replace(/.*{{NODE/g, "NODE ").replace(/}}/g, "")+'</text></g></svg></div>'
+        $(".follower-wrapper").append(htmlsvg)
+        }); 
+        
         validateLabInfo();
-    }) 
+    });
+    }); 
 }
 
 // User form
@@ -5117,10 +5133,11 @@ function connContextMenu ( e, ui ) {
 
 function zoomlab ( event, ui ) {
     var zoom=ui.value/100
-    setZoom(zoom,lab_topology,[0,0])
-    $('#lab-viewport').width($(window).width()/zoom-40)
+    setZoom(zoom,lab_topology,[0.0,0.0])
+    $('#lab-viewport').width(($(window).width()-40)/zoom)
     $('#lab-viewport').height($(window).height()/zoom);
     $('#lab-viewport').css({top: 0,left: 40,position: 'absolute'});
+    //setZoom(zoom,lab_topology,[0.0,0.0])
     $('#zoomslide').slider({value:ui.value})
 }
 

@@ -83,7 +83,10 @@ $('body').on('click', '.follower-wrapper', function (e) {
     var y = (parseInt((data_y).toFixed(0)) * k).toFixed(0);
     var x = (parseInt((data_x).toFixed(0)) * k).toFixed(0);
     var current_href=""
-    $('form textarea').val($('form textarea').val() + "<area shape='circle' alt='img' coords='" + x + "," + y + ",30' href='telnet://{{IP}}:{{NODE1}}'>\n");
+    $('form textarea').val($('form textarea').val() + "<area shape='circle' alt='img' coords='" + x + "," + y + ",30' href='telnet://{{IP}}:{{NODE"+$("#map_nodeid option:selected").val()+"}}'>\n");
+    var htmlsvg="" ;
+    htmlsvg = '<div style="position:absolute;top:'+(y-30)+'px;left:'+(x-30)+'px;width:60px;height:60px;"><svg width="60" height="60"><g><ellipse cx="30" cy="30" rx="28" ry="28" stroke="#000000" stroke-width="2" fill="#ffffff"></ellipse><text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" stroke="#000000" stroke-width="0px" dy=".2em" font-size="12" >NODE '+$("#map_nodeid option:selected").val()+'</text></g></svg></div>'
+    $(".follower-wrapper").append(htmlsvg)
 });
 
 // context menu on picture edit
@@ -1288,7 +1291,7 @@ $(document).on('click', '.action-picturesget', function (e) {
     logger(1, 'DEBUG: action = picturesget');
     $.when(getPictures()).done(function (pictures) {
         if (!$.isEmptyObject(pictures)) {
-            var body = '<div class="col-md-1 col-md-offset-10" id="picslider"></div><div class="col-md-1 col-md-offset-11"></div><div class="row"><div class="picture-list col-md-2 col-lg-1"><ul class="map">';
+            var body = '<div class="col-md-1 col-md-offset-10" id="picslider"></div><div class="col-md-1 col-md-offset-11"></div><div class="row"><div class="picture-list col-md-3 col-lg-2"><ul class="map">';
             $.each(pictures, function (key, picture) {
                 var title = picture['name'] || "pic name";
                 body += '<li>';
@@ -1296,10 +1299,10 @@ $(document).on('click', '.action-picturesget', function (e) {
                     body += '<a class="delete-picture" style="margin-right: 5px;" href="javascript:void(0)" data-path="' + key + '"><i class="glyphicon glyphicon-trash" title="Delete"></i> ';
                     body += '<a class="action-pictureedit" href="javascript:void(0)" data-path="' + key + '"><i class="glyphicon glyphicon-edit" title="Edit"></i> ';
                 }
-                body += '<a class="action-pictureget" data-path="' + key + '" href="javascript:void(0)" title="' + title + '">' + picture['name'].split(' ')[0] + '</a>';
+                body += '<a class="action-pictureget" data-path="' + key + '" href="javascript:void(0)" title="' + title + '">&nbsp;&nbsp;' + picture['name'].split(' ')[0] + '</a>';
                 body += '</a></li>';
             });
-            body += '</ul></div><div id="config-data" class="col-md-10 col-lg-11"></div></div>';
+            body += '</ul></div><div id="config-data" class="col-md-9 col-lg-10"></div></div>';
             addModalWide(MESSAGES[59], body, '', "modal-ultra-wide");
             $('#picslider').slider({value:100,min:10,max:200,step:10,slide:zoompic})
         } else {
