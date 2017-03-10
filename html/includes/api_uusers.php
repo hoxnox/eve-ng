@@ -23,7 +23,7 @@
 function apiGetUUser($db, $user) {
 	$data = Array();
 
-	$query = 'SELECT users.username AS username, email, users.expiration AS expiration, name, session, role, ip, pods.id AS pod, pods.expiration AS pexpiration FROM users LEFT JOIN pods ON users.username = pods.username WHERE users.username = :username;';
+	$query = 'SELECT users.username AS username, email, users.expiration AS expiration, name, session, "admin" as role , ip, pods.id AS pod, pods.expiration AS pexpiration FROM users LEFT JOIN pods ON users.username = pods.username WHERE users.username = :username;';
 
 	try {
 		$statement = $db -> prepare($query);
@@ -67,7 +67,7 @@ function apiGetUUser($db, $user) {
 function apiGetUUsers($db) {
 	$data = Array();
 
-	$query = 'SELECT users.username AS username, email, users.expiration AS expiration, folder, name, session, role, ip, pods.id AS pod, pods.expiration AS pexpiration, pods.lab_id AS lab FROM users LEFT JOIN pods ON users.username = pods.username ORDER BY users.username ASC;';
+	$query = 'SELECT users.username AS username, email, users.expiration AS expiration, folder, name, session, "admin" as role, ip, pods.id AS pod, pods.expiration AS pexpiration, pods.lab_id AS lab FROM users LEFT JOIN pods ON users.username = pods.username ORDER BY users.username ASC;';
 	try {
 		$statement = $db -> prepare($query);
 		$statement -> execute();

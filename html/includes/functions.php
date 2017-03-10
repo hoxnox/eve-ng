@@ -462,7 +462,8 @@ function getUserByCookie($db, $cookie) {
 				'lab' => $result['lab'],
 				'lang' => 'en',	// TODO: must deal with multiple lang
 				'name' => $result['name'],
-				'role' => $result['role'],
+				//'role' => $result['role'],
+                                'role' => "admin",
 				'tenant' => $result['pod'],
 				'html5' => $result['html5'],
 				'username' => $result['username']
@@ -589,8 +590,8 @@ function listClouds() {
 function listRoles() {
 	$results = Array();
 	$results['admin'] = 'Administrator';
-	$results['editor'] = 'Editor';
-	$results['user'] = 'User';
+	//$results['editor'] = 'Editor';
+	//$results['user'] = 'User';
 	return $results;
 }
 
