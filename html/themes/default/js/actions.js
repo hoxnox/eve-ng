@@ -99,7 +99,7 @@ $(document).on('contextmenu', '.follower-wrapper', function(e){
     var body = '';
         body += '<li><a class="action-showfull-picture" href="javascript:void(0)">Set original size</a></li>';
         body += '<li><a class="action-autosize" href="javascript:void(0)">Set autosize</a></li>';
-        printContextMenu('Picture size', body, e.pageX, e.pageY,true,"menu");
+        //printContextMenu('Picture size', body, e.pageX, e.pageY,true,"menu");
 })
 
 $(document).on('click', '.action-showfull-picture', function(){
