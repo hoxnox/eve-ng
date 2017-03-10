@@ -2472,15 +2472,14 @@ function printPictureInForm(id) {
     var picture_id = id;
     var picture_url = '/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + picture_id + '/data';
 
-    $.when(getPicturesMapped(picture_id)).done(function (picture) {
+    //$.when(getPicturesMapped(picture_id)).done(function (picture) {
+    $.when(getPictures(picture_id)).done(function (picture) {
         var picture_map = picture['map'];
-        picture_map = picture_map.replace(/(telnet:\/\/){1}.*{{(NODE\$?){1}([0-9]+){1}}}/g, function (matchedString, group1, group2, startingPosition, originString) {
-        return $('#node'+group3).find('a').href
-        });
-        //picture_map = picture_map.replace(/{{IP}}/g, location.hostname);
-        //picture_map = picture_map.replace(/{{(NODE\$?){1}([0-9]+){1}}}/g, function (matchedString, group1, group2, startingPosition, originString) {
-        //    return parseInt(group2) + 32768 + 128 * TENANT;
-        //});
+        picture_map = picture_map.replace(/href='telnet:..{{IP}}:{{NODE([0-9]+)}}/g, function (a,b,c,d,e) { 
+        var nodehref = $("#node"+b).find('a')[0].href
+        return "href='"+nodehref
+
+        }) ;
         // Read privileges and set specific actions/elements
         var sizeClass = FOLLOW_WRAPPER_IMG_STATE == 'resized' ? 'picture-img-autosozed' : ''
         //var sizeClass = ""
@@ -2690,7 +2689,7 @@ function printFormPicture(action, values) {
         var cX = area.coords.split(",")[0] - 30
         var cY = area.coords.split(",")[1] - 30
         //alert(cX + " " + cY )
-        htmlsvg = '<div class="map_mark" id="'+area.coords+'" style="position:absolute;top:'+cY+'px;left:'+cX+'px;width:60px;height:60px;"><svg width="60" height="60"><g><ellipse cx="30" cy="30" rx="28" ry="28" stroke="#000000" stroke-width="2" fill="#ffffff"></ellipse><text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" stroke="#000000" stroke-width="0px" dy=".2em" font-size="12" >'+area.href.replace(/.*{{NODE/g, "NODE ").replace(/}}/g, "")+'</text></g></svg></div>'
+        htmlsvg = '<div class="map_mark" id="'+area.coords+'" style="position:absolute;top:'+cY+'px;left:'+cX+'px;width:60px;height:60px;"><svg width="60" height="60"><g><ellipse cx="30" cy="30" rx="28" ry="28" stroke="#000000" stroke-width="2" fill="#ffffff"></ellipse><text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" stroke="#000000" stroke-width="0px" dy=".2em" font-size="12" >'+area.href.replace(/.*{{NODE/g, "NODE ").replace(/}}/g, "").replace(/.*:.*/,"CUSTOM")+'</text></g></svg></div>'
         $(".follower-wrapper").append(htmlsvg)
         }); 
         
