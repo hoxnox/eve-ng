@@ -1183,6 +1183,7 @@ class Lab {
 			if (!empty($this -> getNetworks())) {
 				$xml -> topology -> addChild('networks');
 				foreach ($this -> getNetworks() as $network_id => $network) {
+                                        if ( $network -> getCount() == 0 && $network -> getVisibility() == 0 )  { continue ;} ;  
 					$n = $xml -> topology -> networks -> addChild('network');
 					$n -> addAttribute('id', $network_id);
 					$n -> addAttribute('type', $network -> getNType());

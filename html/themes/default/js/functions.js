@@ -2476,7 +2476,8 @@ function printPictureInForm(id) {
     $.when(getPictures(picture_id)).done(function (picture) {
         var picture_map = picture['map'];
         picture_map = picture_map.replace(/href='telnet:..{{IP}}:{{NODE([0-9]+)}}/g, function (a,b,c,d,e) { 
-        var nodehref = $("#node"+b).find('a')[0].href
+        var nodehref = ''
+        if ( $("#node"+b).length > 0 ) nodehref =  $("#node"+b).find('a')[0].href
         return "href='"+nodehref
 
         }) ;
@@ -2615,7 +2616,7 @@ function printFormPicture(action, values) {
         , title = (action == 'add') ? MESSAGES[135] : MESSAGES[137]
         , html = '';
         $("#lab_picture").empty()
-        $.when(getPicturesMapped(values['id'])).done(function (picture) {
+        $.when(getPictures(values['id'])).done(function (picture) {
         var picture_map = values['map'];
         picture_map = picture_map.replace(/{{IP}}/g, location.hostname);
     $.when(getNodes(null)).done(function (nodes) {
@@ -2663,6 +2664,7 @@ function printFormPicture(action, values) {
                         $.each(nodes, function (key, value) {
                             html += '<option value="'+key+'">' + value.name + ', NODE ' +   key + '</option>';
                         });
+                    html += '<option value="CUSTOM"> CUSTOM , NODE outside lab</option>';
                     html += '</select>' +
                     '</div>'+
                 '</div>'+

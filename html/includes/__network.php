@@ -269,6 +269,7 @@ class Network {
 	public function setCount($i) {
 		if ((int) $i >= 0) {
 			$this -> count = (int) $i;
+                        if ( $this -> count > 2 ) { $this -> visibility = 1; };
 			return 0;
 		} else {
 			error_log(date('M d H:i:s ').'WARNING: '.$GLOBALS['messages'][30008]);

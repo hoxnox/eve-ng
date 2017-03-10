@@ -83,9 +83,9 @@ $('body').on('click', '.follower-wrapper', function (e) {
     var y = (parseInt((data_y).toFixed(0)) * k).toFixed(0);
     var x = (parseInt((data_x).toFixed(0)) * k).toFixed(0);
     var current_href=""
-    $('form textarea').val($('form textarea').val() + "<area shape='circle' alt='img' coords='" + x + "," + y + ",30' href='telnet://{{IP}}:{{NODE"+$("#map_nodeid option:selected").val()+"}}'>\n");
+    $('form textarea').val($('form textarea').val() + "<area shape='circle' alt='img' coords='" + x + "," + y + (",30' href='telnet://{{IP}}:{{NODE"+$("#map_nodeid option:selected").val()+"}}'>\n").replace(/telnet.*NODECUSTOM/,"proto://CUSTOM_IP:CUSTOM_PORT"));
     var htmlsvg="" ;
-    htmlsvg = '<div class="map_mark" id="'+x+","+y+","+30+'" style="position:absolute;top:'+(y-30)+'px;left:'+(x-30)+'px;width:60px;height:60px;"><svg width="60" height="60"><g><ellipse cx="30" cy="30" rx="28" ry="28" stroke="#000000" stroke-width="2" fill="#ffffff"></ellipse><text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" stroke="#000000" stroke-width="0px" dy=".2em" font-size="12" >NODE '+$("#map_nodeid option:selected").val()+'</text></g></svg></div>'
+    htmlsvg = '<div class="map_mark" id="'+x+","+y+","+30+'" style="position:absolute;top:'+(y-30)+'px;left:'+(x-30)+'px;width:60px;height:60px;"><svg width="60" height="60"><g><ellipse cx="30" cy="30" rx="28" ry="28" stroke="#000000" stroke-width="2" fill="#ffffff"></ellipse><text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" stroke="#000000" stroke-width="0px" dy=".2em" font-size="12" >' + ("NODE"+$("#map_nodeid option:selected").val()).replace(/NODE.*CUSTOM.*/,"CUSTOM")+'</text></g></svg></div>'
     $(".follower-wrapper").append(htmlsvg)
 });
 
