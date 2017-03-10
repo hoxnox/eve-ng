@@ -2668,9 +2668,9 @@ function printFormPicture(action, values) {
                     '</div>'+
                 '</div>'+
                 '<div class="form-group">'+
-                    //'<label class="col-md-3 control-label">'+ MESSAGES[137] + '</label>'+
+                    '<label class="col-md-3 control-label">'+ MESSAGES[137] + '</label>'+
                     '<div class="col-md-5">'+
-                        '<textarea class="form-control hidden" name="picture[map]">'+ map + '</textarea>'+
+                        '<textarea class="form-control" name="picture[map]">'+ map + '</textarea>'+
                     '</div>'+
                 '</div>'+
                 '<div class="form-group">'+
