@@ -3915,6 +3915,16 @@ $(document).on('mousedown', '.network_frame, .node_frame, .customShape', functio
           }
 });
 
+// Reset Lab Zoom
+$(document).on('click', '.sidemenu-zoom', function (e) { 
+    var zoom=1
+    setZoom(zoom,lab_topology,[0.0,0.0])
+    $('#lab-viewport').width(($(window).width()-40)/zoom)
+    $('#lab-viewport').height($(window).height()/zoom);
+    $('#lab-viewport').css({top: 0,left: 40,position: 'absolute'});
+    //setZoom(zoom,lab_topology,[0.0,0.0])
+    $('#zoomslide').slider({value:100})
+});
 
 //show context menu when node is off
 $(document).on('click', '.node.node_frame a', function (e) {

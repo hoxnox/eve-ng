@@ -3709,7 +3709,7 @@ function printPageLabOpen(lab) {
          $('#lab-sidebar ul').append('<li><a class="action-textobjectsget" href="javascript:void(0)" title="' + MESSAGES[150] + '"><i class="glyphicon glyphicon-text-background"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-moreactions" href="javascript:void(0)" title="' + MESSAGES[125] + '"><i class="glyphicon glyphicon-th"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-labtopologyrefresh" href="javascript:void(0)" title="' + MESSAGES[57] + '"><i class="glyphicon glyphicon-refresh"></i></a></li>');
-         $('#lab-sidebar ul').append('<li><div class="col-md-2 glyphicon glyphicon-zoom-in"></div><div id="zoomslide" class="col-md-5"></div><div class="col-md-5"></div><br></li>');
+         $('#lab-sidebar ul').append('<li><div class="col-md-2 glyphicon glyphicon-zoom-in sidemenu-zoom"></div><div id="zoomslide" class="col-md-5"></div><div class="col-md-5"></div><br></li>');
          $('#zoomslide').slider({value:100,min:10,max:200,step:10,slide:zoomlab});
          //$('#lab-sidebar ul').append('<li><a class="action-freeselect" href="javascript:void(0)" title="' + MESSAGES[151] + '"><i class="glyphicon glyphicon-check"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-status" href="javascript:void(0)" title="' + MESSAGES[13] + '"><i class="glyphicon glyphicon-info-sign"></i></a></li>');

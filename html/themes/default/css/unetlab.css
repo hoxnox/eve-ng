@@ -1600,3 +1600,6 @@ table.configured-nodes tbody td label {
     background-color: #263339 ;
     border-color: #263339 ;
 }
+.sidemenu-zoom {
+    cursor: pointer;
+}
