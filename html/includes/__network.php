@@ -109,7 +109,7 @@ class Network {
                 }
 
 		// Now building the network
-		$this -> count = 0;
+		$this -> count = $p['count'];
 		$this -> id = (int) $id;
 		$this -> tenant = (int) $tenant;
 		$this -> type = $p['type'];
