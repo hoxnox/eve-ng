@@ -3890,6 +3890,9 @@ $(document).on('click','#lab-viewport', function (e) {
         $('.ui-selecting').removeClass('ui-selecting')
         $('#lab-viewport').removeClass('freeSelectMode')
         lab_topology.clearDragSelection()
+        if ((ROLE == 'admin' || ROLE == 'editor') &&  LOCK == 0  ) {
+              lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true)
+        }
    }
    if ( $('.ui-selected').length < 1 ) $('#lab-viewport').removeClass('freeSelectMode')
 
