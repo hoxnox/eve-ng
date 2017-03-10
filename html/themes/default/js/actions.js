@@ -85,10 +85,12 @@ $('body').on('click', '.follower-wrapper', function (e) {
     var current_href=""
     $('form textarea').val($('form textarea').val() + "<area shape='circle' alt='img' coords='" + x + "," + y + ",30' href='telnet://{{IP}}:{{NODE"+$("#map_nodeid option:selected").val()+"}}'>\n");
     var htmlsvg="" ;
-    htmlsvg = '<div style="position:absolute;top:'+(y-30)+'px;left:'+(x-30)+'px;width:60px;height:60px;"><svg width="60" height="60"><g><ellipse cx="30" cy="30" rx="28" ry="28" stroke="#000000" stroke-width="2" fill="#ffffff"></ellipse><text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" stroke="#000000" stroke-width="0px" dy=".2em" font-size="12" >NODE '+$("#map_nodeid option:selected").val()+'</text></g></svg></div>'
+    htmlsvg = '<div class="map_mark" id="'+x+","+y+","+30+'" style="position:absolute;top:'+(y-30)+'px;left:'+(x-30)+'px;width:60px;height:60px;"><svg width="60" height="60"><g><ellipse cx="30" cy="30" rx="28" ry="28" stroke="#000000" stroke-width="2" fill="#ffffff"></ellipse><text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" stroke="#000000" stroke-width="0px" dy=".2em" font-size="12" >NODE '+$("#map_nodeid option:selected").val()+'</text></g></svg></div>'
     $(".follower-wrapper").append(htmlsvg)
 });
 
+
+//<div class="map_mark" id="'+area.coords+'"
 // context menu on picture edit
 $(document).on('contextmenu', '.follower-wrapper', function(e){
     // Prevent default context menu on viewport
@@ -775,6 +777,25 @@ $(document).on('click', '.action-conndelete', function (e) {
         });
      }
      $('#context-menu').remove();
+});
+
+$(document).on('contextmenu', '.map_mark', function (e) {
+     //alert (this.id)
+     e.preventDefault();
+     e.stopPropagation();
+     var body =  ''
+     body += '<li><a class="action-mapdelete"  id="'+this.id+'" href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i> Delete</a></li>';
+     printContextMenu('Map', body, e.pageX, e.pageY,true,"menu");
+});
+
+$(document).on('click', '.action-mapdelete' , function (e) {
+   id=this.id.replace(/,/g,"\\,")
+  $('#context-menu').remove();
+  $('#'+id).remove();
+  var oldval = $('form :input[name="picture[map]"]').val()
+  var regex = new RegExp(".*"+id+".*>\n")
+  var newval = oldval.replace(regex,'')
+  $('form :input[name="picture[map]"]').val(newval)
 });
 
 $(document).on('click', '#networkdelete', function (e) {
