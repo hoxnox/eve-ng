@@ -195,6 +195,12 @@ CSS for load img
 /*
 Preview images size //START
 */
+/* default image size*/ 
+[class$="_s2"]{width:60px;}
+[class$="_s3"]{width:40px;}
+[class$="_s4"]{width:30px;}
+[class$="_s5"]{width:20px;}
+
 .AristaSW_s2{width:60px;height:27}
 
 .ASA1_s2{width:60px;height:69}
@@ -228,6 +234,12 @@ Preview images size //START
 .JuniperMX_s2{width:60px;height:57}
 
 .JuniperSRX_s2{width:60px;height:58}
+
+.JunipervQFXre_s2{width:60px;height:58}
+
+.JunosSpace_s2{width:60px;height:58}
+
+.JunipervQFXpfe_s2{width:60px;height:58}
 
 .Laptop_s2{width:60px;height:48}
 
@@ -305,6 +317,12 @@ Preview images size //START
 
 .JuniperSRX_s3{width:40px;height:39}
 
+.JunipervQFXre_s3{width:40px;height:39}
+
+.JunosSpace_s3{width:40px;height:39}
+
+.JunipervQFXpfe_s3{width:40px;height:39}
+
 .Laptop_s3{width:40px;height:32}
 
 .LoadBalancer_s3{width:40px;height:26}
@@ -380,6 +398,12 @@ Preview images size //START
 .JuniperMX_s4{width:30px;height:28}
 
 .JuniperSRX_s4{width:30px;height:29}
+
+.JunipervQFXre_s4{width:30px;height:29}
+
+.JunosSpace_s4{width:30px;height:28}
+
+.JunipervQFXpfe_s4{width:30px;height:29}
 
 .Laptop_s4{width:30px;height:24}
 
@@ -457,6 +481,12 @@ Preview images size //START
 
 .JuniperSRX_s5{width:20px;height:19}
 
+.JunosSpace_s5{width:20px;height:20}
+
+.JunipervQFXre_s5{width:20px;height:20}
+
+.JunipervQFXpfe_s5{width:20px;height:20}
+
 .Laptop_s5{width:20px;height:16}
 
 .LoadBalancer_s5{width:20px;height:13}
@@ -498,6 +528,7 @@ Preview images size //START
 .WSA_s5{width:20px;height:14}
 
 .XR_s5{width:20px;height:20}
+
 
 /*
 Preview images size //END

@@ -23,6 +23,7 @@ function ModalCtrl($scope, $uibModal, $log) {
       controller: $scope.modalActions[pathToModal]['controller'],
       windowTopClass: "fade in out", 
       size: size,
+      scope: $scope,
       backdrop: (size == 'megalg') ? false : true,
       resolve: {
         data: function () {
@@ -204,6 +205,8 @@ function AddElModalCtrl($scope, $uibModalInstance, data, $http) {
 				$scope.blockButtons=false;
 				$scope.blockButtonsClass='';
 				$scope.result=true;
+				var lab_name = $scope.newdata.name+'.unl'
+				$scope.$parent.legacylabopen($scope.newdata.path+lab_name)
 				$uibModalInstance.close($scope.result);
 			}, 
 			function errorCallback(response) {
