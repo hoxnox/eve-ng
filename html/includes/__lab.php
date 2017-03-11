@@ -1178,6 +1178,7 @@ class Lab {
 					}
 				}
 			}
+                        $this -> setNetworkCount();
 
 			// Add networks
 			if (!empty($this -> getNetworks())) {

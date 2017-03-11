@@ -4021,10 +4021,12 @@ $(document).on('submit', '#addConn', function (e) {
              $.when(setNetwork(bridgename, offset.left + 20, offset.top + 40)).then( function (response) {
                   var networkId = response.data.id;
                   logger(1, 'Link DEBUG: new network created ' + networkId);
-                  $.when(setNodeInterface(node1, networkId, iface1) ).then( function () {
+                  $.when(setNodeInterface(node1, networkId, iface1) ).done( function () {
                      $.when(setNodeInterface(node2, networkId, iface2)).done( function () {
-                       $(e.target).parents('.modal').attr('skipRedraw', true);
-                       $(e.target).parents('.modal').modal('hide');
+                       $.when(setNetworkiVisibility( networkId , 0 )).done( function () {
+                         $(e.target).parents('.modal').attr('skipRedraw', true);
+                         $(e.target).parents('.modal').modal('hide');
+                       });
                      });
                   });
              });

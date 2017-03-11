@@ -1326,6 +1326,7 @@ function setNetwork(nodeName,left, top) {
     form_data['type'] = 'bridge';
     form_data['left'] = left;
     form_data['top'] = top;
+    form_data['visibility'] = 1;
     form_data['postfix'] = 0;
 
     var url = '/api/labs' + lab_filename + '/networks';
@@ -1340,6 +1341,43 @@ function setNetwork(nodeName,left, top) {
         success: function (data) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: new network created.');
+                deferred.resolve(data);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
+function setNetworkiVisibility(networkId,visibility) {
+    var deferred = $.Deferred();
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var form_data = {};
+    form_data['visibility'] = visibility;
+    var url = '/api/labs' + lab_filename + '/networks/' + networkId;
+    var type = 'PUT';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: network visibility updated.');
                 deferred.resolve(data);
             } else {
                 // Application error
@@ -3034,7 +3072,6 @@ function printLabTopology() {
                         dragDeferred.resolve();
                     });
                   
-                    //sleep (10000)
                     // Node as source or dest link
                      $.when( dragDeferred ).done( function () {
                      $.each(nodes, function (key,value) {

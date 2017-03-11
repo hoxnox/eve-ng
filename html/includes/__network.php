@@ -168,6 +168,10 @@ class Network {
 			$this -> top = $p['top'];
 			$modified = True;
 		}
+                if (isset($p['visibility']) ) {
+                        $this -> visibility = $p['visibility'];
+                        $modified = True;
+                }
 
 		if (isset($p['type']) && !checkNetworkType($p['type'])) {
 			// Type is not valid, ignored
