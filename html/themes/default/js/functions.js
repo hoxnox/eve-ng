@@ -1286,7 +1286,7 @@ function postLogin(param) {
     $('body').removeClass('login');
     if (LAB == null && param == null) {
 // Code to new UI
-//  window.location.href = "/" ; 
+  window.location.href = "/#/main/" ; 
 //
         logger(1, 'DEBUG: loading folder "' + FOLDER + '".');
         printPageLabList(FOLDER);
@@ -3855,14 +3855,18 @@ function printPageLabOpen(lab) {
 
     $('#body').html(html);
     // Print topology
-    $.when(printLabTopology()).done( function () {
+    $.when(printLabTopology(),getPictures()).done( function (rc,pic) {
      if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
               $('#lab-sidebar ul').append('<li class="action-labobjectadd-li"><a class="action-labobjectadd" href="javascript:void(0)" title="' + MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i></a></li>');
          }
          $('#lab-sidebar ul').append('<li class="action-nodesget-li"><a class="action-nodesget" href="javascript:void(0)" title="' + MESSAGES[62] + '"><i class="glyphicon glyphicon-hdd"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-networksget" href="javascript:void(0)" title="' + MESSAGES[61] + '"><i class="glyphicon glyphicon-transfer"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-configsget" href="javascript:void(0)" title="' + MESSAGES[58] + '"><i class="glyphicon glyphicon-align-left"></i></a></li>');
-         $('#lab-sidebar ul').append('<li><a class="action-picturesget" href="javascript:void(0)" title="' + MESSAGES[59] + '"><i class="glyphicon glyphicon-picture"></i></a></li>');
+         $('#lab-sidebar ul').append('<li class="action-picturesget-li"><a class="action-picturesget" href="javascript:void(0)" title="' + MESSAGES[59] + '"><i class="glyphicon glyphicon-picture"></i></a></li>');
+         if ( Object.keys(pic)  < 1 ) { 
+         $('.action-picturesget-li').addClass('hidden');
+         }
+         
          $('#lab-sidebar ul').append('<li><a class="action-textobjectsget" href="javascript:void(0)" title="' + MESSAGES[150] + '"><i class="glyphicon glyphicon-text-background"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-moreactions" href="javascript:void(0)" title="' + MESSAGES[125] + '"><i class="glyphicon glyphicon-th"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-labtopologyrefresh" href="javascript:void(0)" title="' + MESSAGES[57] + '"><i class="glyphicon glyphicon-refresh"></i></a></li>');

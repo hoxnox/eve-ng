@@ -1241,6 +1241,7 @@ $('body').on('submit', '#form-picture-add', function (e) {
                 addMessage('SUCCESS', 'Picture "' + picture_name + '" added.');
                 // Picture added -> reopen this page (not reload, or will be posted twice)
                 // window.location.href = '/lab_edit.php' + window.location.search;
+                $('.action-picturesget-li').removeClass('hidden')
             } else {
                 // Fetching failed
                 addMessage('DANGER', data['status']);
@@ -1375,11 +1376,15 @@ $(document).on('click', '.delete-picture', function (ev) {
             addMessage('SUCCESS', 'Picture "' + picture_name + '" deleted.');
             $('li a[data-path="' + picture_id + '"]').parent().remove();
             $("#config-data").html("");
+            $.when(getPictures()).done( function (pic) {
+             if ( Object.keys(pic)  < 1 ) {
+                 $('.action-picturesget-li').addClass('hidden');
+              }
+            });
         }).fail(function (message) {
             $('.modal.make-red').modal('hide')
             addModalError(message);
         });
-
         // Hide and delete the modal (or will be posted twice)
         $('body').children('.modal.second-win').modal('hide');
 
@@ -4101,3 +4106,4 @@ $(document).on('change','#ToggleUKSM', function (e) {
         if ( status != window.uksm ) setUksm(status);
  }
 }); 
+
