@@ -2249,8 +2249,9 @@ function printFormNode(action, values, fromNodeList) {
 
         if (action == 'edit') {
             // If editing a node, disable the select and trigger
-            $('#form-node-template').prop('disabled', 'disabled');
             $('#form-node-template').val(template).change();
+            $('#form-node-template').prop('disabled', 'disabled');
+            //$('#form-node-template').val(template).change();
         }
 
     }).fail(function (message) {
