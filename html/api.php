@@ -703,6 +703,8 @@ $app -> put('/api/labs/(:path+)', function($path = array()) use ($app, $db) {
 			unset($p['count']);
 		}
 		$output = apiEditLabNetwork($lab, $p);
+        } else if ( preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/networks$/', $s)) {
+                $output = apiEditLabNetworks($lab, $p);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/configs\/[0-9]+$/', $s)) {
 		$p['id'] = $id;
 		$output = apiEditLabConfig($lab, $p);

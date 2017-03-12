@@ -186,36 +186,35 @@ function ObjectPosUpdate (event ,ui) {
           if ( id.search('node') != -1 ) {
                logger(1, 'DEBUG: setting' + id + ' position.');
                tmp_nodes.push( { id : id.replace('node','') , left: eLeft, top: eTop } )
-               logger(1, 'DEBUG: setting' + id + ' position.');
           } else if  ( id.search('network') != -1 )  {
               logger(1, 'DEBUG: setting ' + id + ' position.');
-              $.when(setNetworkPosition(id.replace('network',''), eLeft, eTop)).done(function () {
-                  //lab_topology.repaintEverything();
-              }).fail(function (message) {
-                     // Error on save
-                     addModalError(message);
-              });;
+              tmp_networks.push( { id : id.replace('network','') , left: eLeft, top: eTop } )
           } else if ( id.search('custom') != -1 )  {
               logger(1, 'DEBUG: setting ' + id + ' position.');
-              $.when(setShapePosition(node)).done(function () {
-                  //lab_topology.repaintEverything();
-                            }).fail(function (message) {
-                     // Error on save
-                     addModalError(message);
-              });;
+              objectData = node.outerHTML;
+              objectData = fromByteArray(new TextEncoderLite('utf-8').encode(objectData));
+              tmp_shapes.push( { id : id.replace(/customShape/,'').replace(/customText/,'') , data: objectData } )
           }
      });
      // Bulk for nodes 
         // lab_topology.repaintEverything();
         // lab_topology.repaintEverything();
-     if ( tmp_nodes.length > 0 )  {
-         $.when(setNodesPosition(tmp_nodes)).done(function () {
-               logger(1, 'DEBUG: all selected node position saved.');
-         }).fail(function (message) {
-             // Error on save
-             addModalError(message);
-         });
-     }
+     $.when(setNodesPosition(tmp_nodes)).done(function () {
+           logger(1, 'DEBUG: all selected node position saved.');
+           $.when(editTextObjects(tmp_shapes)).done(function () {
+                logger(1, 'DEBUG: all selected shape position saved.');
+                $.when(setNetworksPosition(tmp_networks)).done(function () {
+                     logger(1, 'DEBUG: all selected networks position saved.');
+                }).fail(function (message) {
+                     addModalError(message);
+                });
+           }).fail(function (message) {
+                addModalError(message);
+           });
+     }).fail(function (message) {
+         // Error on save
+         addModalError(message);
+     });
      window.moveCount = 0
 }
 

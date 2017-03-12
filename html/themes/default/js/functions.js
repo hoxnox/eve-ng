@@ -1437,12 +1437,14 @@ function setNetworkPosition(network_id, left, top) {
     return deferred.promise();
 }
 
+// Set multiple network position
 function setNetworksPosition(networks) {
     var deferred = $.Deferred();
+    if ( networks.length == 0 ) { deferred.resolve(); return deferred.promise(); }
     var lab_filename = $('#lab-viewport').attr('data-path');
     var form_data = {};
     form_data = networks;
-    var url = '/api/labs' + lab_filename + '/networks';
+    var url = '/api/labs' + lab_filename + '/networks' ;
     var type = 'PUT';
     $.ajax({
         cache: false,
@@ -1548,6 +1550,7 @@ function setNodePosition(node_id, left, top) {
 // Set multiple node position
 function setNodesPosition(nodes) {
     var deferred = $.Deferred();
+    if ( nodes.length == 0 ) { deferred.resolve(); return deferred.promise(); } 
     var lab_filename = $('#lab-viewport').attr('data-path');
     var form_data = [];
     form_data=nodes;
@@ -4005,7 +4008,7 @@ function updateStatusInModal(intervalId, data) {
         return clearInterval(intervalId);
     }
 
-    drawStatusInModal(data);
+    //drawStatusInModal(data);
 }
 
 // Update system status
@@ -4291,6 +4294,41 @@ function editTextObject(id, newData) {
     return deferred.promise();
 }
 
+// Update Multiple Text Object
+function editTextObjects(newData) {
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var deferred = $.Deferred();
+    if (newData.length == 0 ) { deferred.resolve(); return deferred.promise(); }
+    var type = 'PUT';
+    var url = '/api/labs' + lab_filename + '/textobjects';
+
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(newData), // newData is object with differences between old and new data
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: custom shape text object updated.');
+                deferred.resolve(data['message']);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
 // Delete Text Object By Id
 function deleteTextObject(id) {
     var deferred = $.Deferred();
@@ -4363,30 +4401,6 @@ function setShapePosition( shape )  {
 
     //objectData = shape.outerHTML;
     objectData = shape.outerHTML;
-    editTextObject(id, {
-        data: objectData
-    });
-}
-
-
-function setShapesPosition( shapes )  {
-    var id
-        , objectData
-        , shape_border_width
-        , shapesArr
-        ;
-    $.each( shapes , function ( key, shape) {
-        if (shape.id.indexOf("customShape") != -1) {
-           id = shape.id.slice("customShape".length);
-        }
-        else if (shape.id.indexOf("customText") != -1) {
-           id = shape.id.slice("customText".length);
-            shape_border_width = 5;
-        }
-        objectData = shape.outerHTML;
-    
-    });
-
     editTextObject(id, {
         data: objectData
     });

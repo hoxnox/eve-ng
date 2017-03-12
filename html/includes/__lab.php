@@ -637,7 +637,11 @@ class Lab {
 			error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?net='.$p['id'].' '.$GLOBALS['messages'][20023]);
 			return 20023;
 		} else if ($this -> networks[$p['id']] -> edit($p) === 0) {
-			return $this -> save();
+                        if ( isset ( $p['save'] ) && $p['save'] === 0) {
+                             return 0;
+                        } else {
+		             return $this -> save();
+                        }
 		} else {
 			error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?net='.$p['id'].' '.$GLOBALS['messages'][20025]);
 			return False;
@@ -1307,6 +1311,7 @@ class Lab {
 				return 20029;
 			}
 		}
+                error_log(date('M d H:i:s ').'DEBUG: lab saved');
 		return 0;
 	}
 
