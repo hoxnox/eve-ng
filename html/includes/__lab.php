@@ -656,7 +656,11 @@ class Lab {
 			error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?node='.$p['id'].' '.$GLOBALS['messages'][20024]);
 			return 20024;
 		} else if ($this -> nodes[$p['id']] -> edit($p) === 0) {
-			return $this -> save();
+                        if ( isset ( $p['save'] ) && $p['save'] === 0) {
+                            return 0;
+                        } else {
+			    return $this -> save();
+                       }
 		} else {
 			error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?node='.$p['id'].' '.$GLOBALS['messages'][20026]);
 			return 20026;
@@ -675,7 +679,11 @@ class Lab {
 			error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?obj='.$p['id'].' '.$GLOBALS['messages'][20043]);
 			return 20043;
 		} else if ($this -> textobjects[$p['id']] -> edit($p) === 0) {
-			return $this -> save();
+			if ( isset($p['save']) && $p['save'] === 0  ) { 
+				 return 0 ;
+                        } else {
+                                 return $this -> save();
+                        }
 		} else {
 			error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?obj='.$p['id'].' '.$GLOBALS['messages'][20044]);
 			return False;

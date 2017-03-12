@@ -1437,6 +1437,43 @@ function setNetworkPosition(network_id, left, top) {
     return deferred.promise();
 }
 
+function setNetworksPosition(networks) {
+    var deferred = $.Deferred();
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var form_data = {};
+    form_data = networks;
+    var url = '/api/labs' + lab_filename + '/networks';
+    var type = 'PUT';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: network position updated.');
+                deferred.resolve();
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            //addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
 // Set node boot
 function setNodeBoot(node_id, config) {
     var deferred = $.Deferred();
@@ -3861,7 +3898,12 @@ function drawStatusInModal(data) {
     $('#stats-text ul', $statusModalBody).empty();
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[39] + ': <code>' + data['version'] + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[49] + ': <code>' + data['qemu_version'] + '</code></li>');
-    $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[165] + ': <code>' + data['uksm'] + '</code></li>');
+    $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[165] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleUKSM"></li>');
+    $('#ToggleUKSM').toggleSwitch({width: "50px"});
+    if ( data['uksm'] == "enabled" ) { $('#ToggleUKSM').toggleCheckedState(true) };
+    $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[170] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleCPULIMIT"></li>');
+    $('#ToggleCPULIMIT').toggleSwitch({width: "50px"});
+    //if ( data['cpulimit'] == "enabled" ) { $('#ToggleCPULIMIT').toggleCheckedState(true) };
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[29] + ': <code>' + ROLE + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[32] + ': <code>' + ((TENANT == -1) ? 'none' : TENANT) + '</code></li>');
 
@@ -3963,7 +4005,7 @@ function updateStatusInModal(intervalId, data) {
         return clearInterval(intervalId);
     }
 
-    drawStatusInModal(data);
+    //drawStatusInModal(data);
 }
 
 // Update system status
@@ -4321,6 +4363,30 @@ function setShapePosition( shape )  {
 
     //objectData = shape.outerHTML;
     objectData = shape.outerHTML;
+    editTextObject(id, {
+        data: objectData
+    });
+}
+
+
+function setShapesPosition( shapes )  {
+    var id
+        , objectData
+        , shape_border_width
+        , shapesArr
+        ;
+    $.each( shapes , function ( key, shape) {
+        if (shape.id.indexOf("customShape") != -1) {
+           id = shape.id.slice("customShape".length);
+        }
+        else if (shape.id.indexOf("customText") != -1) {
+           id = shape.id.slice("customText".length);
+            shape_border_width = 5;
+        }
+        objectData = shape.outerHTML;
+    
+    });
+
     editTextObject(id, {
         data: objectData
     });

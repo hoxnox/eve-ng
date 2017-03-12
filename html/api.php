@@ -743,6 +743,8 @@ $app -> put('/api/labs/(:path+)', function($path = array()) use ($app, $db) {
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/textobjects\/[0-9]+$/', $s)) {
 		$p['id'] = $id;
 		$output = apiEditLabTextObject($lab, $p);
+        } else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/textobjects$/', $s)) {
+                $output = apiEditLabTextObjects($lab, $p);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/pictures\/[0-9]+$/', $s)) {
 		$p['id'] = $id;
 		$output = apiEditLabPicture($lab, $p);

@@ -134,8 +134,10 @@ function apiEditLabNodes($lab, $p) {
         // Edit node
             //$rc=$lab -> editNode
         foreach ( $p as $node ) { 
-          $rc = $rc=$lab -> editNode($node);
+          $node['save'] = 0 ;
+          $rc = $lab -> editNode($node);
         }
+        $rc = $lab -> save() ;
         if ($rc === 0) {
                 $output['code'] = 201;
                 $output['status'] = 'success';

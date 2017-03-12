@@ -1,4 +1,6 @@
 function sysstatController($scope, $http, $rootScope, $interval, $location) {
+        $("#ToggleUKSM").toggleSwitch({width: "50px"});
+        $("#ToggleCPULIMIT").toggleSwitch({width: "50px"});
 	$scope.testAUTH("/sysstat"); //TEST AUTH
 	$scope.versiondata='';
 	$scope.serverstatus=[];
@@ -81,6 +83,10 @@ function sysstatController($scope, $http, $rootScope, $interval, $location) {
 					$scope.valueSwap = $scope.serverstatus.swap;
 					$scope.valueDisk = $scope.serverstatus.disk;
 					$scope.versiondata="Current API version: "+response.data.data.version;
+                                        //$("#ToggleUKSM").toggleSwitch();
+                                        if ( response.data.data.uksm == "enabled" ) {
+						$("#ToggleUKSM").toggleCheckedState(true)
+                                        }
 					$.unblockUI();
 				}, 
 				function errorCallback(response) {
