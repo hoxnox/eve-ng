@@ -460,8 +460,8 @@ function EditUserModalCtrl($scope, $uibModalInstance, data, $http) {
 	$scope.errorMessage='';
 	$scope.podError=false;
 	$scope.result=false;
-	$scope.restrictNumber = '^[a-zA-Z0-9-_]+$';
-	$scope.patternEmail = '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$';
+	$scope.restrictNumber = '^[a-zA-Z0-9-_ ]+$';
+	$scope.patternEmail = '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+[\.][a-zA-Z]{2,3}$';
 	
 	console.log('Start edit user '+data.username)
 	$http({

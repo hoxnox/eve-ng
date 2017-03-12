@@ -933,3 +933,10 @@ body {
 .OffSide {
    background: #DD4B39 !important;
 }
+.form-group.required .control-label:after {
+  content:"*";
+  color:#a6a6a6;
+}
+.inline-first-children > button {
+  display: inline-block;
+}
