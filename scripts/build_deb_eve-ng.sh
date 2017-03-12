@@ -331,7 +331,7 @@ if [ \$? -ne 0 ]; then
 		echo -e "${DONE}"
 	else
 		echo -ne "Adding admin user... "
-		echo "INSERT INTO users VALUES ('admin',NULL,'root@localhost',-1,'UNetLab Administrator','85262adf74518bbb70c7cb94cd6159d91669e5a81edf1efebd543eadbda9fa2b',NULL,'','admin','',1);" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ng_db &> /dev/null
+		echo "INSERT INTO users VALUES ('admin',NULL,'root@localhost',-1,'Eve-NG Administrator','85262adf74518bbb70c7cb94cd6159d91669e5a81edf1efebd543eadbda9fa2b',NULL,'','admin','',1);" | mysql --host=localhost --user=root --password=${MYSQL_ROOT_PASSWD} eve_ng_db &> /dev/null
 		if [ $? -ne 0 ]; then
 				echo -e "${FAILED}"
 				exit 1
