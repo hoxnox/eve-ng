@@ -3903,11 +3903,16 @@ $(document).on('click','#lab-viewport', function (e) {
 
 $(document).on('click', '.customShape', function (e) {
         var node = $(this)
+        var isFreeSelectMode = $labViewport.hasClass("freeSelectMode")
          if ( e.metaKey || e.ctrlKey  ) {
         node.toggleClass('ui-selected')
         updateFreeSelect(e,node)
         e.preventDefault();
         } 
+       if (isFreeSelectMode ) {
+       e.preventDefault();
+       return true;
+    }
 });
 
 $(document).on('mousedown', '.network_frame, .node_frame, .customShape', function (e) { 
