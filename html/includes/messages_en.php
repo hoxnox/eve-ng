@@ -221,6 +221,10 @@ $messages[60059] = 'Failed to update UNetLab (60059).';
 $messages[60060] = 'UNetLab is updated (60060).';
 $messages[60061] = 'Failed to lock the lab (60061).';
 $messages[60062] = 'Successfully listed textobjects (60062).';
+$messages[60063] = 'Successfully change cpulimit (60063).';
+$messages[60064] = 'Failed change cpulimit (60064).';
+$messages[60065] = 'Successfully change uksm (60065).';
+$messages[60066] = 'Failed change uksm (60066).';
 
 // Text (70000-79999)
 $messages[70000] = 'Name/prefix';

@@ -3908,11 +3908,20 @@ $(document).on('click', '.customShape', function (e) {
         node.toggleClass('ui-selected')
         updateFreeSelect(e,node)
         e.preventDefault();
+        } else {
+                 if (!node.hasClass('ui-selecting') && !node.hasClass('ui-selected')  && isFreeSelectMode ) {
+                     $('.free-selected').removeClass('free-selected')
+                     $('.ui-selected').removeClass('ui-selected')
+                     $('.ui-selecting').removeClass('ui-selecting')
+                     $('#lab-viewport').removeClass('freeSelectMode')
+                     lab_topology.clearDragSelection()
+                     if ((ROLE == 'admin' || ROLE == 'editor') &&  LOCK == 0  ) {
+                          lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true)
+                     }
+                     e.preventDefault();
+                     e.stopPropagation();
+                 }
         } 
-       if (isFreeSelectMode ) {
-       e.preventDefault();
-       return true;
-    }
 });
 
 $(document).on('mousedown', '.network_frame, .node_frame, .customShape', function (e) { 
@@ -4074,3 +4083,21 @@ function detachNodeLink() {
 
 
 }
+
+// CPULIMIT Toggle
+
+$(document).on('change','#ToggleCPULIMIT', function (e) {
+ if  ( e.currentTarget.id == 'ToggleCPULIMIT' ) {
+        var status=$('#ToggleCPULIMIT').prop('checked');
+         if ( status != window.cpulimit ) setCpuLimit (status); 
+ }
+});
+
+// UKSM Toggle
+
+$(document).on('change','#ToggleUKSM', function (e) {
+ if  ( e.currentTarget.id == 'ToggleUKSM' ) {
+        var status =$('#ToggleUKSM').prop('checked') 
+        if ( status != window.uksm ) setUksm(status);
+ }
+}); 

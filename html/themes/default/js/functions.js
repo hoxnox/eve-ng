@@ -1361,6 +1361,83 @@ function setNetwork(nodeName,left, top) {
     return deferred.promise();
 }
 
+// set cpulimit
+function setCpuLimit(bool) {
+    var deferred = $.Deferred();
+    var form_data = {};
+
+    form_data['state'] = bool;
+
+    var url = '/api/cpulimit';
+    var type = 'POST';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: cpulimit updated.');
+                deferred.resolve(data);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
+// set uksm
+function setUksm(bool) {
+    var deferred = $.Deferred();
+    var form_data = {};
+
+    form_data['state'] = bool;
+
+    var url = '/api/uksm';
+    var type = 'POST';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: UKSM updated.');
+                deferred.resolve(data);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
 function setNetworkiVisibility(networkId,visibility) {
     var deferred = $.Deferred();
     var lab_filename = $('#lab-viewport').attr('data-path');
@@ -3884,6 +3961,8 @@ function printUserManagement() {
 
 // Print system status in modal
 function drawStatusInModal(data) {
+    window.uksm = false ;
+    window.cpulimit =false ;
     var $statusModalBody = $("#statusModal");
 
     if (!$statusModalBody.length) {
@@ -3904,10 +3983,10 @@ function drawStatusInModal(data) {
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[49] + ': <code>' + data['qemu_version'] + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[165] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleUKSM"></li>');
     $('#ToggleUKSM').toggleSwitch({width: "50px"});
-    if ( data['uksm'] == "enabled" ) { $('#ToggleUKSM').toggleCheckedState(true) };
+    if ( data['uksm'] == "enabled" ) { window.uksm = true ; $('#ToggleUKSM').toggleCheckedState(true) };
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[170] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleCPULIMIT"></li>');
     $('#ToggleCPULIMIT').toggleSwitch({width: "50px"});
-    //if ( data['cpulimit'] == "enabled" ) { $('#ToggleCPULIMIT').toggleCheckedState(true) };
+    if ( data['cpulimit'] == "enabled" ) { window.cpulimit = true ;$('#ToggleCPULIMIT').toggleCheckedState(true) };
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[29] + ': <code>' + ROLE + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[32] + ': <code>' + ((TENANT == -1) ? 'none' : TENANT) + '</code></li>');
 
@@ -4009,7 +4088,7 @@ function updateStatusInModal(intervalId, data) {
         return clearInterval(intervalId);
     }
 
-    //drawStatusInModal(data);
+    drawStatusInModal(data);
 }
 
 // Update system status

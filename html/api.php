@@ -206,6 +206,18 @@ $app -> get('/api/status', function() use ($app, $db) {
 			$output['data']['uksm'] = "disabled";
 		}
 	}
+        $cmd = 'systemctl is-active cpulimit.service';
+        exec($cmd, $o, $rc);
+        if ($rc != 0) {
+                error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][60044]);
+                $output['data']['cpulimit'] = 'disabled';
+        } else {
+               if ($o[1] == "active") {
+                    $output['data']['cpulimit'] = 'enabled';
+               } else {
+                    $output['data']['cpulimit'] = 'disabled';
+              }
+        }
 	$output['data']['cpu'] = apiGetCPUUsage();
 	$output['data']['disk'] = apiGetDiskUsage();
 	list($output['data']['cached'], $output['data']['mem']) = apiGetMemUsage();
@@ -1107,6 +1119,53 @@ $app -> delete('/api/users/(:uuser)', function($uuser = False) use ($app, $db) {
 	$app -> response -> setStatus($output['code']);
 	$app -> response -> setBody(json_encode($output));
 });
+
+// Change cpulimit
+
+$app -> post('/api/cpulimit', function() use ($app, $db) {
+        list($user, $tenant, $output) = apiAuthorization($db, $app -> getCookie('unetlab_session'));
+        if ($user === False) {
+                $app -> response -> setStatus($output['code']);
+                $app -> response -> setBody(json_encode($output));
+                return;
+        }
+        if (!in_array($user['role'], Array('admin'))) {
+                $app -> response -> setStatus($GLOBALS['forbidden']['code']);
+                $app -> response -> setBody(json_encode($GLOBALS['forbidden']));
+                return;
+        }
+
+        $event = json_decode($app -> request() -> getBody());
+        $p = json_decode(json_encode($event), True);    // Reading options from POST/PUT
+
+        $output = apiSetCpuLimit($p);
+        $app -> response -> setStatus($output['code']);
+        $app -> response -> setBody(json_encode($output));
+});
+
+// Change uksm
+
+$app -> post('/api/uksm', function() use ($app, $db) {
+        list($user, $tenant, $output) = apiAuthorization($db, $app -> getCookie('unetlab_session'));
+        if ($user === False) {
+                $app -> response -> setStatus($output['code']);
+                $app -> response -> setBody(json_encode($output));
+                return;
+        }
+        if (!in_array($user['role'], Array('admin'))) {
+                $app -> response -> setStatus($GLOBALS['forbidden']['code']);
+                $app -> response -> setBody(json_encode($GLOBALS['forbidden']));
+                return;
+        }
+
+        $event = json_decode($app -> request() -> getBody());
+        $p = json_decode(json_encode($event), True);    // Reading options from POST/PUT
+
+        $output = apiSetUksm($p);
+        $app -> response -> setStatus($output['code']);
+        $app -> response -> setBody(json_encode($output));
+});
+
 
 /***************************************************************************
  * Export/Import
