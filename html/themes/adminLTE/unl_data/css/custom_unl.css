@@ -927,3 +927,16 @@ body {
 .modal-dialog {
   margin-top: 80px !important;
 }
+.OnSide {
+   background: #2CC185 !important;
+}
+.OffSide {
+   background: #DD4B39 !important;
+}
+.form-group.required .control-label:after {
+  content:"*";
+  color:#a6a6a6;
+}
+.inline-first-children > button {
+  display: inline-block;
+}
