@@ -2404,6 +2404,10 @@ $(document).on('submit', '#form-node-add, #form-node-edit', function (e) {
     var lab_filename = $('#lab-viewport').attr('data-path');
     var form_data = form2Array('node');
     var promises = [];
+    if ( form_data['template'] == "" ) {
+          return false;
+    }
+		
     if ($(this).attr('id') == 'form-node-add') {
         logger(1, 'DEBUG: posting form-node-add form.');
         var url = '/api/labs' + lab_filename + '/nodes';
