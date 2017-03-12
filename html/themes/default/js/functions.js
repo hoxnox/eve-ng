@@ -4005,7 +4005,7 @@ function updateStatusInModal(intervalId, data) {
         return clearInterval(intervalId);
     }
 
-    //drawStatusInModal(data);
+    drawStatusInModal(data);
 }
 
 // Update system status
