@@ -1603,3 +1603,11 @@ table.configured-nodes tbody td label {
 .sidemenu-zoom {
     cursor: pointer;
 }
+.OnSide {
+   background: #2CC185 !important;
+   line-height: 1em;
+}
+.OffSide {
+   background: #DD4B39 !important;
+   line-height: 1em;
+}

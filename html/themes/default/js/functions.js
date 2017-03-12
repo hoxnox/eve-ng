@@ -1326,6 +1326,7 @@ function setNetwork(nodeName,left, top) {
     form_data['type'] = 'bridge';
     form_data['left'] = left;
     form_data['top'] = top;
+    form_data['visibility'] = 1;
     form_data['postfix'] = 0;
 
     var url = '/api/labs' + lab_filename + '/networks';
@@ -1360,6 +1361,43 @@ function setNetwork(nodeName,left, top) {
     return deferred.promise();
 }
 
+function setNetworkiVisibility(networkId,visibility) {
+    var deferred = $.Deferred();
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var form_data = {};
+    form_data['visibility'] = visibility;
+    var url = '/api/labs' + lab_filename + '/networks/' + networkId;
+    var type = 'PUT';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: network visibility updated.');
+                deferred.resolve(data);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
 // Set network position
 function setNetworkPosition(network_id, left, top) {
     var deferred = $.Deferred();
@@ -1368,6 +1406,45 @@ function setNetworkPosition(network_id, left, top) {
     form_data['left'] = left;
     form_data['top'] = top;
     var url = '/api/labs' + lab_filename + '/networks/' + network_id;
+    var type = 'PUT';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: network position updated.');
+                deferred.resolve();
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            //addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
+// Set multiple network position
+function setNetworksPosition(networks) {
+    var deferred = $.Deferred();
+    if ( networks.length == 0 ) { deferred.resolve(); return deferred.promise(); }
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var form_data = {};
+    form_data = networks;
+    var url = '/api/labs' + lab_filename + '/networks' ;
     var type = 'PUT';
     $.ajax({
         cache: false,
@@ -1473,6 +1550,7 @@ function setNodePosition(node_id, left, top) {
 // Set multiple node position
 function setNodesPosition(nodes) {
     var deferred = $.Deferred();
+    if ( nodes.length == 0 ) { deferred.resolve(); return deferred.promise(); } 
     var lab_filename = $('#lab-viewport').attr('data-path');
     var form_data = [];
     form_data=nodes;
@@ -2171,8 +2249,9 @@ function printFormNode(action, values, fromNodeList) {
 
         if (action == 'edit') {
             // If editing a node, disable the select and trigger
-            $('#form-node-template').prop('disabled', 'disabled');
             $('#form-node-template').val(template).change();
+            $('#form-node-template').prop('disabled', 'disabled');
+            //$('#form-node-template').val(template).change();
         }
 
     }).fail(function (message) {
@@ -3034,7 +3113,6 @@ function printLabTopology() {
                         dragDeferred.resolve();
                     });
                   
-                    //sleep (10000)
                     // Node as source or dest link
                      $.when( dragDeferred ).done( function () {
                      $.each(nodes, function (key,value) {
@@ -3824,7 +3902,12 @@ function drawStatusInModal(data) {
     $('#stats-text ul', $statusModalBody).empty();
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[39] + ': <code>' + data['version'] + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[49] + ': <code>' + data['qemu_version'] + '</code></li>');
-    $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[165] + ': <code>' + data['uksm'] + '</code></li>');
+    $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[165] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleUKSM"></li>');
+    $('#ToggleUKSM').toggleSwitch({width: "50px"});
+    if ( data['uksm'] == "enabled" ) { $('#ToggleUKSM').toggleCheckedState(true) };
+    $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[170] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleCPULIMIT"></li>');
+    $('#ToggleCPULIMIT').toggleSwitch({width: "50px"});
+    //if ( data['cpulimit'] == "enabled" ) { $('#ToggleCPULIMIT').toggleCheckedState(true) };
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[29] + ': <code>' + ROLE + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[32] + ': <code>' + ((TENANT == -1) ? 'none' : TENANT) + '</code></li>');
 
@@ -3926,7 +4009,7 @@ function updateStatusInModal(intervalId, data) {
         return clearInterval(intervalId);
     }
 
-    drawStatusInModal(data);
+    //drawStatusInModal(data);
 }
 
 // Update system status
@@ -4212,6 +4295,41 @@ function editTextObject(id, newData) {
     return deferred.promise();
 }
 
+// Update Multiple Text Object
+function editTextObjects(newData) {
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var deferred = $.Deferred();
+    if (newData.length == 0 ) { deferred.resolve(); return deferred.promise(); }
+    var type = 'PUT';
+    var url = '/api/labs' + lab_filename + '/textobjects';
+
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(newData), // newData is object with differences between old and new data
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: custom shape text object updated.');
+                deferred.resolve(data['message']);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
 // Delete Text Object By Id
 function deleteTextObject(id) {
     var deferred = $.Deferred();

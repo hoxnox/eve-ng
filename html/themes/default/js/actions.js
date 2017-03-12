@@ -186,36 +186,35 @@ function ObjectPosUpdate (event ,ui) {
           if ( id.search('node') != -1 ) {
                logger(1, 'DEBUG: setting' + id + ' position.');
                tmp_nodes.push( { id : id.replace('node','') , left: eLeft, top: eTop } )
-               logger(1, 'DEBUG: setting' + id + ' position.');
           } else if  ( id.search('network') != -1 )  {
               logger(1, 'DEBUG: setting ' + id + ' position.');
-              $.when(setNetworkPosition(id.replace('network',''), eLeft, eTop)).done(function () {
-                  //lab_topology.repaintEverything();
-              }).fail(function (message) {
-                     // Error on save
-                     addModalError(message);
-              });;
+              tmp_networks.push( { id : id.replace('network','') , left: eLeft, top: eTop } )
           } else if ( id.search('custom') != -1 )  {
               logger(1, 'DEBUG: setting ' + id + ' position.');
-              $.when(setShapePosition(node)).done(function () {
-                  //lab_topology.repaintEverything();
-                            }).fail(function (message) {
-                     // Error on save
-                     addModalError(message);
-              });;
+              objectData = node.outerHTML;
+              objectData = fromByteArray(new TextEncoderLite('utf-8').encode(objectData));
+              tmp_shapes.push( { id : id.replace(/customShape/,'').replace(/customText/,'') , data: objectData } )
           }
      });
      // Bulk for nodes 
         // lab_topology.repaintEverything();
         // lab_topology.repaintEverything();
-     if ( tmp_nodes.length > 0 )  {
-         $.when(setNodesPosition(tmp_nodes)).done(function () {
-               logger(1, 'DEBUG: all selected node position saved.');
-         }).fail(function (message) {
-             // Error on save
-             addModalError(message);
-         });
-     }
+     $.when(setNodesPosition(tmp_nodes)).done(function () {
+           logger(1, 'DEBUG: all selected node position saved.');
+           $.when(editTextObjects(tmp_shapes)).done(function () {
+                logger(1, 'DEBUG: all selected shape position saved.');
+                $.when(setNetworksPosition(tmp_networks)).done(function () {
+                     logger(1, 'DEBUG: all selected networks position saved.');
+                }).fail(function (message) {
+                     addModalError(message);
+                });
+           }).fail(function (message) {
+                addModalError(message);
+           });
+     }).fail(function (message) {
+         // Error on save
+         addModalError(message);
+     });
      window.moveCount = 0
 }
 
@@ -3904,11 +3903,16 @@ $(document).on('click','#lab-viewport', function (e) {
 
 $(document).on('click', '.customShape', function (e) {
         var node = $(this)
+        var isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode")
          if ( e.metaKey || e.ctrlKey  ) {
         node.toggleClass('ui-selected')
         updateFreeSelect(e,node)
         e.preventDefault();
         } 
+       if (isFreeSelectMode ) {
+       e.preventDefault();
+       return true;
+    }
 });
 
 $(document).on('mousedown', '.network_frame, .node_frame, .customShape', function (e) { 
@@ -4021,10 +4025,12 @@ $(document).on('submit', '#addConn', function (e) {
              $.when(setNetwork(bridgename, offset.left + 20, offset.top + 40)).then( function (response) {
                   var networkId = response.data.id;
                   logger(1, 'Link DEBUG: new network created ' + networkId);
-                  $.when(setNodeInterface(node1, networkId, iface1) ).then( function () {
+                  $.when(setNodeInterface(node1, networkId, iface1) ).done( function () {
                      $.when(setNodeInterface(node2, networkId, iface2)).done( function () {
-                       $(e.target).parents('.modal').attr('skipRedraw', true);
-                       $(e.target).parents('.modal').modal('hide');
+                       $.when(setNetworkiVisibility( networkId , 0 )).done( function () {
+                         $(e.target).parents('.modal').attr('skipRedraw', true);
+                         $(e.target).parents('.modal').modal('hide');
+                       });
                      });
                   });
              });
