@@ -316,7 +316,7 @@ $(document).on('contextmenu', '#lab-viewport', function (e) {
     }
 
     if ( window.connContext == 1 ) {
-           window.connContext == 0 
+           window.connContext = 0 
            if (ROLE == "user" || LOCK == 1 ) return;
            body = '';
            body += '<li><a class="action-conndelete" href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i> Delete</a></li>';
