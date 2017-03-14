@@ -143,7 +143,34 @@ function apiSetUksm($p) {
 }
 
 /*
- * Function to set UKSM status.
+ * Function to set KSM status.
+ *
+ * @return  Bool Success operation
+ */
+
+function apiSetKsm($p) {
+     if  ( $p['state'] == true ) {
+           $cmd = "sudo /opt/unetlab/wrappers/unl_wrapper -a ksmon" ;
+           error_log(date('M d H:i:s ').'DEBUG: uksm on' );
+     } else {
+           $cmd = "sudo /opt/unetlab/wrappers/unl_wrapper -a ksmoff" ;
+           error_log(date('M d H:i:s ').'DEBUG: uksm off' );
+     }
+     exec($cmd, $o, $rc);
+     if ($rc == 0 ) {
+                $output['code'] = 200;
+                $output['status'] = 'success';
+                $output['message'] = $GLOBALS['messages'][60065];
+     } else {
+                $output['code'] = 400;
+                $output['status'] = 'fail';
+                $output['message'] = $GLOBALS['messages'][60066];
+     }
+     return $output;
+}
+
+/*
+ * Function to set cpulimit  status.
  *
  * @return  Bool Success operation
  */

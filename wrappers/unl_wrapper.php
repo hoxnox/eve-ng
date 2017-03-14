@@ -449,6 +449,38 @@ switch ($action) {
                     exit(13);
                 }
                 break;
+        case 'ksmoff':
+                $cmd = 'echo 0 > /sys/kernel/mm/ksm/run';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                $cmd = 'echo 0 > /opt/unetlab/ksm';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                break;
+        case 'ksmon':
+                $cmd = 'echo 1 > /sys/kernel/mm/ksm/run';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                $cmd = 'echo 1 > /opt/unetlab/ksm';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                break;
 }
 exit(0);
 ?>

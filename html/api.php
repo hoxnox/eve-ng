@@ -197,8 +197,7 @@ $app -> get('/api/status', function() use ($app, $db) {
 	$cmd = 'cat /sys/kernel/mm/uksm/run';
 	exec($cmd, $o, $rc);
 	if ($rc != 0) { 
-		error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][60044]);
-		$output['data']['ukms'] = 'disabled';
+		$output['data']['uksm'] = 'unsupported';
 	} else {
 		if ($o[0] == "1") {
 			$output['data']['uksm'] = "enabled";
@@ -206,13 +205,26 @@ $app -> get('/api/status', function() use ($app, $db) {
 			$output['data']['uksm'] = "disabled";
 		}
 	}
+        $o = "" ;
+        $cmd = 'cat /sys/kernel/mm/ksm/run';
+        exec($cmd, $o, $rc);
+        if ($rc != 0) {
+                $output['data']['ksm'] = 'unsupported';
+        } else {
+                if ($o[0] == "1") {
+                        $output['data']['ksm'] = "enabled";
+                } else {
+                        $output['data']['ksm'] = "disabled";
+                }
+        }
+        $o = "" ;
         $cmd = 'systemctl is-active cpulimit.service';
         exec($cmd, $o, $rc);
         if ($rc != 0) {
                 error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][60044]);
                 $output['data']['cpulimit'] = 'disabled';
         } else {
-               if ($o[1] == "active") {
+               if ($o[0] == "active") {
                     $output['data']['cpulimit'] = 'enabled';
                } else {
                     $output['data']['cpulimit'] = 'disabled';
@@ -1165,7 +1177,28 @@ $app -> post('/api/uksm', function() use ($app, $db) {
         $app -> response -> setStatus($output['code']);
         $app -> response -> setBody(json_encode($output));
 });
+// Change ksm
 
+$app -> post('/api/ksm', function() use ($app, $db) {
+        list($user, $tenant, $output) = apiAuthorization($db, $app -> getCookie('unetlab_session'));
+        if ($user === False) {
+                $app -> response -> setStatus($output['code']);
+                $app -> response -> setBody(json_encode($output));
+                return;
+        }
+        if (!in_array($user['role'], Array('admin'))) {
+                $app -> response -> setStatus($GLOBALS['forbidden']['code']);
+                $app -> response -> setBody(json_encode($GLOBALS['forbidden']));
+                return;
+        }
+
+        $event = json_decode($app -> request() -> getBody());
+        $p = json_decode(json_encode($event), True);    // Reading options from POST/PUT
+
+        $output = apiSetKsm($p);
+        $app -> response -> setStatus($output['code']);
+        $app -> response -> setBody(json_encode($output));
+});
 
 /***************************************************************************
  * Export/Import

@@ -4111,3 +4111,11 @@ $(document).on('change','#ToggleUKSM', function (e) {
  }
 }); 
 
+// KSM Toggle
+
+$(document).on('change','#ToggleKSM', function (e) {
+ if  ( e.currentTarget.id == 'ToggleKSM' ) {
+        var status =$('#ToggleKSM').prop('checked')
+        if ( status != window.ksm ) setKsm(status);
+ }
+});

@@ -182,3 +182,4 @@ MESSAGES[167] = 'Unlock Lab';
 MESSAGES[168] = 'Console To All Nodes';
 MESSAGES[169] = 'Console To Selected Nodes';
 MESSAGES[170] = 'CPU Limit Status';
+MESSAGES[171] = 'KSM Status';
