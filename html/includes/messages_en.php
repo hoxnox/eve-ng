@@ -97,6 +97,7 @@ $messages[20042] = 'Cannot add object to the lab (20042).';
 $messages[20043] = 'Cannot find object in the selected lab (20043).';
 $messages[20044] = 'Cannot edit object in the selected lab (20044).';
 $messages[20045] = 'Attribute ignored, invalid script timeout - set to default value 300 (20045).';
+$messages[20046] = 'Max nodes reached ( 128 )';
 
 // __network.php (30000-39999)
 $messages[30000] = 'Cannot create network, invalid or missing mandatory parameters (30000).';
@@ -221,6 +222,10 @@ $messages[60059] = 'Failed to update UNetLab (60059).';
 $messages[60060] = 'UNetLab is updated (60060).';
 $messages[60061] = 'Failed to lock the lab (60061).';
 $messages[60062] = 'Successfully listed textobjects (60062).';
+$messages[60063] = 'Successfully change cpulimit (60063).';
+$messages[60064] = 'Failed change cpulimit (60064).';
+$messages[60065] = 'Successfully change uksm (60065).';
+$messages[60066] = 'Failed change uksm (60066).';
 
 // Text (70000-79999)
 $messages[70000] = 'Name/prefix';

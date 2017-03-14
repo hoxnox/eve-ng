@@ -46,6 +46,7 @@ function apiAddLabNode($lab, $p, $o) {
 			$p['top'] =  $initTop + ( intval( ( $i -1 ) / 5 )  * 80 ) ;
 		}
 		$id = $lab -> getFreeNodeId();
+                if ( $id > 127 ) { $rc = 20046 ;  break ;} 
 		// Adding node_id to node_name if required
 		if ($o == True && $default_name || $numberNodes > 1) $p['name'] = $default_name.$lab -> getFreeNodeId();
 		
@@ -60,6 +61,13 @@ function apiAddLabNode($lab, $p, $o) {
                 $output['data'] = array(
                         'id'=> ($no_array ? $id : $ids)
 			);
+        } else if ( $rc = 20046 ) {
+                $output['code'] = 201;
+                $output['status'] = 'success';
+                $output['message'] = $GLOBALS['messages'][$rc];
+                $output['data'] = array(
+                        'id'=> ($no_array ? $id : $ids)
+                        );
 	} else {
 		$output['code'] = 400;
 		$output['status'] = 'fail';

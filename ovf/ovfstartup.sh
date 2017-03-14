@@ -38,6 +38,12 @@ if [ $? == 0 ]; then \
 	done
 fi
 
+# Enable or Disable UKSM
+if [[ -e /sys/kernel/mm/uksm/run ]]; then 
+    if [[ -e /opt/unetlab/uksm ]]; then
+        cat /opt/unetlab/uksm > /sys/kernel/mm/uksm/run
+    fi
+fi
 # Setting /etc/issue
 echo "Eve-NG (default root password is 'eve')" > /etc/issue
 if [[ -e "/sys/class/net/pnet0" ]]; then

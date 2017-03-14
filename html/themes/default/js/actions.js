@@ -316,7 +316,7 @@ $(document).on('contextmenu', '#lab-viewport', function (e) {
     }
 
     if ( window.connContext == 1 ) {
-           window.connContext == 0 
+           window.connContext = 0 
            if (ROLE == "user" || LOCK == 1 ) return;
            body = '';
            body += '<li><a class="action-conndelete" href="javascript:void(0)"><i class="glyphicon glyphicon-trash"></i> Delete</a></li>';
@@ -1241,6 +1241,7 @@ $('body').on('submit', '#form-picture-add', function (e) {
                 addMessage('SUCCESS', 'Picture "' + picture_name + '" added.');
                 // Picture added -> reopen this page (not reload, or will be posted twice)
                 // window.location.href = '/lab_edit.php' + window.location.search;
+                $('.action-picturesget-li').removeClass('hidden')
             } else {
                 // Fetching failed
                 addMessage('DANGER', data['status']);
@@ -1375,11 +1376,15 @@ $(document).on('click', '.delete-picture', function (ev) {
             addMessage('SUCCESS', 'Picture "' + picture_name + '" deleted.');
             $('li a[data-path="' + picture_id + '"]').parent().remove();
             $("#config-data").html("");
+            $.when(getPictures()).done( function (pic) {
+             if ( Object.keys(pic)  < 1 ) {
+                 $('.action-picturesget-li').addClass('hidden');
+              }
+            });
         }).fail(function (message) {
             $('.modal.make-red').modal('hide')
             addModalError(message);
         });
-
         // Hide and delete the modal (or will be posted twice)
         $('body').children('.modal.second-win').modal('hide');
 
@@ -2399,6 +2404,10 @@ $(document).on('submit', '#form-node-add, #form-node-edit', function (e) {
     var lab_filename = $('#lab-viewport').attr('data-path');
     var form_data = form2Array('node');
     var promises = [];
+    if ( form_data['template'] == "" ) {
+          return false;
+    }
+		
     if ($(this).attr('id') == 'form-node-add') {
         logger(1, 'DEBUG: posting form-node-add form.');
         var url = '/api/labs' + lab_filename + '/nodes';
@@ -3908,11 +3917,20 @@ $(document).on('click', '.customShape', function (e) {
         node.toggleClass('ui-selected')
         updateFreeSelect(e,node)
         e.preventDefault();
+        } else {
+                 if (!node.hasClass('ui-selecting') && !node.hasClass('ui-selected')  && isFreeSelectMode ) {
+                     $('.free-selected').removeClass('free-selected')
+                     $('.ui-selected').removeClass('ui-selected')
+                     $('.ui-selecting').removeClass('ui-selecting')
+                     $('#lab-viewport').removeClass('freeSelectMode')
+                     lab_topology.clearDragSelection()
+                     if ((ROLE == 'admin' || ROLE == 'editor') &&  LOCK == 0  ) {
+                          lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true)
+                     }
+                     e.preventDefault();
+                     e.stopPropagation();
+                 }
         } 
-       if (isFreeSelectMode ) {
-       e.preventDefault();
-       return true;
-    }
 });
 
 $(document).on('mousedown', '.network_frame, .node_frame, .customShape', function (e) { 
@@ -4074,3 +4092,30 @@ function detachNodeLink() {
 
 
 }
+
+// CPULIMIT Toggle
+
+$(document).on('change','#ToggleCPULIMIT', function (e) {
+ if  ( e.currentTarget.id == 'ToggleCPULIMIT' ) {
+        var status=$('#ToggleCPULIMIT').prop('checked');
+         if ( status != window.cpulimit ) setCpuLimit (status); 
+ }
+});
+
+// UKSM Toggle
+
+$(document).on('change','#ToggleUKSM', function (e) {
+ if  ( e.currentTarget.id == 'ToggleUKSM' ) {
+        var status =$('#ToggleUKSM').prop('checked') 
+        if ( status != window.uksm ) setUksm(status);
+ }
+}); 
+
+// KSM Toggle
+
+$(document).on('change','#ToggleKSM', function (e) {
+ if  ( e.currentTarget.id == 'ToggleKSM' ) {
+        var status =$('#ToggleKSM').prop('checked')
+        if ( status != window.ksm ) setKsm(status);
+ }
+});

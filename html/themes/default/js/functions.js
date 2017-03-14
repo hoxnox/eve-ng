@@ -1286,7 +1286,7 @@ function postLogin(param) {
     $('body').removeClass('login');
     if (LAB == null && param == null) {
 // Code to new UI
-//  window.location.href = "/" ; 
+  window.location.href = "/#/main/" ; 
 //
         logger(1, 'DEBUG: loading folder "' + FOLDER + '".');
         printPageLabList(FOLDER);
@@ -1360,6 +1360,124 @@ function setNetwork(nodeName,left, top) {
     });
     return deferred.promise();
 }
+
+// set cpulimit
+function setCpuLimit(bool) {
+    var deferred = $.Deferred();
+    var form_data = {};
+
+    form_data['state'] = bool;
+
+    var url = '/api/cpulimit';
+    var type = 'POST';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: cpulimit updated.');
+                deferred.resolve(data);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
+// set uksm
+function setUksm(bool) {
+    var deferred = $.Deferred();
+    var form_data = {};
+
+    form_data['state'] = bool;
+
+    var url = '/api/uksm';
+    var type = 'POST';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: UKSM updated.');
+                deferred.resolve(data);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
+// set ksm
+function setKsm(bool) {
+    var deferred = $.Deferred();
+    var form_data = {};
+
+    form_data['state'] = bool;
+
+    var url = '/api/ksm';
+    var type = 'POST';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: KSM updated.');
+                deferred.resolve(data);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
 
 function setNetworkiVisibility(networkId,visibility) {
     var deferred = $.Deferred();
@@ -3778,14 +3896,18 @@ function printPageLabOpen(lab) {
 
     $('#body').html(html);
     // Print topology
-    $.when(printLabTopology()).done( function () {
+    $.when(printLabTopology(),getPictures()).done( function (rc,pic) {
      if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
               $('#lab-sidebar ul').append('<li class="action-labobjectadd-li"><a class="action-labobjectadd" href="javascript:void(0)" title="' + MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i></a></li>');
          }
          $('#lab-sidebar ul').append('<li class="action-nodesget-li"><a class="action-nodesget" href="javascript:void(0)" title="' + MESSAGES[62] + '"><i class="glyphicon glyphicon-hdd"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-networksget" href="javascript:void(0)" title="' + MESSAGES[61] + '"><i class="glyphicon glyphicon-transfer"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-configsget" href="javascript:void(0)" title="' + MESSAGES[58] + '"><i class="glyphicon glyphicon-align-left"></i></a></li>');
-         $('#lab-sidebar ul').append('<li><a class="action-picturesget" href="javascript:void(0)" title="' + MESSAGES[59] + '"><i class="glyphicon glyphicon-picture"></i></a></li>');
+         $('#lab-sidebar ul').append('<li class="action-picturesget-li"><a class="action-picturesget" href="javascript:void(0)" title="' + MESSAGES[59] + '"><i class="glyphicon glyphicon-picture"></i></a></li>');
+         if ( Object.keys(pic)  < 1 ) { 
+         $('.action-picturesget-li').addClass('hidden');
+         }
+         
          $('#lab-sidebar ul').append('<li><a class="action-textobjectsget" href="javascript:void(0)" title="' + MESSAGES[150] + '"><i class="glyphicon glyphicon-text-background"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-moreactions" href="javascript:void(0)" title="' + MESSAGES[125] + '"><i class="glyphicon glyphicon-th"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-labtopologyrefresh" href="javascript:void(0)" title="' + MESSAGES[57] + '"><i class="glyphicon glyphicon-refresh"></i></a></li>');
@@ -3884,6 +4006,9 @@ function printUserManagement() {
 
 // Print system status in modal
 function drawStatusInModal(data) {
+    window.uksm = false ;
+    window.ksm = false ;
+    window.cpulimit =false ;
     var $statusModalBody = $("#statusModal");
 
     if (!$statusModalBody.length) {
@@ -3902,12 +4027,21 @@ function drawStatusInModal(data) {
     $('#stats-text ul', $statusModalBody).empty();
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[39] + ': <code>' + data['version'] + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[49] + ': <code>' + data['qemu_version'] + '</code></li>');
-    $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[165] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleUKSM"></li>');
+    $('#stats-text ul', $statusModalBody).append('<li class="uksm">' + MESSAGES[165] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleUKSM"></li>');
+    $('#stats-text ul', $statusModalBody).append('<li class="ksm">' + MESSAGES[171] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleKSM"></li>');
+ 
+    if ( data['uksm'] == "unsupported" ) $('.uksm').addClass('hidden')
+    if ( data['ksm'] == "unsupported" ) $('.ksm').addClass('hidden')
+
     $('#ToggleUKSM').toggleSwitch({width: "50px"});
-    if ( data['uksm'] == "enabled" ) { $('#ToggleUKSM').toggleCheckedState(true) };
+    if ( data['uksm'] == "enabled" ) { window.uksm = true ; $('#ToggleUKSM').toggleCheckedState(true) };
+
+    $('#ToggleKSM').toggleSwitch({width: "50px"});
+    if ( data['ksm'] == "enabled" ) { window.ksm = true ; $('#ToggleKSM').toggleCheckedState(true) };
+
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[170] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleCPULIMIT"></li>');
     $('#ToggleCPULIMIT').toggleSwitch({width: "50px"});
-    //if ( data['cpulimit'] == "enabled" ) { $('#ToggleCPULIMIT').toggleCheckedState(true) };
+    if ( data['cpulimit'] == "enabled" ) { window.cpulimit = true ;$('#ToggleCPULIMIT').toggleCheckedState(true) };
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[29] + ': <code>' + ROLE + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[32] + ': <code>' + ((TENANT == -1) ? 'none' : TENANT) + '</code></li>');
 
@@ -4009,7 +4143,7 @@ function updateStatusInModal(intervalId, data) {
         return clearInterval(intervalId);
     }
 
-    //drawStatusInModal(data);
+    drawStatusInModal(data);
 }
 
 // Update system status

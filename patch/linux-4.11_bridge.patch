@@ -1,0 +1,47 @@
+--- v4.11-rc2/net/bridge/br_input.c	2017-03-13 17:11:50.578567069 +0100
++++ v4.11-br/net/bridge/br_input.c	2017-03-13 22:23:13.039358788 +0100
+@@ -298,9 +298,6 @@
+ 			__br_handle_local_finish(skb);
+ 			return RX_HANDLER_PASS;
+ 
+-		case 0x01:	/* IEEE MAC (Pause) */
+-			goto drop;
+-
+ 		case 0x0E:	/* 802.1AB LLDP */
+ 			fwd_mask |= p->br->group_fwd_mask;
+ 			if (fwd_mask & (1u << dest[5]))
+--- v4.11-rc2/net/bridge/br_netlink.c	2017-03-13 22:11:37.485622143 +0100
++++ v4.11-br/net/bridge/br_netlink.c	2017-03-13 22:23:54.536179085 +0100
+@@ -981,9 +981,6 @@
+ 
+ 	if (data[IFLA_BR_GROUP_FWD_MASK]) {
+ 		u16 fwd_mask = nla_get_u16(data[IFLA_BR_GROUP_FWD_MASK]);
+-
+-		if (fwd_mask & BR_GROUPFWD_RESTRICTED)
+-			return -EINVAL;
+ 		br->group_fwd_mask = fwd_mask;
+ 	}
+ 
+--- v4.11-rc2/net/bridge/br_private.h	2017-03-13 22:11:37.489622222 +0100
++++ v4.11-br/net/bridge/br_private.h	2017-03-13 22:24:34.256964353 +0100
+@@ -34,8 +34,6 @@
+ 
+ /* Control of forwarding link local multicast */
+ #define BR_GROUPFWD_DEFAULT	0
+-/* Don't allow forwarding of control protocols like STP, MAC PAUSE and LACP */
+-#define BR_GROUPFWD_RESTRICTED	0x0007u
+ /* The Nearest Customer Bridge Group Address, 01-80-C2-00-00-[00,0B,0C,0D,0F] */
+ #define BR_GROUPFWD_8021AD	0xB801u
+ 
+--- v4.11-rc2/net/bridge/br_sysfs_br.c	2017-03-13 22:11:37.489622222 +0100
++++ v4.11-br/net/bridge/br_sysfs_br.c	2017-03-13 22:25:06.893609622 +0100
+@@ -153,9 +153,6 @@
+ 
+ static int set_group_fwd_mask(struct net_bridge *br, unsigned long val)
+ {
+-	if (val & BR_GROUPFWD_RESTRICTED)
+-		return -EINVAL;
+-
+ 	br->group_fwd_mask = val;
+ 
+ 	return 0;
