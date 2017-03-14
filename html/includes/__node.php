@@ -790,7 +790,7 @@ class Node {
 			if ($this -> getConsole() == 'rdp' ) {
 
                                 $this -> flags_eth .= ' -device %NICDRIVER%,netdev=net'.$this->ethernet.',mac=50:'.sprintf('%02x', $this -> tenant).':'.sprintf('%02x', $this -> id / 512).':'.sprintf('%02x', $this -> id % 512).':00:'.sprintf('%02x', $this->ethernet);
-                                $this -> flags_eth .= ' -netdev user,id=net1,hostfwd=tcp::'.$this -> port.'-:3389,net=169.254.1.100/30,dhcpstart=169.254.1.100,restrict=on';
+                                $this -> flags_eth .= ' -netdev user,id=net'.$this->ethernet.',hostfwd=tcp::'.$this -> port.'-:3389,net=169.254.1.100/30,dhcpstart=169.254.1.100,restrict=on';
                         }
 			if ($this -> getConsole() != 'vnc' ) {
 				$flags .= ' -nographic ';
