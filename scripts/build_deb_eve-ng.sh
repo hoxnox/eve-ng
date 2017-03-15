@@ -58,6 +58,8 @@ if [ $? -ne 0 ]; then
 fi
 
 cat html/includes/init.php 2>> ${LOG} | sed "s/define('VERSION', .*/define('VERSION', '${VERSION}-${RELEASE}');/g" 2>> ${LOG} > ${DATA_DIR}/opt/unetlab/html/includes/init.php
+cat html/themes/adminLTE/unl_data/js/angularjs/controllers/loginCtrl.js | sed -e 's/eveversion = .*/eveversion = "'${VERSION}-${RELEASE}'";/' 2>> ${LOG} > ${DATA_DIR}/opt/unetlab/html/themes/adminLTE/unl_data/js/angularjs/controllers/loginCtrl.js
+
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}
 	exit 1
