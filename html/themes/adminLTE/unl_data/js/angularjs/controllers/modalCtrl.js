@@ -17,6 +17,7 @@ function ModalCtrl($scope, $uibModal, $log) {
 	$scope.edituser = (edituser === undefined) ? '' :  edituser;
 	var pathToModal = (action === undefined) ? 'default' :  action;
 	// console.log(size + 'aaaaaaaaaa');
+	$scope.labInfo.fullPathToFile = $scope.fullPathToFile;
     var modalInstance = $uibModal.open({
       animation: $scope.animationsEnabled,
       templateUrl: $scope.modalActions[pathToModal]['path'],
