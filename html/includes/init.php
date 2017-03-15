@@ -59,6 +59,7 @@ if (!isset($node_config)) {
 		'vsrx'			=>	'config_vsrx.py',
 		'vsrxng'		=>	'config_vsrxng.py',
 		'vmx'			=>	'config_vmx.py',
+		'vmxvcp'		=>	'config_vmxvcp.py',
 		'vqfxre'		=>	'config_vqfxre.py',
 		'xrv'			=>	'config_xrv.py',
 		//'xrv9k'		=>	'config_xrv9k.py',
@@ -169,7 +170,7 @@ if (!isset($node_templates)) {
 }
 
 // Define parameters
-define('VERSION', '2.0.3-0');
+define('VERSION', '2.0.3-48');
 define('BASE_DIR', '/opt/unetlab');
 define('BASE_LAB', BASE_DIR.'/labs');
 define('BASE_TMP', BASE_DIR.'/tmp');

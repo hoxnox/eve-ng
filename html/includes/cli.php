@@ -845,6 +845,7 @@ function prepareNode($n, $id, $t, $nets) {
         	                                exec($diskcmd, $o, $rc);
 						break;
 					case 'vsrxng':
+					case 'vmxvcp':
 					case 'vmx':
 					case 'vqfxre':
 					case 'vsrx':
@@ -964,6 +965,11 @@ function start($n, $id, $t, $nets, $scripttimeout) {
         if ((  $n->getTemplate() == 'vsrxng' ) && is_file($n -> getRunningPath().'/config.iso') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0)  {
                 $flags .= ' -drive file=config.iso,if=ide,media=cdrom,index=2' ;
         }
+
+        if ((  $n->getTemplate() == 'vmxvcp' ) && is_file($n -> getRunningPath().'/config.iso') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0)  {
+                $flags .= ' -drive file=config.iso,if=ide,media=cdrom,index=3' ;
+        }
+
 
 	if (( $n -> getTemplate() == 'pfsense')   && is_file($n -> getRunningPath().'/config.iso') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0)  {
 		$flags .= ' -cdrom config.iso' ;
