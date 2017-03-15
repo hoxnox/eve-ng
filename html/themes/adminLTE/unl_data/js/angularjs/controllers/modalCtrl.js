@@ -17,7 +17,6 @@ function ModalCtrl($scope, $uibModal, $log) {
 	$scope.edituser = (edituser === undefined) ? '' :  edituser;
 	var pathToModal = (action === undefined) ? 'default' :  action;
 	// console.log(size + 'aaaaaaaaaa');
-	$scope.labInfo.fullPathToFile = $scope.fullPathToFile;
     var modalInstance = $uibModal.open({
       animation: $scope.animationsEnabled,
       templateUrl: $scope.modalActions[pathToModal]['path'],
@@ -33,9 +32,11 @@ function ModalCtrl($scope, $uibModal, $log) {
 						return {'name': $scope.newElementName, 'path': $scope.path};
 						break;
 				case 'editfile':
+                                                $scope.labInfo.fullPathToFile = $scope.fullPathToFile;
 						return {'info': $scope.labInfo, 'path': $scope.path};
 						break;
 				case 'editLab':
+                                                $scope.labInfo.fullPathToFile = $scope.fullPathToFile;
 						return {'info': $scope.labInfo, 'path': $scope.path};
 						break;
 				case 'adduser':
