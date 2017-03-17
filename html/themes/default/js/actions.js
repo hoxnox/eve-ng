@@ -1027,9 +1027,9 @@ $(document).on('click', '.action-moreactions', function (e) {
     if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
         body += '<li><a class="action-nodesexport" href="javascript:void(0)"><i class="glyphicon glyphicon-save"></i> ' + MESSAGES[129] + '</a></li>';
         body += '<li><a class="action-labedit" href="javascript:void(0)"><i class="glyphicon glyphicon-pencil"></i> ' + MESSAGES[87] + '</a></li>';
-        body += '<li><a class="action-nodesbootsaved" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-saved"></i> ' + MESSAGES[139] + '</a></li>';
-        body += '<li><a class="action-nodesbootscratch" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-save"></i> ' + MESSAGES[140] + '</a></li>';
-        body += '<li><a class="action-nodesbootdelete" href="javascript:void(0)"><i class="glyphicon glyphicon-floppy-remove"></i> ' + MESSAGES[141] + '</a></li>';
+        body += '<li><a class="action-nodesbootsaved" href="javascript:void(0)"><i class="glyphicon glyphicon-flash"></i> ' + MESSAGES[139] + '</a></li>';
+        body += '<li><a class="action-nodesbootscratch" href="javascript:void(0)"><i class="glyphicon glyphicon-remove"></i> ' + MESSAGES[140] + '</a></li>';
+        body += '<li><a class="action-nodesbootdelete" href="javascript:void(0)"><i class="glyphicon glyphicon-erase"></i> ' + MESSAGES[141] + '</a></li>';
     }
     printContextMenu(MESSAGES[125], body, e.pageX + 3, e.pageY + 3, true,"sidemenu", true);
 });
