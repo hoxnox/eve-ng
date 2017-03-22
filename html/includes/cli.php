@@ -824,6 +824,7 @@ function prepareNode($n, $id, $t, $nets) {
 						exec($isocmd, $o, $rc);
 						break;
 					case 'csr1000v':
+					case 'csr1000vng':
 						copy (  $n -> getRunningPath().'/startup-config',  $n -> getRunningPath().'/iosxe_config.txt');
 	                                        $isocmd = 'mkisofs -o '.$n -> getRunningPath().'/config.iso -l --iso-level 2 '.$n -> getRunningPath().'/iosxe_config.txt' ;
         	                                exec($isocmd, $o, $rc);
@@ -950,7 +951,7 @@ function start($n, $id, $t, $nets, $scripttimeout) {
 			break;
 	}
 	// Special Case for xrv - csr1000v - vIOS - vIOSL - Docker
-	if (( $n->getTemplate() == 'xrv' || $n->getTemplate() == 'csr1000v' || $n->getTemplate() == 'asav' || $n->getTemplate() == 'titanium' )  && is_file($n -> getRunningPath().'/config.iso') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0)  {
+	if (( $n->getTemplate() == 'xrv' || $n->getTemplate() == 'csr1000vng' || $n->getTemplate() == 'csr1000v' || $n->getTemplate() == 'asav' || $n->getTemplate() == 'titanium' )  && is_file($n -> getRunningPath().'/config.iso') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0)  {
 		$flags .= ' -cdrom config.iso' ;
         }
 
@@ -991,7 +992,7 @@ function start($n, $id, $t, $nets, $scripttimeout) {
 	if ($rc == 0 && $n -> getNType() == 'qemu' && is_file($n -> getRunningPath().'/startup-config') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0 ) {
 		// Start configuration process or check if bootstrap is done
 		touch($n -> getRunningPath().'/.lock');
-		$cmd = 'nohup /opt/unetlab/scripts/config_'.$n -> getTemplate().'.py -a put -p '.$n -> getPort().' -f '.$n -> getRunningPath().'/startup-config -t '.($n -> getDelay() + $scripttimeout).' > /dev/null 2>&1 &';
+		$cmd = 'nohup /opt/unetlab/scripts/'.$GLOBALS['node_config'][$n -> getTemplate()].' -a put -p '.$n -> getPort().' -f '.$n -> getRunningPath().'/startup-config -t '.($n -> getDelay() + $scripttimeout).' > /dev/null 2>&1 &';
 		exec($cmd, $o, $rc);
 		error_log(date('M d H:i:s ').'INFO: importing '.$cmd);
 	}
@@ -1026,7 +1027,8 @@ function start($n, $id, $t, $nets, $scripttimeout) {
 
 		// Start configuration process
 		touch($n -> getRunningPath().'/.lock');
-		$cmd = 'nohup /opt/unetlab/scripts/config_'.$n -> getTemplate().'.py -a put -i '.$n -> getUuid().' -f '.$n -> getRunningPath().'/startup-config -t '.($n -> getDelay() + 300).' > /dev/null 2>&1 &';
+		//$cmd = 'nohup /opt/unetlab/scripts/config_'.$n -> getTemplate().'.py -a put -i '.$n -> getUuid().' -f '.$n -> getRunningPath().'/startup-config -t '.($n -> getDelay() + 300).' > /dev/null 2>&1 &';
+		$cmd = 'nohup /opt/unetlab/scripts/'.$GLOBALS['node_config'][$n -> getTemplate()].' -a put -i '.$n -> getUuid().' -f '.$n -> getRunningPath().'/startup-config -t '.($n -> getDelay() + 300).' > /dev/null 2>&1 &';
 		exec($cmd, $o, $rc);
 		error_log(date('M d H:i:s ').'INFO: importing '.$cmd);
 	}
