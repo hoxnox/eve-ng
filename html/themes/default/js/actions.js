@@ -337,6 +337,7 @@ $(document).on('contextmenu', '#lab-viewport', function (e) {
 
 // Manage context menu
 $(document).on('contextmenu', '.context-menu', function (e) {
+
     e.stopPropagation();
     e.preventDefault();  // Prevent default behaviour
     var body = '' ;
@@ -356,18 +357,23 @@ $(document).on('contextmenu', '.context-menu', function (e) {
     
     var isNodeRunning = $(this).attr('data-status') > 1;
     var status = $(this).attr('data-status')
+    var content = '';
     
+ 
     if ($(this).hasClass('node_frame')) {
         logger(1, 'DEBUG: opening node context menu');
 
-        var node_id = $(this).attr('data-path')
-            , title = $(this).attr('data-name') + " (" + node_id + ")"
-            , body = 
-                '<li>' +
-                        '<a class="action-nodestart  menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+    var node_id = $(this).attr('data-path');
+    if(parseInt($('#node'+node_id).attr('data-status')) != 2){
+        content = '<li><a class="action-nodestart  menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
                 '<i class="glyphicon glyphicon-play"></i> ' + MESSAGES[66] +
                 '</a>' +
-                '</li>' +
+                '</li>';
+    }
+
+        var title = $(this).attr('data-name') + " (" + node_id + ")"
+            , body = 
+                content+
                 '<li>' +
                         '<a class="action-nodestop  menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
                 '<i class="glyphicon glyphicon-stop"></i> ' + MESSAGES[67] +
@@ -634,9 +640,9 @@ $(document).on('click', '.action-configget', function (e) {
     var id = $(this).attr('data-path');
     $.when(getNodeConfigs(id)).done(function (config) {
         printFormNodeConfigs(config);
-        $('#config-data').find('.form-control').focusout(function () {
-            saveLab();
-        })
+//        $('#config-data').find('.form-control').focusout(function () {
+//            saveLab();
+//        })
     }).fail(function (message) {
         addModalError(message);
     });
@@ -1087,7 +1093,10 @@ $(document).on('keyup', null, 'alt+u', function(){
 
 
 // Add object in lab_view
-$(document).on('click', '.action-labobjectadd', function (e) {
+$(document).on('click', '.action-labobjectadd', function (e) { 
+    if($(this).attr('data-disabled') == "true"){
+	return;
+    }
     logger(1, 'DEBUG: action = labobjectadd');
     var body = '';
     body += '<li><a class="action-nodeplace" href="javascript:void(0)"><i class="glyphicon glyphicon-hdd"></i> ' + MESSAGES[81] + '</a></li>';
@@ -1200,6 +1209,12 @@ $(document).on('click', '.action-pictureadd', function (e) {
     logger(1, 'DEBUG: action = pictureadd');
     $('#context-menu').remove();
     displayPictureForm();
+    
+ 
+    $("#form-picture-add").find('input:eq(0)').delay(500).queue(function() {
+     $(this).focus();
+     $(this).dequeue();
+    });
     //printFormPicture('add', null);
 });
 
@@ -1722,7 +1737,7 @@ $(document).on('click', '.action-nodestart, .action-nodesstart, .action-nodestar
         , isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode")
         , nodeLenght
         ;
-
+	
     if ($(this).hasClass('action-nodestart')) {
         logger(1, 'DEBUG: action = nodestart');
         node_id = $(this).attr('data-path');
@@ -1730,7 +1745,7 @@ $(document).on('click', '.action-nodestart, .action-nodesstart, .action-nodestar
         logger(1, 'DEBUG: action = nodesstart');
         startAll = true;
     }
-
+	
     $.when(getNodes(null)).done(function (nodes) {
         if (isFreeSelectMode) {
             nodeLenght = window.freeSelectedNodes.length;
@@ -4119,3 +4134,4 @@ $(document).on('change','#ToggleKSM', function (e) {
         if ( status != window.ksm ) setKsm(status);
  }
 });
+

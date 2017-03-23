@@ -411,3 +411,43 @@ body.folders #main{
 .addConn-form-save {
 	margin-right: 5px;
 }
+
+.action-labobjectadd.disabled,
+#lab-sidebar li a.action-labobjectadd.disabled:hover{
+ text-decoration: line-through;
+}
+
+li.plus-minus-slider i{
+    color: #b8c7ce;
+}
+
+li.plus-minus-slider i:first-of-type{
+    margin-left: -127px;
+}
+
+li.plus-minus-slider i:last-of-type{
+    margin-left: 111px;
+}
+
+
+#lab-sidebar .ui-slider-handle.ui-state-active{
+    background-color: #ccd7f3;
+    border-color: #ccd7f3;
+}
+
+.tag .plug-icon:hover{
+    margin-top: -7px;
+    margin-left: -3px;
+}
+
+li.plus-minus-slider #zoomslide{
+  margin-top: 3px;
+}
+
+#capture-menu{
+ margin-top: -25px;
+}
+
+#form-picture-add button:first-of-type{
+ margin-right: 10px;
+}
