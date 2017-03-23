@@ -417,11 +417,8 @@ body.folders #main{
  text-decoration: line-through;
 }
 
-
 li.plus-minus-slider i{
     color: #b8c7ce;
-    position: relative;	
-    top: -3px;
 }
 
 li.plus-minus-slider i:first-of-type{
@@ -440,4 +437,9 @@ li.plus-minus-slider i:last-of-type{
 
 .tag .plug-icon:hover{
     margin-top: -7px;
+    margin-left: -3px;
+}
+
+li.plus-minus-slider #zoomslide{
+  margin-top: 3px;
 }

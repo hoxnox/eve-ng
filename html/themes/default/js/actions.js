@@ -356,17 +356,22 @@ $(document).on('contextmenu', '.context-menu', function (e) {
     
     var isNodeRunning = $(this).attr('data-status') > 1;
     var status = $(this).attr('data-status')
-    
+    var content = '';
+
+    if(!($(this).hasClass('jsplumb-connected'))){
+        content = '<li><a class="action-nodestart  menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
+                '<i class="glyphicon glyphicon-play"></i> ' + MESSAGES[66] +
+                '</a>' +
+                '</li>';
+    }
+
     if ($(this).hasClass('node_frame')) {
         logger(1, 'DEBUG: opening node context menu');
 
         var node_id = $(this).attr('data-path')
             , title = $(this).attr('data-name') + " (" + node_id + ")"
             , body = 
-                '<li>' +
-                        '<a class="action-nodestart  menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
-                '<i class="glyphicon glyphicon-play"></i> ' + MESSAGES[66] +
-                '</a>' +
+		content+
                 '</li>' +
                 '<li>' +
                         '<a class="action-nodestop  menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
