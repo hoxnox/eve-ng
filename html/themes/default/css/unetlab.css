@@ -118,17 +118,17 @@ body.login {
 	overflow:hidden;
 }
 #alert_container .inner{
-	max-height:0px;	
+	height:0px;	
 	overflow:hidden;
 }
-#alert_container:hover {
-	max-height:100%;
-	overflow:auto;
-}
-#alert_container:hover .inner{
-	max-height:100%;
-	overflow:auto;
-}
+//#alert_container:hover {
+//	max-height:100%;
+//	overflow:auto;
+//}
+//#alert_container:hover .inner{
+//	max-height:100%;
+//	overflow:auto;
+//}
 #alert_container .alert{
 	padding:3px;
 	border-radius:0;

@@ -443,3 +443,7 @@ li.plus-minus-slider i:last-of-type{
 li.plus-minus-slider #zoomslide{
   margin-top: 3px;
 }
+
+#capture-menu{
+ margin-top: -25px;
+}
