@@ -437,3 +437,7 @@ li.plus-minus-slider i:last-of-type{
     background-color: #ccd7f3;
     border-color: #ccd7f3;
 }
+
+.tag .plug-icon:hover{
+    margin-top: -7px;
+}
