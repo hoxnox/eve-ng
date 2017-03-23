@@ -411,3 +411,8 @@ body.folders #main{
 .addConn-form-save {
 	margin-right: 5px;
 }
+
+.action-labobjectadd.disabled,
+#lab-sidebar li a.action-labobjectadd.disabled:hover{
+ text-decoration: line-through;
+}
