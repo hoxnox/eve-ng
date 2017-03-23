@@ -337,6 +337,7 @@ $(document).on('contextmenu', '#lab-viewport', function (e) {
 
 // Manage context menu
 $(document).on('contextmenu', '.context-menu', function (e) {
+
     e.stopPropagation();
     e.preventDefault();  // Prevent default behaviour
     var body = '' ;
@@ -357,22 +358,22 @@ $(document).on('contextmenu', '.context-menu', function (e) {
     var isNodeRunning = $(this).attr('data-status') > 1;
     var status = $(this).attr('data-status')
     var content = '';
+    
+ 
+    if ($(this).hasClass('node_frame')) {
+        logger(1, 'DEBUG: opening node context menu');
 
-    if(!($(this).hasClass('jsplumb-connected'))){
+    var node_id = $(this).attr('data-path');
+    if(parseInt($('#node'+node_id).attr('data-status')) != 2){
         content = '<li><a class="action-nodestart  menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
                 '<i class="glyphicon glyphicon-play"></i> ' + MESSAGES[66] +
                 '</a>' +
                 '</li>';
     }
 
-    if ($(this).hasClass('node_frame')) {
-        logger(1, 'DEBUG: opening node context menu');
-
-        var node_id = $(this).attr('data-path')
-            , title = $(this).attr('data-name') + " (" + node_id + ")"
+        var title = $(this).attr('data-name') + " (" + node_id + ")"
             , body = 
-		content+
-                '</li>' +
+                content+
                 '<li>' +
                         '<a class="action-nodestop  menu-manage" data-path="' + node_id + '" data-name="' + title + '" href="javascript:void(0)">' +
                 '<i class="glyphicon glyphicon-stop"></i> ' + MESSAGES[67] +
@@ -1092,7 +1093,7 @@ $(document).on('keyup', null, 'alt+u', function(){
 
 
 // Add object in lab_view
-$(document).on('click', '.action-labobjectadd', function (e) {
+$(document).on('click', '.action-labobjectadd', function (e) { 
     if($(this).attr('data-disabled') == "true"){
 	return;
     }
@@ -1101,8 +1102,8 @@ $(document).on('click', '.action-labobjectadd', function (e) {
     body += '<li><a class="action-nodeplace" href="javascript:void(0)"><i class="glyphicon glyphicon-hdd"></i> ' + MESSAGES[81] + '</a></li>';
     body += '<li><a class="action-networkplace" href="javascript:void(0)"><i class="glyphicon glyphicon-transfer"></i> ' + MESSAGES[82] + '</a></li>';
     body += '<li><a class="action-pictureadd" href="javascript:void(0)"><i class="glyphicon glyphicon-picture"></i> ' + MESSAGES[83] + '</a></li>';
-    body += '<li><a class="action-customshapeadd" href="javascript:void(0)"><i class="glyphicon glyphicon-unchecked"></i> ' + MESSAGES[145] + '</a></li>';
-    body += '<li><a class="action-textadd" href="javascript:void(0)"><i class="glyphicon glyphicon-font"></i> ' + MESSAGES[146] + '</a></li>';
+  body += '<li><a class="action-customshapeadd" href="javascript:void(0)"><i class="glyphicon glyphicon-unchecked"></i> ' + MESSAGES[145] + '</a></li>';
+  body += '<li><a class="action-textadd" href="javascript:void(0)"><i class="glyphicon glyphicon-font"></i> ' + MESSAGES[146] + '</a></li>';
     printContextMenu(MESSAGES[80], body, e.pageX, e.pageY, true,"sidemenu", true);
 });
 
@@ -1730,7 +1731,7 @@ $(document).on('click', '.action-nodestart, .action-nodesstart, .action-nodestar
         , isFreeSelectMode = $("#lab-viewport").hasClass("freeSelectMode")
         , nodeLenght
         ;
-
+	
     if ($(this).hasClass('action-nodestart')) {
         logger(1, 'DEBUG: action = nodestart');
         node_id = $(this).attr('data-path');
@@ -1738,7 +1739,7 @@ $(document).on('click', '.action-nodestart, .action-nodesstart, .action-nodestar
         logger(1, 'DEBUG: action = nodesstart');
         startAll = true;
     }
-
+	
     $.when(getNodes(null)).done(function (nodes) {
         if (isFreeSelectMode) {
             nodeLenght = window.freeSelectedNodes.length;

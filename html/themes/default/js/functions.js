@@ -1893,7 +1893,7 @@ function stop(node_id) {
         success: function (data) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) stopped.');
-                //$('#node' + node_id + ' img').addClass('grayscale')
+                $('#node' + node_id).removeClass('jsplumb-connected');
                 deferred.resolve(data['data']);
 
             } else {
@@ -3893,13 +3893,12 @@ function printPageLabList(folder) {
 // Print lab open page
 function printPageLabOpen(lab) {
     var html = '<div id="lab-sidebar"><ul></ul></div><div id="lab-viewport" data-path="' + lab + '"></div>';
-
     $('#body').html(html);
     // Print topology
     $.when(printLabTopology(),getPictures()).done( function (rc,pic) {
-     if ((ROLE == 'admin' || ROLE == 'editor')) {
+//     if ((ROLE == 'admin' || ROLE == 'editor')) {
               $('#lab-sidebar ul').append('<li class="action-labobjectadd-li"><a class="action-labobjectadd" href="javascript:void(0)" title="' + MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i></a></li>');
-         }
+//         }
          $('#lab-sidebar ul').append('<li class="action-nodesget-li"><a class="action-nodesget" href="javascript:void(0)" title="' + MESSAGES[62] + '"><i class="glyphicon glyphicon-hdd"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-networksget" href="javascript:void(0)" title="' + MESSAGES[61] + '"><i class="glyphicon glyphicon-transfer"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-configsget" href="javascript:void(0)" title="' + MESSAGES[58] + '"><i class="glyphicon glyphicon-align-left"></i></a></li>');
@@ -5097,7 +5096,7 @@ function unlockLab(){
     } else {
          $('.action-labobjectadd-li').show();
    }
-    $('.action-labobjectadd').attr('data-disabled', false).removeClass('disabled');
+   $('.action-labobjectadd').attr('data-disabled', false).removeClass('disabled');   	
     return deferred.promise();
 }
 
