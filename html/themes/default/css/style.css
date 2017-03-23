@@ -416,3 +416,24 @@ body.folders #main{
 #lab-sidebar li a.action-labobjectadd.disabled:hover{
  text-decoration: line-through;
 }
+
+
+li.plus-minus-slider i{
+    color: #b8c7ce;
+    position: relative;	
+    top: -3px;
+}
+
+li.plus-minus-slider i:first-of-type{
+    margin-left: -127px;
+}
+
+li.plus-minus-slider i:last-of-type{
+    margin-left: 111px;
+}
+
+
+#lab-sidebar .ui-slider-handle.ui-state-active{
+    background-color: #ccd7f3;
+    border-color: #ccd7f3;
+}
