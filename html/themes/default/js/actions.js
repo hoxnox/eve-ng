@@ -634,9 +634,9 @@ $(document).on('click', '.action-configget', function (e) {
     var id = $(this).attr('data-path');
     $.when(getNodeConfigs(id)).done(function (config) {
         printFormNodeConfigs(config);
-        $('#config-data').find('.form-control').focusout(function () {
-            saveLab();
-        })
+//        $('#config-data').find('.form-control').focusout(function () {
+//            saveLab();
+//        })
     }).fail(function (message) {
         addModalError(message);
     });
