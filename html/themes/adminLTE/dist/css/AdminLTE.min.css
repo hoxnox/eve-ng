@@ -78,3 +78,10 @@
     height: 5em;
   }
 }
+.btn-options-main .btn+.btn{
+  margin-left: 0px;
+}
+
+.btn-options-main > .btn:not(:hover):not(:last-of-type){
+  border-right-color: transparent;
+}
