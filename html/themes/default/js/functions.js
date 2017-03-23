@@ -2468,6 +2468,11 @@ function printFormCustomShape(values) {
         })
     }
 
+
+    $(".custom-shape-form").find('input:eq(0)').delay(500).queue(function() {
+     $(this).focus();
+     $(this).dequeue();
+    });
 };
 
 // Text form

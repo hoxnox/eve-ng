@@ -447,3 +447,7 @@ li.plus-minus-slider #zoomslide{
 #capture-menu{
  margin-top: -25px;
 }
+
+#form-picture-add button:first-of-type{
+ margin-right: 10px;
+}

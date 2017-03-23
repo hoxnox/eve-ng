@@ -1209,6 +1209,12 @@ $(document).on('click', '.action-pictureadd', function (e) {
     logger(1, 'DEBUG: action = pictureadd');
     $('#context-menu').remove();
     displayPictureForm();
+    
+ 
+    $("#form-picture-add").find('input:eq(0)').delay(500).queue(function() {
+     $(this).focus();
+     $(this).dequeue();
+    });
     //printFormPicture('add', null);
 });
 
@@ -4128,3 +4134,4 @@ $(document).on('change','#ToggleKSM', function (e) {
         if ( status != window.ksm ) setKsm(status);
  }
 });
+
