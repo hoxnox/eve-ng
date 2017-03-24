@@ -3901,9 +3901,9 @@ function printPageLabOpen(lab) {
     $('#body').html(html);
     // Print topology
     $.when(printLabTopology(),getPictures()).done( function (rc,pic) {
-//     if ((ROLE == 'admin' || ROLE == 'editor')) {
+         if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
               $('#lab-sidebar ul').append('<li class="action-labobjectadd-li"><a class="action-labobjectadd" href="javascript:void(0)" title="' + MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i></a></li>');
-//         }
+         }
          $('#lab-sidebar ul').append('<li class="action-nodesget-li"><a class="action-nodesget" href="javascript:void(0)" title="' + MESSAGES[62] + '"><i class="glyphicon glyphicon-hdd"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-networksget" href="javascript:void(0)" title="' + MESSAGES[61] + '"><i class="glyphicon glyphicon-transfer"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-configsget" href="javascript:void(0)" title="' + MESSAGES[58] + '"><i class="glyphicon glyphicon-align-left"></i></a></li>');
@@ -3932,12 +3932,6 @@ function printPageLabOpen(lab) {
         if ( LOCK == 1 ) {
             lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false);
             $('.customShape').resizable('disable');
-	    $('.action-labobjectadd').addClass('disabled').attr('data-disabled', true);
-	    var lockTab = $('.action-lock-lab');
-	    var i = lockTab.find('i');
-	    lockTab .addClass('action-unlock-lab').removeClass('action-lock-lab').text(MESSAGES[167]).prepend(i);
-	    i.css('color', 'red').addClass('glyphicon-remove-circle').removeClass('glyphicon-ok-circle');
-
         }
     })
 }
@@ -5048,7 +5042,7 @@ function lockLab() {
             deferred.reject(message);
         }
     });
-    $('.action-labobjectadd').attr('data-disabled', true).addClass('disabled');
+    $('.action-labobjectadd-li').hide();
     return deferred.promise();
 }
 
@@ -5101,7 +5095,6 @@ function unlockLab(){
     } else {
          $('.action-labobjectadd-li').show();
    }
-   $('.action-labobjectadd').attr('data-disabled', false).removeClass('disabled');   	
     return deferred.promise();
 }
 
