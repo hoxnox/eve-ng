@@ -57,8 +57,11 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-cat html/includes/init.php 2>> ${LOG} | sed "s/define('VERSION', .*/define('VERSION', '${VERSION}-${RELEASE}');/g" 2>> ${LOG} > ${DATA_DIR}/opt/unetlab/html/includes/init.php
-cat html/themes/adminLTE/unl_data/js/angularjs/controllers/loginCtrl.js | sed -e 's/eveversion = .*/eveversion = "'${VERSION}-${RELEASE}'";/' 2>> ${LOG} > ${DATA_DIR}/opt/unetlab/html/themes/adminLTE/unl_data/js/angularjs/controllers/loginCtrl.js
+#cat html/includes/init.php 2>> ${LOG} | sed "s/define('VERSION', .*/define('VERSION', '${VERSION}-${RELEASE}');/g" 2>> ${LOG} > ${DATA_DIR}/opt/unetlab/html/includes/init.php
+#cat html/themes/adminLTE/unl_data/js/angularjs/controllers/loginCtrl.js | sed -e 's/eveversion = .*/eveversion = "'${VERSION}-${RELEASE}'";/' 2>> ${LOG} > ${DATA_DIR}/opt/unetlab/html/themes/adminLTE/unl_data/js/angularjs/controllers/loginCtrl.js
+cat html/themes/adminLTE/unl_data/js/angularjs/app.js | sed -e 's/EVE_VERSION = ".*/EVE_VERSION = "'${VERSION}-${RELEASE}'";/' 2>> ${LOG} > ${DATA_DIR}/opt/unetlab/html/themes/adminLTE/unl_data/js/angularjs/app.js
+cat html/themes/default/js/javascript.js | sed -e 's/EVE_VERSION = ".*/EVE_VERSION = "'${VERSION}-${RELEASE}'";/' 2>> ${LOG} > ${DATA_DIR}/opt/unetlab/html/themes/default/js/javascript.js
+echo  -n ${VERSION}-${RELEASE} 2>> ${LOG}  > ${DATA_DIR}/opt/unetlab/html/themes/adminLTE/VERSION
 
 if [ $? -ne 0 ]; then
 	echo -e ${FAILED}

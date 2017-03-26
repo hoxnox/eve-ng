@@ -170,7 +170,8 @@ if (!isset($node_templates)) {
 }
 
 // Define parameters
-define('VERSION', '2.0.3-48');
+$eve_ver = file_get_contents("/opt/unetlab/html/themes/adminLTE/VERSION");
+define('VERSION', $eve_ver);
 define('BASE_DIR', '/opt/unetlab');
 define('BASE_LAB', BASE_DIR.'/labs');
 define('BASE_TMP', BASE_DIR.'/tmp');

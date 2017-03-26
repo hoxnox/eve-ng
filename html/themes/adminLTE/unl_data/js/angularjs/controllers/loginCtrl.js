@@ -1,5 +1,5 @@
 function loginController($scope, $http, $location, $rootScope) {
-        $scope.eveversion = "2.0.3-50";
+        $scope.eveversion = $rootScope.EVE_VERSION;
 	if ($scope.html5 == null ) { $scope.html5 = -1 ;} 
 	$scope.testAUTH("/main");
 	$('body').removeClass().addClass('hold-transition login-page');

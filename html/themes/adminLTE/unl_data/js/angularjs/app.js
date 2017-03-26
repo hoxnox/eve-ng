@@ -18,6 +18,7 @@ app_main_unl.run(function($rootScope) {
     $rootScope.pagespath = '/themes/adminLTE/unl_data/pages/';
     $rootScope.bodyclass = 'sidebar-collapse';
     $rootScope.UIlegacy = 1 ;
+    $rootScope.EVE_VERSION = "2.0.3-54";
 });
 
 app_main_unl.directive('focusOn', function() {
@@ -92,6 +93,9 @@ app_main_unl.directive('myEnter', function () {
 
 /* Setup App Main Controller */
 app_main_unl.controller('unlMainController', ['$scope', '$rootScope', '$http', '$location', '$cookies', function($scope, $rootScope, $http, $location, $cookies) {
+                $.get('/VERSION?'+Date.now(), function(data) {
+                    if ( data.trim()  != $rootScope.EVE_VERSION ) window.location.reload(true);
+                });
 		$rootScope.openLaba=true;
 		console.log($cookies.get('privacy'));
 		$scope.testAUTH = function (path) {

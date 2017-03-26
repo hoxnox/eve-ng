@@ -987,6 +987,8 @@ function start($n, $id, $t, $nets, $scripttimeout) {
 
 	error_log(date('M d H:i:s ').'INFO: CWD is '.getcwd());
 	error_log(date('M d H:i:s ').'INFO: starting '.$cmd);
+        // Clean TCP port
+        exec("fuser -k -n tcp ".(32768 + 128 * $t + $id));
 	exec($cmd, $o, $rc);
 
 	if ($rc == 0 && $n -> getNType() == 'qemu' && is_file($n -> getRunningPath().'/startup-config') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0 ) {
