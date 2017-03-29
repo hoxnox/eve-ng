@@ -220,6 +220,58 @@ class Lab {
                                                 $n['firstmac'] = (string) '00:'.sprintf('%02x', $this -> tenant).':'.sprintf('%02x', $this -> id / 512).':'.sprintf('%02x', $this -> id % 512).':00:10';
                                         }
                                 }
+             // Nokia Distributed Mode needs QEMU Options
+              if ( $n['template']  == "timos" ) {
+  									if (isset($node -> attributes() -> timos_line)) {  #TimosLine
+  											$n['timos_line'] = (string) $node -> attributes() -> timos_line;
+  									} else {
+  											$n['timos_line'] = "TIMOS:slot=A chassis=SR-12 card=cpm5";
+  									}
+  									if (isset($node -> attributes() -> management_address)) {  #management_address
+  											$n['management_address'] = (string) $node -> attributes() -> management_address;
+  									} 
+  									if (isset($node -> attributes() -> timos_license)) {  #management_address
+  											$n['timos_license'] = (string) $node -> attributes() -> timos_license;
+  									}
+  									if (isset($node -> attributes() -> qemu_options)) {  #TimosLine
+  											$n['qemu_options'] = (string) $node -> attributes() -> qemu_options;                                                
+  									} else {
+  											$n['qemu_options'] = ' -machine type=pc,accel=kvm -enable-kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc';	
+  									}										
+             }
+             
+             if ( $n['template']  == "timosiom" ) {
+								if (isset($node -> attributes() -> timos_line)) {  #TimosLine
+										$n['timos_line'] = (string) $node -> attributes() -> timos_line;
+								} else {
+										$n['timos_line'] = "TIMOS:slot=1 chassis=SR-12 card=iom3-xp-b mda/1=m10-1gb-sfp-b mda/2=isa-bb";
+								}
+								if (isset($node -> attributes() -> qemu_options)) {  #TimosLine
+										$n['qemu_options'] = (string) $node -> attributes() -> qemu_options;                                                
+								} else {
+										$n['qemu_options'] = ' -machine type=pc,accel=kvm -enable-kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc';	
+								}						
+            }                               
+                                
+             if ( $n['template']  == "timoscpm" ) {
+								if (isset($node -> attributes() -> timos_line)) {  #TimosLine
+										$n['timos_line'] = (string) $node -> attributes() -> timos_line;
+								} else {
+										$n['timos_line'] = "TIMOS:slot=1 chassis=SR-12 card=iom3-xp-b mda/1=m10-1gb-sfp-b mda/2=isa-bb";
+								}
+								if (isset($node -> attributes() -> management_address)) {  #management_address
+							      $n['management_address'] = (string) $node -> attributes() -> management_address;
+      					} 
+      					if (isset($node -> attributes() -> timos_license)) {  #management_address
+      							$n['timos_license'] = (string) $node -> attributes() -> timos_license;
+      					}
+								if (isset($node -> attributes() -> qemu_options)) {  #TimosLine
+										$n['qemu_options'] = (string) $node -> attributes() -> qemu_options;                                                
+								} else {
+										$n['qemu_options'] = ' -machine type=pc,accel=kvm -enable-kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc';	
+								}						
+            }  
+                       
 
 				try {
 					$this -> nodes[$n['id']] = new Node($n, $n['id'], $this -> tenant, $this -> id);
@@ -980,13 +1032,14 @@ class Lab {
 				// Interface must be configured
 				$i = Array();
 				$i['id'] = $interface_id;
+				error_log('Interface ID: ' . $interface_id . ' interfacelink: ' . $interface_link  );
 
 				if (strpos($interface_link, ':') === False) {
 					// No ':' found -> simple Ethernet interface
 					if (isset($this -> getNetworks()[$interface_link])) {
 						// Network exists
 						$i['network_id'] = $interface_link;
-
+						
 						// Link the interface
 						if ($this -> nodes[$n] -> linkInterface($i) !== 0) {
 							error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?node='.$n.' '.$GLOBALS['messages'][20034]);
@@ -1157,6 +1210,29 @@ class Lab {
 							$d -> addAttribute('ethernet', $node -> getEthernetCount());
 							$d -> addAttribute('uuid', $node -> getUuid());
 							if ( $node -> getTemplate() == "bigip" || $node -> getTemplate() == "firepower6" || $node -> getTemplate() == "firepower" ) $d -> addAttribute('firstmac', $node -> getFirstMac());
+							
+							if ( $node -> getTemplate() == "timos" ) {
+								$d -> addAttribute('qemu_options', $node -> getQemu_options());
+								$d -> addAttribute('timos_line', $node -> getTimos_Line()); #TimosLine
+								$d -> addAttribute('timos_license', $node -> getLicense_File()); #TimosLine
+								#$d -> addAttribute('timos_config', $node -> getTimos_Config()); #TimosLine
+								$d -> addAttribute('management_address', $node -> getManagement_address()); #TimosLine
+
+								}
+                      
+							if ( $node -> getTemplate() == "timosiom" ) {
+								$d -> addAttribute('qemu_options', $node -> getQemu_options());
+								$d -> addAttribute('timos_line', $node -> getTimos_Line()); #TimosLine
+								}
+                      
+							if ( $node -> getTemplate() == "timoscpm" ) {
+								$d -> addAttribute('qemu_options', $node -> getQemu_options());
+								$d -> addAttribute('timos_line', $node -> getTimos_Line()); #TimosLine
+								$d -> addAttribute('timos_license', $node -> getLicense_File()); #TimosLine
+								#$d -> addAttribute('timos_config', $node -> getTimos_Config()); #TimosLine
+								$d -> addAttribute('management_address', $node -> getManagement_address()); #TimosLine
+
+								}   
 							break;
 					}
 

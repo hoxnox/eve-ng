@@ -1893,7 +1893,7 @@ function stop(node_id) {
         success: function (data) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) stopped.');
-                $('#node' + node_id).removeClass('jsplumb-connected');
+                //$('#node' + node_id + ' img').addClass('grayscale')
                 deferred.resolve(data['data']);
 
             } else {
@@ -2222,9 +2222,16 @@ function printFormNetwork(action, values) {
             // Print all network types
             if(value.startsWith('pnet')){
                 value = value.replace('pnet','Cloud')
+				// Custom Management Port for eth0
+				if(value.startsWith('Cloud0'))
+				{
+					value = value.replace('Cloud0','Management')
+				}
                 var type_selected = (key == type) ? 'selected ' : '';
                 html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
             }
+			
+
         });
         html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="network[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="network[top]" value="' + top + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form></form>';
 
@@ -2468,11 +2475,6 @@ function printFormCustomShape(values) {
         })
     }
 
-
-    $(".custom-shape-form").find('input:eq(0)').delay(500).queue(function() {
-     $(this).focus();
-     $(this).dequeue();
-    });
 };
 
 // Text form
@@ -3898,10 +3900,11 @@ function printPageLabList(folder) {
 // Print lab open page
 function printPageLabOpen(lab) {
     var html = '<div id="lab-sidebar"><ul></ul></div><div id="lab-viewport" data-path="' + lab + '"></div>';
+
     $('#body').html(html);
     // Print topology
     $.when(printLabTopology(),getPictures()).done( function (rc,pic) {
-         if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
+     if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
               $('#lab-sidebar ul').append('<li class="action-labobjectadd-li"><a class="action-labobjectadd" href="javascript:void(0)" title="' + MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i></a></li>');
          }
          $('#lab-sidebar ul').append('<li class="action-nodesget-li"><a class="action-nodesget" href="javascript:void(0)" title="' + MESSAGES[62] + '"><i class="glyphicon glyphicon-hdd"></i></a></li>');
@@ -3915,7 +3918,7 @@ function printPageLabOpen(lab) {
          $('#lab-sidebar ul').append('<li><a class="action-textobjectsget" href="javascript:void(0)" title="' + MESSAGES[150] + '"><i class="glyphicon glyphicon-text-background"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-moreactions" href="javascript:void(0)" title="' + MESSAGES[125] + '"><i class="glyphicon glyphicon-th"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-labtopologyrefresh" href="javascript:void(0)" title="' + MESSAGES[57] + '"><i class="glyphicon glyphicon-refresh"></i></a></li>');
-         $('#lab-sidebar ul').append('<li class="plus-minus-slider"><i class="fa fa-minus"></i><div class="col-md-2 glyphicon glyphicon-zoom-in sidemenu-zoom"></div><div id="zoomslide" class="col-md-5"></div><div class="col-md-5"></div><i class="fa fa-plus"></i><br></li>');
+         $('#lab-sidebar ul').append('<li><div class="col-md-2 glyphicon glyphicon-zoom-in sidemenu-zoom"></div><div id="zoomslide" class="col-md-5"></div><div class="col-md-5"></div><br></li>');
          $('#zoomslide').slider({value:100,min:10,max:200,step:10,slide:zoomlab});
          //$('#lab-sidebar ul').append('<li><a class="action-freeselect" href="javascript:void(0)" title="' + MESSAGES[151] + '"><i class="glyphicon glyphicon-check"></i></a></li>');
          $('#lab-sidebar ul').append('<li><a class="action-status" href="javascript:void(0)" title="' + MESSAGES[13] + '"><i class="glyphicon glyphicon-info-sign"></i></a></li>');

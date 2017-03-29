@@ -71,7 +71,9 @@ if (!isset($node_templates)) {
 	$node_templates = Array(
 		'a10'			=>	'A10 vThunder',
 		'clearpass'		=>	'Aruba ClearPass',
-		'timos'			=>	'Alcatel 7750 SR',
+		'timos'			=>	'Nokia 7750 VSR-I',
+        'timoscpm'		=>	'Nokia 7750 CPM',
+        'timosiom'		=>	'Nokia 7750 IOM',
 		'veos'			=>	'Arista vEOS',
 		'barracuda'		=>	'Barraccuda NGIPS',
 		'brocadevadx'	=>	'Brocade vADX',
@@ -170,8 +172,7 @@ if (!isset($node_templates)) {
 }
 
 // Define parameters
-$eve_ver = file_get_contents("/opt/unetlab/html/themes/adminLTE/VERSION");
-define('VERSION', $eve_ver);
+define('VERSION', '2.0.3-53');
 define('BASE_DIR', '/opt/unetlab');
 define('BASE_LAB', BASE_DIR.'/labs');
 define('BASE_TMP', BASE_DIR.'/tmp');

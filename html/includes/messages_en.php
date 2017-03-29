@@ -250,6 +250,10 @@ $messages[70018] = 'Ethernet portgroups (4 int each)';
 $messages[70019] = 'Exported';
 $messages[70020] = 'None';
 $messages[70021] = 'First Eth MAC Address';
+$messages[70030] = 'QEMU custom options';
+$messages[70031] = 'Management Address';
+$messages[70032] = 'Timos Line';
+$messages[70033] = 'Timos License';
 
 // CLI (80000-89999)
 $messages[80009] = 'Failed to add the username (80009).';

@@ -708,7 +708,7 @@ function listNodeImages($t, $p) {
  * @return  Array                       The list of node types
  */
 function listNodeTypes() {
-	return Array('iol', 'dynamips', 'docker', 'qemu' , 'vpcs');
+	return Array('iol', 'dynamips', 'docker', 'qemu' , 'vpcs', 'Nokia');
 }
 
 /**

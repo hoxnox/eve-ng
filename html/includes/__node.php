@@ -51,6 +51,13 @@ class Node {
 	private $ethernet;
 	private $ethernets = Array();
 	private $firstmac;
+	private $management_address = 'dasdsd';
+	private $qemu_options;
+	private $timos_line;
+	private $timos_config;
+	private $timos_slot;
+	private $timos_chassis;
+    private $timos_license;
 	private $host;
 	private $icon;
 	private $id;
@@ -343,6 +350,105 @@ class Node {
 					$this -> firstmac =  '00:50:'.sprintf('%02x', $this -> tenant).':'.sprintf('%02x', $this -> id / 512).':'.sprintf('%02x', $this -> id % 512).':00';
 				}
 			}
+			
+			if ( $p['template']  == 'timos' ) {
+  				#TimosLine
+  				if (isset($p['timos_line']) && !empty($p['timos_line']))  {
+  					$this -> timos_line = (string) $p['timos_line'];
+  					preg_match("/slot\s*=\s*([\S]+)/", $p['timos_line'] , $output_array);					
+  					$this -> timos_slot = (string) $output_array[1];
+  					preg_match("/chassis=\s*([\S]+)/", $p['timos_line'] , $output_array);
+  					$this -> timos_chassis = (string) $output_array[1];
+            #preg_match("/license-file=\s*([\S]+)/", $p['timos_line'] , $output_array);
+            #$this -> timos_license = (string)  $p['timos_license'];
+  				} else {
+  					$this -> timos_line = 'TIMOS:chassis=VSR-I slot=A card=cpm-v'; 
+  					$this -> timos_slot = 'A';
+  					$this -> timos_chassis = 'VSR-I';			
+            $this -> timos_license = 'ftp://sim_license:sim_license@172.22.108.10/sros_vSIM_R14_license_cis.txt';	
+            $this -> management_address = (string) $p['management_address'];	
+  				}
+  				if (isset($p['management_address'])) {
+  					$this -> management_address = $p['management_address'];
+  				} else {
+  					$this -> management_address = '172.22.108.99/24';#(string) $p['management_address'];
+  				}
+  				if (isset($p['timos_license'])) {
+  					$this -> timos_license = $p['timos_license'];
+  				} else {
+  					$this -> timos_license ='ftp://sim_license:sim_license@172.22.108.10/sros_vSIM_R14_license_cis.txt';
+  				}
+  				if (isset($p['timos_config'])) {
+  					$this -> timos_config = (string) $p['timos_config'];
+  				} else {
+  					$this -> timos_config = NULL;
+  				}
+  				if (isset($p['qemu_options'])) {
+  					$this -> qemu_options = (string) $p['qemu_options'];
+  				} else {
+  					$this -> qemu_options =  ' -machine type=pc,accel=kvm -enable-kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc';					
+  				}
+			}
+      
+			if ( $p['template']  == 'timoscpm' ) {
+  				#TimosLine
+  				if (isset($p['timos_line']) && !empty($p['timos_line']))  {
+  					$this -> timos_line = (string) $p['timos_line'];
+  					preg_match("/slot\s*=\s*([\S]+)/", $p['timos_line'] , $output_array);					
+  					$this -> timos_slot = (string) $output_array[1];
+  					preg_match("/chassis=\s*([\S]+)/", $p['timos_line'] , $output_array);
+  					$this -> timos_chassis = (string) $output_array[1];
+            #preg_match("/license-file=\s*([\S]+)/", $p['timos_line'] , $output_array);
+            #$this -> timos_license = (string)  $p['timos_license'];
+  				} else {
+  					$this -> timos_line = 'TIMOS:slot=A chassis=SR-12 card=cpm5'; 
+  					$this -> timos_slot = 'A';
+  					$this -> timos_chassis = 'SR-12';			
+            $this -> timos_license = 'ftp://sim_license:sim_license@172.22.108.10/sros_vSIM_R14_license_cis.txt';	
+            $this -> management_address = (string) $p['management_address'];	
+  				}
+  				if (isset($p['management_address'])) {
+  					$this -> management_address = $p['management_address'];
+  				} else {
+  					$this -> management_address = '172.22.113.1/20';#(string) $p['management_address'];
+  				}
+  				if (isset($p['timos_license'])) {
+  					$this -> timos_license = $p['timos_license'];
+  				} else {
+  					$this -> timos_license ='ftp://sim_license:sim_license@172.22.108.10/sros_vSIM_R14_license_cis.txt';
+  				}
+  				if (isset($p['timos_config'])) {
+  					$this -> timos_config = (string) $p['timos_config'];
+  				} else {
+  					$this -> timos_config = NULL;
+  				}
+  				if (isset($p['qemu_options'])) {
+  					$this -> qemu_options = (string) $p['qemu_options'];
+  				} else {
+  					$this -> qemu_options =  ' -machine type=pc,accel=kvm -enable-kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc';					
+  				}
+			}
+      
+			if ( $p['template']  == 'timosiom' ) {
+				#TimosLine
+				if (isset($p['timos_line'])) {
+					$this -> timos_line = (string) $p['timos_line'];
+					preg_match("/slot\s*=\s*([\S]+)/", $p['timos_line'] , $output_array);
+					$this -> timos_slot = (string) $output_array[1];
+					preg_match("/chassis=\s*([\S]+)/", $p['timos_line'] , $output_array);
+					$this -> timos_chassis = (string) $output_array[1];
+				} else {
+					$this -> timos_line = 'TIMOS:slot=1 chassis=SR-12 card=iom3-xp-b mda/1=m10-1gb-sfp-b mda/2=isa-bb';
+					$this -> timos_slot = '1';
+					$this -> timos_chassis = 'SR-12';
+				}
+				if (isset($p['qemu_options'])) {
+					$this -> qemu_options = (string) $p['qemu_options'];
+				} else {
+					$this -> qemu_options =  ' -machine type=pc,accel=kvm -enable-kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc';					
+				}
+			}
+			
 		}
 
 		// Building docker node
@@ -645,8 +751,38 @@ class Node {
 			} else if (isset($p['firstmac']) && isValidMac( $p['firstmac'])) {
                                 $this -> firstmac = (string) $p['firstmac'];
                         } 
+			if (isset($p['qemu_options'])) {
+				$this -> qemu_options = (string) $p['qemu_options'];
+				}
 			
+			if (isset($p['timos_line']) && $p['timos_line'] === '') {
+				// Config is empty, unset the current one
+				unset($this -> timos_line);
+				$modified = True;
+			} else if (isset($p['timos_line'])) {
+				$this -> timos_line = $p['timos_line'];
+				$modified = True;
+			}
+			
+			if (isset($p['timos_license']) && $p['timos_license'] === '') {
+				// Config is empty, unset the current one
+				unset($this -> timos_license);
+				$modified = True;
+			} else if (isset($p['timos_license'])) {
+				$this -> timos_license = $p['timos_license'];
+				$modified = True;
+			}
+
+			if (isset($p['management_address']) && $p['management_address'] === '') {
+				// Config is empty, unset the current one
+				unset($this -> management_address);
+				$modified = True;
+			} else if (isset($p['management_address'])) {
+				$this -> management_address = $p['management_address'];
+				$modified = True;
+			}		
 		}
+
 
 		if ($this -> type == 'docker') {
 			if (isset($p['ram']) && $p['ram'] === '') {
@@ -883,14 +1019,44 @@ class Node {
 			}
 
 			// Adding custom flags
-			if (isset($p['qemu_options'])) {
-				// Setting additional QEMU options
-				$flags .= ' '.$p['qemu_options'];
-			} else if (isset($p['qemu_options'])) {
-				// Invalid QEMU options
-				error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][80018]);
-				return Array(False, False);
+			  if (isset($this -> timos_license)) {
+						
+				  $flags .= ' '.$this -> qemu_options;					
+				  $flags .= ' -smbios type=1,product=\"' . 'Timos:' .$this -> timos_line;
+				  if (($this -> management_address) != '') {
+					$flags .= ' address='. $this -> management_address . '@active'; 
+				  }
+				  $flags .= ' static-route=172.22.112.0/20@172.22.127.254'; 
+				  $flags .= ' static-route=172.22.108.0/24@172.22.127.254'; 
+				  if (($this -> timos_license) != '') {
+					$flags .= ' license-file=' .  $this -> timos_license;   
+				  }
+				  $flags .= '\"';
+					}   
+			 elseif (isset($this -> timos_line)) {
+
+						
+				  $flags .= ' '.$this -> qemu_options;					
+						$flags .= ' -smbios type=1,product=\"' . 'Timos:' .$this -> timos_line; 
+				  $flags .= '\"';
+					}     
+			else {
+				$flags .= ' '.$this -> qemu_options;
 			}
+
+			  
+		//	  else {
+		//		if ($this -> qemu_options) {
+		//				// Setting additional QEMU options
+		//				$flags .= ' '.$this -> qemu_options;
+		//			} 
+		//		else {
+		//				error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][80018]);
+		//				return Array(False, False);
+		//			  }
+		//	  }
+
+      
 		}
 
 		if ($this -> type == 'docker') {
@@ -1109,6 +1275,75 @@ class Node {
 		printf("firstmac") ;
         }
 
+        /**
+         * Method to get Qemu options - custom flags
+         * 
+         * @return      Array                       qemu options
+         */
+        public function getQemu_options() {
+                return $this -> qemu_options;
+		printf("qemu_options") ;
+        }
+		
+		 /**
+         * Method to get Timos_Line from Qemu options
+         * 
+         * @return      string                       Timos_Line
+         */
+        public function getManagement_address() {
+                return $this -> management_address;
+		    printf("management_address") ;
+        }
+
+        /**
+         * Method to get Timos_Line from Qemu options
+         * 
+         * @return      string                       Timos_Line
+         */
+        public function getTimos_Line() {
+                return $this -> timos_line;
+		printf("timos_line") ;
+        }
+
+		/**
+         * Method to get Timos Config from Qemu options
+         * 
+         * @return      string                       Timos_Line
+         */
+        public function getTimos_Config() {
+                return $this -> timos_config;
+		printf("timos_line") ;
+        }
+        /**
+         * Method to get Timos Slot from Qemu options
+         * 
+         * @return      string                       Timos_Line
+         */
+        public function getTimos_Slot() {
+                return $this -> timos_slot;
+		printf("timos_line") ;
+        }
+
+        /**
+         * Method to get Timos Slot from Qemu options
+         * 
+         * @return      string                       Timos_Line
+         */
+        public function getTimos_Chassis() {
+                return $this -> timos_chassis;
+		printf("timos_line") ;
+        }
+
+        /**
+         * Method to get Timos Slot from Qemu options
+         * 
+         * @return      string                       Timos_Line
+         */
+        public function getLicense_File() {
+                return $this -> timos_license;
+		printf("timos_license") ;
+        }
+		
 	/**
 	 * Method to get left offset.
 	 * 
@@ -2075,6 +2310,86 @@ class Node {
 									$n = 'Mgmt';            // Interface name
 								} else {
 									$n = '1/1/'.$i;         // Interface name
+								}
+								try {
+									$this -> ethernets[$i] = new Interfc(Array('name' => $n, 'type' => 'ethernet'), $i);
+								} catch (Exception $e) {
+									error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][40020]);
+									error_log(date('M d H:i:s ').(string) $e);
+									return 40020;
+								}
+							}
+							// Setting CMD flags (virtual device and map to TAP device)
+							$this -> flags_eth .= ' -device %NICDRIVER%,netdev=net'.$i.',mac=50:'.sprintf('%02x', $this -> tenant).':'.sprintf('%02x', $this -> id / 512).':'.sprintf('%02x', $this -> id % 512).':00:'.sprintf('%02x', $i);
+							$this -> flags_eth .= ' -netdev tap,id=net'.$i.',ifname=vunl'.$this -> tenant.'_'.$this -> id.'_'.$i.',script=no';
+						}
+						break;
+					case 'timoscpm':
+						if($this -> timos_chassis == 'VSR-I'){
+							for ($i = 0; $i < $this -> ethernet; $i++) {
+								if (isset($old_ethernets[$i])) {
+									// Previous interface found, copy from old one
+									$this -> ethernets[$i] = $old_ethernets[$i];
+								} else {
+									if ($i == 0) {
+										$n = 'Mgmt';            // Interface name
+									} else {
+										$n = '1/1/'.$i;         // Interface name
+									}
+									try {
+										$this -> ethernets[$i] = new Interfc(Array('name' => $n, 'type' => 'ethernet'), $i);
+									} catch (Exception $e) {
+										error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][40020]);
+										error_log(date('M d H:i:s ').(string) $e);
+										return 40020;
+									}
+								}
+								// Setting CMD flags (virtual device and map to TAP device)
+								$this -> flags_eth .= ' -device %NICDRIVER%,netdev=net'.$i.',mac=50:'.sprintf('%02x', $this -> tenant).':'.sprintf('%02x', $this -> id / 512).':'.sprintf('%02x', $this -> id % 512).':00:'.sprintf('%02x', $i);
+								$this -> flags_eth .= ' -netdev tap,id=net'.$i.',ifname=vunl'.$this -> tenant.'_'.$this -> id.'_'.$i.',script=no';
+							}			
+						} else {
+							for ($i = 0; $i < $this -> ethernet; $i++) {
+								if (isset($old_ethernets[$i])) {
+									// Previous interface found, copy from old one
+									$this -> ethernets[$i] = $old_ethernets[$i];
+								} else {
+									if ($i == 0) {				// management
+										$n = 'Mgmt';
+									} else if ($i == 1) {		// Switch Fabric
+										$n = 'SF';
+									} else {
+										$n = 'CPM should have 2 itf..'.$i;         // Interface name - shouldn't be seen on CPM
+									}
+									try {
+										$this -> ethernets[$i] = new Interfc(Array('name' => $n, 'type' => 'ethernet'), $i);
+									} catch (Exception $e) {
+										error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][40020]);
+										error_log(date('M d H:i:s ').(string) $e);
+										return 40020;
+									}
+								}
+								// Setting CMD flags (virtual device and map to TAP device)
+								$this -> flags_eth .= ' -device %NICDRIVER%,netdev=net'.$i.',mac=50:'.sprintf('%02x', $this -> tenant).':'.sprintf('%02x', $this -> id / 512).':'.sprintf('%02x', $this -> id % 512).':00:'.sprintf('%02x', $i);
+								$this -> flags_eth .= ' -netdev tap,id=net'.$i.',ifname=vunl'.$this -> tenant.'_'.$this -> id.'_'.$i.',script=no';
+							}							
+						}
+						break;
+					case 'timosiom':					
+						for ($i = 0; $i < $this -> ethernet; $i++) {
+							if (isset($old_ethernets[$i])) {
+								// Previous interface found, copy from old one
+								$this -> ethernets[$i] = $old_ethernets[$i];
+							} else {
+								if ($i == 0) {				// management
+									$n = 'Mgmt';
+								} else if ($i == 1) {		// Switch Fabric
+									$n = 'SF';
+
+
+								} else {
+									$n = $this -> timos_slot.'/1/'.($i - 1);         // Interface name
+
 								}
 								try {
 									$this -> ethernets[$i] = new Interfc(Array('name' => $n, 'type' => 'ethernet'), $i);
