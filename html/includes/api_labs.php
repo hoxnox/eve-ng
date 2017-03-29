@@ -297,6 +297,7 @@ function apiGetLab($lab) {
 		'name' => $lab -> getName(),
 		'version' => $lab -> getVersion(),
 		'scripttimeout' => $lab -> getScriptTimeout(),
+		'lock' => $lab -> getLock(),
 	);
 	return $output;
 }
@@ -499,11 +500,14 @@ function apiImportLabs($p) {
 						'data' => $result_pictures['img_content']
 					);
 					if (!empty($result_pictures['img_name'])) $p_picture['name'] =  $result_pictures['img_name'];
+					/*
+					 * Commented out because coordinates does not match between iou-web and UNetLab/eve
 					if (!empty($result_pictures['img_map'])) {
 						$p_picture['map'] =  $result_pictures['img_map'];
 						$p_picture['map'] = preg_replace_callback('/:2*([0-9]+)/', function($m) { return ':{{NODE$'.((int) $m[1]).'}}'; }, $p_picture['map']);
 						//$p_picture['map'] = preg_replace_callback('/coords=\'([0-9]+),([0-9]+),/', function($m) { return 'coords=\''.((int) ($m[1] / 1.78)).','.((int) ($m[2] / 1.78).','); }, $p_picture['map']);
 					}
+					 */
 					$rc = $lab -> addPicture($p_picture);
 					if ($rc !== 0) {
 						error_log('ERROR: skipping picture img_id = '.$result_pictures['img_id'].', error while creating picture.');
@@ -732,4 +736,45 @@ function apiMoveLab($lab, $path) {
 	}
 	return $output;
 }
+
+/*
+ * Function to Lock  a lab 
+ *
+ * @param       Lab                     $lab                    Lab
+ * @return      Array                                           Return code (JSend data)
+ */
+
+function apiLockLab($lab) {
+        $rc = $lab -> lockLab();
+        if ($rc !== 0) {
+                $output['code'] = 400;
+                $output['status'] = 'fail';
+                $output['message'] = $GLOBALS['messages'][$rc];
+        } else {
+                $output['code'] = 200;
+                $output['status'] = 'success';
+                $output['message'] = $GLOBALS['messages'][60023];
+        }
+        return $output;
+}
+
+/*
+ * Function to Unlock  a lab
+ *
+ * @param       Lab                     $lab                    Lab
+ * @return      Array                                           Return code (JSend data)
+ */
+
+function apiUnlockLab($lab) {
+        $rc = $lab -> unlockLab();
+        if ($rc !== 0) {
+                $output['code'] = 400;
+                $output['status'] = 'fail';
+                $output['message'] = $GLOBALS['messages'][$rc];
+        } else {
+                $output['code'] = 200;
+                $output['status'] = 'success';
+                $output['message'] = $GLOBALS['messages'][60023];
+        }
+        return $output;}
 ?>

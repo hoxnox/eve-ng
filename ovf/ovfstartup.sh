@@ -10,8 +10,42 @@ setcap cap_net_admin+ep /usr/bin/ovs-vsctl
 rm -f /opt/unetlab/data/Logs/* /opt/unetlab/data/Exports/*
 /usr/sbin/apache2ctl graceful
 
+# Detecting new disk and resize Root Filesystem
+
+# VM env ????
+cat /proc/cpuinfo | grep -q hypervisor
+if [ $? == 0 ]; then \
+	echo Running Virtual Environment...
+	echo Check new disks
+	disks=$(dmesg | grep 'SCSI disk' | sed -e 's/.*\[//' -e 's/\].*//')
+	for disk in $disks ; do \
+		pvs | grep -q $disk
+		if [ $? != 0 ]; then \
+			# New disk found
+			echo New disk $disk found
+			pvcreate /dev/$disk
+			echo -n "Detecting VG...."
+			VGS=$(vgs --noheading | awk '{print $1}')
+			echo $VGS
+			vgextend $VGS /dev/$disk
+			echo -n "Detecting ROOT FS..."
+			ROOTLV=$(mount | grep ' / ' | awk '{print $1}')
+			echo $ROOTLV
+			lvextend -l +100%FREE $ROOTLV	
+			echo Resizing ROOT FS
+			resize2fs $ROOTLV
+		fi
+	done
+fi
+
+# Enable or Disable UKSM
+if [[ -e /sys/kernel/mm/uksm/run ]]; then 
+    if [[ -e /opt/unetlab/uksm ]]; then
+        cat /opt/unetlab/uksm > /sys/kernel/mm/uksm/run
+    fi
+fi
 # Setting /etc/issue
-echo "Unified Networking Lab (default root password is 'unl')" > /etc/issue
+echo "Eve-NG (default root password is 'eve')" > /etc/issue
 if [[ -e "/sys/class/net/pnet0" ]]; then
     INTERFACE="pnet0"
     IP="$(ifconfig ${INTERFACE} 2> /dev/null | grep 'inet addr' | cut -d: -f2 | cut -d' ' -f1 | grep -E "^[0-9]+.[0-9]+.[0-9]+.[0-9]+$")"

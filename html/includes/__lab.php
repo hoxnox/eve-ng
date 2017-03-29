@@ -40,6 +40,7 @@ class Lab {
 	private $tenant;
 	private $version;
 	private $scripttimeout;
+	private $lock;
 
 	/**
 	 * Constructor which load an existent lab or create an empty one.
@@ -73,6 +74,7 @@ class Lab {
 			$this -> id = genUuid();
 			$modified = True;
 			$this -> scripttimeout = 600;
+			$this -> lock = 0;
 		} else {
 			// Load the existent lab
 			$this -> filename = basename($f);
@@ -121,7 +123,8 @@ class Lab {
 			}
 
 			// Lab description
-			$result = (string) array_pop($xml -> xpath('//lab/description'));
+			$result = $xml -> xpath('//lab/description');
+			$result = (string) array_pop($result);
 			if (strlen($result) !== 0) {
 				$this -> description = htmlspecialchars($result, ENT_DISALLOWED, 'UTF-8', TRUE);
 			} else if (strlen($result) !== 0) {
@@ -129,7 +132,8 @@ class Lab {
 			}
 
 			// Lab body
-			$result = (string) array_pop($xml -> xpath('//lab/body'));
+			$result = $xml -> xpath('//lab/body');
+			$result = (string) array_pop($result);
 			if (strlen($result) !== 0) {
 				$this -> body = htmlspecialchars($result, ENT_DISALLOWED, 'UTF-8', TRUE);
 			} else if (strlen($result) !== 0) {
@@ -137,7 +141,8 @@ class Lab {
 			}
 
 			// Lab author
-			$result = (string) array_pop($xml -> xpath('//lab/@author'));
+			$result = $xml -> xpath('//lab/@author');
+			$result = (string) array_pop($result);
 			if (strlen($result) !== 0) {
 				$this -> author = htmlspecialchars($result, ENT_DISALLOWED, 'UTF-8', TRUE);
 			} else if (strlen($result) !== 0) {
@@ -145,7 +150,8 @@ class Lab {
 			}
 
 			// Lab version
-			$result = (string) array_pop($xml -> xpath('//lab/@version'));
+			$result = $xml -> xpath('//lab/@version');
+			$result = (string) array_pop($result);
 			if (strlen($result) !== 0 && (int) $result >= 0) {
 				$this -> version = $result;
 			} else if (strlen($result) !== 0) {
@@ -160,6 +166,7 @@ class Lab {
 				if (isset($network -> attributes() -> name)) $w['name'] = (string) $network -> attributes() -> name;
 				if (isset($network -> attributes() -> top)) $w['top'] = (string) $network -> attributes() -> top;
 				if (isset($network -> attributes() -> type)) $w['type'] = (string) $network -> attributes() -> type;
+				if (isset($network -> attributes() -> visibility)) $w['visibility'] = (string) $network -> attributes() -> visibility;
 
 				try {
 					$this -> networks[$w['id']] = new Network($w, $w['id'], $this -> tenant);
@@ -197,7 +204,8 @@ class Lab {
 				$n['config'] == 'None' ? $n['config'] = '0' : $n['config'];	// Fix startup-config
 
 				// If config is empty, force "None"
-				$result = (string) array_pop($xml -> xpath('//lab/objects/configs/config[@id="'.$n['id'].'"]'));
+				$result = $xml -> xpath('//lab/objects/configs/config[@id="'.$n['id'].'"]');
+				$result = (string) array_pop($result);
 				if (strlen($result) == 0) {
 					$n['config'] = 0;
 					$config_data = False;
@@ -205,13 +213,65 @@ class Lab {
 					$config_data = base64_decode($result);
 				}
 				// F5 needs a first mac address
-                                if ( $n['template']  == "bigip" ) {
+                                if ( $n['template']  == "bigip" ||  $n['template']  == "firepower6" ||  $n['template']  == "firepower" ) {
                                         if (isset($node -> attributes() -> firstmac)) {
                                                 $n['firstmac'] = (string) $node -> attributes() -> firstmac;
                                         } else {
                                                 $n['firstmac'] = (string) '00:'.sprintf('%02x', $this -> tenant).':'.sprintf('%02x', $this -> id / 512).':'.sprintf('%02x', $this -> id % 512).':00:10';
                                         }
                                 }
+             // Nokia Distributed Mode needs QEMU Options
+              if ( $n['template']  == "timos" ) {
+  									if (isset($node -> attributes() -> timos_line)) {  #TimosLine
+  											$n['timos_line'] = (string) $node -> attributes() -> timos_line;
+  									} else {
+  											$n['timos_line'] = "TIMOS:slot=A chassis=SR-12 card=cpm5";
+  									}
+  									if (isset($node -> attributes() -> management_address)) {  #management_address
+  											$n['management_address'] = (string) $node -> attributes() -> management_address;
+  									} 
+  									if (isset($node -> attributes() -> timos_license)) {  #management_address
+  											$n['timos_license'] = (string) $node -> attributes() -> timos_license;
+  									}
+  									if (isset($node -> attributes() -> qemu_options)) {  #TimosLine
+  											$n['qemu_options'] = (string) $node -> attributes() -> qemu_options;                                                
+  									} else {
+  											$n['qemu_options'] = ' -machine type=pc,accel=kvm -enable-kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc';	
+  									}										
+             }
+             
+             if ( $n['template']  == "timosiom" ) {
+								if (isset($node -> attributes() -> timos_line)) {  #TimosLine
+										$n['timos_line'] = (string) $node -> attributes() -> timos_line;
+								} else {
+										$n['timos_line'] = "TIMOS:slot=1 chassis=SR-12 card=iom3-xp-b mda/1=m10-1gb-sfp-b mda/2=isa-bb";
+								}
+								if (isset($node -> attributes() -> qemu_options)) {  #TimosLine
+										$n['qemu_options'] = (string) $node -> attributes() -> qemu_options;                                                
+								} else {
+										$n['qemu_options'] = ' -machine type=pc,accel=kvm -enable-kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc';	
+								}						
+            }                               
+                                
+             if ( $n['template']  == "timoscpm" ) {
+								if (isset($node -> attributes() -> timos_line)) {  #TimosLine
+										$n['timos_line'] = (string) $node -> attributes() -> timos_line;
+								} else {
+										$n['timos_line'] = "TIMOS:slot=1 chassis=SR-12 card=iom3-xp-b mda/1=m10-1gb-sfp-b mda/2=isa-bb";
+								}
+								if (isset($node -> attributes() -> management_address)) {  #management_address
+							      $n['management_address'] = (string) $node -> attributes() -> management_address;
+      					} 
+      					if (isset($node -> attributes() -> timos_license)) {  #management_address
+      							$n['timos_license'] = (string) $node -> attributes() -> timos_license;
+      					}
+								if (isset($node -> attributes() -> qemu_options)) {  #TimosLine
+										$n['qemu_options'] = (string) $node -> attributes() -> qemu_options;                                                
+								} else {
+										$n['qemu_options'] = ' -machine type=pc,accel=kvm -enable-kvm -serial mon:stdio -nographic -nodefconfig -nodefaults -rtc base=utc';	
+								}						
+            }  
+                       
 
 				try {
 					$this -> nodes[$n['id']] = new Node($n, $n['id'], $this -> tenant, $this -> id);
@@ -271,13 +331,22 @@ class Lab {
 			}
 
 			// lab script timeout
-			$result = (string) array_pop($xml -> xpath('//lab/@scripttimeout'));
+			$result = $xml -> xpath('//lab/@scripttimeout');
+			$result = (string) array_pop($result);
                         if (strlen($result) !== 0 && (int) $result >= 300) {
                                 $this -> scripttimeout = $result;
                         } else if (strlen($result) !== 0) {
                                 error_log(date('M d H:i:s ').'WARNING: '.$f.' '.$GLOBALS['messages'][20045]);
 				$this -> scripttimeout = 300;
                         }
+			// lab lock
+			$result = $xml -> xpath('//lab/@lock');
+			$result = (string) array_pop($result);
+			if (strlen($result) !== 0 && (int) $result < 2 ) {
+				$this -> lock = $result;
+			} else if (strlen($result) == 0) {
+				$this -> lock = 0;
+			}
 
 			// Lab Pictures
 			foreach ($xml -> xpath('//lab/objects/pictures/picture') as $picture) {
@@ -285,9 +354,11 @@ class Lab {
 				if (isset($picture -> attributes() -> id)) $p['id'] = (string) $picture -> attributes() -> id;
 				if (isset($picture -> attributes() -> name)) $p['name'] = (string) $picture -> attributes() -> name;
 				if (isset($picture -> attributes() -> type)) $p['type'] = (string) $picture -> attributes() -> type;
-				$result = (string) array_pop($picture -> xpath('./data'));
+				$result = $picture -> xpath('./data') ;
+				$result = (string) array_pop($result);
 				if (strlen($result) > 0) $p['data'] = base64_decode($result);
-				$result = (string) array_pop($picture -> xpath('./map'));
+				$result = $picture -> xpath('./map');
+				$result = (string) array_pop($result);
 				if (strlen($result) > 0) $p['map'] = html_entity_decode($result);
 
 				try {
@@ -306,7 +377,8 @@ class Lab {
 				if (isset($textobject -> attributes() -> id)) $p['id'] = (string) $textobject -> attributes() -> id;
 				if (isset($textobject -> attributes() -> name)) $p['name'] = (string) $textobject -> attributes() -> name;
 				if (isset($textobject -> attributes() -> type)) $p['type'] = (string) $textobject -> attributes() -> type;
-				$result = (string) array_pop($textobject -> xpath('./data'));
+				$result = $textobject -> xpath('./data');
+				$result = (string) array_pop($result);
 				if (strlen($result) > 0) $p['data'] = $result;
 
 				try {
@@ -617,7 +689,11 @@ class Lab {
 			error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?net='.$p['id'].' '.$GLOBALS['messages'][20023]);
 			return 20023;
 		} else if ($this -> networks[$p['id']] -> edit($p) === 0) {
-			return $this -> save();
+                        if ( isset ( $p['save'] ) && $p['save'] === 0) {
+                             return 0;
+                        } else {
+		             return $this -> save();
+                        }
 		} else {
 			error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?net='.$p['id'].' '.$GLOBALS['messages'][20025]);
 			return False;
@@ -636,7 +712,11 @@ class Lab {
 			error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?node='.$p['id'].' '.$GLOBALS['messages'][20024]);
 			return 20024;
 		} else if ($this -> nodes[$p['id']] -> edit($p) === 0) {
-			return $this -> save();
+                        if ( isset ( $p['save'] ) && $p['save'] === 0) {
+                            return 0;
+                        } else {
+			    return $this -> save();
+                       }
 		} else {
 			error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?node='.$p['id'].' '.$GLOBALS['messages'][20026]);
 			return 20026;
@@ -655,7 +735,11 @@ class Lab {
 			error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?obj='.$p['id'].' '.$GLOBALS['messages'][20043]);
 			return 20043;
 		} else if ($this -> textobjects[$p['id']] -> edit($p) === 0) {
-			return $this -> save();
+			if ( isset($p['save']) && $p['save'] === 0  ) { 
+				 return 0 ;
+                        } else {
+                                 return $this -> save();
+                        }
 		} else {
 			error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?obj='.$p['id'].' '.$GLOBALS['messages'][20044]);
 			return False;
@@ -915,6 +999,20 @@ class Lab {
                 }
         }
 
+	/**	
+	* Method to get lab lock status
+	*
+	* @return  int Lab lock status 1=lock O=unlock
+	*/
+	public function getLock() {
+		if (isset($this -> lock)) {
+			return (int) $this -> lock;
+		} else {
+			// By default return 0
+			return 1;
+		}
+	}
+
 	/**
 	 * Method to connect a node to a network or to a remote node.
 	 *
@@ -934,13 +1032,14 @@ class Lab {
 				// Interface must be configured
 				$i = Array();
 				$i['id'] = $interface_id;
+				error_log('Interface ID: ' . $interface_id . ' interfacelink: ' . $interface_link  );
 
 				if (strpos($interface_link, ':') === False) {
 					// No ':' found -> simple Ethernet interface
 					if (isset($this -> getNetworks()[$interface_link])) {
 						// Network exists
 						$i['network_id'] = $interface_link;
-
+						
 						// Link the interface
 						if ($this -> nodes[$n] -> linkInterface($i) !== 0) {
 							error_log(date('M d H:i:s ').'ERROR: '.$this -> path .'/'.$this -> filename.'?node='.$n.' '.$GLOBALS['messages'][20034]);
@@ -1018,6 +1117,29 @@ class Lab {
 		return $this -> save();
 	}
 
+
+        /**
+         * Method to Lock  lab 
+         *
+         * @return  int                         0 means ok
+         */
+	public function lockLab() {
+	$this -> lock = 1;
+	$rc = $this -> save ();
+	return $rc;
+	}
+
+        /**
+         * Method to Unlock  lab
+         *
+         * @return  int                         0 means ok
+         */
+        public function unlockLab() {
+	$this -> lock = 0;
+        $rc = $this -> save ();
+	return $rc;
+        }
+
 	/**
 	 * Method to save a lab into a file.
 	 *
@@ -1032,6 +1154,7 @@ class Lab {
 
 		if (isset($this -> version)) $xml -> addAttribute('version', $this -> version);
 		if (isset($this -> scripttimeout)) $xml -> addAttribute('scripttimeout', $this -> scripttimeout);
+		if (isset($this -> lock)) $xml -> addAttribute('lock', $this -> lock);
 		if (isset($this -> author)) $xml -> addAttribute('author', $this -> author);
 		if (isset($this -> description)) $xml -> addChild('description', $this -> description);
 		if (isset($this -> body)) $xml -> addChild('body', $this -> body);
@@ -1086,7 +1209,30 @@ class Lab {
 							$d -> addAttribute('ram', $node -> getRam());
 							$d -> addAttribute('ethernet', $node -> getEthernetCount());
 							$d -> addAttribute('uuid', $node -> getUuid());
-							if ( $node -> getTemplate() == "bigip" ) $d -> addAttribute('firstmac', $node -> getFirstMac());
+							if ( $node -> getTemplate() == "bigip" || $node -> getTemplate() == "firepower6" || $node -> getTemplate() == "firepower" ) $d -> addAttribute('firstmac', $node -> getFirstMac());
+							
+							if ( $node -> getTemplate() == "timos" ) {
+								$d -> addAttribute('qemu_options', $node -> getQemu_options());
+								$d -> addAttribute('timos_line', $node -> getTimos_Line()); #TimosLine
+								$d -> addAttribute('timos_license', $node -> getLicense_File()); #TimosLine
+								#$d -> addAttribute('timos_config', $node -> getTimos_Config()); #TimosLine
+								$d -> addAttribute('management_address', $node -> getManagement_address()); #TimosLine
+
+								}
+                      
+							if ( $node -> getTemplate() == "timosiom" ) {
+								$d -> addAttribute('qemu_options', $node -> getQemu_options());
+								$d -> addAttribute('timos_line', $node -> getTimos_Line()); #TimosLine
+								}
+                      
+							if ( $node -> getTemplate() == "timoscpm" ) {
+								$d -> addAttribute('qemu_options', $node -> getQemu_options());
+								$d -> addAttribute('timos_line', $node -> getTimos_Line()); #TimosLine
+								$d -> addAttribute('timos_license', $node -> getLicense_File()); #TimosLine
+								#$d -> addAttribute('timos_config', $node -> getTimos_Config()); #TimosLine
+								$d -> addAttribute('management_address', $node -> getManagement_address()); #TimosLine
+
+								}   
 							break;
 					}
 
@@ -1120,17 +1266,20 @@ class Lab {
 					}
 				}
 			}
+                        $this -> setNetworkCount();
 
 			// Add networks
 			if (!empty($this -> getNetworks())) {
 				$xml -> topology -> addChild('networks');
 				foreach ($this -> getNetworks() as $network_id => $network) {
+                                        if ( $network -> getCount() == 0 && $network -> getVisibility() == 0 )  { continue ;} ;  
 					$n = $xml -> topology -> networks -> addChild('network');
 					$n -> addAttribute('id', $network_id);
 					$n -> addAttribute('type', $network -> getNType());
 					$n -> addAttribute('name', $network -> getName());
 					$n -> addAttribute('left', $network -> getLeft());
 					$n -> addAttribute('top', $network -> getTop());
+					$n -> addAttribute('visibility', $network -> getVisibility());
 				}
 			}
 
@@ -1197,11 +1346,21 @@ class Lab {
 		$dom -> loadXML($xml -> asXML());
 
 		// Write to file
-		$tmp = $this -> path.'/'.$this -> name.'.swp';
+		//$tmp = $this -> path.'/'.$this -> name.'.swp';
+		$tmp = tempnam($this -> path, $this -> name.'.swp');
+		chown ( $tmp , "www-data" );
+		chmod ( $tmp , 0644 );
 		$old = $this -> path.'/'.$this -> filename;
 		$dst = $this -> path.'/'.$this -> name.'.unl';
 		$fp = fopen($tmp, 'w');
-		if (!fwrite($fp, $dom -> saveXML())) {
+                $trylock = 60;
+                while ( $trylock > 0 )   {
+                        flock($fp,LOCK_EX) && $trylock = 0 ;
+                        $trylock -= 1 ;
+                        usleep ( 100000 )  ;
+                }
+                
+		if ( $trylock == 0 || !fwrite($fp, $dom -> saveXML())) {
 			// Failed to write
 			fclose($fp);
 			unlink($tmp);
@@ -1209,6 +1368,7 @@ class Lab {
 			return 20027;
 		} else {
 			// Write OK
+                        fflush($fp);
 			fclose($fp);
 			if ($old != $dst && is_file($dst)) {
 				// Should rename the lab, but destination file already exists
@@ -1227,6 +1387,7 @@ class Lab {
 				return 20029;
 			}
 		}
+                error_log(date('M d H:i:s ').'DEBUG: lab saved');
 		return 0;
 	}
 

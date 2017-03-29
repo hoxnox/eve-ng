@@ -22,15 +22,52 @@
  * @return  Array                       Return code (JSend data)
  */
 function apiAddLabNode($lab, $p, $o) {
-	// Adding node_id to node_name if required
-	if ($o == True && isset($p['name'])) $p['name'] = $p['name'].$lab -> getFreeNodeId();
-
-	// Adding the node
-	$rc = $lab -> addNode($p);
+	if (isset($p['numberNodes'])) 
+		$numberNodes = $p['numberNodes'];
+	
+	$default_name = $p['name'];
+	if ($default_name == "R")
+		$o = True;
+	
+	$ids = array();
+	$no_array = false;
+        $initLeft = $p['left'] ;
+        $initTop = $p['top'] ;
+	if (!isset($numberNodes))
+	{
+		$numberNodes = 1;
+		$no_array = true;
+	}
+	for($i = 1 ; $i<= $numberNodes; $i++)
+	{
+		if ($i > 1)
+		{
+			$p['left'] =  $initLeft + ( ( $i -1 ) % 5 )   * 60   ;
+			$p['top'] =  $initTop + ( intval( ( $i -1 ) / 5 )  * 80 ) ;
+		}
+		$id = $lab -> getFreeNodeId();
+                if ( $id > 127 ) { $rc = 20046 ;  break ;} 
+		// Adding node_id to node_name if required
+		if ($o == True && $default_name || $numberNodes > 1) $p['name'] = $default_name.$lab -> getFreeNodeId();
+		
+		// Adding the node
+		$rc = $lab -> addNode($p);
+		$ids[] = $id;
+	}
 	if ($rc === 0) {
 		$output['code'] = 201;
 		$output['status'] = 'success';
 		$output['message'] = $GLOBALS['messages'][60023];
+                $output['data'] = array(
+                        'id'=> ($no_array ? $id : $ids)
+			);
+        } else if ( $rc = 20046 ) {
+                $output['code'] = 201;
+                $output['status'] = 'success';
+                $output['message'] = $GLOBALS['messages'][$rc];
+                $output['data'] = array(
+                        'id'=> ($no_array ? $id : $ids)
+                        );
 	} else {
 		$output['code'] = 400;
 		$output['status'] = 'fail';
@@ -51,13 +88,24 @@ function apiDeleteLabNode($lab, $id, $tenant) {
 	$cmd = 'sudo /opt/unetlab/wrappers/unl_wrapper -a delete -T 0 -D '.$id.' -F "'.$lab -> getPath().'/'.$lab -> getFilename().'"';  // Tenant not required for delete operation
 	exec($cmd, $o, $rc);
 	// Stop the node
-	foreach( scandir("/opt/unetlab/tmp/") as $value ) {	
-		if ( is_dir("/opt/unetlab/tmp/".$value) and intval($value) >= 0 ) {
-			$output=apiStopLabNode($lab, $id, intval($value)); 
-			file_put_contents("/tmp/ade",$value,FILE_APPEND);
-			if ($output['status'] == 400 ) return $output; 	
-		}
+	error_log('Delete Node Lab : WTF ' . 'id: ' . $id . ' tenant: ' . $tenant);
+
+	if ( is_dir("/opt/unetlab/tmp/".$tenant) ) {
+	$output=apiStopLabNode($lab, $id, $tenant); 
+	error_log('Delete Node Lab : output ' . implode("|",$output) . ' id: ' . $id . ' tenant: ' . $tenant );
+	file_put_contents("/tmp/ade",$tenant,FILE_APPEND);
+	if ($output['status'] == 400 ) return $output; 	
 	}
+// TODO: Why ???
+// THAT CAUSES THAT ALLYWAY the 1 VM WILL BE STOPPED 
+//	foreach( scandir("/opt/unetlab/tmp/") as $value ) {	
+//		if ( is_dir("/opt/unetlab/tmp/".$value) and intval($value) >= 0 ) {
+//			$output=apiStopLabNode($lab, $id, intval($value)); 
+//			error_log('Delete Node Lab : output ' . implode("|",$output) . ' id: ' . $id . ' tenant: ' . $tenant );
+//			file_put_contents("/tmp/ade",$value,FILE_APPEND);
+//			if ($output['status'] == 400 ) return $output; 	
+//		}
+//	}
 	// Deleting the node
 	$rc = $lab -> deleteNode($id);
 	if ($rc === 0) {
@@ -94,7 +142,32 @@ function apiEditLabNode($lab, $p) {
 	}
 	return $output;
 }
-
+/**
+ * Function to edit multiple lab node.
+ *
+ * @param   Lab     $lab                Lab
+ * @param   Array   $p                  Parameters
+ * @return  Array                       Return code (JSend data)
+ */
+function apiEditLabNodes($lab, $p) {
+        // Edit node
+            //$rc=$lab -> editNode
+        foreach ( $p as $node ) { 
+          $node['save'] = 0 ;
+          $rc = $lab -> editNode($node);
+        }
+        $rc = $lab -> save() ;
+        if ($rc === 0) {
+                $output['code'] = 201;
+                $output['status'] = 'success';
+                $output['message'] = $GLOBALS['messages'][60023];
+        } else {
+                $output['code'] = 400;
+                $output['status'] = 'fail';
+                $output['message'] = $GLOBALS['messages'][$rc];
+        }
+        return $output;
+}
 /**
  * Function to export a single node.
  *
@@ -229,8 +302,25 @@ function apiGetLabNode($lab, $id , $html5, $username ) {
 			$output['data']['ethernet'] = $node -> getEthernetCount();
 			$output['data']['ram'] = $node -> getRam();
 			$output['data']['uuid'] = $node -> getUuid();
-			if ( $node -> getTemplate() == "bigip" )  {
+			if ( $node -> getTemplate() == "bigip" || $node -> getTemplate() == "firepower6" || $node -> getTemplate() == "firepower")  {
 				$output['data']['firstmac'] = $node -> getFirstMac();
+			}
+			if ($node -> getTemplate() == "timos"){
+				$output['data']['management_address'] = $node -> getManagement_address();
+				$output['data']['timos_line'] = $node -> getTimos_Line();
+				$output['data']['timos_license'] = $node -> getLicense_File();
+				$output['data']['qemu_options'] = $node -> getQemu_options();
+			}
+			if ($node -> getTemplate() == "timoscpm"){
+				$output['data']['management_address'] = $node -> getManagement_address();
+				$output['data']['timos_line'] = $node -> getTimos_Line();
+				$output['data']['timos_license'] = $node -> getLicense_File();
+				$output['data']['qemu_options'] = $node -> getQemu_options();
+			}
+			if ($node -> getTemplate() == "timosiom"){
+				$output['data']['timos_line'] = $node -> getTimos_Line();
+				$output['data']['qemu_options'] = $node -> getQemu_options();
+
 			}
 		}
 
@@ -280,7 +370,9 @@ function apiGetLabNodes($lab,$html5,$username) {
 				'template' => $node -> getTemplate(),
 				'type' => $node -> getNType(),
 				'top' => $node -> getTop(),
-				'url' => $node -> getConsoleUrl($html5,$username)
+				'url' => $node -> getConsoleUrl($html5,$username),
+				'config_list' => listNodeConfigTemplates(),
+				'config' => $node->getConfig()
 			);
 
 			if ($node -> getNType() == 'iol') {
@@ -304,7 +396,7 @@ function apiGetLabNodes($lab,$html5,$username) {
 				$output['data'][$node_id]['ethernet'] = $node -> getEthernetCount();
 				$output['data'][$node_id]['ram'] = $node -> getRam();
 				$output['data'][$node_id]['uuid'] = $node -> getUuid();
-				if ( $node -> getTemplate() == "bigip" ) {
+				if ( $node -> getTemplate() == "bigip" || $node -> getTemplate() == "firepower6" || $node -> getTemplate() == "firepower") {
 					$output['data'][$node_id]['firstmac'] = $node -> getFirstMac();
 				}
 			}
@@ -507,12 +599,65 @@ function apiGetLabNodeTemplate($p) {
 	);
 
 	// First Mac
-        if ($p['template'] == "bigip" ) $output['data']['options']['firstmac'] =  Array(
+        if ($p['template'] == "bigip" || $p['template'] == "firepower6" || $p['template'] == "firepower") $output['data']['options']['firstmac'] =  Array(
                 'name' => $GLOBALS['messages'][70021],
                 'type' => 'input',
                 'value' => ( isset($p['firstmac'])?$p['firstmac']:"") 
         );
+		
+		
+	// Timos Options
+	if ($p['template'] == "timos" ) {
+	
+			$output['data']['options']['management_address'] =  Array(
+				'name' => $GLOBALS['messages'][70031],
+				'type' => 'input',
+				'value' => ( isset($p['management_address'])?$p['management_address']:"")	);
+   };
+      
+    // Timos Options CPM
+	if ($p['template'] == "timoscpm" ) {
+		
+			$output['data']['options']['management_address'] =  Array(
+				'name' => $GLOBALS['messages'][70031],
+				'type' => 'input',
+				'value' => ( isset($p['management_address'])?$p['management_address']:"")	);    
 
+			$output['data']['options']['timos_line'] =  Array(
+				'name' => $GLOBALS['messages'][70032],
+				'type' => 'input',
+				'value' => ( isset($p['timos_line'])?$p['timos_line']:"") );	        
+	  
+			$output['data']['options']['timos_license'] =  Array(
+				'name' => $GLOBALS['messages'][70033],
+				'type' => 'input',
+				'value' => ( isset($p['timos_license'])?$p['timos_license']:"") );	    
+		
+			$output['data']['options']['qemu_options'] =  Array(
+				'name' => $GLOBALS['messages'][70030],
+				'type' => 'input',
+				'value' => ( isset($p['qemu_options'])?$p['qemu_options']:"") );
+					
+	};
+
+   
+	// Timos Options IOM
+	if ($p['template'] == "timosiom" ) {
+
+
+			$output['data']['options']['timos_line'] =  Array(
+				'name' => $GLOBALS['messages'][70032],
+				'type' => 'input',
+				'value' => ( isset($p['timos_line'])?$p['timos_line']:"") );	        
+
+		
+			$output['data']['options']['qemu_options'] =  Array(
+				'name' => $GLOBALS['messages'][70030],
+				'type' => 'input',
+				'value' => ( isset($p['qemu_options'])?$p['qemu_options']:"") );
+					
+	};
+	
 	// Serial
 	if ($p['type'] == 'iol') $output['data']['options']['serial'] = Array(
 		'name' => $GLOBALS['messages'][70017],
@@ -639,6 +784,7 @@ function apiStopLabNode($lab, $id, $tenant) {
 	$cmd .= ' -D '.$id;
 	$cmd .= ' -F "'.$lab -> getPath().'/'.$lab -> getFilename().'"';
 	$cmd .= ' 2>> /opt/unetlab/data/Logs/unl_wrapper.txt';
+	error_log('HALLO Delete Node Lab : ' . 'cmd: ' . $cmd );
 	exec($cmd, $o, $rc);
 	if ($rc == 0) {
 		// Nodes started
@@ -667,6 +813,8 @@ function apiStopLabNodes($lab, $tenant) {
 	$cmd .= ' -T '.$tenant;
 	$cmd .= ' -F "'.$lab -> getPath().'/'.$lab -> getFilename().'"';
 	$cmd .= ' 2>> /opt/unetlab/data/Logs/unl_wrapper.txt';
+	error_log('HALLO Delete Node Lab : ' . 'cmd: ' . $cmd );
+	
 	exec($cmd, $o, $rc);
 	if ($rc == 0) {
 		// Nodes started

@@ -36,6 +36,7 @@ $p['icon'] = 'JuniperSRX.png';
 $p['cpu'] = 2;
 $p['ram'] = 4096;
 $p['ethernet'] = 4;
+$p['qemu_nic'] = 'virtio-net-pci';
 $p['console'] = 'telnet';
 $p['qemu_arch'] = 'x86_64';
 $p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -cpu qemu64,+ssse3,+sse4.1,+sse4.2,+x2apic,+aes,pclmulqdq  -serial mon:stdio -nographic   -nodefconfig -nodefaults -rtc base=utc';

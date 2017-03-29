@@ -1,4 +1,4 @@
-function mainController($scope, $http, $location, $uibModal, $log, $rootScope, FileUploader, focus) {
+function mainController($scope, $http, $location, $window, $uibModal, $log, $rootScope, FileUploader, focus) {
 		$rootScope.openLaba=false;
 		$scope.testAUTH("/main"); //TEST AUTH
 		//Default variables ///START
@@ -14,12 +14,14 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 		$scope.checkboxArray=[];
 		//Default variables ///END
 		
-		console.log('here')
+		//console.log('here')
 		
 		$scope.falseForSelAll = function(){
 			$scope.allCheckedFlag=false;
 		}
 		
+
+
 		$('body').removeClass().addClass('hold-transition skin-blue layout-top-nav');
 		//Draw current position //START
 		$scope.currentPosition = function(){
@@ -57,6 +59,10 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 				$scope.rootDir = response.data.data;
 				$scope.currentPosition();
 				$.unblockUI();
+				//console.log($scope.rootDir)
+				// setTimeout(function(){
+				// 	$scope.getLabInfo($scope.rootDir.labs[0].path, $scope.rootDir.labs[0].file);
+				// }, 1000)
 			}, 
 			function errorCallback(response) {
 				$.unblockUI();
@@ -139,6 +145,39 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 			//Create NEW Lab //END
 			////////////////////////
 		}
+                //Clone Lab//START
+
+                $scope.cloneElement = function (elementName,event){
+		d = new Date();
+                console.log('clone requested for '+$scope.path+'/'+elementName.value + ' ' + d.getTime());
+                form_data = {};
+                form_data['name'] = elementName.value.slice(0,-4)+'_'+d.getTime();
+                form_data['source'] = $scope.path + '/' + elementName.value;
+                $http({
+                method: 'POST',
+                url: '/api/labs',
+                data: form_data})
+                        .then(
+                                function successcallback(response) {
+                                //console.log(response)
+                                //$scope.filemngdraw($scope.path);
+				$scope.fileMngDraw($scope.path);
+				//$location.path("/login");
+                                },
+                                function errorcallback(response) {
+                                //console.log(response)
+                                console.log("unknown error. why did api doesn't respond?");
+                                $location.path("/login");
+                                }
+                        );
+                
+                
+                event.stopPropagation();
+                }
+
+                //clone lab//end
+
+
 		//Create NEW Element Folder OR Lab //END
 		///////////////////////////////////////
 		//Delete selected elements //START
@@ -272,7 +311,8 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 			//console.log(itemType+item.name)
 			//console.log($scope.checkboxArray[itemType+item.name])
 			$scope.checkboxArray[itemType+item.name].checked=!$scope.checkboxArray[itemType+item.name].checked;
-			$scope.falseForSelAll(); $scope.hideAllEdit();
+			$scope.falseForSelAll(); 
+			$scope.hideAllEdit();
 		}
 		//Select element by clicking on <td> //END
 		///////////////////////////////////////////////////////
@@ -305,6 +345,11 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 				$scope.allCheckedFlag=false;
 			}
 		}
+		$scope.uncheck_all = function()
+		{
+			$(".folder_check").prop("checked", false).trigger("change").trigger("unchecked");
+		}
+
 		$scope.openRename = function (item, $event){
 			if ($event != undefined) $event.stopPropagation();
 			$scope.hideAllEdit()
@@ -395,6 +440,7 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 		/////////////////////////////////////////////////////
 		//Export lab //START
 		$scope.exportFiles = function(){
+			$(".content-wrapper").append("<div id='progress-loader'><label style='float:left'>Creating archive...</label><div class='loader'></div></div>")
 			
 			var fileExportArray={};
 			var tempPath = ($scope.path === '/') ? $scope.path :  $scope.path+'/';
@@ -421,6 +467,7 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 				data: fileExportArray})
 					.then(
 					function successCallback(response) {
+						$("#progress-loader").remove()
 						console.log(response.data.data)
 						var a         = document.createElement('a');
 							a.href        = response.data.data;
@@ -430,6 +477,7 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 							a.click();
 					}, 
 					function errorCallback(response) {
+						$("#progress-loader").remove()
 						console.log(response)
 						console.log("Unknown Error. Why did API doesn't respond?");
 						//$location.path("/login");
@@ -507,6 +555,12 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 			console.log('Open lab: '+$rootScope.lab)
 		}
 		//Open Lab //END
+		//Open Lagacy LAB//START
+		$scope.legacylabopen = function(labname){
+			$http.get('/api/labs'+labname+'/topology');
+			$window.location.href = "legacy"+labname+"/topology" ;
+		}
+		//Open Lagacy LAB//END
 		///////////////////////////////
 		//More controllers //START
 		ModalCtrl($scope, $uibModal, $log)
@@ -529,13 +583,13 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 	$scope.networksList=[];
 	$scope.linkLinesArray=[];
 	$scope.lineList=[];
-	$scope.scale=3;
+	$scope.scale=5;
 	$scope.previewFun= function(path){
 		$scope.pathToLab=path;
 		$scope.nodelist=[];
 		$scope.networksList=[]
 		$scope.lineList=[]
-		$scope.scale=3;
+		$scope.scale=5;
 		//console.log(path)
 		$scope.zeroNodes=false;
 		///Get all nodes ///START
@@ -585,7 +639,20 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 			function errorCallback(response) {
 				console.log("Unknown Error. Why did API doesn't respond?"); $location.path("/login");}	
 		).finally(function(){
-			if ($scope.topologyObject.length === 0 ) return;
+			if ($scope.topologyObject.length === 0 ) {
+				$http({
+                                method: 'DELETE',
+                                url: '/api/labs/close'})
+                                .then(
+                                        function successCallback(response) {
+                                                console.log(response)
+                                        },
+                                        function errorCallback(response) {
+                                                console.log(response)
+                                        }
+                                );
+				return;
+			}
 			var lineCounter=0;
 			for (i = 0; i < $scope.topologyObject.length; i++) { 
 				$scope.lineList[lineCounter]=[]
@@ -594,26 +661,26 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 				if ($scope.topologyObject[i].destination.includes("network")){
 					var netNum = $scope.topologyObject[i].destination.replace("network", '')
 					if ($scope.networksList.indexOf(netNum) == -1)  $scope.networksList.push(netNum)
-					$scope.lineList[lineCounter]['x1']=(parseFloat($scope.networksObject[netNum].left)+50)/$scope.scale
-					$scope.lineList[lineCounter]['y1']=(parseFloat($scope.networksObject[netNum].top)+30)/$scope.scale
+					$scope.lineList[lineCounter]['x1']=(parseFloat($scope.networksObject[netNum].left)+50)/$scope.scale*2
+					$scope.lineList[lineCounter]['y1']=(parseFloat($scope.networksObject[netNum].top)+30)/$scope.scale*2
 					
 				}
 				if ($scope.topologyObject[i].destination.includes("node")){
 					var nodeNum = $scope.topologyObject[i].destination.replace("node", '')
 					console.log(nodeNum)
-					$scope.lineList[lineCounter]['x1']=(parseFloat($scope.nodelist[parseInt(nodeNum)].left)+50)/$scope.scale
-					$scope.lineList[lineCounter]['y1']=(parseFloat($scope.nodelist[parseInt(nodeNum)].top)+30)/$scope.scale
+					$scope.lineList[lineCounter]['x1']=(parseFloat($scope.nodelist[parseInt(nodeNum)].left)+50)/$scope.scale*2
+					$scope.lineList[lineCounter]['y1']=(parseFloat($scope.nodelist[parseInt(nodeNum)].top)+30)/$scope.scale*2
 				}
 				if ($scope.topologyObject[i].source.includes("network")){
 					var netNum = $scope.topologyObject[i].source.replace("network", '')
-					$scope.lineList[lineCounter]['x2']=(parseFloat($scope.networksObject[netNum].left)+50)/$scope.scale
-					$scope.lineList[lineCounter]['y2']=(parseFloat($scope.networksObject[netNum].top)+30)/$scope.scale
+					$scope.lineList[lineCounter]['x2']=(parseFloat($scope.networksObject[netNum].left)+50)/$scope.scale*2
+					$scope.lineList[lineCounter]['y2']=(parseFloat($scope.networksObject[netNum].top)+30)/$scope.scale*2
 					
 				}
 				if ($scope.topologyObject[i].source.includes("node")){
 					var nodeNum = $scope.topologyObject[i].source.replace("node", '')
-					$scope.lineList[lineCounter]['y2']=(parseFloat($scope.nodelist[parseInt(nodeNum)].top)+20)/$scope.scale
-					$scope.lineList[lineCounter]['x2']=(parseFloat($scope.nodelist[parseInt(nodeNum)].left)+40)/$scope.scale
+					$scope.lineList[lineCounter]['y2']=(parseFloat($scope.nodelist[parseInt(nodeNum)].top)+20)/$scope.scale*2
+					$scope.lineList[lineCounter]['x2']=(parseFloat($scope.nodelist[parseInt(nodeNum)].left)+40)/$scope.scale*2
 					console.log(nodeNum)
 				}
 				lineCounter++
@@ -660,6 +727,24 @@ function mainController($scope, $http, $location, $uibModal, $log, $rootScope, F
 	//	+'px; top: '+y1+'px; left: '+x1+'px;"></div>');
 	//}
 	//Line calculator //END	
+
+
+	// Stop All Nodes //START
+	//$app -> delete('/api/status', function() use ($app, $db) {
+	$scope.stopAll = function() {
+		$http({
+			method: 'DELETE',
+			url: '/api/status'})
+			.then(
+				function successCallback(response) {
+					console.log(response)
+				},
+				function errorCallback(response) {
+					console.log(response)
+				}
+			);
+	}
+	// Stop All Nodes //STOP
 };
 
 function ObjectLength( object ) {

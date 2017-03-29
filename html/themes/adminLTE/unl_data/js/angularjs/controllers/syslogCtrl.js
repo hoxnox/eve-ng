@@ -12,7 +12,7 @@ function syslogController($scope, $http, $rootScope) {
 	$scope.unl_wrapperLog=[];
 	$scope.blockButtons=false;
 	$scope.blockButtonsClass='';
-	$scope.logfiles= ['access.txt', 'api.txt','error.txt','php_errors.txt','unl_wrapper.txt']
+	$scope.logfiles= ['access.txt', 'api.txt','error.txt','php_errors.txt','unl_wrapper.txt','cpulimit.log']
 	
 	$scope.readFile = function(filename){
 		//console.log(filename)

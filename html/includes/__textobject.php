@@ -19,6 +19,7 @@
 
 class TextObject {
 	private $data;
+	private $newdata;
 	private $id;
 	private $name;
 	private $type;
@@ -63,6 +64,19 @@ class TextObject {
 		$this -> id = (int) $id;
 		$this -> type = $p['type'];
 		if (isset($p['name'])) $this -> name = htmlentities($p['name']);
+		/* New code for new UI */
+		if ( $GLOBALS['UIlegacy'] == 0 ) {
+			if ( $this -> type == "text" ) {
+				$this -> newdata = data_to_textobjattr($this -> data);
+			}
+			if ( $this -> type == "circle" ) {
+				$this -> newdata = dataToCircleAttr($this -> data);
+			}
+			if ( $this -> type == "square" ) {
+				$this -> newdata = dataToSquareAttr($this -> data);
+			}
+		}
+		/* End of new code */
 	}
 
 	/**
@@ -136,5 +150,14 @@ class TextObject {
 	public function getNType() {
 		return $this -> type;
 	}
+	/**
+	 * Method to get the object left.
+	 *
+	 * @return  string                      The object type
+	 */
+	public function getNewData() {
+		return $this -> newdata;
+	}
+	
 }
 ?>

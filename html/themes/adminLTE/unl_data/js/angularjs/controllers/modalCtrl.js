@@ -4,6 +4,7 @@ function ModalCtrl($scope, $uibModal, $log) {
   $scope.modalActions = {
 		'addfile': {'path':'/themes/adminLTE/unl_data/pages/modals/addfile.html', 'controller':'AddElModalCtrl'},
 		'editfile': {'path':'/themes/adminLTE/unl_data/pages/modals/editfile.html', 'controller':'EditElModalCtrl'},
+		'editLab': {'path':'/themes/adminLTE/unl_data/pages/modals/editLab.html', 'controller':'EditElModalCtrl'},
 		'adduser': {'path':'/themes/adminLTE/unl_data/pages/modals/adduser.html', 'controller':'AddUserModalCtrl'},
 		'edituser': {'path':'/themes/adminLTE/unl_data/pages/modals/edituser.html', 'controller':'EditUserModalCtrl'},
 		'moveto': {'path':'/themes/adminLTE/unl_data/pages/modals/moveto.html', 'controller':'MoveToModalCtrl'},
@@ -15,11 +16,15 @@ function ModalCtrl($scope, $uibModal, $log) {
   $scope.openModal = function (action , edituser, size) {
 	$scope.edituser = (edituser === undefined) ? '' :  edituser;
 	var pathToModal = (action === undefined) ? 'default' :  action;
+	// console.log(size + 'aaaaaaaaaa');
     var modalInstance = $uibModal.open({
       animation: $scope.animationsEnabled,
       templateUrl: $scope.modalActions[pathToModal]['path'],
       controller: $scope.modalActions[pathToModal]['controller'],
+      windowTopClass: "fade in out", 
       size: size,
+      scope: $scope,
+      backdrop: (size == 'megalg') ? false : true,
       resolve: {
         data: function () {
 			switch(action) {
@@ -27,6 +32,11 @@ function ModalCtrl($scope, $uibModal, $log) {
 						return {'name': $scope.newElementName, 'path': $scope.path};
 						break;
 				case 'editfile':
+                                                $scope.labInfo.fullPathToFile = $scope.fullPathToFile;
+						return {'info': $scope.labInfo, 'path': $scope.path};
+						break;
+				case 'editLab':
+                                                $scope.labInfo.fullPathToFile = $scope.fullPathToFile;
 						return {'info': $scope.labInfo, 'path': $scope.path};
 						break;
 				case 'adduser':
@@ -74,6 +84,21 @@ function ModalCtrl($scope, $uibModal, $log) {
 		//$log.info('Modal dismissed at: ' + new Date());
 		});
 		break;
+        case 'editLab':
+                modalInstance.result.then(function (result) {
+                        if (result.result){
+                                $scope.newElementName='';
+                                $scope.newElementToggle=false;
+                                $scope.getLabInfo(result.name)
+                                $scope.fileMngDraw($scope.path);
+                        } else {
+                                toastr["error"]("Server has error", "Error");
+                        }
+                }, function () {
+                //function if user just close modal
+                //$log.info('Modal dismissed at: ' + new Date());
+                });
+                break;
 	case 'adduser':
 		modalInstance.result.then(function (result) {
 			if (result){
@@ -109,6 +134,8 @@ function ModalCtrl($scope, $uibModal, $log) {
 		//function if user just close modal
 		//$log.info('Modal dismissed at: ' + new Date());
 		console.log('here')
+		//$scope.selectAll();
+		$scope.allCheckedFlag=false;
 		$scope.fileMngDraw($scope.pathBeforeMove);
 		});
 		break;
@@ -137,12 +164,14 @@ function AddElModalCtrl($scope, $uibModalInstance, data, $http) {
 	$scope.author='';
 	$scope.description='';
 	$scope.version=1;
-	//$scope.body='';
+	$scope.body='';
 	$scope.scripttimeout=300;
 	$scope.labName=data.name;
 	$scope.labPath=data.path;
 	$scope.errorClass='';
 	$scope.errorMessage='';
+	$scope.restrictTest = '\\d+';
+	$scope.restrictNumber = '^[a-zA-Z0-9-_ ]+$';
 	
 	$scope.addNewLab = function () {
 		
@@ -157,6 +186,7 @@ function AddElModalCtrl($scope, $uibModalInstance, data, $http) {
 		'scripttimeout': $scope.scripttimeout,
 		'version': $scope.version,
 		'name': $scope.labName,
+		'body': $scope.body,
 		'path': $scope.path}
 		
 		if ($scope.labName == ''){ 
@@ -177,6 +207,8 @@ function AddElModalCtrl($scope, $uibModalInstance, data, $http) {
 				$scope.blockButtons=false;
 				$scope.blockButtonsClass='';
 				$scope.result=true;
+				var lab_name = $scope.newdata.name+'.unl'
+				$scope.$parent.legacylabopen($scope.newdata.path+lab_name)
 				$uibModalInstance.close($scope.result);
 			}, 
 			function errorCallback(response) {
@@ -201,6 +233,10 @@ function AddElModalCtrl($scope, $uibModalInstance, data, $http) {
 		);
 	}
 
+	$scope.opacity = function(){
+		$(".modal-content").toggleClass("modal-content_opacity");
+	};
+
 	$scope.closeModal = function () {
 		$uibModalInstance.dismiss('cancel');
 	};
@@ -214,7 +250,7 @@ function EditElModalCtrl($scope, $uibModalInstance, data, $http) {
 	$scope.author=data.info.author;
 	$scope.description=data.info.description;
 	$scope.version=data.info.version;
-	//$scope.body=data.info.body;
+	$scope.body=data.info.body;
 	$scope.scripttimeout=data.info.scripttimeout;
 	$scope.labName=data.info.name;
 	$scope.oldName=data.info.name;
@@ -231,7 +267,7 @@ function EditElModalCtrl($scope, $uibModalInstance, data, $http) {
 		$scope.newdata = {
 		'author': $scope.author,
 		'description': $scope.description,
-		//'body': $scope.body,
+		'body': $scope.body,
 		'scripttimeout': $scope.scripttimeout,
 		'version': $scope.version,
 		'name': $scope.labName}
@@ -295,6 +331,8 @@ function AddUserModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.role='';
 	$scope.podArray=[];
 	$scope.expiration='-1';
+	$scope.restrictNumber = '^[a-zA-Z0-9-_ ]+$';
+	$scope.patternEmail = '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$';
 	//Generate unique POD //START
 	var podArrayIndex=0;
 	for (var key in data.currentUserData){
@@ -340,11 +378,13 @@ function AddUserModalCtrl($scope, $uibModalInstance, $http, data) {
 	$scope.addNewUser = function(){
 		$scope.errorClass=''; 
 		$scope.errorMessage="";
+		$scope.podError = false;
 	$scope.username = $scope.username.replace(/[\',#,$,@,\",\\,/,%,\*,\,,\.,(,),:,;,^,&,\[,\],|]/g, '')
 		if ($scope.passwdConfirm!=$scope.passwd) {$scope.errorClass='has-error passwdConfirm'; $scope.errorMessage="Password doesn't match";}
 		if ($scope.passwdConfirm=='') {$scope.errorClass='has-error passwdConfirm'; $scope.errorMessage="Password can't be empty!";}
 		if ($scope.passwd=='') {$scope.errorClass='has-error passwd'; $scope.errorMessage="Password can't be empty!";}
 		if ($scope.username=='') {$scope.errorClass='has-error username'; $scope.errorMessage="Username can't be empty!";}
+		if ($scope.passwd=='whereismypassword?') { $scope.passwd='' ;}
 		if ($scope.errorClass!=''){return;}
 		
 		$http.get('/api/users/').then(function(response){
@@ -352,45 +392,53 @@ function AddUserModalCtrl($scope, $uibModalInstance, $http, data) {
 			console.log(response.data.data)
 			//Compare unique POD //START
 			for (var key in response.data.data){
-				if (parseInt(response.data.data[key].pod) == $scope.pod) {
-					$scope.podError=true; break;
+				console.log("pod", response.data.data[key].pod);
+				if (parseInt(response.data.data[key].pod) == parseInt($scope.pod) && response.data.data[key].username != $scope.username) {
+					$scope.podError=true; 
+					break;
 				}
 			}
 			//Compare unique POD //END
 		
 		}).then(function(response){
-		if ($scope.podError){toastr["error"]("Please set unique POD value", "Error"); return;}
-		$scope.newdata = {
-			"username": $scope.username,
-			"name": $scope.name,
-			"email": $scope.email,
-			"password": $scope.passwd,
-			"role": $scope.roleArray[$scope.selectRole],
-			"expiration": $scope.expiration,
-			"pod": $scope.pod,
-			"pexpiration": $scope.pexpiration,
-		}
-		$http({
-			method: 'POST',
-			url: '/api/users',
-			data: $scope.newdata})
-					.then(
-					function successCallback(response) {
-						//console.log(response)
-						$scope.result=true;
-						$uibModalInstance.close($scope.result);
-					}, 
-					function errorCallback(response) {
-						console.log(response)
-						console.log("Unknown Error. Why did API doesn't respond?")
-						if (response.status == 412 && response.data.status == "unauthorized"){
-							console.log("Unauthorized user.")
-							$uibModalInstance.dismiss('cancel');
-							toastr["error"]("Unauthorized user", "Error");
-						}
-						//$uibModalInstance.close($scope.result);
-						toastr["error"](response.data.message, "Error");
-					});
+			
+			if ($scope.podError){
+				toastr["error"]("Please set unique POD value", "Error"); return;
+			}
+			
+			$scope.newdata = {
+				"username": $scope.username,
+				"name": $scope.name,
+				"email": $scope.email,
+				"password": $scope.passwd,
+				"role": $scope.roleArray[$scope.selectRole],
+				"expiration": $scope.expiration,
+				"pod": $scope.pod,
+				//"pod": -1,
+				"pexpiration": $scope.pexpiration,
+			}
+			
+			$http({
+				method: 'POST',
+				url: '/api/users',
+				data: $scope.newdata})
+						.then(
+						function successCallback(response) {
+							//console.log(response)
+							$scope.result=true;
+							$uibModalInstance.close($scope.result);
+						}, 
+						function errorCallback(response) {
+							console.log(response)
+							console.log("Unknown Error. Why did API doesn't respond?")
+							if (response.status == 412 && response.data.status == "unauthorized"){
+								console.log("Unauthorized user.")
+								$uibModalInstance.dismiss('cancel');
+								toastr["error"]("Unauthorized user", "Error");
+							}
+							//$uibModalInstance.close($scope.result);
+							toastr["error"](response.data.message, "Error");
+						});
 		});
 	}
 	
@@ -414,6 +462,8 @@ function EditUserModalCtrl($scope, $uibModalInstance, data, $http) {
 	$scope.errorMessage='';
 	$scope.podError=false;
 	$scope.result=false;
+	$scope.restrictNumber = '^[a-zA-Z0-9-_ ]+$';
+	$scope.patternEmail = '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+[\.][a-zA-Z]{2,3}$';
 	
 	console.log('Start edit user '+data.username)
 	$http({
@@ -468,6 +518,7 @@ function EditUserModalCtrl($scope, $uibModalInstance, data, $http) {
 		if ($scope.passwdConfirm!=$scope.passwd) {$scope.errorClass='has-error passwdConfirm'; $scope.errorMessage="Password doesn't match";}
 		if ($scope.passwdConfirm=='') {$scope.errorClass='has-error passwdConfirm'; $scope.errorMessage="Password can't be empty!";}
 		if ($scope.passwd=='') {$scope.errorClass='has-error passwd'; $scope.errorMessage="Password can't be empty!";}
+		if ($scope.passwd=='whereismypassword?') { $scope.passwd='' ;}
 		if ($scope.errorClass!=''){return;}
 		
 		$http.get('/api/users/').then(function(response){
@@ -476,7 +527,7 @@ function EditUserModalCtrl($scope, $uibModalInstance, data, $http) {
 			//Compare unique POD //START
 			for (var key in response.data.data){
 				console.log(parseInt(response.data.data[key].pod))
-				if (parseInt(response.data.data[key].pod) == parseInt($scope.pod)) {
+				if (parseInt(response.data.data[key].pod) == parseInt($scope.pod) && response.data.data[key].username != $scope.username) {
 					$scope.podError=true; break;
 				}
 			}
@@ -545,10 +596,18 @@ function MoveToModalCtrl($scope, $uibModalInstance, data, $http, $location,$inte
 	$scope.localSearch="";
 	$scope.blockButtons=false;
 	$scope.blockButtonsClass='';
+	// $scope.inputSlash=$('#newPathInput');
 	//$("#newPathInput").dropdown();
 	console.log($scope.filedata)
 	console.log($scope.folderdata)
 	
+	// $scope.inputSlash = function(){
+	// 	$('#newPathInput').focus();
+	// 	var inputSlash = $('#newPathInput').val();
+	// 	inputSlash.val('/');
+	// 	inputSlash.val(inputSlash);
+	// }
+
 	$scope.fastSearch = function(pathInput){
 		$scope.errorMessage="";
 		var re = /^\//;
@@ -604,17 +663,22 @@ function MoveToModalCtrl($scope, $uibModalInstance, data, $http, $location,$inte
 		$scope.newpath=fastPath;
 		$scope.fastSearch(fastPath);
 		$("#newPathInput").focus();
+
 	}
 	
+	$scope.deselect = function(){
+	
+	}
 	
 	$scope.move = function(){
 		$scope.openDropdown="";
 		$scope.folderfound=true;
 		var re = /^\/.*\/$/;
+		$scope.newpath = "/" + $scope.newpath
 		console.log($scope.newpath.search(re))
 		$scope.errorMessage="";
 		if ($scope.newpath == "") {$scope.errorMessage="New path can't be empty"; return;}
-		if ($scope.newpath.search(re) == -1) {$scope.errorMessage="Unknown path format, be sure that you added '/' to the end"; return;}
+		if ($scope.newpath.search(re) == -1 && $scope.newpath != "/") {$scope.errorMessage="Unknown path format, be sure that you added '/' to the end"; return;}
 		if ($scope.pathForTest == $scope.newpath) {$scope.errorMessage="Path can't be the same"; return;}
 		
 		for (i = 0; i < $scope.folderdata.length; i++) {
@@ -714,3 +778,4 @@ function MoveToModalCtrl($scope, $uibModalInstance, data, $http, $location,$inte
 	};
 	
 }
+

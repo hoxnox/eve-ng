@@ -1,5 +1,6 @@
 <div class="modal-header">
 	<button type="button" class="close" ng-click="closeModal()">&times;</button>
+  <i class="glyphicon glyphicon-certificate pull-right pointer action-changeopacity" ng-click="opacity()"></i>
 	<h3 class="modal-title">System status</h3>
 </div>
 <div class="modal-body">
@@ -61,8 +62,9 @@
         </div>
         <!-- ./col -->
       </div>
-	  <p class="text-muted">qemu version: <text data-ng-bind="serverstatus.qemu_version"></text></p>
+	 <p class="text-muted">Qemu version: <text data-ng-bind="serverstatus.qemu_version"></text></p>
 	<p class="text-muted" data-ng-bind="versiondata"></p>
+	<p class="text-muted">UKSM status: <text  data-ng-bind="serverstatus.uksm"></text></p>
 </div>
 <div class="modal-footer">
 	<button class="btn btn-dander btn-flat" type="button" data-ng-click="closeModal()">Close</button>

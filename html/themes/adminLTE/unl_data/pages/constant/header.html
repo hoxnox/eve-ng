@@ -1,9 +1,9 @@
  <!-- Main Header -->
-<header class="main-header">
-    <nav class="navbar navbar-static-top">
+<header class="main-header" style="height: 50px;">
+    <nav class="navbar navbar-static-top navbar-static-top-eve">
       <div class="container">
         <div class="navbar-header">
-          <a href="#/main" class="navbar-brand" data-ng-click="blockui('/main')" style="padding-top: 5px;"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/mainLogo.png" style="width:104px;height:40px"></a>
+          <a href="#/main" class="navbar-brand" data-ng-click="blockui('/main')" style="padding-top: 5px;"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/Logo_EVE_Color.png" style="width:104px;height:40px"></a>
 		   <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
                 <i class="fa fa-bars"></i>
             </button>
@@ -15,26 +15,30 @@
             <li data-ng-click="blockui('/main')" class="{{ (currentPath == '/main') ? activeClass : emptyClass}}"><a href="#/main"><i class="fa fa-home" aria-hidden="true"></i> Main</a></li>
             <li class="dropdown {{ (currentPath == '/usermgmt') ? activeClass : emptyClass}}">
               <a class="dropdown-toggle pointer" data-toggle="dropdown"><i class="fa fa-wrench" aria-hidden="true"></i> Management <span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
+              <ul class="dropdown-menu dropdown-main" role="menu">
                 <li data-ng-click="blockui('/usermgmt')" class="{{ (currentPath == '/usermgmt') ? activeClass : emptyClass}}"><a href="#/usermgmt"><i class="fa fa-group"></i> User management</a></li>
               </ul>
             </li>
 			<li class="dropdown {{ (currentPath == '/syslog' || currentPath == '/sysstat') ? activeClass : emptyClass}}">
-              <a class="dropdown-toggle pointer" data-toggle="dropdown"><i class="fa fa-book" aria-hidden="true"></i> Logs <span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
+              <a class="dropdown-toggle pointer" data-toggle="dropdown"><i class="fa fa-book" aria-hidden="true"></i> System <span class="caret"></span></a>
+              <ul class="dropdown-menu dropdown-main" role="menu">
                 <li data-ng-click="blockui('/sysstat')" class="{{ (currentPath == '/sysstat') ? activeClass : emptyClass}}"><a href="#/sysstat"><i class="fa fa-adjust"></i> System status</a></li>
                 <li data-ng-click="blockui('/syslog')" class="{{ (currentPath == '/syslog') ? activeClass : emptyClass}}"><a href="#/syslog"><i class="fa fa-life-ring"></i> System logs</a></li>
+		<li ng-click="stopAll()"><a href=""><i class="fa fa-times"></i> Stop All Nodes</a></li>
               </ul>
             </li>
 			<li class="dropdown">
               <a class="dropdown-toggle pointer" data-toggle="dropdown"><i class="fa fa-info-circle" aria-hidden="true"></i> Information <span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="http://www.unetlab.com/" target="_blank"><i class="fa fa-info-circle"></i> About</a></li>
-                <li><a href="http://forum.802101.com/forum39.html" target="_blank"><i class="fa fa-comment"></i> Forum</a></li>
-                <li><a href="https://github.com/dainok/unetlab" target="_blank"><i class="fa fa-github"></i> GitHub</a></li>
-                <li><a href="https://www.youtube.com/c/UnifiedNetworkingLab" target="_blank"><i class="fa fa-youtube"></i> YouTube Channel</a></li>
-                <li><a href="http://webchat.freenode.net/?channels=%23UNetLab" target="_blank"><i class="fa fa-question-circle"></i> Help on IRC Channel</a></li>
+              <ul class="dropdown-menu dropdown-main" role="menu">
+                <li><a href="http://www.eve-ng.net/" target="_blank"><i class="fa fa-info-circle"></i> About</a></li>
+                <li><a href="http://www.eve-ng.net/forum/" target="_blank"><i class="fa fa-comment"></i> Forum</a></li>
+                <li><a href="https://gitlab.com/eve-ng-dev/eve-ng-public" target="_blank"><i class="fa fa-github"></i> GitLab</a></li>
+                <li><a href="https://www.youtube.com/channel/UCh-RxHfEpYzo2Sgflq4_vAA" target="_blank"><i class="fa fa-youtube"></i> YouTube Channel</a></li>
+                <li><a href="https://join.skype.com/hp6FIrOYpcuJ" target="_blank"><i class="fa fa-question-circle"></i> Help on Skype</a></li>
               </ul>
+            </li>
+      <li>
+              <a href="http://www.eve-ng.net/">©2017 Eve-NG</a>
             </li>
           </ul>
         </div>
@@ -55,10 +59,10 @@
             </li>
 			
             <li class="user user-menu">
-			<a href="" ng-click="logout()" >
-			<i class="fa fa-sign-out" aria-hidden="true"></i>
-			 <span class="hidden-xs"> Sign out </span>
-			</a>
+          			<a href="" ng-click="logout()" >
+          			<i class="fa fa-sign-out" aria-hidden="true"></i>
+          			 <span class="hidden-xs"> Sign out </span>
+          			</a>
             </li>
           </ul>
         </div>

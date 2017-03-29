@@ -185,7 +185,7 @@ $app -> get('/api/status', function() use ($app, $db) {
 	$output['message'] = $GLOBALS['messages']['60001'];
 	$output['data'] = Array();
 	$output['data']['version'] = VERSION;
-	$cmd = '/opt/qemu/bin/qemu-system-x86_64 -version | sed \'s/.* \([0-9.]*\), .*/\1/g\'';
+	$cmd = '/opt/qemu/bin/qemu-system-x86_64 -version | sed \'s/.* \([0-9]*\.[0-9.]*\.[0-9.]*\).*/\1/g\'';
 	exec($cmd, $o, $rc);
 	if ($rc != 0) {
 		error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][60044]);
@@ -193,6 +193,43 @@ $app -> get('/api/status', function() use ($app, $db) {
 	} else {
 		$output['data']['qemu_version'] = $o[0];
 	}
+	$o = "" ;
+	$cmd = 'cat /sys/kernel/mm/uksm/run';
+	exec($cmd, $o, $rc);
+	if ($rc != 0) { 
+		$output['data']['uksm'] = 'unsupported';
+	} else {
+		if ($o[0] == "1") {
+			$output['data']['uksm'] = "enabled";
+		} else {
+			$output['data']['uksm'] = "disabled";
+		}
+	}
+        $o = "" ;
+        $cmd = 'cat /sys/kernel/mm/ksm/run';
+        exec($cmd, $o, $rc);
+        if ($rc != 0) {
+                $output['data']['ksm'] = 'unsupported';
+        } else {
+                if ($o[0] == "1") {
+                        $output['data']['ksm'] = "enabled";
+                } else {
+                        $output['data']['ksm'] = "disabled";
+                }
+        }
+        $o = "" ;
+        $cmd = 'systemctl is-active cpulimit.service';
+        exec($cmd, $o, $rc);
+        if ($rc != 0) {
+                error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][60044]);
+                $output['data']['cpulimit'] = 'disabled';
+        } else {
+               if ($o[0] == "active") {
+                    $output['data']['cpulimit'] = 'enabled';
+               } else {
+                    $output['data']['cpulimit'] = 'disabled';
+              }
+        }
 	$output['data']['cpu'] = apiGetCPUUsage();
 	$output['data']['disk'] = apiGetDiskUsage();
 	list($output['data']['cached'], $output['data']['mem']) = apiGetMemUsage();
@@ -690,6 +727,8 @@ $app -> put('/api/labs/(:path+)', function($path = array()) use ($app, $db) {
 			unset($p['count']);
 		}
 		$output = apiEditLabNetwork($lab, $p);
+        } else if ( preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/networks$/', $s)) {
+                $output = apiEditLabNetworks($lab, $p);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/configs\/[0-9]+$/', $s)) {
 		$p['id'] = $id;
 		$output = apiEditLabConfig($lab, $p);
@@ -712,6 +751,8 @@ $app -> put('/api/labs/(:path+)', function($path = array()) use ($app, $db) {
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/nodes\/[0-9]+$/', $s)) {
 		$p['id'] = $id;
 		$output = apiEditLabNode($lab, $p);
+        } else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/nodes$/', $s)) {
+                $output = apiEditLabNodes($lab, $p);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/nodes\/[0-9]+\/export$/', $s)) {
 		if ($tenant < 0) {
 			// User does not have an assigned tenant
@@ -728,11 +769,17 @@ $app -> put('/api/labs/(:path+)', function($path = array()) use ($app, $db) {
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/textobjects\/[0-9]+$/', $s)) {
 		$p['id'] = $id;
 		$output = apiEditLabTextObject($lab, $p);
+        } else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/textobjects$/', $s)) {
+                $output = apiEditLabTextObjects($lab, $p);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/pictures\/[0-9]+$/', $s)) {
 		$p['id'] = $id;
 		$output = apiEditLabPicture($lab, $p);
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl$/', $s)) {
 		$output = apiEditLab($lab, $p);
+	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/Lock$/', $s)) {
+		$output = apiLockLab($lab);
+	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/Unlock$/', $s)) {
+		$output = apiUnlockLab($lab);	
 	} else if (preg_match('/^\/[A-Za-z0-9_+\/\\s-]+\.unl\/move$/', $s)) {
 		$output = apiMoveLab($lab, $p['path']);
 	} else {
@@ -1085,6 +1132,74 @@ $app -> delete('/api/users/(:uuser)', function($uuser = False) use ($app, $db) {
 	$app -> response -> setBody(json_encode($output));
 });
 
+// Change cpulimit
+
+$app -> post('/api/cpulimit', function() use ($app, $db) {
+        list($user, $tenant, $output) = apiAuthorization($db, $app -> getCookie('unetlab_session'));
+        if ($user === False) {
+                $app -> response -> setStatus($output['code']);
+                $app -> response -> setBody(json_encode($output));
+                return;
+        }
+        if (!in_array($user['role'], Array('admin'))) {
+                $app -> response -> setStatus($GLOBALS['forbidden']['code']);
+                $app -> response -> setBody(json_encode($GLOBALS['forbidden']));
+                return;
+        }
+
+        $event = json_decode($app -> request() -> getBody());
+        $p = json_decode(json_encode($event), True);    // Reading options from POST/PUT
+
+        $output = apiSetCpuLimit($p);
+        $app -> response -> setStatus($output['code']);
+        $app -> response -> setBody(json_encode($output));
+});
+
+// Change uksm
+
+$app -> post('/api/uksm', function() use ($app, $db) {
+        list($user, $tenant, $output) = apiAuthorization($db, $app -> getCookie('unetlab_session'));
+        if ($user === False) {
+                $app -> response -> setStatus($output['code']);
+                $app -> response -> setBody(json_encode($output));
+                return;
+        }
+        if (!in_array($user['role'], Array('admin'))) {
+                $app -> response -> setStatus($GLOBALS['forbidden']['code']);
+                $app -> response -> setBody(json_encode($GLOBALS['forbidden']));
+                return;
+        }
+
+        $event = json_decode($app -> request() -> getBody());
+        $p = json_decode(json_encode($event), True);    // Reading options from POST/PUT
+
+        $output = apiSetUksm($p);
+        $app -> response -> setStatus($output['code']);
+        $app -> response -> setBody(json_encode($output));
+});
+// Change ksm
+
+$app -> post('/api/ksm', function() use ($app, $db) {
+        list($user, $tenant, $output) = apiAuthorization($db, $app -> getCookie('unetlab_session'));
+        if ($user === False) {
+                $app -> response -> setStatus($output['code']);
+                $app -> response -> setBody(json_encode($output));
+                return;
+        }
+        if (!in_array($user['role'], Array('admin'))) {
+                $app -> response -> setStatus($GLOBALS['forbidden']['code']);
+                $app -> response -> setBody(json_encode($GLOBALS['forbidden']));
+                return;
+        }
+
+        $event = json_decode($app -> request() -> getBody());
+        $p = json_decode(json_encode($event), True);    // Reading options from POST/PUT
+
+        $output = apiSetKsm($p);
+        $app -> response -> setStatus($output['code']);
+        $app -> response -> setBody(json_encode($output));
+});
+
 /***************************************************************************
  * Export/Import
  **************************************************************************/
@@ -1206,6 +1321,15 @@ $app -> get('/api/logs/(:file)/(:lines)/(:search)', function($file = False, $lin
 	else
 		$arr = array();
 	
+	$app -> response -> setStatus(200);
+	$app -> response -> setBody(json_encode($arr));
+});
+
+/***************************************************************************
+ * ICONS
+ **************************************************************************/
+$app -> get('/api/icons', function() use ($app, $db) {
+	$arr = listNodeIcons();
 	$app -> response -> setStatus(200);
 	$app -> response -> setBody(json_encode($arr));
 });

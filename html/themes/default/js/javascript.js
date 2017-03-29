@@ -29,13 +29,23 @@ var TENANT;
 var USERNAME;
 var ATTACHMENTS;
 var UPDATEID;
-
+var LOCK = 0 ; 
+var isIE = getInternetExplorerVersion() > -1;
+var FOLLOW_WRAPPER_IMG_STATE = 'resized'
+var EVE_VERSION = "2.0.3-57";
 
 $(document).ready(function() {
 	if ($.cookie('privacy') != 'true') {
 		// Cookie is not set, show a modal with privacy policy
 		logger(1, 'DEBUG: need to accept privacy.');
-		addModal('Privacy Policy', '<p>We use cookies on this site for our own business purposes including collecting aggregated statistics to analyze how our site is used, integrating social networks and forums and to show you ads tailored to your interests. Find out our <a href="http://www.unetlab.com/about/privacy.html" title="Privacy Policy">privacy policy</a> for more information.</p><p>By continuing to browse the site, you are agreeing to our use of cookies.</p>', '<button id="privacy" type="button" class="btn btn-aqua" data-dismiss="modal">Accept</button>');
+		//addModal('Privacy Policy', '<p>We use cookies on this site for our own business purposes including collecting aggregated statistics to analyze how our site is used, integrating social networks and forums and to show you ads tailored to your interests. Find out our <a href="http://www.unetlab.com/about/privacy.html" title="Privacy Policy">privacy policy</a> for more information.</p><p>By continuing to browse the site, you are agreeing to our use of cookies.</p>', '<button id="privacy" type="button" class="btn btn-aqua" data-dismiss="modal">Accept</button>');
+		$.cookie('privacy', 'true', {
+                    expires: 90,
+                    path: '/'
+                });
+                if ($.cookie('privacy') == 'true') {
+                      window.location.reload();
+                } 
 	} else {
 		// Privacy policy already been accepted, check if user is already authenticated
 		$.when(getUserInfo()).done(function() {
@@ -54,4 +64,18 @@ $(document).ready(function() {
 			printPageAuthentication();
 		});
 	}
+       var timer;
+
+       $(document).on('click', '#alert_container', function(e){
+           if(timer){
+	       clearTimeout(timer);
+           }
+	   
+	   var container = $(this).next().first();
+           container.slideToggle(300);
+	   setTimeout(function(){
+		container.slideUp(300);
+           }, 2700);
+
+       });
 });

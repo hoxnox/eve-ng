@@ -71,16 +71,19 @@ function addMessage(severity, message, notFromLabviewport) {
     }
 }
 
-// Add Modal
+/* Add Modal
+@param prop - helping classes. E.g prop = "red-text capitalize-title"
+*/
 function addModal(title, body, footer, prop) {
     var html = '<div aria-hidden="false" style="display: block;z-index: 10000;" class="modal ' + ' ' + prop + ' fade in" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">' + title + '</h4></div><div class="modal-body">' + body + '</div><div class="modal-footer">' + footer + '</div></div></div></div>';
     $('body').append(html);
     $('body > .modal').modal('show');
+    $('.modal-dialog').draggable({handle: ".modal-header"});
 }
 
 // Add Modal
 function addModalError(message) {
-    var html = '<div aria-hidden="false" style="display: block;" class="modal fade in" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">' + MESSAGES[15] + '</h4></div><div class="modal-body">' + message + '</div><div class="modal-footer"></div></div></div></div>';
+    var html = '<div aria-hidden="false" style="display: block; z-index: 99999" class="modal fade in" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">' + MESSAGES[15] + '</h4></div><div class="modal-body">' + message + '</div><div class="modal-footer"></div></div></div></div>';
     $('body').append(html);
     $('body > .modal').modal('show');
 }
@@ -108,6 +111,7 @@ function cfg_export(node_id) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id + '/export';
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT * 10,  // Takes a lot of time
         type: type,
         url: encodeURI(url),
@@ -147,6 +151,7 @@ function recursive_cfg_export(nodes, i) {
     logger(1, 'DEBUG: ' + url);
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT * 10 * i,  // Takes a lot of time
         type: type,
         url: encodeURI(url),
@@ -188,6 +193,7 @@ function cloneLab(form_data) {
     var type = 'POST';
     var url = '/api/labs';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -229,6 +235,7 @@ function closeLab() {
             var url = '/api/labs/close';
             var type = 'DELETE';
             $.ajax({
+                cache: false,
                 timeout: TIMEOUT,
                 type: type,
                 url: encodeURI(url),
@@ -260,6 +267,7 @@ function closeLab() {
         var url = '/api/labs/close';
         var type = 'DELETE';
         $.ajax({
+            cache: false,
             timeout: TIMEOUT,
             type: type,
             url: encodeURI(url),
@@ -293,6 +301,7 @@ function deleteFolder(path) {
     var type = 'DELETE';
     var url = '/api/folders' + path;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -324,6 +333,7 @@ function deleteLab(path) {
     var type = 'DELETE';
     var url = '/api/labs' + path;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -356,6 +366,7 @@ function deleteNetwork(id) {
     var lab_filename = $('#lab-viewport').attr('data-path');
     var url = '/api/labs' + lab_filename + '/networks/' + id;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -388,6 +399,7 @@ function deleteNode(id) {
     var lab_filename = $('#lab-viewport').attr('data-path');
     var url = '/api/labs' + lab_filename + '/nodes/' + id;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -419,6 +431,7 @@ function deleteUser(path) {
     var type = 'DELETE';
     var url = '/api/users/' + path;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -450,6 +463,7 @@ function exportObjects(form_data) {
     var type = 'POST';
     var url = '/api/export';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -525,6 +539,7 @@ function getLabInfo(lab_filename) {
     var url = '/api/labs' + lab_filename;
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -557,6 +572,7 @@ function getLabBody() {
     var url = '/api/labs' + lab_filename + '/html';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -589,6 +605,7 @@ function getLabLinks() {
     var url = '/api/labs' + lab_filename + '/links';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -626,6 +643,7 @@ function getNetworks(network_id) {
     }
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -663,7 +681,7 @@ function deleteSingleNetworks() {
             networksArr = networks;
 
             $.each(networksArr, function (key, value) {
-                if (value.count == 1 && value.type == 'bridge'){
+                if (value.count == 1 && value.type == 'bridge' && value.visibility == 0){
                     deleted.push(deleteNetwork(value.id))
                     delete networksArr[key];
                     $('.network' + value.id).remove();
@@ -687,6 +705,7 @@ function getNetworkTypes() {
     var url = '/api/list/networks';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -723,13 +742,14 @@ function getNodes(node_id) {
     }
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
         dataType: 'json',
         success: function (data) {
             if (data['status'] == 'success') {
-                logger(1, 'DEBUG: got node(s) from lab "' + lab_filename + '".');
+                // logger(1, 'DEBUG: got node(s) from lab "' + lab_filename + '".');
                 deferred.resolve(data['data']);
             } else {
                 // Application error
@@ -759,6 +779,7 @@ function getNodeConfigs(node_id) {
     }
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -791,13 +812,14 @@ function getNodeInterfaces(node_id) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id + '/interfaces';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
         dataType: 'json',
         success: function (data) {
             if (data['status'] == 'success') {
-                logger(1, 'DEBUG: got node(s) from lab "' + lab_filename + '".');
+                // logger(1, 'DEBUG: got node(s) from lab "' + lab_filename + '".');
                 deferred.resolve(data['data']);
             } else {
                 // Application error
@@ -827,6 +849,7 @@ function getPictures(picture_id) {
     }
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -863,6 +886,7 @@ function getPicturesMapped(picture_id) {
         }
         var type = 'GET';
         $.ajax({
+                cache: false,
                 timeout: TIMEOUT,
                 type: type,
                 url: encodeURI(url),
@@ -896,6 +920,7 @@ function getTopology() {
     var url = '/api/labs' + lab_filename + '/topology';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -928,6 +953,7 @@ function getRoles() {
     var url = '/api/list/roles';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -960,6 +986,7 @@ function getSystemStats() {
     var url = '/api/status';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -996,6 +1023,7 @@ function getTemplates(template) {
     var url = (template == null) ? '/api/list/templates/' : '/api/list/templates/' + template;
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1027,6 +1055,7 @@ function getUserInfo() {
     var url = '/api/auth';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1075,6 +1104,7 @@ function getUsers(user) {
     }
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1113,6 +1143,7 @@ function logoutUser() {
     var url = '/api/auth/logout';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1150,6 +1181,7 @@ function moveFolder(folder, path) {
     var form_data = {};
     form_data['path'] = (path == '/') ? '/' + basename(folder) : path + '/' + basename(folder);
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1184,6 +1216,7 @@ function moveLab(lab, path) {
     var form_data = {};
     form_data['path'] = path;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1218,6 +1251,7 @@ function deletePicture(lab_file, picture_id, cb) {
     // Delete network
     var url = '/api/labs' + lab_file + '/pictures/' + picture_id;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: 'DELETE',
         url: encodeURI(url),
@@ -1249,8 +1283,11 @@ function postLogin(param) {
         // Stop updating node_status
         clearInterval(UPDATEID);
     }
-
+    $('body').removeClass('login');
     if (LAB == null && param == null) {
+// Code to new UI
+  window.location.href = "/#/main/" ; 
+//
         logger(1, 'DEBUG: loading folder "' + FOLDER + '".');
         printPageLabList(FOLDER);
     } else {
@@ -1259,7 +1296,6 @@ function postLogin(param) {
 
 
         printPageLabOpen(LAB);
-
         // Update node status
         UPDATEID = setInterval('printLabStatus("' + LAB + '")', STATUSINTERVAL);
 
@@ -1267,6 +1303,15 @@ function postLogin(param) {
     }
 
 
+}
+// Post login
+function newUIreturn(param) {
+    if (UPDATEID != null) {
+        // Stop updating node_status
+        clearInterval(UPDATEID);
+    }
+    $('body').removeClass('login');
+        window.location.href = "/#/main" ;
 }
 
 //set Network
@@ -1281,11 +1326,13 @@ function setNetwork(nodeName,left, top) {
     form_data['type'] = 'bridge';
     form_data['left'] = left;
     form_data['top'] = top;
+    form_data['visibility'] = 1;
     form_data['postfix'] = 0;
 
     var url = '/api/labs' + lab_filename + '/networks';
     var type = 'POST';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1294,6 +1341,161 @@ function setNetwork(nodeName,left, top) {
         success: function (data) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: new network created.');
+                deferred.resolve(data);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
+// set cpulimit
+function setCpuLimit(bool) {
+    var deferred = $.Deferred();
+    var form_data = {};
+
+    form_data['state'] = bool;
+
+    var url = '/api/cpulimit';
+    var type = 'POST';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: cpulimit updated.');
+                deferred.resolve(data);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
+// set uksm
+function setUksm(bool) {
+    var deferred = $.Deferred();
+    var form_data = {};
+
+    form_data['state'] = bool;
+
+    var url = '/api/uksm';
+    var type = 'POST';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: UKSM updated.');
+                deferred.resolve(data);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
+// set ksm
+function setKsm(bool) {
+    var deferred = $.Deferred();
+    var form_data = {};
+
+    form_data['state'] = bool;
+
+    var url = '/api/ksm';
+    var type = 'POST';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: KSM updated.');
+                deferred.resolve(data);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
+
+function setNetworkiVisibility(networkId,visibility) {
+    var deferred = $.Deferred();
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var form_data = {};
+    form_data['visibility'] = visibility;
+    var url = '/api/labs' + lab_filename + '/networks/' + networkId;
+    var type = 'PUT';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: network visibility updated.');
                 deferred.resolve(data);
             } else {
                 // Application error
@@ -1324,6 +1526,7 @@ function setNetworkPosition(network_id, left, top) {
     var url = '/api/labs' + lab_filename + '/networks/' + network_id;
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1338,7 +1541,46 @@ function setNetworkPosition(network_id, left, top) {
                 logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
                 deferred.reject(data['message']);
             }
-            addMessage(data['status'], data['message']);
+            //addMessage(data['status'], data['message']);
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+
+// Set multiple network position
+function setNetworksPosition(networks) {
+    var deferred = $.Deferred();
+    if ( networks.length == 0 ) { deferred.resolve(); return deferred.promise(); }
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var form_data = {};
+    form_data = networks;
+    var url = '/api/labs' + lab_filename + '/networks' ;
+    var type = 'PUT';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: network position updated.');
+                deferred.resolve();
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            //addMessage(data['status'], data['message']);
 
         },
         error: function (data) {
@@ -1361,6 +1603,7 @@ function setNodeBoot(node_id, config) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id;
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1396,6 +1639,43 @@ function setNodePosition(node_id, left, top) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id;
     var type = 'PUT';
     $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(form_data),
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: node position updated.');
+                deferred.resolve();
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
+// Set multiple node position
+function setNodesPosition(nodes) {
+    var deferred = $.Deferred();
+    if ( nodes.length == 0 ) { deferred.resolve(); return deferred.promise(); } 
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var form_data = [];
+    form_data=nodes;
+    var url = '/api/labs' + lab_filename + '/nodes' ;
+    var type = 'PUT';
+    $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1436,6 +1716,7 @@ function setNodeData(id){
         form_data['left'] = parseInt(form_data['left']) + i * 10;
         form_data['top'] = parseInt(form_data['top']) + i * 10;
         var request = $.ajax({
+        cache: false,
             timeout: TIMEOUT,
             type: type,
             url: encodeURI(url),
@@ -1451,7 +1732,7 @@ function setNodeData(id){
                 } else {
                     // Application error
                     logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
-                    addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                    addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
                 }
             },
             error: function (data) {
@@ -1459,7 +1740,7 @@ function setNodeData(id){
                 var message = getJsonMessage(data['responseText']);
                 logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
                 logger(1, 'DEBUG: ' + message);
-                addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
             }
         });
         promises.push(request);
@@ -1482,6 +1763,7 @@ function setNodeInterface(node_id,network_id,interface_id){
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id +'/interfaces';
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1516,6 +1798,7 @@ function start(node_id) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id + '/start';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1523,6 +1806,7 @@ function start(node_id) {
         success: function (data) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) started.');
+                //$('#node' + node_id + ' img').removeClass('grayscale')
                 deferred.resolve(data['data']);
             } else {
                 // Application error
@@ -1553,6 +1837,7 @@ function recursive_start(nodes, i) {
     }
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1561,6 +1846,7 @@ function recursive_start(nodes, i) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) started.');
                 addMessage('success', nodes[Object.keys(nodes)[i]]['name'] + ': ' + MESSAGES[76]);
+                //$('#node' + nodes[Object.keys(nodes)[i]]['id'] + ' img').removeClass('grayscale')
                 
                 //set start status
             } else {
@@ -1599,6 +1885,7 @@ function stop(node_id) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id + '/stop';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1606,6 +1893,7 @@ function stop(node_id) {
         success: function (data) {
             if (data['status'] == 'success') {
                 logger(1, 'DEBUG: node(s) stopped.');
+                //$('#node' + node_id + ' img').addClass('grayscale')
                 deferred.resolve(data['data']);
 
             } else {
@@ -1631,6 +1919,7 @@ function stopAll() {
     var type = 'DELETE';
     var url = '/api/status';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1663,6 +1952,7 @@ function update(path) {
     var type = 'GET';
     var url = '/api/update';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT * 10,
         type: type,
         url: encodeURI(url),
@@ -1697,6 +1987,7 @@ function wipe(node_id) {
     var url = '/api/labs' + lab_filename + '/nodes/' + node_id + '/wipe';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -1726,39 +2017,59 @@ function wipe(node_id) {
  * Print forms and pages
  **************************************************************************/
 // Context menu
-function printContextMenu(title, body, pageX, pageY, addToBody) {
+function printContextMenu(title, body, pageX, pageY, addToBody, role, hideTitle) {
+    var zoomvalue = 100
+    if ( role == "menu" ) zoomvalue=$('#zoomslide').slider("value")
+    pageX=pageX*100/zoomvalue
+    pageY=pageY*100/zoomvalue
+    $("#context-menu").remove()
+    var titleLine = '';
+        
+    if(!hideTitle){
+        titleLine = '<li role="presentation" class="dropdown-header">' + title + '</li>'
+    } 
+    
     var menu = '<div id="context-menu" class="collapse clearfix dropdown">';
-    menu += '<ul class="dropdown-menu" role="menu"><li role="presentation" class="dropdown-header">' + title + '</li>' + body + '</ul></div>';
+    menu += '<ul class="dropdown-menu" role="' + role + '">' + titleLine + body + '</ul></div>';
+    var hiddenYpix = 0
+    var hiddenXpix = 0
+    
+    
 
     if(addToBody){
         $('body').append(menu);
     } else {
         $('#lab-viewport').append(menu);
+        hiddenYpix=$('#lab-viewport').scrollTop();
+        hiddenXpix=$('#lab-viewport').scrollLeft();
     }
 
     // Set initial status
     $('.menu-interface, .menu-edit').slideToggle();
     $('.menu-interface, .menu-edit').hide();
+    setZoom(100/zoomvalue,lab_topology,[0,0],$('#context-menu')[0])
 
     // Calculating position
-    if (pageX + $('#context-menu').width() > $(window).width()) {
+    if (pageX + $('#context-menu').width() + 30 > $(window).width()) {
         // Dropright
-        var left = pageX - $('#context-menu').width();
+        logger(1,'Drop right');
+        var left = pageX - $('#context-menu').width() + hiddenXpix;
     } else {
         // Dropleft
-        var left = pageX;
+        var left = pageX+hiddenXpix;
     }
     if ($('#context-menu').height() > $(window).height()) {
         // Page is too short, drop down by default
         var top = 0;
         var max_height = $(window).height();
-    } else if ($(window).height() - pageY >= $('#context-menu').height()) {
+    } else if ($(window).height()/zoomvalue*100 - pageY >= $('#context-menu').height()) {
         // Dropdown if enough space
-        var top = pageY;
+        var top = pageY+hiddenYpix;
         var max_height = $('#context-menu').height();
     } else {
         // Dropup
-        var top = $(window).height() - $('#context-menu').height();
+        var top = ( $(window).height() - $('#context-menu').height() ) /zoomvalue * 100 + hiddenYpix;
+        //var top = $(window).height() - $('#context-menu').height() + hiddenpix;
         var max_height = $('#context-menu').height();
     }
 
@@ -1771,6 +2082,7 @@ function printContextMenu(title, body, pageX, pageY, addToBody) {
     $('#context-menu > ul').css({
         maxHeight: max_height - 5
     });
+    
 }
 
 // Folder form
@@ -1783,7 +2095,7 @@ function printFormFolder(action, values) {
     if (original == '/' && action == 'rename') {
         addModalError(MESSAGES[51]);
     } else {
-        var html = '<form id="form-folder-' + action + '" class="form-horizontal form-folder-' + action + '"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[20] + '</label><div class="col-md-5"><input class="form-control" name="folder[path]" value="' + path + '" disabled type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control autofocus" name="folder[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><input class="form-control" name="folder[original]" value="' + original + '" type="hidden"/><button type="submit" class="btn btn-aqua">' + submit + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        var html = '<form id="form-folder-' + action + '" class="form-horizontal form-folder-' + action + '"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[20] + '</label><div class="col-md-5"><input class="form-control" name="folder[path]" value="' + path + '" disabled type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control autofocus" name="folder[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><input class="form-control" name="folder[original]" value="' + original + '" type="hidden"/><button type="submit" class="btn btn-success">' + submit + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
         logger(1, 'DEBUG: popping up the folder-' + action + ' form.');
         addModal(title, html, '');
         validateFolder();
@@ -1792,7 +2104,7 @@ function printFormFolder(action, values) {
 
 // Import external labs
 function printFormImport(path) {
-    var html = '<form id="form-import" class="form-horizontal form-import"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[20] + '</label><div class="col-md-5"><input class="form-control" name="import[path]" value="' + path + '" disabled type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[2] + '</label><div class="col-md-5"><input class="form-control" name="import[local]" value="" disabled="" placeholder="' + MESSAGES[25] + '" "type="text"/></div></div><div class="form-group"><div class="col-md-7 col-md-offset-3"><span class="btn btn-default btn-file btn-aqua">' + MESSAGES[23] + ' <input class="form-control" name="import[file]" value="" type="file"></span> <button type="submit" class="btn btn-aqua">' + MESSAGES[24] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+    var html = '<form id="form-import" class="form-horizontal form-import"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[20] + '</label><div class="col-md-5"><input class="form-control" name="import[path]" value="' + path + '" disabled type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[2] + '</label><div class="col-md-5"><input class="form-control" name="import[local]" value="" disabled="" placeholder="' + MESSAGES[25] + '" "type="text"/></div></div><div class="form-group"><div class="col-md-7 col-md-offset-3"><span class="btn btn-default btn-file btn-success">' + MESSAGES[23] + ' <input class="form-control" name="import[file]" value="" type="file"></span> <button type="submit" class="btn btn-flat">' + MESSAGES[24] + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     logger(1, 'DEBUG: popping up the import form.');
     addModal(MESSAGES[9], html, '');
     validateImport();
@@ -1813,52 +2125,66 @@ function printFormLab(action, values) {
     var body = (values['body'] != null) ? values['body'] : '';
     var title = (action == 'add') ? MESSAGES[5] : MESSAGES[87];
     var html = '<form id="form-lab-' + action + '" class="form-horizontal form-lab-' + action + '">' +
-        '<div class="form-group">' +
-        '<label class="col-md-3 control-label">' + MESSAGES[20] + '</label>' +
-        '<div class="col-md-5">' +
-        '<input class="form-control" name="lab[path]" value="' + path + '" disabled="" type="text"/>' +
+        '<div class="row">' +
+           '<div class="col-md-4">' +
+              '<div class="form-group">' +
+                 '<label class="col-md-2 control-label">' + MESSAGES[20] + '<sup class="sup-star">*</sup></label>' +
+                 '<div class="col-md-10">' +
+                    '<input class="form-control" name="lab[path]" value="' + path + '" disabled="" type="text"/>' +
+                 '</div>' +
+              '</div>' +
+              '<div class="form-group">' +
+                 '<label class="col-md-2 control-label">' + MESSAGES[19] + '<sup class="sup-star">*</sup></label>' +
+                 '<div class="col-md-10"><input class="form-control autofocus" name="lab[name]" value="' + name + '" type="text"/>' +
+                    '<span class="chars" >Use only [A-Za-z0-9_- ]chars</span>'  +
+                 '</div>' +
+              '</div>' +
+              '<div class="form-group">' +
+                 '<label class="col-md-2 control-label">' + MESSAGES[26] + '<sup class="sup-star">*</sup></label>' +
+                 '<div class="col-md-10"><input class="form-control" name="lab[version]" value="' + version + '" type="text"/>' +
+                    '<span class="chars">Must be interger ([0-9]chars)</span>' +
+                 '</div>' +
+              '</div>' +
+              '<div class="form-group">' +
+                 '<label class="col-md-2 control-label">Author</label>' +
+                 '<div class="col-md-10">' +
+                    '<input class="form-control" name="lab[author]" value="' + author + '" type="text"/>' +
+                 '</div>' +
+              '</div>' +
+              '<div class="form-group">' +
+                 '<label class="col-md-4 control-label">' + MESSAGES[158] + '<sup class="sup-star">*</sup></label>' +
+                 '<div class="col-md-3"><input class="form-control" name="lab[scripttimeout]" value="' + scripttimeout + '" type="text"/>' +
+             '</div>' +
+                 '<label class="col-md-3 control-label control-label_custom">Seconds</label>'+
+              '</div>' +
+              '<div class="row">' +
+                 '<div class="col-md-12 parent-required">' +
+                    '<p class="p-required"><sup class="sup-required">*</sup>- Required Fields</p>' +
+                 '</div>' +
+              '</div>' +
+           '</div>' +
+           '<div class="col-md-8">' +
+              '<div class="form-group">' +
+                 '<label class="col-md-2 control-label">' + MESSAGES[27] + '</label>' +
+                 '<div class="col-md-10">' +
+                    '<textarea class="form-control" name="lab[description]" rows="6" style="width: 100%;">' + description + '</textarea>' +
+                 '</div>' +
+              '</div>' +
+              '<div class="form-group"> ' +
+                 '<label class="col-md-2 control-label">' + MESSAGES[88] + '</label>' +
+                 '<div class="col-md-10">' +
+                    '<textarea class="form-control" name="lab[body]" rows="6" style="width: 100%;">' + body + '</textarea>' +
+                 '</div>' +
+              '</div>' +
+              '<div class="form-group">' +
+                 '<div class="col-md-2 col-md-offset-10">' +
+                    '<button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button>' +
+                    '<button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+                 '</div>' +
+              '</div>' +
+           '</div>' +
         '</div>' +
-        '</div>' +
-        '<div class="form-group">' +
-        '<label class="col-md-3 control-label">' + MESSAGES[19] + '</label>' +
-        '<div class="col-md-5"><input class="form-control autofocus" name="lab[name]" value="' + name + '" type="text"/>' +
-        '</div>' +
-        '</div>' +
-        '<div class="form-group">' +
-        '<label class="col-md-3 control-label">' + MESSAGES[26] + '</label>' +
-        '<div class="col-md-5"><input class="form-control" name="lab[version]" value="' + version + '" type="text"/>' +
-        '</div>' +
-        '</div>' +
-        '<div class="form-group">' +
-        '<label class="col-md-3 control-label">Author</label>' +
-        '<div class="col-md-5">' +
-        '<input class="form-control" name="lab[author]" value="' + author + '" type="text"/>' +
-        '</div>' +
-        '</div>' +
-        '<div class="form-group">' +
-        '<label class="col-md-3 control-label">' + MESSAGES[27] + '</label>' +
-        '<div class="col-md-5">' +
-        '<textarea class="form-control" name="lab[description]">' + description + '</textarea>' +
-        '</div>' +
-        '</div>' +
-        '<div class="form-group"> ' +
-        '<label class="col-md-3 control-label">' + MESSAGES[88] + '</label>' +
-        '<div class="col-md-5">' +
-        '<textarea class="form-control" name="lab[body]">' + body + '</textarea>' +
-        '</div>' +
-        '</div>' +
-        '<div class="form-group">' +
-        '<label class="col-md-3 control-label">' + MESSAGES[158] + '</label>' +
-        '<div class="col-md-5"><input class="form-control" name="lab[scripttimeout]" value="' + scripttimeout + '" type="text"/>' +
-        '</div>' +
-        '</div>' +
-        '<div class="form-group">' +
-        '<div class="col-md-5 col-md-offset-3">' +
-        '<button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button>' +
-        '<button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
-        '</div>' +
-        '</div>' +
-        '</form>';
+     '</form>';
     logger(1, 'DEBUG: popping up the lab-add form.');
     addModalWide(title, html, '');
     validateLabInfo();
@@ -1879,17 +2205,35 @@ function printFormNetwork(action, values) {
         if (action == 'add') {
             // If action == add -> print the nework count input
             html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[114] + '</label><div class="col-md-5"><input class="form-control" name="network[count]" value="1" type="text"/></div></div>';
+            html += '<input class="form-control" name="network[visibility]" type="hidden" value="1"/>';
         } else {
             // If action == edit -> print the network ID
             html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[92] + '</label><div class="col-md-5"><input class="form-control" disabled name="network[id]" value="' + id + '" type="text"/></div></div>';
         }
         html += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[103] + '</label><div class="col-md-5"><input class="form-control autofocus" name="network[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[95] + '</label><div class="col-md-5"><select class="selectpicker show-tick form-control" name="network[type]" data-live-search="true" data-style="selectpicker-button">';
+         $.each(network_types, function (key, value) {
+            // Print all network types
+            if(!value.startsWith('pnet') && !value.startsWith('ovs') ){
+                var type_selected = (key == type) ? 'selected ' : '';
+                html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
+            }
+        });
         $.each(network_types, function (key, value) {
             // Print all network types
-            var type_selected = (key == type) ? 'selected ' : '';
-            html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
+            if(value.startsWith('pnet')){
+                value = value.replace('pnet','Cloud')
+				// Custom Management Port for eth0
+				if(value.startsWith('Cloud0'))
+				{
+					value = value.replace('Cloud0','Management')
+				}
+                var type_selected = (key == type) ? 'selected ' : '';
+                html += '<option ' + type_selected + 'value="' + key + '">' + value + '</option>';
+            }
+			
+
         });
-        html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="network[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="network[top]" value="' + top + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form></form>';
+        html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="network[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="network[top]" value="' + top + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form></form>';
 
         // Show the form
         addModal(title, html, '', 'second-win');
@@ -1899,28 +2243,41 @@ function printFormNetwork(action, values) {
 }
 
 // Node form
-function printFormNode(action, values) {
+function printFormNode(action, values, fromNodeList) {
     var id = (values == null || values['id'] == null) ? null : values['id'];
     var left = (values == null || values['left'] == null) ? null : values['left'];
     var top = (values == null || values['top'] == null) ? null : values['top'];
     var template = (values == null || values['template'] == null) ? null : values['template'];
 
     var title = (action == 'add') ? MESSAGES[85] : MESSAGES[86];
-    var template_disabled = (values == null || values['template'] == null) ? '' : 'disabled ';
+    var template_disabled = (values == null || values['template'] == null ) ? '' : 'disabled ';
 
     $.when(getTemplates(null)).done(function (templates) {
         var html = '';
-        html += '<form id="form-node-' + action + '" class="form-horizontal"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[84] + '</label><div class="col-md-5"><select id="form-node-template" class="selectpicker form-control" name="node[template]" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[102] + '</option>';
+        html += '<form id="form-node-' + action + '" >'+
+                    '<div class="form-group col-sm-12">'+
+                        '<label class="control-label">' + MESSAGES[84] + '</label>' +
+                            '<select id="form-node-template" class="selectpicker form-control" name="node[template]" data-live-search="true" data-size="auto" data-style="selectpicker-button">'+
+                                '<option value="">' + MESSAGES[102] + '</option>';
         $.each(templates, function (key, value) {
+        var valdisabled  = (/missing/i.test(value)) ? 'disabled="disabled"' : '';
+        //var valdisabled  = '' ;
             // Adding all templates
-            html += '<option value="' + key + '">' + value + '</option>';
+            html += '<option value="' + key + '" '+ valdisabled +' >' + value.replace('.missing','') + '</option>';
         });
-        html += '</select></div></div><div id="form-node-data"></div><div id="form-node-buttons"></div></form>';
+        html += '</select></div><div id="form-node-data"></div><div id="form-node-buttons"></div></form>';
 
         // Show the form
         addModal(title, html, '', 'second-win');
         $('.selectpicker').selectpicker();
-
+        if(!fromNodeList){
+            $('.selectpicker-button').trigger('click');
+            $('.selectpicker').selectpicker();
+            setTimeout(function(){
+                $('.bs-searchbox input').focus()
+            }, 500);
+        }
+        
         $('#form-node-template').change(function (e2) {
             id = (id == '') ? null : id;    // Ugly fix for change template after selection
             template = $(this).find("option:selected").val();
@@ -1932,37 +2289,76 @@ function printFormNode(action, values) {
                     var html_data = '<input name="node[type]" value="' + template_values['type'] + '" type="hidden"/>';
                     if (action == 'add') {
                         // If action == add -> print the nework count input
-                        html_data += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[113] + '</label><div class="col-md-5"><input class="form-control" name="node[count]" value="1" type="text"/></div></div>';
+                        html_data += '<div class="form-group col-sm-5"><label class=" control-label">' + MESSAGES[113] + '</label>'+
+                                        '<input class="form-control" name="node[count]" max=50 value="1" type="text"/>'+
+                                     '</div>';
                     } else {
                         // If action == edit -> print the network ID
-                        html_data += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[92] + '</label><div class="col-md-5"><input class="form-control" disabled name="node[id]" value="' + id + '" type="text"/></div></div>';
+                        html_data += '<div class="form-group col-sm-12">'+
+                                        '<label class="control-label">' + MESSAGES[92] + '</label>'+
+                                        '<input class="form-control" disabled name="node[id]" value="' + id + '" type="text"/>'+
+                                     '</div>';
                     }
+
+                    var bothRam = template_values['options'].hasOwnProperty('ram') && template_values['options'].hasOwnProperty('nvram')
+                    var bothConnTypes = template_values['options'].hasOwnProperty('ethernet') && template_values['options'].hasOwnProperty('serial')
+
                     $.each(template_values['options'], function (key, value) {
                         // Print all options from template
                         var value_set = (node_values != null && node_values[key] != null) ? node_values[key] : value['value'];
                         if (value['type'] == 'list') {
                             // Option is a list
-                            html_data += '<div class="form-group"><label class="col-md-3 control-label">' + value['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="node[' + key + ']" data-style="selectpicker-button">';
+                            var widthClass = ' col-sm-12 '
+                            if(key == 'image' && action == 'add') widthClass = ' col-sm-7'
+                            if (key.startsWith('slot')) widthClass = ' col-sm-6 '
+                            html_data += '<div class="form-group '+widthClass+'">'+
+                                            '<label class=" control-label">' + value['name'] + '</label>'+
+                                            '<select class="selectpicker form-control" name="node[' + key + ']" data-size="5" data-style="selectpicker-button">';
                             $.each(value['list'], function (list_key, list_value) {
                                 var selected = (list_key == value_set) ? 'selected ' : '';
-                                html_data += '<option ' + selected + 'value="' + list_key + '">' + list_value + '</option>';
+                                    iconselect = '' ;
+                                if ( key == "icon" ) { iconselect = 'data-content="<img src=\'/images/icons/'+list_value+'\' height=15 width=15>&nbsp;&nbsp;&nbsp;'+list_value+'"' }; 
+                                html_data += '<option ' + selected + 'value="' + list_key + '" '+ iconselect +'>' + list_value + '</option>';
                             });
-                            html_data += '</select></div>';
+                            html_data += '</select>';
                             html_data += '</div>';
                         } else {
                             // Option is standard
-                            html_data += '<div class="form-group"><label class="col-md-3 control-label">' + value['name'] + '</label><div class="col-md-5"><input class="form-control' + ((key == 'name') ? ' autofocus' : '') + '" name="node[' + key + ']" value="' + value_set + '" type="text"/></div></div>';
+                            var widthClass = ' col-sm-12 '
+                            if (!bothRam && template_values['options'].hasOwnProperty('cpu') && 
+                                template_values['options'].hasOwnProperty('ethernet') &&
+                                template_values['options'].hasOwnProperty('ram')){
+                                if (key == 'ram' || key == 'ethernet' || key == 'cpu') widthClass = ' col-sm-4 '
+                            } else if (key == 'ram' || key == 'nvram') widthClass = ' col-sm-6 '
+                            if (bothConnTypes && (key == 'ethernet' || key == 'serial')) widthClass = ' col-sm-6 '
+                            
+                            html_data += '<div class="form-group'+ widthClass +'">'+
+                                            '<label class=" control-label">' + value['name'] + '</label>'+
+                                            '<input class="form-control' + ((key == 'name') ? ' autofocus' : '') + '" name="node[' + key + ']" value="' + value_set + '" type="text"/>'+
+                                         '</div>';
                         }
                     });
-                    html_data += '<div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[93] + '</label><div class="col-md-5"><input class="form-control" name="node[left]" value="' + left + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[94] + '</label><div class="col-md-5"><input class="form-control" name="node[top]" value="' + top + '" type="text"/></div></div>';
+                    html_data += '<div class="form-group col-sm-6">'+
+                                    '<label class=" control-label">' + MESSAGES[93] + '</label>'+
+                                    '<input class="form-control" name="node[left]" value="' + left + '" type="text"/>'+
+                                 '</div>'+
+                                 '<div class="form-group col-sm-6">'+
+                                    '<label class=" control-label">' + MESSAGES[94] + '</label>'+
+                                    '<input class="form-control" name="node[top]" value="' + top + '" type="text"/>'+
+                                 '</div>';
 
                     // Show the buttons
-                    $('#form-node-buttons').html('<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div>');
+                    $('#form-node-buttons').html('<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div>');
 
                     // Show the form
                     $('#form-node-data').html(html_data);
                     $('.selectpicker').selectpicker();
-                    $('.autofocus').focus();
+                    if(!fromNodeList){
+                        console.log("show2")
+                        setTimeout(function(){
+                            $('.selectpicker').selectpicker().data("selectpicker").$button.focus();
+                        }, 500);
+                    }
                     validateNode();
                 }).fail(function (message1, message2) {
                     // Cannot get data
@@ -1978,8 +2374,9 @@ function printFormNode(action, values) {
 
         if (action == 'edit') {
             // If editing a node, disable the select and trigger
-            $('#form-node-template').prop('disabled', 'disabled');
             $('#form-node-template').val(template).change();
+            $('#form-node-template').prop('disabled', 'disabled');
+            //$('#form-node-template').val(template).change();
         }
 
     }).fail(function (message) {
@@ -1991,10 +2388,10 @@ function printFormNode(action, values) {
 // Node config
 function printFormNodeConfigs(values, cb) {
     var title = values['name'] + ': ' + MESSAGES[123];
-    if (ROLE == 'admin' || ROLE == 'editor') {
-        var html = '<form id="form-node-config" class="form-horizontal"><input name="config[id]" value="' + values['id'] + '" type="hidden"/><div class="form-group"><div class="col-md-12"><textarea class="form-control autofocus" id="nodeconfig" name="config[data]" rows="15"></textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+    if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
+        var html = '<form id="form-node-config" class="form-horizontal"><input name="config[id]" value="' + values['id'] + '" type="hidden"/><div class="form-group"><div class="col-md-12"><textarea class="form-control autofocus" id="nodeconfig" name="config[data]" rows="500"></textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
     } else {
-        var html = '<div class="col-md-12"><pre>' + values['data'] + '</pre></div>';
+        var html = '<div class="col-md-12"><pre style="max-height: calc(90vh - 120px)!important;">' + values['data'] + '</pre></div>';
     }
     $('#config-data').html(html);
     $('#nodeconfig').val(values['data']);
@@ -2048,15 +2445,14 @@ function printFormCustomShape(values) {
         '<input type="color" class="form-control shape_background_color">' +
         '</div>' +
         '</div> <br>' +
-        '<button type="submit" class="btn btn-aqua col-md-offset-1">' + MESSAGES[47] + '</button>' +
-        '<button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+        '<button type="submit" class="btn btn-success col-md-offset-1">' + MESSAGES[47] + '</button>' +
+        '<button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
         '</div>' +
         '<input  type="text" class="hide left-coordinate" value="' + left + '">' +
         '<input  type="text" class="hide top-coordinate" value="' + top + '">' +
         '</form>';
 
     addModal("ADD CUSTOM SHAPE", html, '');
-
     $('.custom-shape-form .shape_background_color').val('#ffffff');
 
     for (var i = 0; i < shapeTypes.length; i++) {
@@ -2065,6 +2461,18 @@ function printFormCustomShape(values) {
 
     for (var j = 0; j < borderTypes.length; j++) {
         $('.border-type-select').append($('<option></option>').val(borderTypes[j]).html(borderTypes[j]));
+    }
+
+    if(isIE){
+        $('input[type="color"]').hide()
+        $('input.shape_border_color').colorpicker({
+            color: "#000000",
+            defaultPalette: 'web'
+        })
+        $('input.shape_background_color').colorpicker({
+            color: "#ffffff",
+            defaultPalette: 'web'
+        })
     }
 
 };
@@ -2110,8 +2518,8 @@ function printFormText(values) {
         '<input type="color" class="form-control text_background_color">' +
         '</div>' +
         '</div> <br>' +
-         '<button type="submit" class="btn btn-aqua col-md-offset-1">' + MESSAGES[47] + '</button>' +
-        '<button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+         '<button type="submit" class="btn btn-success col-md-offset-1">' + MESSAGES[47] + '</button>' +
+        '<button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
         '</div>' +
         '<input  type="text" class="hide left-coordinate" value="' + left + '">' +
         '<input  type="text" class="hide top-coordinate" value="' + top + '">' +
@@ -2123,6 +2531,17 @@ function printFormText(values) {
 
     for (var i = 0; i < fontStyles.length; i++) {
         $('.text-font-style-select').append($('<option></option>').val(fontStyles[i]).html(fontStyles[i]));
+    }
+    if(isIE){
+        $('input[type="color"]').hide()
+        $('input.shape_border_color').colorpicker({
+            color: "#000000",
+            defaultPalette: 'web'
+        })
+        $('input.shape_background_color').colorpicker({
+            color: "#ffffff",
+            defaultPalette: 'web'
+        })
     }
 };
 
@@ -2141,6 +2560,7 @@ function saveLab(form) {
     var url = '/api/labs' + lab_filename + '/configs/' + form_data['id'];
     var type = 'PUT';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -2158,7 +2578,7 @@ function saveLab(form) {
             } else {
                 // Application error
                 logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
-                addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
             }
         },
         error: function (data) {
@@ -2166,7 +2586,7 @@ function saveLab(form) {
             var message = getJsonMessage(data['responseText']);
             logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
             logger(1, 'DEBUG: ' + message);
-            addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+            addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
         }
     });
     return false;  // Stop to avoid POST
@@ -2174,6 +2594,7 @@ function saveLab(form) {
 
 // Node interfaces
 function printFormNodeInterfaces(values) {
+    var disabled = values['node_status'] == 2 ? ' disabled="disabled" ' : "";
     $.when(getLabLinks()).done(function (links) {
         var html = '<form id="form-node-connect" class="form-horizontal">';
         html += '<input name="node_id" value="' + values['node_id'] + '" type="hidden"/>';
@@ -2184,7 +2605,7 @@ function printFormNodeInterfaces(values) {
             $.each(values['ethernet'], function (interfc_id, interfc) {
                 var x = interfc_id % 16;
                 var y = (interfc_id - x) / 16;
-                iol_interfc[4 * x + y] = '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
+                iol_interfc[4 * x + y] = '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select ' + disabled + ' class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
                 $.each(links['ethernet'], function (link_id, link) {
                     var link_selected = (interfc['network_id'] == link_id) ? 'selected ' : '';
                     iol_interfc[4 * x + y] += '<option ' + link_selected + 'value="' + link_id + '">' + link + '</option>';
@@ -2196,7 +2617,7 @@ function printFormNodeInterfaces(values) {
             });
         } else {
             $.each(values['ethernet'], function (interfc_id, interfc) {
-                html += '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
+                html += '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select ' + disabled + ' class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
                 $.each(links['ethernet'], function (link_id, link) {
                     var link_selected = (interfc['network_id'] == link_id) ? 'selected ' : '';
                     html += '<option ' + link_selected + 'value="' + link_id + '">' + link + '</option>';
@@ -2211,7 +2632,7 @@ function printFormNodeInterfaces(values) {
             $.each(values['serial'], function (interfc_id, interfc) {
                 var x = interfc_id % 16;
                 var y = (interfc_id - x) / 16;
-                iol_interfc[4 * x + y] = '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
+                iol_interfc[4 * x + y] = '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select ' + disabled + ' class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
                 $.each(links['serial'], function (node_id, serial_link) {
                     if (values['node_id'] != node_id) {
                         $.each(serial_link, function (link_id, link) {
@@ -2227,7 +2648,7 @@ function printFormNodeInterfaces(values) {
             });
         } else {
             $.each(values['serial'], function (interfc_id, interfc) {
-                html += '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
+                html += '<div class="form-group"><label class="col-md-3 control-label">' + interfc['name'] + '</label><div class="col-md-5"><select ' + disabled + ' class="selectpicker form-control" name="interfc[' + interfc_id + ']" data-live-search="true" data-style="selectpicker-button"><option value="">' + MESSAGES[117] + '</option>';
                 $.each(links['serial'], function (node_id, serial_link) {
                     if (values['node_id'] != node_id) {
                         $.each(serial_link, function (link_id, link) {
@@ -2240,7 +2661,7 @@ function printFormNodeInterfaces(values) {
             });
         }
 
-        html += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        html += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button ' + disabled + ' type="submit" class="btn btn-success">' + MESSAGES[47] + '</button> <button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
 
         addModal(values['node_name'] + ': ' + MESSAGES[116], html, '', 'second-win');
         $('.selectpicker').selectpicker();
@@ -2255,32 +2676,39 @@ function printPictureInForm(id) {
     var picture_id = id;
     var picture_url = '/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + picture_id + '/data';
 
-    $.when(getPicturesMapped(picture_id)).done(function (picture) {
+    //$.when(getPicturesMapped(picture_id)).done(function (picture) {
+    $.when(getPictures(picture_id)).done(function (picture) {
         var picture_map = picture['map'];
-        picture_map = picture_map.replace(/{{IP}}/g, location.hostname);
-        picture_map = picture_map.replace(/{{(NODE\$?){1}([0-9]+){1}}}/g, function (matchedString, group1, group2, startingPosition, originString) {
-            return parseInt(group2) + 32768 + 128 * TENANT;
-        });
+        picture_map = picture_map.replace(/href='telnet:..{{IP}}:{{NODE([0-9]+)}}/g, function (a,b,c,d,e) { 
+        var nodehref = ''
+        if ( $("#node"+b).length > 0 ) nodehref =  $("#node"+b).find('a')[0].href
+        return "href='"+nodehref
+
+        }) ;
         // Read privileges and set specific actions/elements
+        var sizeClass = FOLLOW_WRAPPER_IMG_STATE == 'resized' ? 'picture-img-autosozed' : ''
+        //var sizeClass = ""
         var body = '<div id="lab_picture">' +
-            '<img usemap="#picture_map" ' +
+            '<img class="' + sizeClass + '" usemap="#picture_map" ' +
             'src="' + picture_url + '" ' +
             'alt="' + picture['name'] + '" ' +
             'title="' + picture['name'] + '" ' +
-            'width="' + picture['width'] + '" ' +
-            'height="' + picture['height'] + '"/>' +
+             //'width="' + picture['width'] + '" ' +
+             //'height="' + picture['height'] + 
+            '/>' +
             '<map name="picture_map">' + picture_map + '</map>' +
             '</div>';
-        if (ROLE == 'admin' || ROLE == 'editor') {
-            var footer = '<button type="button" class="btn btn-aqua action-pictureedit" data-path="' + picture_id + '">Edit</button>';
-        } else {
-            var footer = '';
-        }
+        
+        var footer = '';
+        
         printNodesMap({name: picture['name'], body: body, footer: footer}, function () {
             setTimeout(function () {
-                $('map').imageMapResize();
+               $('map').imageMapResize();
             }, 500);
         });
+        window.lab_picture = jsPlumb.getInstance()
+        lab_picture.setContainer($('#lab_picture'))
+        $('#picslider').slider("value",100)
     }).fail(function (message) {
         addModalError(message);
     });
@@ -2303,7 +2731,7 @@ function displayPictureForm(picture_id) {
         // File (add only)
         form += '<div class="form-group"><label class="col-md-3 control-label">Picture</label><div class="col-md-5"><input type="file" name="picture[file]" value=""/></div></div>';
         // Footer
-        form += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + button + '</button><button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button></div></div></form>';
+        form += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + button + '</button><button type="button" class="btn" data-dismiss="modal">Cancel</button></div></div></form>';
         // Add the form to the HTML page
         // $('#form_frame').html(form);
 
@@ -2340,7 +2768,7 @@ function displayPictureForm(picture_id) {
                     form += '<div class="form-group"><label class="col-md-3 control-label">Map</label><div class="col-md-5"><textarea type="textarea" name="picture[map]">' + picture_map + '</textarea></div></div>';
                     // Footer
                     form += '<input type="hidden" name="picture[id]" value="' + picture_id + '"/>';
-                    form += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + button + '</button> <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button></div></div></form></div></div></div></div>';
+                    form += '<div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + button + '</button> <button type="button" class="btn" data-dismiss="modal">Cancel</button></div></div></form></div></div></div></div>';
                     // Add the form to the HTML page
                     $('#form_frame').html(form);
 
@@ -2391,15 +2819,89 @@ function printFormPicture(action, values) {
         , height = (values['height'] != null) ? values['height'] : ''
         , title = (action == 'add') ? MESSAGES[135] : MESSAGES[137]
         , html = '';
-
-    if (action == 'add') {
-        html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '"><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[137] + '</label><div class="col-md-5"><textarea class="form-control" name="picture[map]">' + map + '</textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        $("#lab_picture").empty()
+        $.when(getPictures(values['id'])).done(function (picture) {
+        var picture_map = values['map'];
+        picture_map = picture_map.replace(/{{IP}}/g, location.hostname);
+    $.when(getNodes(null)).done(function (nodes) {
+        if (action == 'add') {
+            html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '">'+
+                '<div class="form-group">'+
+                    '<label class="col-md-3 control-label">' + MESSAGES[19] + '</label>'+
+                    '<div class="col-md-5">'+
+                        '<input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/>'+
+                    '</div>'+
+                    '</div>'+
+                '<div class="form-group">'+
+                    '<label class="col-md-3 control-label">' + MESSAGES[137] + '</label>'+
+                    '<div class="col-md-5">'+
+                    '<textarea class="form-control" name="picture[map]">' + map + '</textarea></div>'+
+                '</div>'+
+                '</div>' +
+                '<div class="form-group">'+
+                    '<div class="col-md-5 col-md-offset-3">'+
+                    '<button type="submit" class="btn btn-success">' + MESSAGES[47] + '</button>'+
+                    '<button type="button" class="btn" data-dismiss="modal">' + MESSAGES[18] + '</button>'+
+                '</div>'+
+            '</div>'+
+        '</form>';
     } else {
-        html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '" data-path=' + values['id'] + '><div class="follower-wrapper"><img src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '" width="' + values['width'] + '" height="' + values['height'] + '"/><div id="follower"></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[19] + '</label><div class="col-md-5"><input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[137] + '</label><div class="col-md-5"><textarea class="form-control" name="picture[map]">' + map + '</textarea></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + MESSAGES[47] + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
-    }
-    logger(1, 'DEBUG: popping up the picture form.');
-    addModalWide(title, html, '', 'second-win modal-ultra-wide');
-    validateLabInfo();
+            //var sizeClass = FOLLOW_WRAPPER_IMG_STATE == 'resized' ? 'picture-img-autosozed' : ''
+            var sizeClass = 'resized' 
+            html += '<form id="form-picture-' + action + '" class="form-horizontal form-lab-' + action + '" data-path=' + values['id'] + '>'+
+                '<div class="follower-wrapper">'+
+                    '<img class="' + sizeClass + '" src="/api/labs' + $('#lab-viewport').attr('data-path') + '/pictures/' + values['id'] + '/data" alt="' + values['name'] + '" width-val="'+values['width'] + '" height-val="' + values['height'] +'"/>'+
+                    '<div id="follower">'+
+                    '<map name="picture_map">' + picture_map + '</map>' +
+                    '</div>'+
+                '</div>'+
+                '<div class="form-group">'+
+                    '<label class="col-md-3 control-label">' + MESSAGES[19] + '</label>'+
+                    '<div class="col-md-5">'+
+                        '<input class="form-control" autofocus name="picture[name]" value="' + name + '" type="text"/>'+
+                    '</div>'+
+                '</div>'+
+                '<div class="form-group">'+
+                    '<label class="col-md-3 control-label">' + MESSAGES[62] + '</label>'+
+                    '<div class="col-md-5">'+
+                        '<select class="form-control" id="map_nodeid">';
+                        $.each(nodes, function (key, value) {
+                            html += '<option value="'+key+'">' + value.name + ', NODE ' +   key + '</option>';
+                        });
+                    html += '<option value="CUSTOM"> CUSTOM , NODE outside lab</option>';
+                    html += '</select>' +
+                    '</div>'+
+                '</div>'+
+                '<div class="form-group">'+
+                    '<label class="col-md-3 control-label">'+ MESSAGES[137] + '</label>'+
+                    '<div class="col-md-5">'+
+                        '<textarea class="form-control" name="picture[map]">'+ map + '</textarea>'+
+                    '</div>'+
+                '</div>'+
+                '<div class="form-group">'+
+                    '<div class="col-md-5 col-md-offset-3">'+
+                        '<button type="submit" class="btn btn-success">'+ MESSAGES[47] + '</button>'+
+                        '<button type="button" class="btn" data-dismiss="modal">'+ MESSAGES[18] + '</button>'+
+                    '</div>'+
+                '</div>'+
+            '</form>';
+
+        }
+        logger(1, 'DEBUG: popping up the picture form.');
+        addModalWide(title, html, '', 'second-win modal-ultra-wide');
+        var htmlsvg = "" ;
+        $.each( $('area') , function ( key, area ) {
+        //alert ( area.coords )
+        var cX = area.coords.split(",")[0] - 30
+        var cY = area.coords.split(",")[1] - 30
+        //alert(cX + " " + cY )
+        htmlsvg = '<div class="map_mark" id="'+area.coords+'" style="position:absolute;top:'+cY+'px;left:'+cX+'px;width:60px;height:60px;"><svg width="60" height="60"><g><ellipse cx="30" cy="30" rx="28" ry="28" stroke="#000000" stroke-width="2" fill="#ffffff"></ellipse><text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" stroke="#000000" stroke-width="0px" dy=".2em" font-size="12" >'+area.href.replace(/.*{{NODE/g, "NODE ").replace(/}}/g, "").replace(/.*:.*/,"CUSTOM")+'</text></g></svg></div>'
+        $(".follower-wrapper").append(htmlsvg)
+        }); 
+        
+        validateLabInfo();
+    });
+    }); 
 }
 
 // User form
@@ -2421,7 +2923,7 @@ function printFormUser(action, values) {
             var role_selected = (role == key) ? 'selected ' : '';
             html += '<option ' + role_selected + 'value="' + key + '">' + value + '</option>';
         });
-        html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[30] + '</label><div class="col-md-5"><input class="form-control expiration" name="user[expiration]" value="' + expiration + '" type="text"/></div></div><h4>' + MESSAGES[46] + '</h4><div class="form-group"><label class="col-md-3 control-label">POD</label><div class="col-md-5"><input class="form-control pod" name="user[pod]" value="' + pod + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[30] + '</label><div class="col-md-5"><input class="form-control expiration pod" name="user[pexpiration]" value="' + pexpiration + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-aqua">' + submit + '</button> <button type="button" class="btn btn-grey" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
+        html += '</select></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[30] + '</label><div class="col-md-5"><input class="form-control expiration" name="user[expiration]" value="' + expiration + '" type="text"/></div></div><h4>' + MESSAGES[46] + '</h4><div class="form-group"><label class="col-md-3 control-label">POD</label><div class="col-md-5"><input class="form-control pod" name="user[pod]" value="' + pod + '" type="text"/></div></div><div class="form-group"><label class="col-md-3 control-label">' + MESSAGES[30] + '</label><div class="col-md-5"><input class="form-control expiration pod" name="user[pexpiration]" value="' + pexpiration + '" type="text"/></div></div><div class="form-group"><div class="col-md-5 col-md-offset-3"><button type="submit" class="btn btn-success">' + submit + '</button> <button type="button" class="btn btn-flat" data-dismiss="modal">' + MESSAGES[18] + '</button></div></div></form>';
         addModal(title, html, '');
         if (ROLE == "user") {
             $("#form-user-edit input,#form-user-edit select").prop("disabled", true)
@@ -2463,9 +2965,9 @@ function printLabPreview(lab_filename) {
         if (lab['description'] != null) {
             html += '<p>' + lab['description'] + '</p>';
         }
-        html += '<button class="action-labopen btn btn-aqua" type="button" data-path="' + lab_filename + '">' + MESSAGES[22] + '</button> ';
+        html += '<button class="action-labopen btn btn-flat" type="button" data-path="' + lab_filename + '">' + MESSAGES[22] + '</button> ';
         if (ROLE != "user")
-            html += '<button class="action-labedit-inline btn btn-aqua" type="button" data-path="' + lab_filename + '">Edit</button>';
+            html += '<button class="action-labedit-inline btn btn-flat" type="button" data-path="' + lab_filename + '">Edit</button>';
         $('#list-title-info span').html(lab['filename'].replace(/\\/g, '/').replace(/.*\//, ''));
         $('#list-info').html(html);
     }).fail(function (message) {
@@ -2473,8 +2975,39 @@ function printLabPreview(lab_filename) {
     });
 }
 
+// Drag jsPlumb helpers
+// Jquery-ui freeselect
+
+
+function updateFreeSelect ( e , ui ) {
+    if ( $('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting').length > 0 ) {
+        $('#lab-viewport').addClass('freeSelectMode')
+    }
+    window.freeSelectedNodes = []
+         if ( LOCK == 0 && ( ROLE == 'admin' || ROLE == 'editor' )) {  
+            $.when ( lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false) ).done ( function () {
+               $.when( lab_topology.clearDragSelection() ).done(  function () {
+                    lab_topology.setDraggable($('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting'),true)
+                    lab_topology.addToDragSelection($('.node_frame.ui-selected, node_frame.ui-selecting, .network_frame.ui-selected,.network_ui-selecting, .customShape.ui-selected, .customShape.ui-selecting'))
+              });
+        
+            });
+         } else {
+            $('.customShape.ui-selected, .customShape.ui-selecting').removeClass('ui-selecting').removeClass('ui-selected')
+         }
+    $('.free-selected').removeClass('free-selected')
+    $('.node_frame.ui-selected, node_frame.ui-selecting').addClass('free-selected')
+    $('.node_frame.ui-selected, .node_frame.ui-selecting').each(function() {
+         window.freeSelectedNodes.push({ name: $(this).data("name") , path: $(this).data("path") , type: 'node'  });
+         
+    });
+}
+
+
 // Print lab topology
 function printLabTopology() {
+    var defer  = $.Deferred();
+    $('#lab-viewport').selectable({stop: function ( event, ui ) { updateFreeSelect ( event, ui ) }, distance: 1});
     var lab_filename = $('#lab-viewport').attr('data-path')
         , $labViewport = $('#lab-viewport')
         , loadingLabHtml = '' +
@@ -2494,7 +3027,7 @@ function printLabTopology() {
         ;
 
     if ($labViewport.data("refreshing")) {
-        return;
+        return ;
     }
     $labViewport.empty();
     $labViewport.data('refreshing', true);
@@ -2506,8 +3039,9 @@ function printLabTopology() {
         getNetworks(null),
         getNodes(null),
         getTopology(),
-        getTextObjects()
-    ).done(function (networks, nodes, topology, textObjects) {
+        getTextObjects(),
+    getLabInfo(lab_filename)
+    ).done(function (networks, nodes, topology, textObjects, labinfo) {
 
 
         var networkImgs = []
@@ -2522,24 +3056,24 @@ function printLabTopology() {
             var icon;
             var unusedClass='';
 
-            if (value['type'] == 'bridge') {
+            if (value['type'] == 'bridge' || value['type'] == 'ovs' ) {
                 icon = 'lan.png';
-                unusedClass = ' unused ';
-            } else if (value['type'] == 'ovs') {
-                icon = 'lan.png';
-
             } else {
                 icon = 'cloud.png';
             }
+            if (value['visibility'] == 0 )  unusedClass=' unused ' 
 
 
             $labViewport.append(
                 '<div id="network' + value['id'] + '" ' +
-                'class="context-menu network network' + value['id'] + ' network_frame '+unusedClass+' " ' +
+                'class="context-menu  network network' + value['id'] + ' network_frame '+unusedClass+' " ' +
                 'style="top: ' + value['top'] + 'px; left: ' + value['left'] + 'px" ' +
                 'data-path="' + value['id'] + '" ' +
                 'data-name="' + value['name'] + '">' +
                 '<div class="network_name">' + value['name'] + '</div>' +
+                '<div class="tag  hidden" title="Connect to another node">'+
+                '<i class="fa fa-plug plug-icon dropdown-toggle ep"></i>'+
+                '</div>'+
                 '</div>');
 
             networkImgs.push($.Deferred(function (defer) {
@@ -2574,16 +3108,18 @@ function printLabTopology() {
             }
             $labViewport.append(
                 '<div id="node' + value['id'] + '" ' +
-                'class="context-menu node node' + value['id'] + ' node_frame" ' +
+                'class="context-menu node node' + value['id'] + ' node_frame "' +
                 'style="top: ' + value['top'] + 'px; left: ' + value['left'] + 'px;" ' +
                 'data-path="' + value['id'] + '" ' +
                 'data-status="' + value['status'] + '" ' +
                 'data-name="' + value['name'] + '">' +
+                '<div class="tag  hidden" title="Connect to another node">'+
+                '<i class="fa fa-plug plug-icon dropdown-toggle ep"></i>'+
+                '</div>'+
                 hrefbuf +
                 '</a>' +
                 '<div class="node_name"><i class="node' + value['id'] + '_status"></i> ' + value['name'] + '</div>' +
                 '</div>');
-
             nodesImgs.push($.Deferred(function (defer) {
                 var img = new Image();
 
@@ -2593,7 +3129,14 @@ function printLabTopology() {
 
                 img.src = "/images/icons/" + value['icon'];
 
+                if(value['status'] == 0) img.className = 'grayscale';
+
                 $(img).appendTo("#node" + value['id'] + " a");
+
+                // need the presence of images in the DOM
+                if(isIE && value['status'] == 0){
+                    addIEGrayscaleWrapper($(img))
+                }
 
                 function resolve(image) {
                     img.onload = null;
@@ -2605,14 +3148,12 @@ function printLabTopology() {
 
             $(".progress-bar").css("width", ++progressbarValue / progressbarMax * 100 + "%");
         });
-
+        // In bad situation resolving textobject will save our soul ;-)
+        setTimeout( checkDeferred =  ( labTextObjectsResolver.state() == 'pending' ? true :  labTextObjectsResolver.resolve()  ) , 10000 )
         //add shapes from server to viewport
         $.each(textObjects, function (key, value) {
             getTextObject(value['id']).done(function (textObject) {
                 $(".progress-bar").css("width", ++progressbarValue / progressbarMax * 100 + "%");
-                if (--textObjectsCount === 0) {
-                    labTextObjectsResolver.resolve();
-                }
 
                 var $newTextObject = $(textObject['data']);
 
@@ -2622,11 +3163,9 @@ function printLabTopology() {
                     $labViewport.prepend($newTextObject);
 
                     $newTextObject
-                        .draggable({
-                            stop: textObjectDragStop
-                        })
                         .resizable().resizable("destroy")
                         .resizable({
+                grid:[3,3],
                             autoHide: true,
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
@@ -2640,11 +3179,9 @@ function printLabTopology() {
                     $labViewport.prepend($newTextObject);
 
                     $newTextObject
-                        .draggable({
-                            stop: textObjectDragStop
-                        })
                         .resizable().resizable('destroy')
                         .resizable({
+                grid:[3,3],
                             autoHide: true,
                             resize: function (event, ui) {
                                 textObjectResize(event, ui, {"shape_border_width": 5});
@@ -2655,6 +3192,14 @@ function printLabTopology() {
                 else {
                     return void 0;
                 }
+                // Finally clean old class saved by error or bug
+               $newTextObject.removeClass('ui-selected'); 
+               $newTextObject.removeClass('move-selected'); 
+               $newTextObject.removeClass('dragstopped'); 
+               if ( labinfo['lock'] == 1 ) $newTextObject.resizable("disable")
+                if (--textObjectsCount === 0) {
+                    labTextObjectsResolver.resolve();
+                }
             }).fail(function () {
                 logger(1, 'DEBUG: Failed to load Text Object' + value['name'] + '!');
             });
@@ -2662,34 +3207,79 @@ function printLabTopology() {
         if (Object.keys(textObjects).length === 0) {
             labTextObjectsResolver.resolve();
         }
-
         $.when.apply($, networkImgs.concat(nodesImgs)).done(function () {
             // Drawing topology
             jsPlumb.ready(function () {
-                // Defaults
-                jsPlumb.importDefaults({
-                    Anchor: 'Continuous',
-                    Connector: ['Straight'],
-                    Endpoint: 'Blank',
-                    PaintStyle: {lineWidth: 2, strokeStyle: '#58585a'},
-                    cssClass: 'link'
-                });
 
                 // Create jsPlumb topology
-                var lab_topology = jsPlumb.getInstance();
+                try { window.lab_topology.reset() } catch (ex) { window.lab_topology = jsPlumb.getInstance() };
+                window.moveCount = 0
                 lab_topology.setContainer($("#lab-viewport"));
                 lab_topology.importDefaults({
                     Anchor: 'Continuous',
                     Connector: ['Straight'],
                     Endpoint: 'Blank',
-                    PaintStyle: {lineWidth: 2, strokeStyle: '#58585a'},
+                    PaintStyle: {lineWidth: 2, strokeStyle: '#c00001'},
                     cssClass: 'link'
                 });
-
                 // Read privileges and set specific actions/elements
-                if (ROLE == 'admin' || ROLE == 'editor') {
-                    // Nodes and networks are draggable within a grid
-                    lab_topology.draggable($('.node_frame, .network_frame'), {grid: [10, 10]});
+               
+                if ((ROLE == 'admin' || ROLE == 'editor') && labinfo['lock'] == 0 )  {
+                    dragDeferred = $.Deferred()
+                    $.when ( labTextObjectsResolver ).done ( function () {
+                        logger(1,'DEBUG: '+ textObjectsCount+ ' Shape(s) left');
+                        lab_topology.draggable($('.node_frame, .network_frame, .customShape' ), {
+                           containment: true,
+                           grid: [3, 3],
+                           stop: function ( e, ui) {
+                                    ObjectPosUpdate(e,ui)
+                           }
+                        });
+                        dragDeferred.resolve();
+                    });
+                  
+                    // Node as source or dest link
+                     $.when( dragDeferred ).done( function () {
+                     $.each(nodes, function (key,value) {
+                           lab_topology.makeSource('node' + value['id'], {
+                                filter: ".ep",
+                                Anchor:"Continuous",
+                                extract:{
+                                    "action":"the-action"
+                                },
+                                maxConnections: 30,
+                                onMaxConnections: function (info, e) {
+                                    alert("Maximum connections (" + info.maxConnections + ") reached");
+                                }
+                           });
+
+                          lab_topology.makeTarget( $('#node' + value['id']), {
+                                dropOptions: { hoverClass: "dragHover" },
+                                anchor: "Continuous",
+                                allowLoopback: false
+                          });
+                    });
+                    $.each(networks, function (key,value) {
+                           if ( value['visibility'] == 1 ) lab_topology.makeSource('network' + value['id'], {
+                                filter: ".ep",
+                                Anchor:"Continuous",
+                                connectionType:"basic",
+                                extract:{
+                                    "action":"the-action"
+                                },
+                                maxConnections: 30,
+                                onMaxConnections: function (info, e) {
+                                    alert("Maximum connections (" + info.maxConnections + ") reached");
+                                }
+                           });
+
+                          if ( value['visibility'] == 1 ) lab_topology.makeTarget($('#network' + value['id']), {
+                                dropOptions: { hoverClass: "dragHover" },
+                                anchor: "Continuous",
+                                allowLoopback: false
+                          });
+                    });
+                    });
                 }
 
                 $.each(topology, function (id, link) {
@@ -2721,13 +3311,25 @@ function printLabTopology() {
                             dst_label.push(Object());
                         }
 
-                     
-                        lab_topology.connect({
+                                 
+                        var tmp_conn = lab_topology.connect({
                             source: source,       // Must attach to the IMG's parent or not printed correctly
                             target: destination,  // Must attach to the IMG's parent or not printed correctly
                             cssClass: source + ' ' + destination + ' frame_ethernet',
+                            paintStyle: {lineWidth: 2, strokeStyle: '#0066aa'},
                             overlays: [src_label, dst_label]
                         });
+                        if (destination.substr(0, 7) == 'network') {
+                              $.when( getNodeInterfaces(source.replace('node',''))).done( function ( ifaces ) {
+                                  for ( ikey in ifaces['ethernet'] ) { 
+                                      if ( ifaces['ethernet'][ikey]['name'] == source_label ) {
+                                         tmp_conn.id = 'iface:'+source+":"+ikey
+                                      }
+                                  }
+                              });
+                        } else {
+                              tmp_conn.id = 'network_id:'+link['network_id']
+                        }
                     } else {
                         src_label.push({
                             label: source_label,
@@ -2739,40 +3341,67 @@ function printLabTopology() {
                             location: 0.85,
                             cssClass: 'node_interface ' + source + ' ' + destination
                         });
-
-                        lab_topology.connect({
+                        var tmp_conn = lab_topology.connect({
                             source: source,       // Must attach to the IMG's parent or not printed correctly
                             target: destination,  // Must attach to the IMG's parent or not printed correctly
                             cssClass: source + " " + destination + ' frame_serial',
                             paintStyle: {lineWidth: 2, strokeStyle: "#ffcc00"},
                             overlays: [src_label, dst_label]
                         });
+                        $.when( getNodeInterfaces(source.replace('node',''))).done( function ( ifaces ) {
+                             for ( ikey in ifaces['serial'] ) {
+                                    if ( ifaces['serial'][ikey]['name'] == source_label ) {
+                                        tmp_conn.id = 'iface:'+source+':'+ikey
+                                    }
+                             }
+                        });
                     }
-
                     // If destination is a network, remove the 'unused' class
                     if (destination.substr(0, 7) == 'network') {
                         $('.' + destination).removeClass('unused');
                     }
 
-
                 });
+
+        printLabStatus();
 
                 // Remove unused elements
                 $('.unused').remove();
 
-                printLabStatus();
 
                 // Move elements under the topology node
-                $('._jsPlumb_connector, ._jsPlumb_overlay, ._jsPlumb_endpoint_anchor_').detach().appendTo('#lab-viewport');
+                //$('._jsPlumb_connector, ._jsPlumb_overlay, ._jsPlumb_endpoint_anchor_').detach().appendTo('#lab-viewport');
+                // if lock then freeze node network
+                if ( labinfo['lock'] == 1 ) {
+                                window.LOCK = 1 ;
+                                //alert("lock it ")
+                                defer.resolve();
+                               // if (ROLE == 'admin' || ROLE == 'editor' ) {
+                               //      lab_topology.setDraggable($('customShape, .node_frame, .network_frame'), false );
+                               //}
+                               $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
+                               $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
+                            
+                }
+                defer.resolve(LOCK);
                 $labViewport.data('refreshing', false);
                 labNodesResolver.resolve();
-            });
+                lab_topology.bind("connection", function (info , oe ) {
+                       newConnModal(info , oe);
+                });
+                // Bind contextmenu to connections
+                lab_topology.bind("contextmenu", function (info) {
+                       connContextMenu (info);
+                });
+           });
         }).fail(function () {
             logger(1, "DEBUG: not all images of networks or nodes loaded");
             $('#lab-viewport').data('refreshing', false);
             labNodesResolver.reject();
             labTextObjectsResolver.reject();
         });
+
+    
     }).fail(function (message1, message2, message3) {
         if (message1 != null) {
             addModalError(message1);
@@ -2784,20 +3413,20 @@ function printLabTopology() {
         $('#lab-viewport').data('refreshing', false);
         labNodesResolver.reject();
         labTextObjectsResolver.reject();
+        $.when(closeLab()).done(function () {
+          newUIreturn();
+        }).fail(function (message) {
+          addModalError(message);
+        });
     });
-
 
     $.when(labNodesResolver, labTextObjectsResolver).done(function () {
 
-        return $.when(deleteSingleNetworks()).done(function(){
+        $.when(deleteSingleNetworks()).done(function(){
+            //lab_topology.repaintEverything()
+            //lab_topology.repaintEverything()
             $("#loading-lab").remove();
             $("#lab-sidebar *").show();
-
-
-            var active = localStorage.getItem('action-nodelink');
-
-           $('.action-nodelink').toggleClass('active',(active=='true'));
-
         })
 
     }).fail(function (message1, message2) {
@@ -2810,32 +3439,40 @@ function printLabTopology() {
         $("#lab-sidebar ul").show();
         $("#lab-sidebar ul li:lt(11)").hide();
     });
-
-
+      return defer.promise() ;
 
 }
 
 // Display lab status
 function printLabStatus() {
-    logger(1, 'DEBUG: updating node status');
+    // logger(1, 'DEBUG: updating node status');
     $.when(getNodes(null)).done(function (nodes) {
         $.each(nodes, function (node_id, node) {
             if (node['status'] == 0) {
                 // Stopped
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-stop');
-
+                $('#node' + node['id'] + ' img').addClass('grayscale')
+                if(isIE) toogleIEGrayscle($('#node' + node['id'] + ' img'), true);
             } else if (node['status'] == 1) {
                 // Stopped and locked
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-warning-sign');
+                $('#node' + node['id'] + ' img').addClass('grayscale')
+                if(isIE) toogleIEGrayscle($('#node' + node['id'] + ' img'), true);
             } else if (node['status'] == 2) {
                 // Running
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-play');
+                $('#node' + node['id'] + ' img').removeClass('grayscale')
+                if(isIE) toogleIEGrayscle($('#node' + node['id'] + ' img'), false);
             } else if (node['status'] == 3) {
                 // Running and locked
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-time');
+                $('#node' + node['id'] + ' img').removeClass('grayscale')
+                if(isIE) toogleIEGrayscle($('#node' + node['id'] + ' img'), false);
             } else {
                 // Undefined
                 $('.node' + node['id'] + '_status').attr('class', 'node' + node['id'] + '_status glyphicon glyphicon-question-sign');
+                $('#node' + node['id'] + ' img').addClass('grayscale')
+                if(isIE) toogleIEGrayscle($('#node' + node['id'] + ' img'), true);
             }
 
             //add status attr
@@ -2850,18 +3487,18 @@ function printLabStatus() {
 // Display all networks in a table
 function printListNetworks(networks) {
     logger(1, 'DEBUG: printing network list');
-    var body = '<div class="table-responsive"><table class="table"><thead><tr><th>' + MESSAGES[92] + '</th><th>' + MESSAGES[19] + '</th><th>' + MESSAGES[95] + '</th><th>' + MESSAGES[97] + '</th><th>' + MESSAGES[99] + '</th></tr></thead><tbody>';
+    var body = '<table><thead><tr><th>' + MESSAGES[92] + '</th><th>' + MESSAGES[19] + '</th><th>' + MESSAGES[95] + '</th><th>' + MESSAGES[97] + '</th><th>' + MESSAGES[99] + '</th></tr></thead><tbody>';
     $.each(networks, function (key, value) {
-        body += '<tr class="network' + value['id'] + '"><td>' + value['id'] + '</td><td>' + value['name'] + '</td><td>' + value['type'] + '</td><td>' + value['count'] + '</td><td><a class="action-networkedit" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[71] + '"><i class="glyphicon glyphicon-edit"></i></a><a class="action-networkdelete" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[65] + '"><i class="glyphicon glyphicon-trash"></i></a></td></tr>';
+        if ( value['visibility'] == 1 )  {
+              body += '<tr class="network' + value['id'] + '"><td>' + value['id'] + '</td><td>' + value['name'] + '</td><td>' + value['type'] + '</td><td>' + value['count'] + '</td><td><a class="action-networkedit" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[71] + '"><i class="glyphicon glyphicon-edit"></i></a><a class="action-networkdelete" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[65] + '"><i class="glyphicon glyphicon-trash"></i></a></td></tr>';
+        }
     });
-    body += '</tbody></table></div>';
-
     body = $(body);
-    if (ROLE == "user") {
+    if ( ROLE == "user"  ||  LOCK == 1  ) {
         body.find(".action-networkedit,.action-networkdelete").remove();
     }
-
-    addModalWide(MESSAGES[96], body.html(), '');
+    body = '<div class="table-responsive"><table class="table">' + body.html() + '</tbody></table></div>';
+    addModalWide(MESSAGES[96], body, '');
 }
 
 // check template's options that field's exists
@@ -2878,8 +3515,15 @@ function checkTemplateValue(template_options, field){
 function createNodeListRow(template, id){
     var html_data = "";
     var defer = $.Deferred();
+    var userRight = "readonly";
+    var disabledAttr = 'disabled="true"' ; 
+    if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
+         userRight = "";
+         disabledAttr = ""
+    }
 
     $.when(getTemplates(template), getNodes(id)).done(function (template_values, node_values) {
+        console.log("node_values", node_values)
         var value_set = "";
         var readonlyAttr = "";
         var value_name      = node_values['name'];
@@ -2897,10 +3541,20 @@ function createNodeListRow(template, id){
         } else{
             value_serial = "n/a";
         }
+
+        var highlightRow = '';
+        var disabled = '';
+        var disabledClass = '';
+        if(node_values['status'] == 2){
+            highlightRow = 'node-running';
+            // disabled = 'disabled';
+            disabledAttr = 'disabled="true"' ; 
+            disabledClass = ' disabled '
+        }
         
         // TODO: this event is called twice
         id = (id == null) ? '' : id;
-        var html_data = '<tr><input name="node[type]" data-path="' + id + '" value="' + template_values['type'] + '" type="hidden"/>';
+        var html_data = '<tr class=" ' + highlightRow+ ' "><input name="node[type]" data-path="' + id + '" value="' + template_values['type'] + '" type="hidden"/>';
         html_data += '<input name="node[left]" data-path="' + id + '" value="' + node_values['left'] + '" type="hidden"/>';
         html_data += '<input name="node[top]" data-path="' + id + '" value="' + node_values['top'] + '" type="hidden"/>';
 
@@ -2908,16 +3562,16 @@ function createNodeListRow(template, id){
         html_data += '<td><input class="hide-border" style="width: 20px;" value="' + id + '" readonly/></td>';
         
         //node name
-        html_data += '<td><input class="configured-nodes-input" data-path="' + id + '" name="node[name]" value="' + value_name + '" type="text" /></td>';
+        html_data += '<td><input class="configured-nodes-input ' + userRight + '" data-path="' + id + '" name="node[name]" value="' + value_name + '" type="text" ' + disabledAttr + ' /></td>';
         
         //node template
-        html_data += '<td><input class="hide-border" data-path="' + id + '" name="node[template]" value="' + template + '" readonly/></td>';
+        html_data += '<td><input class="hide-border ' + userRight + '" data-path="' + id + '" name="node[template]" value="' + template + '" readonly/></td>';
 
         //node boot image
         if(template == "vpcs"){
             html_data += '<td><input class="configured-nodes-input short-input readonly" data-path="' + id + '" name="node[cpu]" value="n/a" type="text" readonly /></td>';
         } else {
-            html_data += '<td><select class="configured-nods-select form-control" data-path="' + id + '" name="node[image]">'
+            html_data += '<td><select class="configured-nods-select form-control"' + disabledAttr + 'data-path="' + id + '" name="node[image]">'
             value_set = (node_values != null && template_values['options']['image'] && template_values['options']['image']['list']) ? node_values['image'] : "";
             var options_arr = template_values['options']['image'] && template_values['options']['image']['list'] ? template_values['options']['image']['list'] : [];
             $.each(options_arr, function (list_key, list_value) {
@@ -2929,19 +3583,19 @@ function createNodeListRow(template, id){
 
         //node cpu
         readonlyAttr = (value_cpu && value_cpu != "n/a") ? "" : "readonly";
-        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + '" data-path="' + id + '" name="node[cpu]" value="' + value_cpu + '" type="text" ' + readonlyAttr + ' /></td>';
+        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + ' ' + userRight + '" data-path="' + id + '" name="node[cpu]" value="' + value_cpu + '" type="text" ' + readonlyAttr + ' ' + disabledAttr + ' /></td>';
 
         //node idle
         readonlyAttr = (value_idlepc && value_idlepc != "n/a") ? "" : "readonly";
-        html_data += '<td><input class="configured-nodes-input ' + readonlyAttr + '" data-path="' + id + '" name="node[idlepc]" value="' + value_idlepc + '" type="text" ' + readonlyAttr + ' /></td>';
+        html_data += '<td><input class="configured-nodes-input ' + readonlyAttr + ' ' + userRight + '" data-path="' + id + '" name="node[idlepc]" value="' + value_idlepc + '" type="text" ' + readonlyAttr + ' ' + disabledAttr + ' /></td>';
 
         //node nvram
         readonlyAttr = (value_nvram && value_nvram != "n/a") ? "" : "readonly";
-        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + '" data-path="' + id + '" name="node[nvram]" value="' + value_nvram + '" type="text" ' + readonlyAttr + ' /></td>';
+        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + ' ' + userRight + '" data-path="' + id + '" name="node[nvram]" value="' + value_nvram + '" type="text" ' + readonlyAttr + ' ' + disabledAttr + ' /></td>';
 
         //node ram
         readonlyAttr = (value_ram && value_ram != "n/a") ? "" : "readonly";
-        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + '" data-path="' + id + '" name="node[ram]" value="' + value_ram + '" type="text" ' + readonlyAttr + ' /></td>';
+        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + ' ' + userRight + '" data-path="' + id + '" name="node[ram]" value="' + value_ram + '" type="text" ' + readonlyAttr + ' ' + disabledAttr + ' /></td>';
 
         //node ethernet
         if(template == "vpcs"){
@@ -2949,17 +3603,17 @@ function createNodeListRow(template, id){
         } else {
             readonlyAttr = (value_ethernet && value_ethernet != "n/a") ? "" : "readonly";
         }
-        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + '" data-path="' + id + '" name="node[ethernet]" value="' + value_ethernet + '" type="text" ' + readonlyAttr + ' /></td>';
+        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + ' ' + userRight + '" data-path="' + id + '" name="node[ethernet]" value="' + value_ethernet + '" type="text" ' + readonlyAttr + ' ' + disabledAttr + ' /></td>';
 
         //node serial
         readonlyAttr = (value_serial && value_serial != "n/a") ? "" : "readonly";
-        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + '" data-path="' + id + '" name="node[serial]" value="' + value_serial + '" type="text" '  + readonlyAttr + '/></td>';
+        html_data += '<td><input class="configured-nodes-input short-input ' + readonlyAttr + ' ' + userRight + '" data-path="' + id + '" name="node[serial]" value="' + value_serial + '" type="text" '  + readonlyAttr + ' ' + disabledAttr + '/></td>';
 
         //node console
         if(template == "iol"){
             html_data += '<td><input class="hide-border"  data-path="' + id + '" value="telnet" readonly/></td>';
         } else if(template_values['options']['console']){
-            html_data += '<td><select class="configured-nods-select form-control" name="node[console]" data-path="' + id + '" >'
+            html_data += '<td><select class="configured-nods-select form-control"' + disabledAttr + ' name="node[console]" data-path="' + id + '" >'
             value_set = (node_values != null && node_values['console'] != null) ? node_values['console'] : value['value'];
             $.each(template_values['options']['console']['list'], function (list_key, list_value) {
                 var selected = (list_key == value_set) ? 'selected ' : '';
@@ -2971,16 +3625,17 @@ function createNodeListRow(template, id){
         }
 
         //node icons
-        html_data += '<td><select class="configured-nods-select form-control" data-path="' + id + '" name="node[icon]" >'
+        html_data += '<td><select class="selectpicker configured-nods-select form-control"' + disabledAttr + ' data-path="' + id + '" data-size="5" name="node[icon]" data-container="body">'
         value_set = (node_values != null && node_values['icon'] != null) ? node_values['icon'] : value['value'];
         $.each(template_values['options']['icon']['list'], function (list_key, list_value) {
             var selected = (list_key == value_set) ? 'selected ' : '';
-            html_data += '<option ' + selected + 'value="' + list_key + '">' + list_value + '</option>';
+            var iconselect = 'data-content="<img src=\'/images/icons/'+list_value+'\' height=15 width=15>&nbsp;&nbsp;&nbsp;'+list_value+'&nbsp;&nbsp;"';
+            html_data += '<option ' + selected + 'value="' + list_key + '" ' + iconselect + '>' + list_value + '</option>';
         });
         html_data += '</select></td>';
 
         //node startup-configs
-        html_data += '<td><select class="configured-nods-select form-control" data-path="' + id + '" name="node[config]">'
+        html_data += '<td><select class="configured-nods-select form-control"' + disabledAttr + ' data-path="' + id + '" name="node[config]">'
         value_set = (node_values != null && node_values['config'] != null) ? node_values['config'] : value['value'];
         $.each(template_values['options']['config']['list'], function (list_key, list_value) {
             var selected = (list_key == value_set) ? 'selected ' : '';
@@ -2993,11 +3648,11 @@ function createNodeListRow(template, id){
                          '<a class="action-nodestart" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[66] + '"><i class="glyphicon glyphicon-play"></i></a>'+
                          '<a class="action-nodestop" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[67] + '"><i class="glyphicon glyphicon-stop"></i></a>'+
                          '<a class="action-nodewipe" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[68] + '"><i class="glyphicon glyphicon-erase"></i></a>'
-        if (ROLE == 'admin' || ROLE == 'editor') {
+        if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
             html_data += '<a class="action-nodeexport" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[69] + '"><i class="glyphicon glyphicon-save"></i></a> '+
-                         '<a class="action-nodeinterfaces" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[72] + '"><i class="glyphicon glyphicon-transfer"></i></a>'+
-                         '<a class="action-nodeedit" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[71] + '"><i class="glyphicon glyphicon-edit"></i></a>'+
-                         '<a class="action-nodedelete" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[65] + '"><i class="glyphicon glyphicon-trash"></i></a>';
+                         '<a class="action-nodeinterfaces" data-status="' + node_values['status'] +'" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[72] + '"><i class="glyphicon glyphicon-transfer"></i></a>'+
+                         '<a class="action-nodeedit control'+ disabledClass +'" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[71] + '"><i class="glyphicon glyphicon-edit"></i></a>'+
+                         '<a class="action-nodedelete'+ disabledClass +'" data-path="' + id + '" data-name="' + checkTemplateValue(template_values['options'],'name') + '" href="javascript:void(0)" title="' + MESSAGES[65] + '"><i class="glyphicon glyphicon-trash"></i></a>';
         } 
         html_data += '</div></td></tr>';
         defer.resolve({"html": html_data, "id": id});
@@ -3051,7 +3706,7 @@ function printListNodes(nodes) {
             body += value.html;
         });
         body += '</tbody></table></form></div>';
-        $("#nodelist-loader").remove();
+        $("#progress-loader").remove();
         addModalWide(MESSAGES[118], body, '');
         $('.selectpicker').selectpicker();
     })
@@ -3076,10 +3731,11 @@ function printListTextobjects(textobjects) {
         ;
 
     $.each(textobjects, function (key, value) {
+        var textClass = '',
+            text = '';
         if (value['type'] == 'text') {
             text = $('#customText' + value['id'] + ' p').html();
-        } else {
-            text = ''
+            textClass ='customText'
         }
 
         body +=
@@ -3089,8 +3745,8 @@ function printListTextobjects(textobjects) {
             '<td>' + value['type'] + '</td>' +
             '<td>' + text + '</td>' +
             '<td>';
-        if (ROLE != "user") {
-             body += '<a class="action-textobjectdelete" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[65] + '">' +
+        if (ROLE != "user" && LOCK == 0  ) {
+             body += '<a class="action-textobjectdelete '+ textClass +'" data-path="' + value['id'] + '" data-name="' + value['name'] + '" href="javascript:void(0)" title="' + MESSAGES[65] + '">' +
                 '<i class="glyphicon glyphicon-trash" style="margin-left:20px;"></i>' +
                 '</a>'
         }
@@ -3103,10 +3759,11 @@ function printListTextobjects(textobjects) {
 
 // Print Authentication Page
 function printPageAuthentication() {
-    var html = new EJS({url: '/themes/default/ejs/login.ejs'}).render()
-    $('#body').html(html);
-    $("#form-login input:eq(0)").focus();
-    bodyAddClass('login');
+    location.href = "/" ; 
+    //var html = new EJS({url: '/themes/default/ejs/login.ejs'}).render()
+    //$('#body').html(html);
+    //$("#form-login input:eq(0)").focus();
+    //bodyAddClass('login');
 }
 
 // Print lab list page
@@ -3116,6 +3773,7 @@ function printPageLabList(folder) {
     var type = 'GET';
     FOLDER = folder;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -3195,7 +3853,7 @@ function printPageLabList(folder) {
                                     })
                                 }).fail(function (data) {
                                     logger(1, 'DEBUG: failed to move "' + object + '" into "' + path + '".');
-                                    addModal('ERROR', '<p>' + data + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                                    addModal('ERROR', '<p>' + data + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
                                 });
                             } else if (o['draggable'].hasClass('folder')) {
                                 $.when(moveFolder(object, path)).done(function (data) {
@@ -3205,7 +3863,7 @@ function printPageLabList(folder) {
                                     })
                                 }).fail(function (data) {
                                     logger(1, 'DEBUG: failed to move "' + object + '" into "' + path + '".');
-                                    addModal('ERROR', '<p>' + data + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                                    addModal('ERROR', '<p>' + data + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
                                 });
                             } else {
                                 // Should not be here
@@ -3221,7 +3879,7 @@ function printPageLabList(folder) {
             } else {
                 // Application error
                 logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
-                addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+                addModal('ERROR', '<p>' + data['message'] + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
             }
 
             bodyAddClass('folders');
@@ -3234,7 +3892,7 @@ function printPageLabList(folder) {
             var message = getJsonMessage(data['responseText']);
             logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
             logger(1, 'DEBUG: ' + message);
-            addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-aqua" data-dismiss="modal">Close</button>');
+            addModal('ERROR', '<p>' + message + '</p>', '<button type="button" class="btn btn-flat" data-dismiss="modal">Close</button>');
         }
     });
 }
@@ -3244,33 +3902,40 @@ function printPageLabOpen(lab) {
     var html = '<div id="lab-sidebar"><ul></ul></div><div id="lab-viewport" data-path="' + lab + '"></div>';
 
     $('#body').html(html);
-
     // Print topology
-    printLabTopology();
+    $.when(printLabTopology(),getPictures()).done( function (rc,pic) {
+     if ((ROLE == 'admin' || ROLE == 'editor') && LOCK == 0 ) {
+              $('#lab-sidebar ul').append('<li class="action-labobjectadd-li"><a class="action-labobjectadd" href="javascript:void(0)" title="' + MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i></a></li>');
+         }
+         $('#lab-sidebar ul').append('<li class="action-nodesget-li"><a class="action-nodesget" href="javascript:void(0)" title="' + MESSAGES[62] + '"><i class="glyphicon glyphicon-hdd"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-networksget" href="javascript:void(0)" title="' + MESSAGES[61] + '"><i class="glyphicon glyphicon-transfer"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-configsget" href="javascript:void(0)" title="' + MESSAGES[58] + '"><i class="glyphicon glyphicon-align-left"></i></a></li>');
+         $('#lab-sidebar ul').append('<li class="action-picturesget-li"><a class="action-picturesget" href="javascript:void(0)" title="' + MESSAGES[59] + '"><i class="glyphicon glyphicon-picture"></i></a></li>');
+         if ( Object.keys(pic)  < 1 ) { 
+         $('.action-picturesget-li').addClass('hidden');
+         }
+         
+         $('#lab-sidebar ul').append('<li><a class="action-textobjectsget" href="javascript:void(0)" title="' + MESSAGES[150] + '"><i class="glyphicon glyphicon-text-background"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-moreactions" href="javascript:void(0)" title="' + MESSAGES[125] + '"><i class="glyphicon glyphicon-th"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-labtopologyrefresh" href="javascript:void(0)" title="' + MESSAGES[57] + '"><i class="glyphicon glyphicon-refresh"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><div class="col-md-2 glyphicon glyphicon-zoom-in sidemenu-zoom"></div><div id="zoomslide" class="col-md-5"></div><div class="col-md-5"></div><br></li>');
+         $('#zoomslide').slider({value:100,min:10,max:200,step:10,slide:zoomlab});
+         //$('#lab-sidebar ul').append('<li><a class="action-freeselect" href="javascript:void(0)" title="' + MESSAGES[151] + '"><i class="glyphicon glyphicon-check"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-status" href="javascript:void(0)" title="' + MESSAGES[13] + '"><i class="glyphicon glyphicon-info-sign"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-labbodyget" href="javascript:void(0)" title="' + MESSAGES[64] + '"><i class="glyphicon glyphicon-list-alt"></i></a></li>');
+         $('#lab-sidebar ul').append('<div id="action-labclose"><li><a class="action-labclose" href="javascript:void(0)" title="' + MESSAGES[60] + '"><i class="glyphicon glyphicon-off"></i></a></li></div>');
+         $('#lab-sidebar ul').append('<li><a class="action-lock-lab" href="javascript:void(0)" title="' + MESSAGES[166] + '"><i class="glyphicon glyphicon-ok-circle"></i></a></li>');
+         $('#lab-sidebar ul').append('<li><a class="action-logout" href="javascript:void(0)" title="' + MESSAGES[14] + '"><i class="glyphicon glyphicon-log-out"></i></a></li>');
+         $('#lab-sidebar ul a').each(function () {
+             var t = $(this).attr("title");
+             $(this).append(t);
 
-    // Read privileges and set specific actions/elements
-    if (ROLE == 'admin' || ROLE == 'editor') {
-        $('#lab-sidebar ul').append('<li><a class="action-labobjectadd" href="javascript:void(0)" title="' + MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i></a></li>');
-        $('#lab-sidebar ul').append('<li><a class="action-nodelink" href="javascript:void(0)" title="' + MESSAGES[115] + '"><i class="glyphicon glyphicon-link"></i></a></li>');
-    }
 
-    $('#lab-sidebar ul').append('<li><a class="action-nodesget" href="javascript:void(0)" title="' + MESSAGES[62] + '"><i class="glyphicon glyphicon-hdd"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-networksget" href="javascript:void(0)" title="' + MESSAGES[61] + '"><i class="glyphicon glyphicon-transfer"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-configsget" href="javascript:void(0)" title="' + MESSAGES[58] + '"><i class="glyphicon glyphicon-align-left"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-picturesget" href="javascript:void(0)" title="' + MESSAGES[59] + '"><i class="glyphicon glyphicon-picture"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-textobjectsget" href="javascript:void(0)" title="' + MESSAGES[150] + '"><i class="glyphicon glyphicon-text-background"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-moreactions" href="javascript:void(0)" title="' + MESSAGES[125] + '"><i class="glyphicon glyphicon-th"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-labtopologyrefresh" href="javascript:void(0)" title="' + MESSAGES[57] + '"><i class="glyphicon glyphicon-refresh"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-freeselect" href="javascript:void(0)" title="' + MESSAGES[151] + '"><i class="glyphicon glyphicon-check"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-status" href="javascript:void(0)" title="' + MESSAGES[13] + '"><i class="glyphicon glyphicon-info-sign"></i></a></li>');
-    $('#lab-sidebar ul').append('<li><a class="action-labbodyget" href="javascript:void(0)" title="' + MESSAGES[64] + '"><i class="glyphicon glyphicon-list-alt"></i></a></li>');
-    $('#lab-sidebar ul').append('<div id="action-labclose"><li><a class="action-labclose" href="javascript:void(0)" title="' + MESSAGES[60] + '"><i class="glyphicon glyphicon-off"></i></a></li></div>');
-    $('#lab-sidebar ul').append('<li><a class="action-logout" href="javascript:void(0)" title="' + MESSAGES[14] + '"><i class="glyphicon glyphicon-log-out"></i></a></li>');
-    $('#lab-sidebar ul a').each(function () {
-        var t = $(this).attr("title");
-        $(this).append(t);
-
-
+             })
+        if ( LOCK == 1 ) {
+            lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false);
+            $('.customShape').resizable('disable');
+        }
     })
 }
 
@@ -3348,6 +4013,9 @@ function printUserManagement() {
 
 // Print system status in modal
 function drawStatusInModal(data) {
+    window.uksm = false ;
+    window.ksm = false ;
+    window.cpulimit =false ;
     var $statusModalBody = $("#statusModal");
 
     if (!$statusModalBody.length) {
@@ -3366,6 +4034,21 @@ function drawStatusInModal(data) {
     $('#stats-text ul', $statusModalBody).empty();
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[39] + ': <code>' + data['version'] + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[49] + ': <code>' + data['qemu_version'] + '</code></li>');
+    $('#stats-text ul', $statusModalBody).append('<li class="uksm">' + MESSAGES[165] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleUKSM"></li>');
+    $('#stats-text ul', $statusModalBody).append('<li class="ksm">' + MESSAGES[171] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleKSM"></li>');
+ 
+    if ( data['uksm'] == "unsupported" ) $('.uksm').addClass('hidden')
+    if ( data['ksm'] == "unsupported" ) $('.ksm').addClass('hidden')
+
+    $('#ToggleUKSM').toggleSwitch({width: "50px"});
+    if ( data['uksm'] == "enabled" ) { window.uksm = true ; $('#ToggleUKSM').toggleCheckedState(true) };
+
+    $('#ToggleKSM').toggleSwitch({width: "50px"});
+    if ( data['ksm'] == "enabled" ) { window.ksm = true ; $('#ToggleKSM').toggleCheckedState(true) };
+
+    $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[170] + ':&nbsp;&nbsp;<input type="checkbox" id="ToggleCPULIMIT"></li>');
+    $('#ToggleCPULIMIT').toggleSwitch({width: "50px"});
+    if ( data['cpulimit'] == "enabled" ) { window.cpulimit = true ;$('#ToggleCPULIMIT').toggleCheckedState(true) };
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[29] + ': <code>' + ROLE + '</code></li>');
     $('#stats-text ul', $statusModalBody).append('<li>' + MESSAGES[32] + ': <code>' + ((TENANT == -1) ? 'none' : TENANT) + '</code></li>');
 
@@ -3379,7 +4062,7 @@ function drawStatusInModal(data) {
         value: data['cpu'],
         thickness: 10,
         startAngle: -Math.PI / 2,
-        fill: {gradient: ['#46a6b6']}
+        fill: {gradient: ['#2cc085']}
     }).on('circle-animation-progress', function (event, progress) {
         if (progress > data['cpu']) {
             $(this).find('strong').html(parseInt(100 * data['cpu']) + '%');
@@ -3395,7 +4078,7 @@ function drawStatusInModal(data) {
         value: data['mem'],
         thickness: 10,
         startAngle: -Math.PI / 2,
-        fill: {gradient: ['#46a6b6']}
+        fill: {gradient: ['#2cc085']}
     }).on('circle-animation-progress', function (event, progress) {
         if (progress > data['mem']) {
             $(this).find('strong').html(parseInt(100 * data['mem']) + '%');
@@ -3411,7 +4094,7 @@ function drawStatusInModal(data) {
         value: data['swap'],
         thickness: 10,
         startAngle: -Math.PI / 2,
-        fill: {gradient: ['#46a6b6']}
+        fill: {gradient: ['#2cc085']}
     }).on('circle-animation-progress', function (event, progress) {
         if (progress > data['swap']) {
             $(this).find('strong').html(parseInt(100 * data['swap']) + '%');
@@ -3427,7 +4110,7 @@ function drawStatusInModal(data) {
         value: data['disk'],
         thickness: 10,
         startAngle: -Math.PI / 2,
-        fill: {gradient: ['#46a6b6']}
+        fill: {gradient: ['#2cc085']}
     }).on('circle-animation-progress', function (event, progress) {
         if (progress > data['disk']) {
             $(this).find('strong').html(parseInt(100 * data['disk']) + '%');
@@ -3603,6 +4286,7 @@ function getTextObjects() {
     var url = '/api/labs' + lab_filename + '/textobjects';
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -3635,6 +4319,7 @@ function getTextObject(id) {
     var url = '/api/labs' + lab_filename + '/textobjects/' + id;
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -3644,7 +4329,11 @@ function getTextObject(id) {
                 logger(1, 'DEBUG: got shape ' + id + 'from lab "' + lab_filename + '".');
 
                 try {
-                    data['data'].data = new TextDecoderLite('utf-8').decode(toByteArray(data['data'].data));
+                    if ( data['data'].data.indexOf('div') != -1  ) {
+                                   // nothing to do ?
+                    } else {
+                                   data['data'].data =  new TextDecoderLite('utf-8').decode(toByteArray(data['data'].data));
+                    }
                 }
                 catch (e) {
                     console.warn("Compatibility issue", e);
@@ -3680,6 +4369,7 @@ function createTextObject(newData) {
     }
 
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -3719,6 +4409,7 @@ function editTextObject(id, newData) {
     }
 
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -3745,6 +4436,41 @@ function editTextObject(id, newData) {
     return deferred.promise();
 }
 
+// Update Multiple Text Object
+function editTextObjects(newData) {
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var deferred = $.Deferred();
+    if (newData.length == 0 ) { deferred.resolve(); return deferred.promise(); }
+    var type = 'PUT';
+    var url = '/api/labs' + lab_filename + '/textobjects';
+
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        data: JSON.stringify(newData), // newData is object with differences between old and new data
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: custom shape text object updated.');
+                deferred.resolve(data['message']);
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    return deferred.promise();
+}
 // Delete Text Object By Id
 function deleteTextObject(id) {
     var deferred = $.Deferred();
@@ -3752,6 +4478,7 @@ function deleteTextObject(id) {
     var lab_filename = $('#lab-viewport').attr('data-path');
     var url = '/api/labs' + lab_filename + '/textobjects/' + id;
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -3791,9 +4518,31 @@ function textObjectDragStop(event, ui) {
         id = event.target.id.slice("customText".length);
         shape_border_width = 5;
     }
-
+    
     objectData = event.target.outerHTML;
+    
 
+    editTextObject(id, {
+        data: objectData
+    });
+}
+
+function setShapePosition( shape )  {
+    var id
+        , objectData
+        , shape_border_width
+        ;
+    if (shape.id.indexOf("customShape") != -1) {
+        id = shape.id.slice("customShape".length);
+        shape_border_width = $("#customShape" + id + " svg").children().attr('stroke-width');
+    }
+    else if (shape.id.indexOf("customText") != -1) {
+        id = shape.id.slice("customText".length);
+        shape_border_width = 5;
+    }
+
+    //objectData = shape.outerHTML;
+    objectData = shape.outerHTML;
     editTextObject(id, {
         data: objectData
     });
@@ -3849,7 +4598,7 @@ function printFormEditCustomShape(id) {
         , colorDigits
         , bgColor
         , html =
-        '<form id="main-modal-edit" class="container col-md-12 col-lg-12 edit-custom-shape-form" data-path="' + id + '">' +
+        '<form id="main-modal-edit" class="container col-md-offset-1 col-md-11 col-lg-11 col-lg-offset-1 edit-custom-shape-form" data-path="' + id + '">' +
             '<div class="row col-md-9 top-part">' +
             '<label class="edit-custom-shape-label">Edit: ' + id + '</label><br>' +
             '<div class="form-group">' +
@@ -3887,8 +4636,8 @@ function printFormEditCustomShape(id) {
             '</div>' +
             '</div>' +
             '<div class="row col-md-3 btn-part">' +
-            '<button type="button" class="btn btn-aqua edit-custom-shape-form-save" data-path="' + id + '">' + MESSAGES[47] + '</button>' +
-            '<button type="button" class="btn btn-grey cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
+            '<button type="button" class="btn btn-success edit-custom-shape-form-save" data-path="' + id + '">' + MESSAGES[47] + '</button>' +
+            '<button type="button" class="btn cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
             '</div>' +
             '<input type="hidden" class="firstShapeValues-z_index">' +
             '<input type="hidden" class="firstShapeValues-border-color">' +
@@ -3900,6 +4649,17 @@ function printFormEditCustomShape(id) {
 
         $('#lab-viewport').append(html);
 
+        if(isIE){
+            $('input[type="color"]').hide()
+            $('input.shape_border_color').colorpicker({
+                color: "#000000",
+                defaultPalette: 'web'
+            })
+            $('input.shape_background_color').colorpicker({
+                color: "#ffffff",
+                defaultPalette: 'web'
+            })
+        }
         for (var i = 0; i < borderTypes.length; i++) {
             $('.edit-custom-shape-form .border-type-select').append($('<option></option>').val(borderTypes[i]).html(borderTypes[i]));
         }
@@ -3973,7 +4733,7 @@ function printFormEditText(id) {
         , colorDigits
         , bgColor
         , html =
-  '<form id="main-modal-edit" class="container col-md-12 col-lg-12 edit-custom-text-form"  data-path="' + id + '">' +
+  '<form id="main-modal-edit" class="container col-md-offset-1 col-md-11 col-lg-11 col-lg-offset-1 edit-custom-text-form"  data-path="' + id + '">' +
         '<div class="row col-md-9  top-part">' +
         '<label class="edit-custom-text-label">Edit: ' + id + '</label><br>' +
         '<div class="form-group">' +
@@ -4017,8 +4777,8 @@ function printFormEditText(id) {
         '</div>' +
         '</div>' +
         '<div class="row col-md-3 btn-part">' +
-        '<button type="button" class="btn btn-aqua edit-custom-text-form-save" data-path="' + id + '">' + MESSAGES[47] + '</button>' +
-        '<button type="button" class="btn btn-grey cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
+        '<button type="button" class="btn btn-success edit-custom-text-form-save" data-path="' + id + '">' + MESSAGES[47] + '</button>' +
+        '<button type="button" class="btn cancelForm" data-path="' + id + '">' + MESSAGES[18] + '</button>' +
         '</div>' +
         '<input type="text" class="hide firstTextValues-z_index">' +
         '<input type="text" class="hide firstTextValues-color">' +
@@ -4031,6 +4791,17 @@ function printFormEditText(id) {
 
     $('#lab-viewport').append(html);
 
+    if(isIE){
+        $('input[type="color"]').hide()
+        $('input.shape_border_color').colorpicker({
+            color: "#000000",
+            defaultPalette: 'web'
+        })
+        $('input.shape_background_color').colorpicker({
+            color: "#ffffff",
+            defaultPalette: 'web'
+        })
+    }
     bgColor = $("#customText" + id + " p").css('background-color');
     colorDigits = /(.*?)rgba{0,1}\((\d+), (\d+), (\d+)\)/.exec(bgColor);
     if (colorDigits === null) {
@@ -4153,6 +4924,7 @@ function getLogs(file, per_page, search) {
     var url = '/api/logs/' + file + "/" + per_page + "/" + search;
     var type = 'GET';
     $.ajax({
+        cache: false,
         timeout: TIMEOUT,
         type: type,
         url: encodeURI(url),
@@ -4228,3 +5000,433 @@ function autoheight()
         });
     }
 }
+
+function lockLab() {
+    var lab_topology = window.lab_topology
+    //var allElements = $('.node_frame, .network_frame, .customShape');
+    //alert ( JSON.stringify( allElements ));
+    //for (var i = 0; i < allElements.length; i++){
+    //    if(toogleDruggable(lab_topology, allElements[i])) toogleDruggable(lab_topology, allElements[i])
+    //}
+    lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), false);
+    //$('.customShape').draggable('disable');
+    $('.customShape').resizable('disable');
+    // $('.action-unlock-lab i').removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle')
+    $('.action-lock-lab').html('<i style="color:red" class="glyphicon glyphicon-remove-circle"></i>' + MESSAGES[167])
+    $('.action-lock-lab').removeClass('action-lock-lab').addClass('action-unlock-lab')
+    var deferred = $.Deferred();
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var url = '/api/labs' + lab_filename + '/Lock' ;
+    var type = 'PUT';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: network position updated.');
+                deferred.resolve();
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+            LOCK = 1 ;
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    $('.action-labobjectadd-li').hide();
+    return deferred.promise();
+}
+
+function unlockLab(){
+    lab_topology = window.lab_topology
+    lab_topology.setDraggable($('.node_frame, .network_frame, .customShape'), true);
+    lab_topology.draggable($('.node_frame, .network_frame, .customShape'), {
+                       grid: [3, 3],
+                       stop: ObjectPosUpdate
+                    });
+
+    //$('.customShape').draggable('enable');
+    $('.customShape').resizable('enable');
+    $('.action-unlock-lab').html('<i class="glyphicon glyphicon-ok-circle"></i>' + MESSAGES[166])
+    $('.action-unlock-lab').removeClass('action-unlock-lab').addClass('action-lock-lab')
+    var deferred = $.Deferred();
+    var lab_filename = $('#lab-viewport').attr('data-path');
+    var url = '/api/labs' + lab_filename + '/Unlock' ;
+    var type = 'PUT';
+    $.ajax({
+        cache: false,
+        timeout: TIMEOUT,
+        type: type,
+        url: encodeURI(url),
+        dataType: 'json',
+        success: function (data) {
+            if (data['status'] == 'success') {
+                logger(1, 'DEBUG: network position updated.');
+                deferred.resolve();
+            } else {
+                // Application error
+                logger(1, 'DEBUG: application error (' + data['status'] + ') on ' + type + ' ' + url + ' (' + data['message'] + ').');
+                deferred.reject(data['message']);
+            }
+            addMessage(data['status'], data['message']);
+        LOCK = 0 ;
+
+        },
+        error: function (data) {
+            // Server error
+            var message = getJsonMessage(data['responseText']);
+            logger(1, 'DEBUG: server error (' + data['status'] + ') on ' + type + ' ' + url + '.');
+            logger(1, 'DEBUG: ' + message);
+            deferred.reject(message);
+        }
+    });
+    if ($('.action-labobjectadd-li').length == 0) {
+         $('.action-nodesget-li').before('<li class="action-labobjectadd-li"><a class="action-labobjectadd" href="javascript:void(0)" title="' +
+         MESSAGES[56] + '"><i class="glyphicon glyphicon-plus"></i>' + MESSAGES[56] + '</a></li>');
+    } else {
+         $('.action-labobjectadd-li').show();
+   }
+    return deferred.promise();
+}
+
+function toogleDruggable(topology, elem){
+    return topology.toggleDraggable(elem)
+}
+
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
+
+function openNodeCons ( url ) {
+        nw = window.open(url);
+        sleep ( 1000 );
+        $(nw).ready(function() { nw.close(); } );
+}
+
+function natSort(as, bs){
+    var a, b, a1, b1, i= 0, L, rx=  /(\d+)|(\D+)/g, rd=  /\d/;
+    if(isFinite(as) && isFinite(bs)) return as - bs;
+    a= String(as).toLowerCase();
+    b= String(bs).toLowerCase();
+    if(a=== b) return 0;
+    if(!(rd.test(a) && rd.test(b))) return a> b? 1: -1;
+    a= a.match(rx);
+    b= b.match(rx);
+    L= a.length> b.length? b.length: a.length;
+    while(i < L){
+        a1= a[i];
+        b1= b[i++];
+        if(a1!== b1){
+            if(isFinite(a1) && isFinite(b1)){
+                if(a1.charAt(0)=== "0") a1= "." + a1;
+                if(b1.charAt(0)=== "0") b1= "." + b1;
+                return a1 - b1;
+            }
+            else return a1> b1? 1: -1;
+        }
+    }
+    return a.length - b.length;
+}
+
+
+function newConnModal(info , oe ) {
+        if ( !oe ) return ; 
+    $.when(
+        getNetworks(null),
+        getNodes(null),
+        getTopology()
+        ).done(function (networks, nodes, topology ) {
+            linksourcestyle = '' ;
+            linktargetstyle = '' ;
+        $('#'+info.source.id).addClass("startNode")
+            if ( info.source.id.search('node')  != -1  ) {
+                  linksourcedata =  nodes[ info.source.id.replace('node','') ] ;
+                  linksourcetype = 'node' ;
+                  linksourcedata['interfaces'] = getNodeInterfaces(linksourcedata['id'])
+                  if ( linksourcedata['status'] == 0 ) linksourcestyle = 'grayscale'
+             } else {
+                  linksourcedata =  networks[ info.source.id.replace('network','') ] ;
+                  linksourcetype = 'net' ;
+                  linksourcedata['icon'] = ( linksourcedata['type'] == "bridge")  ? "../lan.png" : "../cloud.png"
+             }
+             if ( info.target.id.search('node')  != -1  ) {
+                  linktargetdata =  nodes[ info.target.id.replace('node','') ] ;
+                  linktargettype = 'node' ;
+                  linktargetdata['interfaces'] = getNodeInterfaces(linktargetdata['id'])
+                  if ( linktargetdata['status'] == 0 ) linktargetstyle = 'grayscale'
+             } else {
+                  linktargetdata =  networks[ info.target.id.replace('network','') ] ;
+                  linktargettype = 'net' ;
+          linktargetdata['icon'] = ( linktargetdata['type'] == "bridge")  ? "../lan.png" : "../cloud.png"
+             }
+             title = 'Add connection between ' + linksourcedata['name'] + ' and ' + linktargetdata['name'] ;
+             $.when( linksourcedata['interfaces'] , linktargetdata['interfaces'] ).done( function ( sourceif, targetif) {
+             /* choose first free interface */
+                  if ( linksourcetype == 'node' )  {
+                       logger(1,'DEBUG: looking interfaces... ');
+                   linksourcedata['selectedif'] = '' ;  
+                       var tmp_interfaces = {} ;
+                       for ( var key in sourceif['ethernet'] ) {
+                 logger(1,'DEBUG: interface id ' + key + ' named ' + sourceif['ethernet'][key]['name']  + ' ' + sourceif['ethernet'][key]['network_id'])
+                             tmp_interfaces[key] = sourceif['ethernet'][key]
+                             tmp_interfaces[key]['type'] = 'ethernet'
+                 if ( (sourceif['ethernet'][key]['network_id'] == 0 )  && ( linksourcedata['selectedif'] == '') ) {
+                                    linksourcedata['selectedif'] = key ;
+                             }
+                       }
+                       for ( var key in sourceif['serial'] ) {
+                             logger(1,'DEBUG: interface id ' + key + ' named ' + sourceif['serial'][key]['name']  + ' ' + sourceif['serial'][key]['remote_id'])
+                             tmp_interfaces[key] =  sourceif['serial'][key]
+                             tmp_interfaces[key]['type']  =  'serial' 
+                             if ( (sourceif['serial'][key]['remote_id'] == 0 )  && ( linksourcedata['selectedif'] == '') ) {
+                                    linksourcedata['selectedif'] = key ;
+                             }
+                       }
+                       linksourcedata['interfaces'] = tmp_interfaces
+                  }
+                  if ( linksourcedata['selectedif'] == '') linksourcedata['selectedif'] = 0 ;
+                  if ( linktargettype == 'node' )  {
+                       logger(1,'DEBUG: looking interfaces... ') ;
+                       linktargetdata['selectedif'] = '' ;
+                       var tmp_interfaces = []
+                       for ( var key in targetif['ethernet'] ) {
+                             logger(1,'DEBUG: interface id ' + key + ' named ' + targetif['ethernet'][key]['name']  + ' ' + targetif['ethernet'][key]['network_id'])
+                             tmp_interfaces[key] = targetif['ethernet'][key];
+                             tmp_interfaces[key]['type'] = 'ethernet'
+                             if ( (targetif['ethernet'][key]['network_id'] == 0 )  && ( linktargetdata['selectedif'] == '') ) {
+                                    linktargetdata['selectedif'] = key ;
+                             }
+                       }
+                       for ( var key in targetif['serial'] ) {
+                             logger(1,'DEBUG: interface id ' + key + ' named ' + targetif['serial'][key]['name']  + ' ' + targetif['serial'][key]['remote_id'])
+                             tmp_interfaces[key] = targetif['serial'][key];
+                             tmp_interfaces[key]['type'] = 'serial' ;
+                             if ( (targetif['serial'][key]['remote_id'] == 0 )  && ( linktargetdata['selectedif'] == '') ) {
+                                    linktargetdata['selectedif'] = key ;
+                             }
+                       }
+                       linktargetdata['interfaces'] = tmp_interfaces
+                  }
+                  if ( linktargetdata['selectedif'] == '' ) linktargetdata['selectedif'] = 0 ;
+                  if ( linksourcedata['status'] == 2 || linktargetdata['status'] == 2 ) { lab_topology.detach( info.connection ) ; return }
+                  window.tmpconn = info.connection
+                  html = '<form id="addConn" class="addConn-form">' +
+                           '<input type="hidden" name="addConn[srcNodeId]" value="'+linksourcedata['id']+'">' +
+                           '<input type="hidden" name="addConn[dstNodeId]" value="'+linktargetdata['id']+'">' +
+                           '<input type="hidden" name="addConn[srcNodeType]" value="'+linksourcetype+'">' +
+                           '<input type="hidden" name="addConn[dstNodeType]" value="'+linktargettype+'">' +
+                           '<div class="row">' +
+                            '<div class="col-md-4">' +
+                                '<div style="text-align:center;" >'+ linksourcedata['name']  + '</div>' +
+                                '<img src="'+ '/images/icons/' + linksourcedata['icon'] + '" class="'+ linksourcestyle  +' img-responsive" style="margin:0 auto;">' +
+                                '<div style="width:3px;height: ' + ( (linksourcetype == 'net') ? '0' : '10' ) + 'px; margin: 0 auto; background-color:#444"></div>' +
+                                '<div style="margin: 0 auto; width:50%; text-align:center;" class="' + (( linksourcetype == 'net') ? 'hidden' : '')  +  '">' +
+                                    '<text class="aLabel addConnSrc text-center" >'+ (( linksourcetype == 'node') ? linksourcedata['interfaces'][linksourcedata['selectedif']]['name'] : '' )  +'</text>' +
+                                '</div>' +
+                                '<div style="width:3px;height:160px; margin: 0 auto; background-color:#444"></div>' +
+                                '<div style="margin: 0 auto; width:50%; text-align:center;" class="' + ((linktargettype == 'net') ? 'hidden' : '')  + '">' +
+                                    '<text class="aLabel addConnDst text-center" >'+ ((linktargettype == 'node') ?  linktargetdata['interfaces'][linktargetdata['selectedif']]['name'] : '' ) +'</text>' +
+                                '</div>' +
+                                '<div style="width:3px;height: '+ ( ( linktargettype  == 'net') ? '0' : '10')  + 'px; margin: 0 auto; background-color:#444"></div>' +
+                                '<img src="/images/icons/'+linktargetdata['icon']+'" class="'+linktargetstyle+' img-responsive" style="margin:0 auto;">' +
+                                '<div style="text-align:center;" >'+linktargetdata['name']+'</div>' +
+                            '</div>' +
+                            '<div class="col-md-8">' +
+                                '<div class="form-group">' +
+                                    '<label>Source ID: '+linksourcedata['id']+'</label>' +
+                                    '<p style="margin:0px;"></p>' +
+                                    '<label>Source Name: '+ linksourcedata['name'] +'</label>' +
+                                    '<p style="">type - '+ ((linksourcetype == 'net') ? 'Network' : 'Node') +'</p>' +
+                                '</div>' +
+                                '<div class="form-group">' +
+                                    '<div class="form-group ' + (( linksourcetype == 'net') ? 'hidden' : '')  +  '">'  +
+                                        '<label>Choose Interface for '+ linksourcedata['name'] +'</label>' +
+                                        '<select name="addConn[srcConn]" class="form-control srcConn">' 
+                                        if ( linksourcetype == 'node' ) {
+                                            // Eth first
+                                            var tmp_name = [];
+                                            var reversetab = [];
+                                            for ( key in linksourcedata['interfaces'] ) {
+                                                 tmp_name.push(linksourcedata['interfaces'][key]['name'])
+                                                 reversetab[linksourcedata['interfaces'][key]['name']] = key
+                                            }
+                                            var ordered_name = tmp_name.sort(natSort)
+                                            for ( key in ordered_name ) {
+                                                okey = reversetab[ordered_name[key]] ;
+                                                if ( linksourcedata['interfaces'][okey]['type'] == 'ethernet' ) {
+                                                    html += '<option value="' + okey + ',ethernet' +'" '+((linksourcedata['interfaces'][okey]['network_id'] != 0) ? 'disabled="true"' : '' ) +'>' + linksourcedata['interfaces'][okey]['name'] 
+                                                    if ( linksourcedata['interfaces'][okey]['network_id'] != 0) {
+                                                        html += ' connected to '
+                                                        for ( tkey in topology ) {
+                                                            if ( ( topology[tkey]['source'] == ( 'node' + linksourcedata['id'] ))  && ( topology[tkey]['source_label'] == linksourcedata['interfaces'][okey]['name'] )) { 
+                                                                if (topology[tkey]['destination_type'] == 'node'  ) html += nodes[topology[tkey]['destination'].replace('node','')]['name']
+                                                                if (topology[tkey]['destination_type'] == 'node' ) html += ' ' + topology[tkey]['destination_label']
+                                                                if (topology[tkey]['destination_type'] == 'network' ) html += ' ' + networks[ linksourcedata['interfaces'][okey]['network_id'] ]['name']
+                                                            } 
+                                                            if ( ( topology[tkey]['destination'] == ( 'node' + linksourcedata['id'] ))  && ( topology[tkey]['destination_label'] == linksourcedata['interfaces'][okey]['name'] )) {
+                                                                if (topology[tkey]['source_type'] == 'node'  ) html += nodes[topology[tkey]['source'].replace('node','')]['name']
+                                                                if (topology[tkey]['source_type'] == 'node'  ) html += ' ' + topology[tkey]['source_label']
+                                                                if ( topology[tkey]['source_type'] == 'network' ) html += ' ' + networks[ linksourcedata['interfaces'][okey]['network_id'] ]['name']
+                                                            }
+                                                        }
+                                                    }   
+                                                }
+                                            }
+                                            for ( key in ordered_name ) {
+                                                okey = reversetab[ordered_name[key]] ;
+                                                if ( linksourcedata['interfaces'][okey]['type'] == 'serial' ) {
+                                                    html += '<option value="' + okey + ',serial' +'" '+ ((linksourcedata['interfaces'][okey]['remote_id'] != 0) ? 'disabled="true"' : '' )  +'>' + linksourcedata['interfaces'][okey]['name']
+                                                    if ( linksourcedata['interfaces'][okey]['remote_id'] != 0) {
+                                                    html += ' connected to '
+                                                    html += nodes[ linksourcedata['interfaces'][okey]['remote_id'] ]['name']
+                                                    html += ' ' + linksourcedata['interfaces'][okey]['remote_if_name']
+                                                    }
+                                                }
+                                            }
+                                         }
+                                        html += '</option>' 
+                                        html += '</select>' +
+                                        '<div style="width:3px;height:30px;"></div>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div style="width:3px;height:30px;"></div>' +
+                                '<div class="form-group">' +
+                                    '<div class="form-group ' + (( linktargettype == 'net') ? 'hidden' : '')  +  '">'  +
+                                        '<label>Choose Interface for '+ linktargetdata['name'] +'</label>' +
+                                        '<select name="addConn[dstConn]" class="form-control dstConn">'
+                                        if ( linktargettype == 'node' ) {
+                                            // Eth first
+                                            var tmp_name = [];
+                                            var reversetab = [];
+                                            for ( key in linktargetdata['interfaces'] ) {
+                                                 tmp_name.push(linktargetdata['interfaces'][key]['name'])
+                                                 reversetab[linktargetdata['interfaces'][key]['name']] = key
+                                            }
+                                            var ordered_name = tmp_name.sort(natSort) ;
+                                            for ( key in ordered_name ) {
+                                            okey = reversetab[ordered_name[key]] ;
+                                                if ( linktargetdata['interfaces'][okey]['type'] == 'ethernet' ) {
+                                                    html += '<option value="' + okey + ',ethernet' +'" '+((linktargetdata['interfaces'][okey]['network_id'] != 0) ? 'disabled="true"' : '' ) +'>' + linktargetdata['interfaces'][okey]['name']
+                                                    if ( linktargetdata['interfaces'][okey]['network_id'] != 0) {
+                                                        html += ' connected to '
+                                                        for ( tkey in topology ) {
+                                                            if ( ( topology[tkey]['source'] == ( 'node' + linktargetdata['id'] ))  && ( topology[tkey]['source_label'] == linktargetdata['interfaces'][okey]['name'] )) {
+                                                                if (topology[tkey]['destination_type'] == 'node'  ) html += nodes[topology[tkey]['destination'].replace('node','')]['name']
+                                                                if (topology[tkey]['destination_type'] == 'node' ) html += ' ' + topology[tkey]['destination_label']
+                                                                if (topology[tkey]['destination_type'] == 'network' ) html += ' ' + networks[ linktargetdata['interfaces'][okey]['network_id'] ]['name']
+                                                            }
+                                                            if ( ( topology[tkey]['destination'] == ( 'node' + linktargetdata['id'] ))  && ( topology[tkey]['destination_label'] == linktargetdata['interfaces'][okey]['name'] )) {
+                                                                if (topology[tkey]['source_type'] == 'node'  ) html += nodes[topology[tkey]['source'].replace('node','')]['name']
+                                                                if (topology[tkey]['source_type'] == 'node'  ) html += ' ' + topology[tkey]['source_label']
+                                                                if ( topology[tkey]['source_type'] == 'network' ) html += ' ' + networks[ linktargetdata['interfaces'][okey]['network_id'] ]['name']
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            // Serial first
+                                            for ( key in ordered_name ) {
+                                            okey = reversetab[ordered_name[key]] ;
+                                                if ( linktargetdata['interfaces'][okey]['type'] == 'serial' ) {
+                                                    html += '<option value="' + okey + ',serial' +'" '+ ((linktargetdata['interfaces'][okey]['remote_id'] != 0) ? 'disabled="true"' : '' )  +'>' + linktargetdata['interfaces'][okey]['name']
+                                                    if ( linktargetdata['interfaces'][okey]['remote_id'] != 0) {
+                                                    html += ' connected to '
+                                                    html += nodes[ linktargetdata['interfaces'][okey]['remote_id'] ]['name']
+                                                    html += ' ' + linktargetdata['interfaces'][okey]['remote_if_name']
+                                                    }
+                                                }
+                                            }
+                                         }
+                                        html += '</option>' 
+                                        html += '</select>' +
+                                        '<div style="width:3px;height:30px;"></div>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="form-group">' +
+                                    '<label>Destination ID: ' + linktargetdata['id'] + '</label>' +
+                                    '<p style="margin:0px;"></p>' +
+                                    '<label>Destination Name: ' + linktargetdata['name'] + '</label>' +
+                                    '<p style="text-muted">type - '+ ((linktargettype == 'net') ? 'Network' : 'Node') +'</p>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="col-md-8 btn-part col-md-offset-6">' +
+                                '<div class="form-group">' +
+                                    '<button type="submit" class="btn btn-success addConn-form-save">' + MESSAGES[47] + '</button>' +
+                                    '<button type="button" class="btn cancelForm" data-dismiss="modal">' + MESSAGES[18] + '</button>' +
+                                '</div>' + 
+                            '</div>' +
+                           '</div>' +
+                         '</form>' 
+            
+                  addModal(title, html, '');
+             });
+        });
+     $('body').on('change','select.srcConn', function (e) {
+          var iname =  $('select.srcConn option[value="' + $('select.srcConn').val() + '"]').text();
+      $('.addConnSrc').html(iname) 
+     });
+     $('body').on('change','select.dstConn', function (e) {
+          var iname =  $('select.dstConn option[value="' + $('select.dstConn').val() + '"]').text();
+          $('.addConnDst').html(iname)
+     });
+}
+
+function connContextMenu ( e, ui ) {
+         window.connContext = 1
+         window.connToDel = e
+}
+
+function zoomlab ( event, ui ) {
+    var zoom=ui.value/100
+    setZoom(zoom,lab_topology,[0.0,0.0])
+    $('#lab-viewport').width(($(window).width()-40)/zoom)
+    $('#lab-viewport').height($(window).height()/zoom);
+    $('#lab-viewport').css({top: 0,left: 40,position: 'absolute'});
+    //setZoom(zoom,lab_topology,[0.0,0.0])
+    $('#zoomslide').slider({value:ui.value})
+}
+
+function zoompic ( event, ui ) {
+    var zoom=ui.value/100
+    setZoom(zoom,lab_picture,[0,0])
+    $('#picslider').slider({value:ui.value})
+}
+
+// Function from jsPlumb Doc
+window.setZoom = function(zoom, instance, transformOrigin, el) {
+  transformOrigin = transformOrigin || [ 0.5, 0.5 ];
+  instance = instance || jsPlumb;
+  el = el || instance.getContainer();
+  var p = [ "webkit", "moz", "ms", "o" ],
+      s = "scale(" + zoom + ")",
+      oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+
+  for (var i = 0; i < p.length; i++) {
+    el.style[p[i] + "Transform"] = s;
+    el.style[p[i] + "TransformOrigin"] = oString;
+  }
+
+  el.style["transform"] = s;
+  el.style["transformOrigin"] = oString;
+
+  instance.setZoom(zoom);
+};

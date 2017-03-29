@@ -23,7 +23,7 @@
 function apiGetUUser($db, $user) {
 	$data = Array();
 
-	$query = 'SELECT users.username AS username, email, users.expiration AS expiration, name, session, role, ip, pods.id AS pod, pods.expiration AS pexpiration FROM users LEFT JOIN pods ON users.username = pods.username WHERE users.username = :username;';
+	$query = 'SELECT users.username AS username, email, users.expiration AS expiration, name, session, "admin" as role , ip, pods.id AS pod, pods.expiration AS pexpiration FROM users LEFT JOIN pods ON users.username = pods.username WHERE users.username = :username;';
 
 	try {
 		$statement = $db -> prepare($query);
@@ -67,7 +67,7 @@ function apiGetUUser($db, $user) {
 function apiGetUUsers($db) {
 	$data = Array();
 
-	$query = 'SELECT users.username AS username, email, users.expiration AS expiration, folder, name, session, role, ip, pods.id AS pod, pods.expiration AS pexpiration, pods.lab_id AS lab FROM users LEFT JOIN pods ON users.username = pods.username ORDER BY users.username ASC;';
+	$query = 'SELECT users.username AS username, email, users.expiration AS expiration, folder, name, session, "admin" as role, ip, pods.id AS pod, pods.expiration AS pexpiration, pods.lab_id AS lab FROM users LEFT JOIN pods ON users.username = pods.username ORDER BY users.username ASC;';
 	try {
 		$statement = $db -> prepare($query);
 		$statement -> execute();
@@ -198,13 +198,16 @@ function apiEditUUser($db, $user, $p) {
 		$statement = $db -> prepare($query);
 		$statement -> bindParam(':username', $user, PDO::PARAM_STR);
 		if (isset($p['name']) && !empty($p['name'])) {
-			$statement -> bindParam(':name', htmlentities($p['name']), PDO::PARAM_STR);
+			$uname=htmlentities($p['name']);
+			$statement -> bindParam(':name', $uname, PDO::PARAM_STR);
 		}
 		if (isset($p['email']) && !empty($p['email'])) {
-			$statement -> bindParam(':email', htmlentities($p['email']), PDO::PARAM_STR);
+			$uemail=htmlentities($p['email']);
+			$statement -> bindParam(':email', $uemail, PDO::PARAM_STR);
 		}
 		if (isset($p['password']) && !empty($p['password'])) {
-			$statement -> bindParam(':password',  $hash = hash('sha256', $p['password']), PDO::PARAM_STR);
+			$hash = hash('sha256', $p['password']);
+			$statement -> bindParam(':password', $hash, PDO::PARAM_STR);
 		}
 		if (isset($p['role']) && !empty($p['role'])) {
 			$statement -> bindParam(':role', $p['role'], PDO::PARAM_STR);
@@ -278,7 +281,8 @@ function apiAddUUser($db, $p) {
 		$statement -> bindParam(':username', $p['username'], PDO::PARAM_STR);
 		$statement -> bindParam(':email', $p['email'], PDO::PARAM_STR);
 		$statement -> bindParam(':name', $p['name'], PDO::PARAM_STR);
-		$statement -> bindParam(':password',  $hash = hash('sha256', $p['password']), PDO::PARAM_STR);
+		$hash = hash('sha256', $p['password']) ;
+		$statement -> bindParam(':password',  $hash , PDO::PARAM_STR);
 		$statement -> bindParam(':expiration', $p['expiration'], PDO::PARAM_STR);
 		$statement -> bindParam(':role', $p['role'], PDO::PARAM_STR);
 		$statement -> execute();
@@ -292,11 +296,11 @@ function apiAddUUser($db, $p) {
 	try {
 		// Update PODs
 		if (isset($p['pod']) && $p['pod'] !== '-1') {
-			$result = $statement -> fetch();
+			//$result = $statement -> fetch();
 			if (!isset($p['pexpiration'])) {
 				$p['pexpiration'] = '-1';
 			}
-			$query = 'INSERT OR REPLACE INTO pods (id, expiration, username) VALUES(:id, :expiration, :username);';
+			$query = 'INSERT INTO pods (id, expiration, username) VALUES(:id, :expiration, :username);';
 			$statement = $db -> prepare($query);
 			$statement -> bindParam(':id', $p['pod'], PDO::PARAM_INT);
 			$statement -> bindParam(':expiration', $p['pexpiration'], PDO::PARAM_STR);

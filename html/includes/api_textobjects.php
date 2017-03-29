@@ -81,6 +81,33 @@ function apiEditLabTextObject($lab, $p) {
 	return $output;
 }
 
+
+/**
+ * Function to edit multiple  textobjects.
+ *
+ * @param   Lab     $lab                Lab
+ * @param   Array   $p                  Parameters
+ * @return  Array                       Return code (JSend data)
+ */
+function apiEditLabTextObjects($lab, $p) {
+        foreach ( $p as $textobject ) {
+          $textobject['save']  = 0 ;
+          $rc = $lab -> editTextObject($textobject);
+        }
+        $rc = $lab -> save(); 
+
+        if ($rc === 0) {
+                $output['code'] = 201;
+                $output['status'] = 'success';
+                $output['message'] = $GLOBALS['messages'][60023];
+        } else {
+                $output['code'] = 400;
+                $output['status'] = 'fail';
+                $output['message'] = $GLOBALS['messages'][$rc];
+        }
+        return $output;
+}
+
 /**
  * Function to get a single textobject.
  *
@@ -100,7 +127,8 @@ function apiGetLabTextObject($lab, $id) {
 			'id' => $id,
 			'name' => $textobject -> getName(),
 			'type' => $textobject -> getNType(),
-			'data' => $textobject -> getData()
+			'data' => $textobject -> getData(),
+			'newdata' => $textobject -> getNewData()
 		);
 	} else {
 		$output['code'] = 404;

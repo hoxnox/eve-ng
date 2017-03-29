@@ -33,7 +33,7 @@
 $p['type'] = 'dynamips'; 
 $p['name'] = '7206VXR';
 $p['icon'] = 'Router.png'; 
-$p['idlepc'] = '0x62f224ac'; 
+$p['idlepc'] = '0x62f21000'; 
 $p['nvram'] = 128; 
 $p['ram'] = 512; 
 $p['slot1'] = '';

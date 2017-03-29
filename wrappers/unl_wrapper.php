@@ -110,7 +110,7 @@ switch ($action) {
 		// Exporting node(s) running-config
 		if (isset($node_id)) {
 			// Node ID is set, export a single node
-			$rc = export($node_id, $lab -> getNodes()[$node_id], $lab);
+			$rc = export($node_id, $lab -> getNodes()[$node_id], $lab, $lab -> getTenant());
 			if ($rc == 80061 || $rc == 80084 ) {
 				error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][19]);
 				exit(19);
@@ -123,7 +123,7 @@ switch ($action) {
 		} else {
 			// Node ID is not set, export all nodes
 			foreach ($lab -> getNodes() as $node_id => $node) {
-				export($node_id, $node, $lab);
+				export($node_id, $node, $lab,$lab -> getTenant());
 			}
 		}
 		break;
@@ -383,6 +383,104 @@ switch ($action) {
 				}
 		}
 		break;
+        case 'cpulimitoff':
+                $cmd = 'systemctl stop cpulimit.service';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                error_log(date('M d H:i:s ').implode("\n", $o));
+                $cmd = 'systemctl disable cpulimit.service';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                error_log(date('M d H:i:s ').implode("\n", $o));
+                break;
+        case 'cpulimiton':
+                $cmd = 'systemctl start cpulimit.service';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                $cmd = 'systemctl enable cpulimit.service';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                break;
+        case 'uksmoff':
+                $cmd = 'echo 0 > /sys/kernel/mm/uksm/run';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                $cmd = 'echo 0 > /opt/unetlab/uksm';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                break;
+        case 'uksmon':
+                $cmd = 'echo 1 > /sys/kernel/mm/uksm/run';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                $cmd = 'echo 1 > /opt/unetlab/uksm';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                break;
+        case 'ksmoff':
+                $cmd = 'echo 0 > /sys/kernel/mm/ksm/run';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                $cmd = 'echo 0 > /opt/unetlab/ksm';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                break;
+        case 'ksmon':
+                $cmd = 'echo 1 > /sys/kernel/mm/ksm/run';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                $cmd = 'echo 1 > /opt/unetlab/ksm';
+                exec($cmd, $o, $rc);
+                if ($rc !== 0) {
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][13]);
+                    error_log(date('M d H:i:s ').date('M d H:i:s ').implode("\n", $o));
+                    exit(13);
+                }
+                break;
 }
 exit(0);
 ?>

@@ -10,6 +10,7 @@
 #include "include/tap.h"
 
 int device_id = -1;                         // Device ID
+int tap_id = -1;
 int tenant_id = -1;                         // Tenant ID
 int tsclients_socket[FD_SETSIZE];           // Telnet active clients (socket), tsclients_socket[0] is the index
 
@@ -85,6 +86,7 @@ int main(int argc, char *argv[]) {
       case 'D':
         // Mandatory: Device ID
         device_id = atoi(optarg);
+	tap_id = device_id ;
         if (tenant_id < 0) {
           UNLLog(LLERROR,"device_id must be integer.\n");
           exit(1);

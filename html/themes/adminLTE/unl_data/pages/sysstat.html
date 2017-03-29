@@ -1,5 +1,7 @@
 <div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/header.html'" data-ng-controller="HeaderController">
 </div>
+<link rel="stylesheet" href="/themes/adminLTE/dist/css/skins/skin-blue.min.css">
+<script src="/themes/adminLTE/dist/js/app.js"></script>
 <div class="wrapper">
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -90,8 +92,11 @@
         </div>
         <!-- ./col -->
       </div>
-		<p class="text-muted">qemu version: <text data-ng-bind="serverstatus.qemu_version"></text></p>
+		<p class="text-muted">Qemu version: <text data-ng-bind="serverstatus.qemu_version"></text></p>
 		<p class="text-muted" data-ng-bind="versiondata"></p>
+		<p class="text-muted" id="pUKSM">UKSM status: &nbsp;<input type="checkbox" id="ToggleUKSM" /></p>
+		<p class="text-muted" id="pKSM">KSM status: &nbsp;<input type="checkbox" id="ToggleKSM" /></p>
+		<p class="text-muted">CPULimit status: &nbsp;<input type="checkbox" id="ToggleCPULIMIT" /></p>
       </div><!-- /.box-body -->
     </div><!-- /.box -->
   </div><!-- /.col -->
@@ -103,9 +108,12 @@
   
   
   <!-- Main Footer -->
-  <div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/footer.html'">
+
+  <!-- <div data-ng-include="'/themes/adminLTE/unl_data/pages/constant/footer.html'"> -->
 </div>
 <!-- ./wrapper -->
 <!-- AdminLTE App -->
-<link rel="stylesheet" href="/themes/adminLTE/dist/css/skins/skin-blue.min.css">
-<script src="/themes/adminLTE/dist/js/app.min.js"></script>
+
+<!-- ./wrapper -->
+<!-- AdminLTE App -->
+

@@ -29,6 +29,9 @@ if (file_exists('includes/config.php')) {
 	require_once('includes/config.php');
 }
 
+// Preview Code UIlegacy
+$UIlegacy = 1 ;
+
 if (!defined('DATABASE')) define('DATABASE', '/opt/unetlab/data/database.sdb');
 if (!defined('FORCE_VM')) define('FORCE_VM', 'auto');
 if (!defined('MODE')) define('MODE', 'multi-user');
@@ -38,7 +41,7 @@ if (!defined('TIMEOUT')) define('TIMEOUT', 25);
 if (!defined('TIMEZONE')) define('TIMEZONE', 'Europe/Rome');
 
 if (!isset($node_config)) {
-	$node_config = Array(
+	$node_config =	Array(
 		'iol'			=>	'embedded',
 		'c1710'			=>	'embedded',
 		'c3725'			=>	'embedded',
@@ -47,6 +50,7 @@ if (!isset($node_config)) {
 		'asa'			=>	'config_asa.py',
 		'asav'			=>	'config_asav.py',
 		'csr1000v'		=>	'config_csr1000v.py',
+		'csr1000vng'	=>	'config_csr1000v.py',
 		'docker'		=>	'config_docker.py',
 		'titanium'		=>	'config_titanium.py',
 		'veos'			=>	'config_veos.py',
@@ -55,6 +59,8 @@ if (!isset($node_config)) {
 		'vsrx'			=>	'config_vsrx.py',
 		'vsrxng'		=>	'config_vsrxng.py',
 		'vmx'			=>	'config_vmx.py',
+		'vmxvcp'		=>	'config_vmxvcp.py',
+		'vqfxre'		=>	'config_vqfxre.py',
 		'xrv'			=>	'config_xrv.py',
 		//'xrv9k'		=>	'config_xrv9k.py',
 		'pfsense'		=>	'config_pfsense.py'
@@ -65,25 +71,32 @@ if (!isset($node_templates)) {
 	$node_templates = Array(
 		'a10'			=>	'A10 vThunder',
 		'clearpass'		=>	'Aruba ClearPass',
-		'timos'			=>	'Alcatel 7750 SR',
+		'timos'			=>	'Nokia 7750 VSR-I',
+        'timoscpm'		=>	'Nokia 7750 CPM',
+        'timosiom'		=>	'Nokia 7750 IOM',
 		'veos'			=>	'Arista vEOS',
-		'brocadevadx'		=>	'Brocade vADX',
+		'barracuda'		=>	'Barraccuda NGIPS',
+		'brocadevadx'	=>	'Brocade vADX',
 		'cpsg'			=>	'CheckPoint Security Gateway VE',
-		'docker'		=>	'Docker.io',
+		//'docker'		=>	'Docker.io',
 		'acs'			=>	'Cisco ACS',
 		'asa'			=>	'Cisco ASA',
 		'asav'			=>	'Cisco ASAv',
 		'cda'			=>	'Cisco Context Directory Agent',
 		'csr1000v'		=>	'Cisco CSR 1000V',
+		'csr1000vng'	=>	'Cisco CSR 1000V (Denali and Everest)',
 		'cips'			=>	'Cisco IPS',
+		'cucm'			=>	'Cisco CUCM',
 		'ise'			=>	'Cisco ISE',
 		'c1710'			=>	'Cisco IOS 1710 (Dynamips)',
 		'c3725'			=>	'Cisco IOS 3725 (Dynamips)',
 		'c7200'			=>	'Cisco IOS 7206VXR (Dynamips)',
 		'iol'			=>	'Cisco IOL',
 		'titanium'		=>	'Cisco NX-OSv (Titanium)',
+		'nxosv9k'		=>	'Cisco NX-OSv 9K',
 		'firepower'		=>	'Cisco FirePower',
-		'ucspe'			=>	'Cisco UCS-PE',
+		'firepower6'	=>	'Cisco FirePower 6',
+		//'ucspe'			=>	'Cisco UCS-PE',
 		'vios'			=>	'Cisco vIOS',
 		'viosl2'		=>	'Cisco vIOS L2',
 		'vnam'			=>	'Cisco vNAM',
@@ -92,35 +105,74 @@ if (!isset($node_templates)) {
 		'phoebe'		=>	'Cisco Email Security Appliance (ESA)',
 		'coeus'			=>	'Cisco Web Security Appliance (WSA)',
 		'xrv'			=>	'Cisco XRv',
-		'xrv9k'	                =>      'Cisco XRv 9000',
+		'xrv9k'			=>	'Cisco XRv 9000',
 		'nsvpx'			=>	'Citrix Netscaler',
-		'sonicwall'            	=>      'Dell SonicWall',
+		'sonicwall'		=>	'Dell SonicWall',
 		'cumulus'		=>	'Cumulus VX',
-		'extremexos'		=>	'ExtremeXOS',
+		'extremexos'	=>	'ExtremeXOS',
 		'bigip'			=>	'F5 BIG-IP LTM VE',
 		'fortinet'		=>	'Fortinet FortiGate',
 		//'radware'		=>	'Radware Alteon',
 		'hpvsr'			=>	'HP VSR1000',
+		'jspace'        =>  'Junos Space',
 		'olive'			=>	'Juniper Olive',
 		'vmx'			=>	'Juniper vMX',
-		'vsrx'			=>	'Juniper vSRX',
+		'vmxvcp'        =>  'Juniper vMX VCP',
+		'vmxvfp'        =>  'Juniper vMX VFP',
+        'vsrx'			=>	'Juniper vSRX',
 		'vsrxng'		=>	'Juniper vSRX NextGen',
+		'vqfxre'		=>	'Juniper vQFX RE',
+		'vqfxpfe'		=>	'Juniper vQFX PFE',
 		'linux'			=>	'Linux',
 		'mikrotik'		=>	'MikroTik RouterOS',
 		'ostinato'		=>	'Ostinato',
 		'paloalto'		=>	'Palo Alto VM-100 Firewall',
 		'pfsense'		=>	'pfSense Firewall',
-		//'riverbed'		=>	'Riverbed',
+		'riverbed'		=>	'Riverbed',
 		'sterra'		=>	'S-Terra',
 		'vyos'			=>	'VyOS',
-		//'esxi'		=>	'VMware ESXi',
-		'win'			=>	'Windows',
+		'win'	        =>	'Windows',
+		'winserver'		=>	'Windows Server',
 		'vpcs'			=>	'Virtual PC (VPCS)'
 	);
+	$qemudir = scandir("/opt/unetlab/addons/qemu/");
+	$ioldir=scandir("/opt/unetlab/addons/iol/bin/");
+	$dyndir=scandir("/opt/unetlab/addons/dynamips/");
+	
+	foreach ( $node_templates as $templ => $desc ) {
+		$found = 0 ;
+		if ( $templ == "iol" ) {
+			foreach ( $ioldir as $dir ) {
+                        	if ( preg_match ( "/\.bin/",$dir )  ==  1 ) {
+                                	$found = 1 ;
+                        	}
+                	}
+		}
+		if ( $templ == "c1710" || $templ == "c3725" || $templ == "c7200" ) {
+			foreach ( $dyndir as $dir ) {
+				if ( preg_match ( "/".$templ."/",$dir )  ==  1 ) {
+					$found = 1 ;
+				}
+			}
+		}
+		if ( $templ == "vpcs" || $templ == "docker"  ) {
+		$found = 1 ;
+		}
+		foreach ( $qemudir as $dir ) {
+			if ( preg_match ( "/".$templ."-.*/",$dir )  ==  1 ) {
+				$found = 1 ;
+			}
+		}
+		if ( $found == 0 )  {
+			$node_templates[$templ] = $desc.'.missing'  ;
+		}
+			
+	}
+			
 }
 
 // Define parameters
-define('VERSION', '1.0.2-2-git');
+define('VERSION', '2.0.3-53');
 define('BASE_DIR', '/opt/unetlab');
 define('BASE_LAB', BASE_DIR.'/labs');
 define('BASE_TMP', BASE_DIR.'/tmp');
@@ -145,7 +197,7 @@ if (defined('LOCALE') && is_file(BASE_DIR.'/html/includes/messages_'.LOCALE.'.ph
 }
 
 // Include CLI specific functions
-if (php_sapi_name() === 'cli') {
+if (php_sapi_name() ==	'cli') {
 	// CLI User
 	require_once(BASE_DIR.'/html/includes/cli.php');
 } else {

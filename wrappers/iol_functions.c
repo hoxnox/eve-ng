@@ -44,6 +44,7 @@ extern int child_eth;
 extern int child_ser;
 extern int tenant_id;
 extern int tsclients_socket[];
+extern int tap_id;
 
 // Print usage
 void usage(const char *bin) {
@@ -73,7 +74,7 @@ int mk_netmap() {
     int d = 0;
     int iol_id = device_id;
     int rc = 0;
-    int wrapper_id = iol_id + 512;
+    int wrapper_id = tap_id + 512;
     if (access("NETMAP", F_OK) != -1 && remove("NETMAP") != 0) {
         rc = 1;
         UNLLog(LLERROR, "Cannot create NETMAP file (access). ERR: %s (%i)\n", strerror(errno), rc);
@@ -104,7 +105,7 @@ int mk_afsocket(int *wrapper_socket, int *iol_socket) {
     char tmp[100];
     memset(&tmp, 0, sizeof(tmp));
     int iol_id = device_id;
-    int wrapper_id = iol_id + 512;
+    int wrapper_id = tap_id + 512;
     int rc = -1;
 
     // Creating netio directory
@@ -159,7 +160,7 @@ int mk_tap(int child_eth, int *iol_tap) {
     // Create all interfaces
     for (i = 0; i < child_eth; i++) {
         for (j = 0; j <= 3; j++) {
-            sprintf(tap_name, "vunl%u_%u_%u", tenant_id, device_id, i + 16 * j);
+            sprintf(tap_name, "vunl%u_%u_%u", tenant_id, tap_id, i + 16 * j);
             if ((rc = tap_listen(tap_name, &tap_fd)) != 0) {
                 rc = 1;
                 UNLLog(LLVERBOSE, "Skipping TAP (%s) interface (%i).\n", tap_name, rc);
@@ -276,7 +277,7 @@ int packet_tap(int tap_socket, int af_socket, int iol_ifid) {
     int iol_id = device_id;
     int length = -1;
     int rc = -1;
-    int wrapper_id = iol_id + 512;
+    int wrapper_id = tap_id + 512;
   
 //    char *eth_frame;
 //    char iol_frame[1522];
@@ -338,7 +339,7 @@ int packet_udp(int udp_socket, int af_socket) {
     int iol_id = device_id;
     int length = -1;
     int rc = -1;
-    int wrapper_id = iol_id + 512;
+    int wrapper_id = tap_id + 512;
   
     char ser_frame[BUFFER];
     memset(ser_frame, 0, sizeof(ser_frame));
@@ -391,8 +392,8 @@ int packet_udp(int udp_socket, int af_socket) {
     } else {
         dst_tenant_id = ser_frame[0];
         src_tenant_id = ser_frame[1];
-        dst_device_id = (ser_frame[2] << 8) + ser_frame[3];
-        src_device_id = (ser_frame[4] << 8) + ser_frame[5];
+        dst_device_id = ( ( ser_frame[2] << 8 ) & 65535 ) + ( ser_frame[3] & 255 );
+        src_device_id = ( ( ser_frame[4] << 8 ) & 65535 ) + ( ser_frame[5] & 255 );
         dst_device_if = ser_frame[6];
         src_device_if = ser_frame[7];
         if (dst_tenant_id != tenant_id) {

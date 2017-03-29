@@ -34,10 +34,10 @@ $p['type'] = 'qemu';
 $p['name'] = 'Win';
 $p['icon'] = 'Desktop.png';
 $p['cpu'] = 1;
-$p['ram'] = 2048;
+$p['ram'] = 4096;
 $p['ethernet'] = 1;
 $p['console'] = 'vnc';
 $p['qemu_arch'] = 'x86_64';
 $p['qemu_version'] = '2.0.2';
-$p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -vga std -usbdevice tablet -boot order=dc';
+$p['qemu_options'] = '-machine type=pc-1.0,accel=kvm -cpu qemu64,+fsgsbase -vga std -usbdevice tablet -boot order=dc';
 ?>

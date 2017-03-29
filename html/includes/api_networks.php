@@ -102,6 +102,34 @@ function apiEditLabNetwork($lab, $p) {
 	return $output;
 }
 
+
+/**
+ * Function to edit multiple lab networks.
+ *
+ * @param   Lab     $lab                Lab
+ * @param   Array   $p                  Parameters
+ * @return  Array                       Return code (JSend data)
+ */
+function apiEditLabNetworks($lab, $p) {
+        // Edit network
+        foreach ( $p as $network ) {
+          $network['save'] = 0 ;
+          $rc = $lab -> editNetwork($network);
+        }
+        $rc = $lab -> save() ;
+
+        if ($rc === 0) {
+                $output['code'] = 201;
+                $output['status'] = 'success';
+                $output['message'] = $GLOBALS['messages'][60023];
+        } else {
+                $output['code'] = 400;
+                $output['status'] = 'fail';
+                $output['message'] = $GLOBALS['messages'][$rc];
+        }
+        return $output;
+}
+
 /**
  * Function to get a single lab network.
  *
@@ -123,7 +151,8 @@ function apiGetLabNetwork($lab, $id) {
 			'left' => $network -> getLeft(),
 			'name' => $network -> getName(),
 			'top' => $network -> getTop(),
-			'type' => $network -> getNType()
+			'type' => $network -> getNType(),
+                        'visibility' => $network -> getVisibility()
 		);
 	} else {
 		// Network not found
@@ -156,7 +185,8 @@ function apiGetLabNetworks($lab) {
 			'left' => $network -> getLeft(),
 			'name' => $network -> getName(),
 			'top' => $network -> getTop(),
-			'type' => $network -> getNType()
+			'type' => $network -> getNType(),
+                        'visibility' => $network -> getVisibility()
 		);
 	}
 	return $output;

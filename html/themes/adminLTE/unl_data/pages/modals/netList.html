@@ -1,5 +1,6 @@
 <div class="modal-header">
 	<button type="button" class="close" ng-click="closeModal()">&times;</button>
+	<i class="glyphicon glyphicon-certificate pull-right pointer action-changeopacity" ng-click="opacity()"></i>
 	<h3 class="modal-title">All networks in {{path}}</h3>
 </div>
 <div class="modal-body">
@@ -14,20 +15,32 @@
 		<th>Action</th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody class="tbodyNetList">
 		<tr ng-repeat="(id,item) in netList" class="{{(item.editmode) ? 'bg-warning' : ''}}">
 		<td>{{id}}</td>
-		<td>
-			<text ng-show="!item.editmode" ng-click="editMode(id)">{{item.name}}</text>
-			<input ng-init="item.newname = item.name" ng-model="item.newname" ng-show="item.editmode" style="padding-left:2px;"/>
+		<td ng-click="editMode(id)">
+			<form name="formNetList[{{id}}]">
+				
+				<text ng-show="!item.editmode">{{item.name}}</text>
+				<input name="name" ng-pattern="restrictSpace" ng-init="item.newname = item.name" ng-show="item.editmode" ng-model="item.name" ng-blur="applyChanges(id)" style="padding-left:2px;"/> 
+				<span style="display: none;">{{$parent.formNetListValid[id] = formNetList[id].name.$valid}}</span>
+
+			<!--  -->
+			</form>
 		</td>
-		<td>{{item.type}}</td>
+		<td ng-click="editMode(id)">
+			<text ng-show="!item.editmode" >{{item.type}}</text>
+			<select class="form-control-networks" ng-show="item.editmode" ng-init="item.newtype = item.type" ng-model="item.type" ng-blur="applyChanges(id)" data-ng-options="x for x in netListType"></select>
+			<!--  -->
+		</td>
 		<td>{{item.count}}</td>
 		<td>
-			<div class="pull-left"><button type="button" class="btn btn-flat btn-xs" tooltip-placement="top" uib-tooltip="Edit network" ng-click="editMode(id)" ng-show="!item.editmode"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-			<button type="button" class="btn btn-flat btn-xs" tooltip-placement="top" uib-tooltip="Cancel changes" ng-click="cancelChanges(id)" ng-show="item.editmode"><i class="fa fa-ban" aria-hidden="true"></i></button>
-			<button type="button" class="btn btn-xs" tooltip-placement="top" uib-tooltip="Save changes" ng-disabled="!item.editmode" ng-click="applyChanges(id)"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
-			<button type="button" class="btn btn-flat btn-danger btn-xs" tooltip-placement="top" uib-tooltip="Delete network" ng-click="deleteNet(id,item.name)"><i class="fa fa-trash" aria-hidden="true"></i></button></div>
+			<div class="pull-left">
+				<!-- <button type="button" class="btn btn-flat btn-xs" tooltip-placement="top" uib-tooltip="Edit network" ng-click="editMode(id)" ng-show="!item.editmode"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+				<button type="button" class="btn btn-flat btn-xs" tooltip-placement="top" uib-tooltip="Cancel changes" ng-click="cancelChanges(id)" ng-show="item.editmode"><i class="fa fa-ban" aria-hidden="true"></i></button>
+				<button type="button" class="btn btn-xs" tooltip-placement="top" uib-tooltip="Save changes" ng-disabled="!item.editmode" ng-click="applyChanges(id)"><i class="fa fa-floppy-o" aria-hidden="true"></i></button> -->
+				<button type="button" class="btn btn-flat btn-danger btn-xs" tooltip-placement="top" uib-tooltip="Delete network" ng-click="deleteNet(id,item.name)"><i class="fa fa-trash" aria-hidden="true"></i></button>
+			</div>
 		</td>
 		</tr>
 	</tbody>

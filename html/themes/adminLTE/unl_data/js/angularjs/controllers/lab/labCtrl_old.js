@@ -192,6 +192,7 @@ function labController($scope, $http, $location, $uibModal, $rootScope, $q, $log
 					function successCallback(response){
 						console.log(response)
 						jsPlumb.detach(conn);
+						$scope.anychanges=false;
 						//$scope.interfList = response.data.data;
 					}, function errorCallback(response){
 						console.log('Server Error');

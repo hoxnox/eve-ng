@@ -1,6 +1,18 @@
-diff -Nru ../vpcs-0.8.ori/src/command.c src/command.c
---- ../vpcs-0.8.ori/src/command.c	2015-11-01 08:36:39.000000000 +0000
-+++ src/command.c	2016-04-13 20:56:20.827220309 +0000
+diff -Nru ../vpcs-0.8.ori/src/Makefile.linux ./src/Makefile.linux
+--- ../vpcs-0.8.ori/src/Makefile.linux	2015-11-01 09:36:39.000000000 +0100
++++ ./src/Makefile.linux	2016-12-30 22:16:47.594707836 +0100
+@@ -5,7 +5,7 @@
+ HVOPT=-DHV
+ 
+ CFLAGS=-D$(OSTYPE) -D$(CPUTYPE) $(HVOPT) -Wall -I. -DTAP
+-LDFLAGS=-lpthread -lutil -s -static
++LDFLAGS=-lpthread -lutil -s
+ OBJS=vpcs.o \
+ 	daemon.o \
+ 	readline.o \
+diff -Nru ../vpcs-0.8.ori/src/command.c ./src/command.c
+--- ../vpcs-0.8.ori/src/command.c	2015-11-01 09:36:39.000000000 +0100
++++ ./src/command.c	2016-12-30 22:16:47.578707535 +0100
 @@ -67,6 +67,7 @@
  extern int runStartup;
  extern const char *default_startupfile;
@@ -38,13 +50,13 @@ diff -Nru ../vpcs-0.8.ori/src/command.c src/command.c
  		ver, __DATE__, __TIME__ );
  	
  	return 1;	
-diff -Nru ../vpcs-0.8.ori/src/daemon.c src/daemon.c
---- ../vpcs-0.8.ori/src/daemon.c	2015-11-01 08:36:38.000000000 +0000
-+++ src/daemon.c	2016-04-13 20:55:10.475218479 +0000
+diff -Nru ../vpcs-0.8.ori/src/daemon.c ./src/daemon.c
+--- ../vpcs-0.8.ori/src/daemon.c	2015-11-01 09:36:38.000000000 +0100
++++ ./src/daemon.c	2016-12-31 00:48:38.882660914 +0100
 @@ -1,5 +1,5 @@
  /*
 - * Copyright (c) 2007-2015, Paul Meng (mirnshi@gmail.com)
-+ * Copyright (c) 2007-2016, Paul Meng (mirnshi@gmail.com)
++ *me Copyright (c) 2007-2016, Paul Meng (mirnshi@gmail.com)
   * All rights reserved.
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -56,6 +68,28 @@ diff -Nru ../vpcs-0.8.ori/src/daemon.c src/daemon.c
  #include <netinet/in.h>
  #include <arpa/inet.h>
  #include <sys/select.h>
+@@ -70,18 +71,18 @@
+ BOOL WINAPI handler_routine(DWORD e);
+ #endif
+ 
+-static void daemon_proc(int sock, int fdtty);
++static void daemon_proc(int sock, char *wname, int fdtty);
+ static void sig_usr1(int sig);
+ static void sig_usr2(int sig);
+ static void sig_quit(int sig);
+ static void sig_term(int sig);
+ static void sig_int(int sig);
+-static int set_telnet_mode(int s);
++static int set_telnet_mode(int s, char *wname);
+ static void set_nonblock(int fd);
+ static int pipe_rw(int fds, int fdd);
+ 
+ int 
+-daemonize(int port, int bg)
++daemonize(int port, char *wname, int bg)
+ {
+ 	int sock = 0;
+ 	struct sockaddr_in serv;
 @@ -139,6 +140,7 @@
  	(void) setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
  	    (char *)&on, sizeof(on));
@@ -64,6 +98,15 @@ diff -Nru ../vpcs-0.8.ori/src/daemon.c src/daemon.c
  	bzero((char *) &serv, sizeof(serv));
  	serv.sin_family = AF_INET;
  	serv.sin_addr.s_addr = htonl(INADDR_ANY);
+@@ -153,7 +155,7 @@
+ 		goto err;
+ 	}
+ 
+-	daemon_proc(sock, fdtty);
++	daemon_proc(sock, wname, fdtty);
+ err:
+ 	printf("error\n");
+ 	if (sock >= 0)
 @@ -177,12 +179,10 @@
  	tv.tv_usec = 10 * 1000; 
  	
@@ -77,7 +120,7 @@ diff -Nru ../vpcs-0.8.ori/src/daemon.c src/daemon.c
  		if (rc < 0)
  			return rc;
  		if (rc == 0) {
-@@ -197,8 +197,10 @@
+@@ -197,20 +197,23 @@
  			memset(buf, 0, sizeof(buf));	
  			len = read(fds, buf, sizeof(buf));
  			if (len <= 0)
@@ -90,7 +133,13 @@ diff -Nru ../vpcs-0.8.ori/src/daemon.c src/daemon.c
  		}
  	}
  }
-@@ -211,6 +213,7 @@
+ 
+ static void 
+-daemon_proc(int sock, int fdtty)
++daemon_proc(int sock,  char *wname, int fdtty)
+ {
+ 	char *goodbye = "\r\nGood-bye\r\n";
+ 	int sock_cli;
  	struct sockaddr_in cli;
  	int slen;
  	int rc;
@@ -103,8 +152,9 @@ diff -Nru ../vpcs-0.8.ori/src/daemon.c src/daemon.c
  		if (sock_cli < 0) 
  			continue;
 -		
+-		set_telnet_mode(sock_cli);
 +
- 		set_telnet_mode(sock_cli);
++		set_telnet_mode(sock_cli, wname );
  		set_nonblock(fdtty);
 +
 +		/* to show the prompt if it is not the first connection */
@@ -124,12 +174,12 @@ diff -Nru ../vpcs-0.8.ori/src/daemon.c src/daemon.c
  		}	
  		pipe_rw(fdtty, sock_cli);
  		rc = write(sock_cli, goodbye, strlen(goodbye));
-@@ -317,18 +325,17 @@
+@@ -317,18 +325,18 @@
  }
  
  static int 
 -set_telnet_mode(int s)
-+set_telnet_mode(int s )
++set_telnet_mode(int s, char *wname  )
  {
  	/* DO echo */
 -	char *neg =
@@ -137,21 +187,34 @@ diff -Nru ../vpcs-0.8.ori/src/daemon.c src/daemon.c
 -	    "\xFF\xFB\x01"
 -	    "\xFF\xFD\x03"
 -	    "\xFF\xFB\x03";
-+	char *pcname = "VPC";
-+	char neg [ strlen(pcname)+17];
-+	    sprintf ( neg , "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%s%c", 0xff,0xfb,0x1,0xff,0xfb,0x3,0xff,0xfb,0x0,0xff,0xfd,0x0,0x1b,0x5d,0x30,0x3b,pcname,0x7); 
++	//char *pcname = "VPC";
++	char neg [ strlen(wname)+17];
++	// printf ( "%c%c%c%c%s%c", 0x1b,0x5d,0x30,0x3b,wname,0x7);
++	    sprintf ( neg , "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%s%c", 0xff,0xfb,0x1,0xff,0xfb,0x3,0xff,0xfb,0x0,0xff,0xfd,0x0,0x1b,0x5d,0x30,0x3b,wname,0x7); 
 +
  	u_char buf[512];
  	int n;
  	
 -	n = write(s, neg, strlen(neg));
-+	n = write(s, neg, strlen(pcname)+17);
++	n = write(s, neg, strlen(wname)+17);
  	n = read(s, buf, sizeof(buf));
  	
  	return n;
-diff -Nru ../vpcs-0.8.ori/src/dev.c src/dev.c
---- ../vpcs-0.8.ori/src/dev.c	2015-11-01 08:36:39.000000000 +0000
-+++ src/dev.c	2016-04-13 20:55:10.475218479 +0000
+diff -Nru ../vpcs-0.8.ori/src/daemon.h ./src/daemon.h
+--- ../vpcs-0.8.ori/src/daemon.h	2015-11-01 09:36:38.000000000 +0100
++++ ./src/daemon.h	2016-12-31 00:53:45.880463287 +0100
+@@ -27,7 +27,7 @@
+ #ifndef _DAEMON_H_
+ #define _DAEMON_H_
+ 
+-int daemonize(int port, int bg);
++int daemonize(int port, char *wname, int bg);
+ 
+ #endif
+ 
+diff -Nru ../vpcs-0.8.ori/src/dev.c ./src/dev.c
+--- ../vpcs-0.8.ori/src/dev.c	2015-11-01 09:36:39.000000000 +0100
++++ ./src/dev.c	2016-12-30 22:16:47.594707836 +0100
 @@ -165,15 +165,14 @@
  {
  	struct ifreq ifr;
@@ -191,21 +254,23 @@ diff -Nru ../vpcs-0.8.ori/src/dev.c src/dev.c
  	return(fd);
  }
  #endif
-diff -Nru ../vpcs-0.8.ori/src/Makefile.linux src/Makefile.linux
---- ../vpcs-0.8.ori/src/Makefile.linux	2015-11-01 08:36:39.000000000 +0000
-+++ src/Makefile.linux	2016-04-13 20:55:10.475218479 +0000
-@@ -5,7 +5,7 @@
- HVOPT=-DHV
+diff -Nru ../vpcs-0.8.ori/src/help.c ./src/help.c
+--- ../vpcs-0.8.ori/src/help.c	2015-11-01 09:36:39.000000000 +0100
++++ ./src/help.c	2016-12-30 22:37:57.622654143 +0100
+@@ -446,10 +446,6 @@
  
- CFLAGS=-D$(OSTYPE) -D$(CPUTYPE) $(HVOPT) -Wall -I. -DTAP
--LDFLAGS=-lpthread -lutil -s -static
-+LDFLAGS=-lpthread -lutil -s
- OBJS=vpcs.o \
- 	daemon.o \
- 	readline.o \
-diff -Nru ../vpcs-0.8.ori/src/readline.c src/readline.c
---- ../vpcs-0.8.ori/src/readline.c	2015-11-01 08:36:39.000000000 +0000
-+++ src/readline.c	2016-04-13 20:55:10.479218479 +0000
+ int run_help(int argc, char **argv) 
+ {
+-	esc_prn("\n"
+-		"{H?}                        Print help\n"
+-		"{H!} {UCOMMAND} [{UARG} ...]      Invoke an OS {UCOMMAND} with optional {UARG(s)}\n");
+-	
+ 	if (num_pths > 1) {
+ 		esc_prn("{Udigit}                    Switch to the VPC{Udigit}. "
+ 			"{Udigit} range 1 to %d\n", num_pths); 
+diff -Nru ../vpcs-0.8.ori/src/readline.c ./src/readline.c
+--- ../vpcs-0.8.ori/src/readline.c	2015-11-01 09:36:39.000000000 +0100
++++ ./src/readline.c	2016-12-30 22:16:47.594707836 +0100
 @@ -452,7 +452,6 @@
  			rls->kbuffer[rls->pos] = kb[0];
  			rls->kbuffer[rls->pos + 1] = '\0';
@@ -214,9 +279,9 @@ diff -Nru ../vpcs-0.8.ori/src/readline.c src/readline.c
  		}
  		rls->pos++;
  	} while (kb[0] != CTRLP);
-diff -Nru ../vpcs-0.8.ori/src/vpcs.c src/vpcs.c
---- ../vpcs-0.8.ori/src/vpcs.c	2015-11-01 08:36:38.000000000 +0000
-+++ src/vpcs.c	2016-04-13 20:55:10.479218479 +0000
+diff -Nru ../vpcs-0.8.ori/src/vpcs.c ./src/vpcs.c
+--- ../vpcs-0.8.ori/src/vpcs.c	2015-11-01 09:36:38.000000000 +0100
++++ ./src/vpcs.c	2016-12-31 01:21:34.996014673 +0100
 @@ -1,5 +1,5 @@
  /*
 - * Copyright (c) 2007-2015, Paul Meng (mirnshi@gmail.com)
@@ -229,7 +294,7 @@ diff -Nru ../vpcs-0.8.ori/src/vpcs.c src/vpcs.c
  #include "frag6.h"
  
 -const char *ver = "0.8b";
-+const char *ver = "0.8c";
++const char *ver = "1.0 (0.8c)";
  /* track the binary */
 -static const char *ident = "$Id: vpcs.c 124 2015-10-30 15:05:08Z mirnshi $";
 +static const char *ident = "$Id: vpcs.c 126 2016-02-24 12:43:26Z mirnshi $";
@@ -271,11 +336,20 @@ diff -Nru ../vpcs-0.8.ori/src/vpcs.c src/vpcs.c
  			case 'i':
  				num_pths = arg2int(optarg, 1, 9, 9);
  				break;
+@@ -227,7 +234,7 @@
+ 		}
+ 	}
+ 
+-	if (daemon_port && daemonize(daemon_port, daemon_bg))
++	if (daemon_port && daemonize(daemon_port, wname, daemon_bg))
+ 		exit(0);
+ 
+ 	if (!isatty(0)) {
 @@ -279,6 +286,8 @@
  		loadhistory(histfile, rls);
  
  	while (1) {
-+		printf ( "%c%c%c%c%s%c", 0x1b,0x5d,0x30,0x3b,wname,0x7);
++		//printf ( "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%s%c", 0xff,0xfb,0x1,0xff,0xfb,0x3,0xff,0xfb,0x0,0xff,0xfd,0x0,0x1b,0x5d,0x30,0x3b,wname,0x7);
 +		fflush(stdout);
  		if (num_pths > 1)
  			snprintf(prompt, sizeof(prompt), "\n\r%s[%d]> ", vpc[pcid].xname, pcid + 1);
@@ -289,11 +363,12 @@ diff -Nru ../vpcs-0.8.ori/src/vpcs.c src/vpcs.c
  	if (cmdstr[0] == '#' || cmdstr[0] == ';')
  		return;
  
-diff -Nru ../vpcs-0.8.ori/src/vpcs.hist src/vpcs.hist
---- ../vpcs-0.8.ori/src/vpcs.hist	1970-01-01 00:00:00.000000000 +0000
-+++ src/vpcs.hist	2016-04-13 20:55:10.479218479 +0000
-@@ -0,0 +1,4 @@
-+help
-+version
-+exit
-+quit
+@@ -357,6 +366,8 @@
+ 	}
+ 	
+ 	if (*cmdstr == '!') {
++		printf("Disabled\n");
++		return ;
+ 		char *p = NULL;
+ 		if (strlen(cmdstr) > 1) {
+ 			p = cmdstr + 1;

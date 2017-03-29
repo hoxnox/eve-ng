@@ -1,6 +1,9 @@
 <div class="login-box">
   <div class="login-logo">
-    <a href="/" title="Emulated Virtual Environment"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/Logo_EVE_black.png" style="width:312px;height:120px"></a>
+    <a href="/" title="Emulated Virtual Environment"><img class="hidden-xs" src="/themes/adminLTE/unl_data/img/Logo_EVE_Color.png" style="width:312px;height:120px"></a>
+  </div>
+  <div class="version">
+    <p style="text-align:center; color:white" data-ng-bind="eveversion"></p>
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
@@ -14,14 +17,16 @@
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <center>Use html5</center>
-        <input type="checkbox" class="form-control" placeholder="html5" ng-model="html5" value=-1 onclick="value=0-value">
+	<select name="html5" class="form-control" ng-init="html5='-1'"  placeholder="html5" ng-model="html5" ng-model="data.singleSelect">
+		<option value=-1 selected>Native console</option>
+		<option value=1>Html5 console</option>
+	</select>
       </div>
       <div class="row">
-        <div class="col-xs-4 col-xs-offset-8">
-          <button class="btn btn-primary btn-block btn-flat" ng-click="tryLogin()">Sign In</button>
+        <div class="col-xs-4 col-xs-offset-4">
+          <center><button id="btnlogin"  class="btn btn  btn-flat" ng-click="tryLogin()">Sign In</button></center>
         </div>
-		</p>
+		</p></br></br>
 		<p style="text-align:center; color:red" data-ng-bind="loginMessageInfo">
 		</p>
         <!-- /.col -->

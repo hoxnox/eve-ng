@@ -207,7 +207,7 @@ function nodeInit(node){
 			'<i class="fa fa-plug plug-icon dropdown-toggle ep" ng-show="node['+id+'].playstopView"></i>'+
 		'</div>'+
 		'<div class="{{node['+id+'].loadclass}} m-progress" ng-show="node['+id+'].loadclassShow" style="position:absolute; z-index:2;"></div>'+
-		'<img ng-src="/themes/adminLTE/unl_data/img/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}">'+
+		'<img ng-src="/images/icons/{{node['+id+'].icon}}" class=" '+node.icon.replace('.png','').replace(' ','')+'_sm {{(!node['+id+'].upstatus) ? \'grayscale\' : \'\'}} {{(node['+id+'].loadclassShow) ? \'icon-opacity\' : \'\';}}">'+
 		'<figcaption class="figcaption-text '+node.icon.replace('.png','').replace(' ','')+'_sm_label">'+node.name+'</figcaption>'+
 	'</div>';
 	$scope.compileNewElement(elDIV, node.id)
@@ -222,7 +222,7 @@ function networkInit(networkObject){
 	var icon = (networkObject.type == 'bridge') ? 'Switch.png' : 'Cloud.png';
 	var elDIV='<div id="networkID_'+networkObject['id']+'" class="w element-menu network" style="left: '+networkObject.left+'px; top: '+networkObject.top+'px;" context-menu="netContext">'+
 		//'<div class="tag"><i class="fa fa-plug plug-icon ep" aria-hidden="true"></i></div>'+
-		'<img src="/themes/adminLTE/unl_data/img/icons/'+icon+'" class="'+icon.replace('.png','')+'_sm'+'">'+
+		'<img src="/images/icons/'+icon+'" class="'+icon.replace('.png','')+'_sm'+'">'+
 		'<figcaption class="figcaption-text">'+networkObject.name+'</figcaption>'+
 	'</div>';
 	$('#canvas').append(elDIV);

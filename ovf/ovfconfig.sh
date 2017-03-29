@@ -7,7 +7,7 @@ fi
 
 . ~/.profile
 
-TITLE="Unified Networking Lab - Setup"
+TITLE="Eve-NG - Setup"
 
 # Checking if eth0 exists
 if [[ ! -e "/sys/class/net/eth0" ]]; then
@@ -39,7 +39,7 @@ if [ $? -eq 0 ]; then
 	. /opt/ovf/ovf_vars
 else
 	# Using interactive input
-	ovf_hostname=$(dialog --backtitle "${TITLE}" --no-cancel --stdout --title 'Hostname' --inputbox 'Type the short hostname for the system:' 9 40 'unl01')
+	ovf_hostname=$(dialog --backtitle "${TITLE}" --no-cancel --stdout --title 'Hostname' --inputbox 'Type the short hostname for the system:' 9 40 'eve-ng')
 	ovf_domain=$(dialog --backtitle "${TITLE}" --no-cancel --stdout --title 'DNS domain name' --inputbox 'Type the DNS domain name for the system:' 9 40 'example.com')
 	ovf_dhcp=$(dialog --backtitle "${TITLE}" --no-cancel --stdout --title 'Use DHCP/Static IP Address' --radiolist 'Use DHCP or Static IP Address for the network adapter on Management Network?' 11 40 2 'dhcp' '' 'on' 'static' '' 'off')
 

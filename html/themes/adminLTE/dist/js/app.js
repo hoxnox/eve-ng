@@ -240,7 +240,9 @@ function _init() {
   $.AdminLTE.layout = {
     activate: function () {
       var _this = this;
-      _this.fix();
+      setTimeout(function(){
+        _this.fix();
+      }, 1000)
       _this.fixSidebar();
       $(window, ".wrapper").resize(function () {
         _this.fix();
@@ -270,7 +272,9 @@ function _init() {
         var controlSidebar = $($.AdminLTE.options.controlSidebarOptions.selector);
         if (typeof controlSidebar !== "undefined") {
           if (controlSidebar.height() > postSetWidth)
+          {
             $(".content-wrapper, .right-side").css('min-height', controlSidebar.height());
+          }
         }
 
       }

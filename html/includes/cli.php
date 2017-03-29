@@ -430,7 +430,7 @@ function dumpConfig($config_data, $file_path) {
  * @param   Lab     $lab                Lab
  * @return  int                         0 means ok
  */
-function export($node_id, $n, $lab) {
+function export($node_id, $n, $lab , $uid ) {
 	$tmp = tempnam(sys_get_temp_dir(), 'unl_cfg_'.$node_id.'_');
 
 	if (is_file($tmp) && !unlink($tmp)) {
@@ -486,10 +486,11 @@ function export($node_id, $n, $lab) {
 			}
 			break;
 		case 'iol':
-			$nvram = $n -> getRunningPath().'/nvram_'.sprintf('%05u', $node_id);
+			// (( device_id & 0x3f ) << 4 ) | ( tenant_id & 0xf )
+			$nvram = $n -> getRunningPath().'/nvram_'.sprintf('%05u', (( $node_id & 0x3f ) << 4 | ( $uid & 0xf)) );
 			if (!is_file($nvram)) {
 				// NVRAM file not found
-				error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][80066]);
+				error_log(date('M d H:i:s ').'ERROR: '.$GLOBALS['messages'][80066].'for iolID '.(( $node_id & 0x3f ) << 4 | ( $uid & 0xf)) );
 				return 80066;
 			}
                         $cmd='/opt/unetlab/scripts/wrconf_iol.py -p '.$n -> getPort().' -t 15';
@@ -844,7 +845,9 @@ function prepareNode($n, $id, $t, $nets) {
         	                                exec($diskcmd, $o, $rc);
 						break;
 					case 'vsrxng':
+					case 'vmxvcp':
 					case 'vmx':
+					case 'vqfxre':
 					case 'vsrx':
 						copy (  $n -> getRunningPath().'/startup-config',  $n -> getRunningPath().'/juniper.conf');
 						$isocmd = 'mkisofs -o '.$n -> getRunningPath().'/config.iso -l --iso-level 2 '.$n -> getRunningPath().'/juniper.conf' ;
@@ -924,7 +927,8 @@ function start($n, $id, $t, $nets, $scripttimeout) {
 			// Adding Serial links
 			foreach ($n -> getSerials() as $interface_id => $interface) {
 				if ($interface -> getRemoteId() > 0) {
-					$cmd .= ' -l '.$interface_id.':localhost:'.$interface -> getRemoteId().':'.$interface -> getRemoteIf();
+					//$cmd .= ' -l '.$interface_id.':localhost:'.$interface -> getRemoteId().':'.$interface -> getRemoteIf();
+					$cmd .= ' -l '.$interface_id.':localhost:'.(((( $interface -> getRemoteId()) & 0x3f ) << 4 ) | ( $t & 0xf )).':'.$interface -> getRemoteIf();
 				}
 			}
 			break;
@@ -954,13 +958,18 @@ function start($n, $id, $t, $nets, $scripttimeout) {
 		$flags .= ' -drive file=minidisk,if=virtio,bus=0,unit=1,cache=none' ;
 	}
 
-	if (( $n->getTemplate() == 'vmx'  || $n->getTemplate() == 'vsrx') && is_file($n -> getRunningPath().'/config.iso') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0)  {
+	if (( $n->getTemplate() == 'vmx'  || $n->getTemplate() == 'vsrx' || $n->getTemplate() == 'vqfxre' ) && is_file($n -> getRunningPath().'/config.iso') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0)  {
 		$flags .= ' -drive file=config.iso,if=virtio,media=cdrom,index=2' ;
 	}
 
-        if ((  $n->getTemplate() == 'vsrxng') && is_file($n -> getRunningPath().'/config.iso') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0)  {
+        if ((  $n->getTemplate() == 'vsrxng' ) && is_file($n -> getRunningPath().'/config.iso') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0)  {
                 $flags .= ' -drive file=config.iso,if=ide,media=cdrom,index=2' ;
         }
+
+        if ((  $n->getTemplate() == 'vmxvcp' ) && is_file($n -> getRunningPath().'/config.iso') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0)  {
+                $flags .= ' -drive file=config.iso,if=ide,media=cdrom,index=3' ;
+        }
+
 
 	if (( $n -> getTemplate() == 'pfsense')   && is_file($n -> getRunningPath().'/config.iso') && !is_file($n -> getRunningPath().'/.configured') && $n -> getConfig() != 0)  {
 		$flags .= ' -cdrom config.iso' ;

@@ -59,8 +59,8 @@ function apiGetLabTopology($lab) {
 						break;
 					case 2:
 						// P2P Link
-						if ($lab -> getNetworks()[$interface -> getNetworkId()] -> isCloud()) {
-							// Cloud are never printed as P2P link
+						if ($lab -> getNetworks()[$interface -> getNetworkId()] -> isCloud() || $lab -> getNetworks()[$interface -> getNetworkId()] -> getVisibility() == 1) {
+							// Cloud are never printed as P2P link or Visibility is on
 							$output['data'][] = Array(
 								'type' => 'ethernet',
 								'source' => 'node'.$node_id,
@@ -83,7 +83,8 @@ function apiGetLabTopology($lab) {
 												'source_label' => $interface -> getName(),
 												'destination' => 'node'.$remote_node_id,
 												'destination_type' => 'node',
-												'destination_label' => $remote_interface -> getName()
+												'destination_label' => $remote_interface -> getName(),
+												'network_id' => $interface -> getNetworkId()
 											);
 										}
 										break;
@@ -104,7 +105,8 @@ function apiGetLabTopology($lab) {
 					'source_label' => $interface -> getName(),
 					'destination' => 'node'.$interface -> getRemoteID(),
 					'destination_type' => 'node',
-					'destination_label' => $lab -> getNodes()[$interface -> getRemoteID()] -> getSerials()[$interface -> getRemoteIf()] -> getName()
+					'destination_label' => $lab -> getNodes()[$interface -> getRemoteID()] -> getSerials()[$interface -> getRemoteIf()] -> getName(),
+					'network_id' => $interface -> getNetworkId()
 				);
 			}
 		}

@@ -17,6 +17,8 @@ app_main_unl.run(function($rootScope) {
     $rootScope.csspath = '/themes/adminLTE/unl_data/css/';
     $rootScope.pagespath = '/themes/adminLTE/unl_data/pages/';
     $rootScope.bodyclass = 'sidebar-collapse';
+    $rootScope.UIlegacy = 1 ;
+    $rootScope.EVE_VERSION = "2.0.3-54";
 });
 
 app_main_unl.directive('focusOn', function() {
@@ -61,8 +63,19 @@ app_main_unl.config(['$controllerProvider', function($controllerProvider) {
 }]);
 
 app_main_unl.config(['$compileProvider', function($compileProvider) {
-   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|telnet):/);
+   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|telnet|vnc|rdp):/);
 }]);
+
+app_main_unl.config(['$httpProvider', function($httpProvider) {
+    $httpProvider.defaults.cache = false;
+    if (!$httpProvider.defaults.headers.get) {
+      $httpProvider.defaults.headers.get = {};
+    }
+    // disable IE ajax request caching
+    $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
+    //.....here proceed with your routes
+}]);
+
 
 app_main_unl.directive('myEnter', function () {
     return function (scope, element, attrs) {
@@ -80,6 +93,9 @@ app_main_unl.directive('myEnter', function () {
 
 /* Setup App Main Controller */
 app_main_unl.controller('unlMainController', ['$scope', '$rootScope', '$http', '$location', '$cookies', function($scope, $rootScope, $http, $location, $cookies) {
+                $.get('/VERSION?'+Date.now(), function(data) {
+                    if ( data.trim()  != $rootScope.EVE_VERSION ) window.location.reload(true);
+                });
 		$rootScope.openLaba=true;
 		console.log($cookies.get('privacy'));
 		$scope.testAUTH = function (path) {
@@ -97,7 +113,12 @@ app_main_unl.controller('unlMainController', ['$scope', '$rootScope', '$http', '
 				$rootScope.tenant=response.data.data.tenant;
 				$scope.userfolder = response.data.folder;
 				console.log($rootScope.lab)
-				if ($rootScope.lab === null) {$location.path(path)} else {$location.path('/lab')};
+				// Preview need to get back to legacy UI
+				if ( $rootScope.UIlegacy == 1) {
+					if ($rootScope.lab === null ) {$location.path(path)} else {location.href ='/legacy/'};
+					} else {
+					if ($rootScope.lab === null ) {$location.path(path)} else {$location.path('/lab')};
+					}
 				}
 			}, 
 			function errorCallback(response) {
@@ -160,7 +181,8 @@ app_main_unl.config(['$stateProvider', '$urlRouterProvider', function($stateProv
                         name: 'app_main_unl',
                         insertBefore: '#load_files_before',
                         files: [
-                             '/themes/adminLTE/unl_data/js/angularjs/controllers/loginCtrl.js'
+                             '/themes/adminLTE/unl_data/js/angularjs/controllers/loginCtrl.js',
+                             '/themes/adminLTE/unl_data/css/custom_unl.css',
                         ] 
                     });
                 }]
@@ -247,7 +269,7 @@ app_main_unl.config(['$stateProvider', '$urlRouterProvider', function($stateProv
             }
         })
 		//LAB LAYOUT
-		.state('lab', {
+	.state('labnew', {
             url: "/lab",
             templateUrl: "/themes/adminLTE/unl_data/pages/lab/lab.html",
             data: {pageTitle: 'Lab'},

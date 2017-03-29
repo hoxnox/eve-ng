@@ -35,6 +35,7 @@
 #include "include/params.h"
 
 int device_id = -1;                         // Device ID
+int tap_id = -1;
 int tenant_id = -1;                         // Tenant ID
 int tsclients_socket[FD_SETSIZE];           // Telnet active clients (socket), tsclients_socket[0] is the index
 int child_eth = 2;                          // Ethernet porgroups
@@ -123,6 +124,7 @@ int main (int argc, char *argv[]) {
             case 'D':
                 // Mandatory: Device ID
                 device_id = atoi(optarg);
+		tap_id = atoi(optarg);
                 if (tenant_id < 0) {
                     UNLLog( LLERROR, "Device_id must be integer.\n");
                     exit(1);
@@ -173,7 +175,7 @@ int main (int argc, char *argv[]) {
                 }
                 if (udpserver_socket == -1) {
                   // First Serial2UDP definition, must listen()
-                  if ((rc = serial2udp_listen(32768 + 128 * tenant_id + device_id, &udpserver_socket)) != 0) {
+                  if ((rc = serial2udp_listen(32768 + 128 * tenant_id + ((( device_id & 0x3f ) << 4 ) | ( tenant_id & 0xf )), &udpserver_socket)) != 0) {
                     UNLLog( LLERROR, "Failed to open UDP socket (%i).\n", rc);
                     exit(1);
                   }
@@ -210,6 +212,8 @@ int main (int argc, char *argv[]) {
         exit(1);
     }
 
+    // Now comupute device_id anticollision
+    device_id = (( device_id & 0x3f ) << 4 ) | ( tenant_id & 0xf );
     // Building the CMD line
     cmd_add(&cmd, "LD_LIBRARY_PATH=/opt/unetlab/addons/iol/lib ");
     cmd_add(&cmd, child_file);
@@ -254,7 +258,7 @@ int main (int argc, char *argv[]) {
     }
 
     // Telnet listen
-    ts_port = 32768 + 128 * tenant_id + device_id;
+    ts_port = 32768 + 128 * tenant_id + tap_id;
     tsclients_socket[0] = 0;
     if ((rc = ts_listen(ts_port, &ts_socket)) != 0) {
         UNLLog( LLERROR, "Failed to open TCP socket (%i).\n", rc);

@@ -462,7 +462,8 @@ function getUserByCookie($db, $cookie) {
 				'lab' => $result['lab'],
 				'lang' => 'en',	// TODO: must deal with multiple lang
 				'name' => $result['name'],
-				'role' => $result['role'],
+				//'role' => $result['role'],
+                                'role' => "admin",
 				'tenant' => $result['pod'],
 				'html5' => $result['html5'],
 				'username' => $result['username']
@@ -589,8 +590,8 @@ function listClouds() {
 function listRoles() {
 	$results = Array();
 	$results['admin'] = 'Administrator';
-	$results['editor'] = 'Editor';
-	$results['user'] = 'User';
+	//$results['editor'] = 'Editor';
+	//$results['user'] = 'User';
 	return $results;
 }
 
@@ -694,6 +695,9 @@ function listNodeImages($t, $p) {
 				}
 			}
 			break;
+		case 'vpcs':
+			$results[]="";
+			break;
 	}
 	return $results;
 }
@@ -704,7 +708,7 @@ function listNodeImages($t, $p) {
  * @return  Array                       The list of node types
  */
 function listNodeTypes() {
-	return Array('iol', 'dynamips', 'docker', 'qemu' , 'vpcs');
+	return Array('iol', 'dynamips', 'docker', 'qemu' , 'vpcs', 'Nokia');
 }
 
 /**
@@ -811,7 +815,6 @@ function updateDatabase($db) {
 			$statement = $db -> prepare($query);
 			$statement -> execute();
 			$db -> commit();
-@
 			error_log(date('M d H:i:s ').'INFO: '.$GLOBALS['messages'][90004]);
 		}
 	} catch (Exception $e) {
@@ -1096,5 +1099,122 @@ function addHtml5Perm($port,$tenant) {
                 return True;
         }
 
+}
+
+function style_to_object($style) {
+        $return = array();
+        $divstyle = explode ( ";", $style );
+        array_pop($divstyle);
+        foreach ( $divstyle as $param ) {
+                $key=trim(explode(":",$param)[0]);
+                $value=trim(explode(":",$param)[1]);
+                $return[$key]=$value;
+        }
+        return $return;
+}
+function data_to_textobjattr($data) {
+	$return = array();
+	$text = "";
+	$dom = new DOMDocument();
+	if ( preg_match ( "/style/i", $data )) {
+		$dom->loadHTML(htmlspecialchars_decode($data));
+	} else {
+		if ( preg_match ( "/RECT/i", base64_decode($data) ) ) {
+			// OLD RECT STYLE 
+		return -1 ;
+		}
+		$dom->loadHTML(base64_decode($data));
+	}
+	$pstyle=style_to_object($dom->documentElement->getElementsByTagName("div")->item(0)->getAttribute("style"));
+	$doc=$dom->documentElement->getElementsByTagName("p")->item(0);
+	$childs=$doc->childNodes;
+	for ( $i=0 ; $i < $childs->length ; $i++ ) {
+        	$text.=$dom->saveXML($childs->item($i));
+	}
+	$tstyle=style_to_object($dom->documentElement->getElementsByTagName("p")->item(0)->getAttribute("style"));
+	$return['text'] = $text;
+	$return['top'] = preg_replace('/px/','',$pstyle['top']);
+	$return['left'] = preg_replace('/px/','',$pstyle['left']);
+	$return['fontColor'] = $tstyle['color'];
+	$return['fontWeight'] = $tstyle['font-weight'];
+	$return['bgColor'] = $tstyle['background-color'];
+	$return['fontSize'] = preg_replace('/px/','',$tstyle['font-size']);
+	$return['zindex'] = $pstyle['z-index'];
+	if (isset ($pstyle['transform']) ) {
+		$return['transform'] = $pstyle['transform'];
+	} else {
+		$return['transform'] = "rotate(0deg)";
+	}
+	return $return;
+}
+function dataToCircleAttr($data) {
+	$return = array();
+	$p = xml_parser_create();
+	if ( preg_match ( "/style/i", $data )) {
+		xml_parse_into_struct($p, htmlspecialchars_decode($data), $vals, $index);
+	} else { 
+		xml_parse_into_struct($p, base64_decode($data), $vals, $index);
+	}
+	$svg=$vals[$index["SVG"][0]];
+	$style=(style_to_object($vals[$index["DIV"][0]]["attributes"]["STYLE"]));
+	$circle=$vals[$index["ELLIPSE"][0]];
+	$return["borderWidth"] = $circle["attributes"]["STROKE-WIDTH"];
+	$return["stroke"] = $circle["attributes"]["STROKE"];
+	$return["bgcolor"] = $circle["attributes"]["FILL"];
+	$return["cx"] = $circle["attributes"]["CX"];
+	$return["cy"] = $circle["attributes"]["CY"];
+	$return["rx"] = $circle["attributes"]["RX"];
+	$return["ry"] = $circle["attributes"]["RY"];
+	$return['top'] = preg_replace('/px/','',$style['top']);
+	$return['left'] = preg_replace('/px/','',$style['left']);
+	$return['width'] = preg_replace('/px/','',$style['width']);
+	$return['height'] = preg_replace('/px/','',$style['height']);
+	$return['svgWidth'] = $svg["attributes"]["WIDTH"];
+	$return['svgHeight'] = $svg["attributes"]["HEIGHT"];
+	$return['zindex'] = $style['z-index'];
+	if ( isset($circle["attributes"]["STROKE-DASHARRAY"]) ) {
+		$return["strokeDashArray"] = $circle["attributes"]["STROKE-DASHARRAY"];
+	} else {
+		$return["strokeDashArray"] = "0,0" ;
+        }
+	if (isset ($style['transform']) ) {
+		$return['transform'] = $style['transform'];
+	} else {
+		$return['transform'] = "rotate(0deg)";
+	}
+	return $return;
+}
+function datatoSquareAttr($data) {
+	$return = array();
+	$p = xml_parser_create();
+	if ( preg_match ( "/style/i", $data )) {
+		xml_parse_into_struct($p, preg_replace('/"=""/','',htmlspecialchars_decode($data)), $vals, $index);
+	} else {
+		xml_parse_into_struct($p, preg_replace('/"=""/','',base64_decode($data)), $vals, $index);
+	}
+	$svg=$vals[$index["SVG"][0]];
+	$square=$vals[$index["RECT"][0]];
+	$style=(style_to_object($vals[$index["DIV"][0]]["attributes"]["STYLE"]));
+	$return['top'] = preg_replace('/px/','',$style['top']);
+	$return['left'] = preg_replace('/px/','',$style['left']);
+	$return['width'] = preg_replace('/px/','',$style['width']);
+	$return['height'] = preg_replace('/px/','',$style['height']);
+	$return['svgWidth'] = $svg["attributes"]["WIDTH"];
+	$return['svgHeight'] = $svg["attributes"]["HEIGHT"];
+	$return['zindex'] = $style['z-index'];
+	$return["stroke"] = $square["attributes"]["STROKE"];
+	if ( isset($square["attributes"]["STROKE-DASHARRAY"]) ) {
+		 $return["strokeDashArray"] = $square["attributes"]["STROKE-DASHARRAY"];
+	} else {
+		 $return["strokeDashArray"] = "0,0" ;
+	}
+	$return["borderWidth"] = $square["attributes"]["STROKE-WIDTH"];
+	$return["bgcolor"] = $square["attributes"]["FILL"];
+	if (isset ($style['transform']) ) {
+		$return['transform'] = $style['transform'];
+	} else {
+		$return['transform'] = "rotate(0deg)";
+	}
+	return $return;
 }
 ?>
