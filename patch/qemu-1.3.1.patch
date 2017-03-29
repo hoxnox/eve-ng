@@ -1,0 +1,25 @@
+diff -Nru qemu-1.3.1.ori/Makefile qemu-1.3.1/Makefile
+--- qemu-1.3.1.ori/Makefile	2013-01-28 22:05:15.000000000 +0100
++++ qemu-1.3.1/Makefile	2016-11-23 23:43:54.481937724 +0100
+@@ -48,7 +48,7 @@
+ 
+ $(call set-vpath, $(SRC_PATH))
+ 
+-LIBS+=-lz $(LIBS_TOOLS)
++LIBS+=-lz -lrt -lm $(LIBS_TOOLS)
+ 
+ HELPERS-$(CONFIG_LINUX) = qemu-bridge-helper$(EXESUF)
+ 
+diff -Nru qemu-1.3.1.ori/qemu-common.h qemu-1.3.1/qemu-common.h
+--- qemu-1.3.1.ori/qemu-common.h	2013-01-28 22:05:15.000000000 +0100
++++ qemu-1.3.1/qemu-common.h	2016-11-23 23:44:29.122626066 +0100
+@@ -9,6 +9,9 @@
+  * must be moved to a separate header file, and the header that uses it
+  * must include that header.
+  */
++#define BIT(n) (1 << (n))
++#define BITS(n, m) (((0xffffffffU << (31 - n)) >> (31 - n + m)) << m)
++
+ #ifndef QEMU_COMMON_H
+ #define QEMU_COMMON_H
+ 

@@ -1,0 +1,12 @@
+[Unit]
+Description=OS configuration for EVE-NG
+After=network.target
+
+[Service]
+ExecStart=/opt/ovf/ovfstartup.sh
+TimeoutSec=0
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+
