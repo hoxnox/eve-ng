@@ -90,14 +90,22 @@ function apiDeleteLabNode($lab, $id, $tenant) {
 	// Stop the node
 	error_log('Delete Node Lab : WTF ' . 'id: ' . $id . ' tenant: ' . $tenant);
 
-	foreach( scandir("/opt/unetlab/tmp/") as $value ) {	
-		if ( is_dir("/opt/unetlab/tmp/".$value) and intval($value) >= 0 ) {
-			$output=apiStopLabNode($lab, $id, intval($value)); 
-			error_log('Delete Node Lab : output ' . implode("|",$output) . ' id: ' . $id . ' tenant: ' . $tenant );
-			file_put_contents("/tmp/ade",$value,FILE_APPEND);
-			if ($output['status'] == 400 ) return $output; 	
-		}
+	if ( is_dir("/opt/unetlab/tmp/".$tenant) ) {
+	$output=apiStopLabNode($lab, $id, $tenant); 
+	error_log('Delete Node Lab : output ' . implode("|",$output) . ' id: ' . $id . ' tenant: ' . $tenant );
+	file_put_contents("/tmp/ade",$tenant,FILE_APPEND);
+	if ($output['status'] == 400 ) return $output; 	
 	}
+// TODO: Why ???
+// THAT CAUSES THAT ALLYWAY the 1 VM WILL BE STOPPED 
+//	foreach( scandir("/opt/unetlab/tmp/") as $value ) {	
+//		if ( is_dir("/opt/unetlab/tmp/".$value) and intval($value) >= 0 ) {
+//			$output=apiStopLabNode($lab, $id, intval($value)); 
+//			error_log('Delete Node Lab : output ' . implode("|",$output) . ' id: ' . $id . ' tenant: ' . $tenant );
+//			file_put_contents("/tmp/ade",$value,FILE_APPEND);
+//			if ($output['status'] == 400 ) return $output; 	
+//		}
+//	}
 	// Deleting the node
 	$rc = $lab -> deleteNode($id);
 	if ($rc === 0) {
