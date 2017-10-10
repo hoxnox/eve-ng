@@ -60,7 +60,6 @@ apply change with update-grub
 Modify /etc/ssh/sshd_config with: PermitRootLogin yes
 Reboot Server
 
-Add Repository: TBD
 Now You are ready to install EVE_NG PACKAGES...
 
 
